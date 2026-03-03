@@ -238,6 +238,18 @@ class WorkoutService {
     _replaceExercise(exercise, updatedExercise);
   }
 
+  /// Deletes a set from a StrengthExercise.
+  void deleteStrengthSet(StrengthExercise exercise, StrengthSet set) {
+    _logger.i('WorkoutService: Deleting Strength set');
+    final List<StrengthSet> updatedSets = List<StrengthSet>.from(exercise.sets);
+    updatedSets.remove(set);
+    final StrengthExercise updatedExercise = exercise.copyWith(
+      sets: updatedSets,
+    );
+
+    _replaceExercise(exercise, updatedExercise);
+  }
+
   /// Adds a set to a CardioExercise.
   void addCardioSet(
     CardioExercise exercise, {
@@ -264,12 +276,36 @@ class WorkoutService {
     _replaceExercise(exercise, updatedExercise);
   }
 
+  /// Deletes a set from a CardioExercise.
+  void deleteCardioSet(CardioExercise exercise, CardioSet set) {
+    _logger.i('WorkoutService: Deleting Cardio set');
+    final List<CardioSet> updatedSets = List<CardioSet>.from(exercise.sets);
+    updatedSets.remove(set);
+    final CardioExercise updatedExercise = exercise.copyWith(
+      sets: updatedSets,
+    );
+
+    _replaceExercise(exercise, updatedExercise);
+  }
+
   /// Adds a set to a StretchExercise.
   void addStretchSet(StretchExercise exercise, Duration duration) {
     _logger.i('WorkoutService: Adding Stretch set - ${duration.inSeconds}s');
     final StretchSet newSet = StretchSet(duration: duration);
     final StretchExercise updatedExercise = exercise.copyWith(
       sets: <StretchSet>[...exercise.sets, newSet],
+    );
+
+    _replaceExercise(exercise, updatedExercise);
+  }
+
+  /// Deletes a set from a StretchExercise.
+  void deleteStretchSet(StretchExercise exercise, StretchSet set) {
+    _logger.i('WorkoutService: Deleting Stretch set');
+    final List<StretchSet> updatedSets = List<StretchSet>.from(exercise.sets);
+    updatedSets.remove(set);
+    final StretchExercise updatedExercise = exercise.copyWith(
+      sets: updatedSets,
     );
 
     _replaceExercise(exercise, updatedExercise);

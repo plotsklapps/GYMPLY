@@ -145,10 +145,29 @@ class StrengthExerciseScreen extends StatelessWidget {
                       '${set.weight.toStringAsFixed(0)} kg x ${set.reps} reps',
                       style: theme.textTheme.titleLarge,
                     ),
-                    trailing: IconButton(
+                    trailing: PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        // Edit/Delete set later
+                      onSelected: (String value) {
+                        if (value == 'delete') {
+                          workoutService.deleteStrengthSet(exercise, set);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              children: <Widget>[
+                                FaIcon(
+                                  FontAwesomeIcons.trashCan,
+                                  color: theme.colorScheme.error,
+                                ),
+                                const SizedBox(width: 8),
+                                const Text('Delete'),
+                              ],
+                            ),
+                          ),
+                        ];
                       },
                     ),
                   ),
