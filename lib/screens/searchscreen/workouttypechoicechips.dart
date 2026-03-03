@@ -23,7 +23,7 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
           final bool isSelected = workoutType == type;
 
           return Padding(
-            padding: const EdgeInsets.only(right: 4),
+            padding: const EdgeInsets.fromLTRB(0, 0, 4, 4),
             child: ChoiceChip(
               showCheckmark: false,
               avatar: isSelected
@@ -33,7 +33,7 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
                   : null,
               label: Text(
                 type.name.capitalizeFirst(),
-                style: theme.textTheme.labelLarge,
+                style: theme.textTheme.bodyLarge,
               ),
               selected: isSelected,
               onSelected: (bool selected) {

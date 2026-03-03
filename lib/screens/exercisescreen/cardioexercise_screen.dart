@@ -5,6 +5,7 @@ import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
+import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/cardiotimer_sheet.dart';
@@ -100,7 +101,7 @@ class CardioExerciseScreen extends StatelessWidget {
                               ? const FaIcon(FontAwesomeIcons.solidCircleCheck)
                               : null,
                           label: Text(
-                            value.name.toUpperCase(),
+                            value.name.capitalizeFirst(),
                           ),
                           selected: isSelected,
                           onSelected: (bool selected) {
@@ -116,7 +117,7 @@ class CardioExerciseScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Text('AUTO'),
+                            const Text('Auto'),
                             Switch(
                               value: IntervalTimer.sAutoIntervalOn.watch(
                                 context,
@@ -255,7 +256,8 @@ class CardioExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'WORK: ${set.cardioDuration.inSeconds.formatHMMSS()} REST: ${set.restDuration.inSeconds.formatHMMSS()}',
+                          : 'WORK: ${set.cardioDuration.inSeconds.formatHMMSS()}'
+                                ' REST: ${set.restDuration.inSeconds.formatHMMSS()}',
                     ),
                     subtitle: Text(
                       set.restDuration == Duration.zero
