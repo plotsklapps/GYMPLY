@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "319450241016",
+    "project_id": "gymplyapp",
+    "storage_bucket": "gymplyapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319450241016:android:a3f02c0f36a138b589e80d",
+        "android_client_info": {
+          "package_name": "dev.plotsklapps.gymply"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319450241016-iispoelsj7j9rshq9uedgmfvfrs3eroo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVHHv6lJhP7szzm-R2x1mTlwCUDFf2de4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "319450241016-iispoelsj7j9rshq9uedgmfvfrs3eroo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
