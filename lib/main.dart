@@ -11,6 +11,7 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:toastification/toastification.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
@@ -20,11 +21,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // Enable Wakelock to keep the screen on during the PWA session.
-  // This is standard for fitness apps to prevent the device from sleeping
-  // while the user is performing exercises.
-  await WakelockPlus.enable();
 
   // Initialize Hive CE.
   await Hive.initFlutter();
@@ -43,9 +39,12 @@ void main() async {
     ..registerAdapter(WorkoutTypeAdapter())
     ..registerAdapter(DurationAdapter());
 
-  // Initialize Services.
+  // Initialize FilterService & WorkoutService.
   await filterService.init();
   await workoutService.init();
+
+  // Enable Wakelock to keep screen on.
+  await WakelockPlus.enable();
 
   runApp(const MainEntry());
 }
@@ -55,10 +54,13 @@ class MainEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GYMPLY.',
-      theme: cThemeData.watch(context),
-      home: const HomeScreen(),
+    // Wrapper for context-free toasts.
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'GYMPLY.',
+        theme: cThemeData.watch(context),
+        home: const HomeScreen(),
+      ),
     );
   }
 }
