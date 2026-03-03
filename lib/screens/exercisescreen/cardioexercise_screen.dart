@@ -87,24 +87,48 @@ class CardioExerciseScreen extends StatelessWidget {
                   ],
                 ),
                 // CARDIOMODE CHOICECHIPS.
-                Wrap(
-                  spacing: 4,
-                  children: CardioMode.values.map((CardioMode value) {
-                    final bool isSelected = mode == value;
-                    return ChoiceChip(
-                      showCheckmark: false,
-                      avatar: isSelected
-                          ? const FaIcon(FontAwesomeIcons.solidCircleCheck)
-                          : null,
-                      label: Text(
-                        value.name.toUpperCase(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Wrap(
+                      spacing: 4,
+                      children: CardioMode.values.map((CardioMode value) {
+                        final bool isSelected = mode == value;
+                        return ChoiceChip(
+                          showCheckmark: false,
+                          avatar: isSelected
+                              ? const FaIcon(FontAwesomeIcons.solidCircleCheck)
+                              : null,
+                          label: Text(
+                            value.name.toUpperCase(),
+                          ),
+                          selected: isSelected,
+                          onSelected: (bool selected) {
+                            if (selected) sCardioMode.value = value;
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    // AUTO-INTERVAL SWITCH.
+                    if (mode == CardioMode.interval)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text('AUTO'),
+                            Switch(
+                              value: IntervalTimer.sAutoIntervalOn.watch(
+                                context,
+                              ),
+                              onChanged: (bool value) {
+                                IntervalTimer.sAutoIntervalOn.value = value;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      selected: isSelected,
-                      onSelected: (bool selected) {
-                        if (selected) sCardioMode.value = value;
-                      },
-                    );
-                  }).toList(),
+                  ],
                 ),
 
                 const SizedBox(height: 16),
@@ -123,12 +147,8 @@ class CardioExerciseScreen extends StatelessWidget {
                     mode: mode,
                   ),
                 ),
-
-                const SizedBox(height: 8),
-
-                // FABs.
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     // RESET FAB.
                     FloatingActionButton(
@@ -142,8 +162,9 @@ class CardioExerciseScreen extends StatelessWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.rotateLeft),
+                      child: const FaIcon(FontAwesomeIcons.solidCircleXmark),
                     ),
+                    const SizedBox(width: 8),
                     // START/PAUSE FAB.
                     FloatingActionButton.large(
                       heroTag: 'cardioPlay',
@@ -170,6 +191,7 @@ class CardioExerciseScreen extends StatelessWidget {
                           ? const FaIcon(FontAwesomeIcons.solidCirclePause)
                           : const FaIcon(FontAwesomeIcons.solidCirclePlay),
                     ),
+                    const SizedBox(width: 8),
                     // ADD SET FAB.
                     FloatingActionButton(
                       heroTag: 'cardioAdd',
@@ -212,23 +234,6 @@ class CardioExerciseScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // AUTO-INTERVAL SWITCH.
-                if (mode == CardioMode.interval)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text('AUTO-INTERVAL'),
-                        Switch(
-                          value: IntervalTimer.sAutoIntervalOn.watch(context),
-                          onChanged: (bool value) {
-                            IntervalTimer.sAutoIntervalOn.value = value;
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
           ),
