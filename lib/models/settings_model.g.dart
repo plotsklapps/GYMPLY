@@ -19,17 +19,22 @@ class SettingsAdapter extends TypeAdapter<Settings> {
     return Settings(
       darkMode: fields[0] as bool,
       initialRestTime: (fields[1] as num).toInt(),
+      favoriteExercises: fields[2] == null
+          ? const <int>[]
+          : (fields[2] as List).cast<int>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
-      ..write(obj.initialRestTime);
+      ..write(obj.initialRestTime)
+      ..writeByte(2)
+      ..write(obj.favoriteExercises);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/loading_signal.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:logger/logger.dart';
@@ -212,10 +213,13 @@ class FilterService {
     final MuscleGroup? muscleGroup = sSelectedMuscleGroup.value;
     final Equipment? equipment = sSelectedEquipment.value;
     final List<ExercisePath> allExercisePaths = sAllExercisePaths.value;
+    final List<int> favorites = workoutService.sFavoriteExercises.value;
 
     if (workoutType == null) return <ExercisePath>[];
 
-    return allExercisePaths.where((ExercisePath ex) {
+    final List<ExercisePath> filtered = allExercisePaths.where((
+      ExercisePath ex,
+    ) {
       // 1. WorkoutType Logic.
       if (workoutType == WorkoutType.strength) {
         if (ex.muscleSegment == 'Cardio' || ex.equipmentSegment == 'Stretch') {
@@ -249,6 +253,19 @@ class FilterService {
 
       return true;
     }).toList();
+
+    // Sort: Favorites first, then alphabetically.
+    filtered.sort((ExercisePath a, ExercisePath b) {
+      final bool isAFavorite = favorites.contains(int.parse(a.id));
+      final bool isBFavorite = favorites.contains(int.parse(b.id));
+
+      if (isAFavorite && !isBFavorite) return -1;
+      if (!isAFavorite && isBFavorite) return 1;
+
+      return a.exerciseName.compareTo(b.exerciseName);
+    });
+
+    return filtered;
   }, debugLabel: 'cFilteredExercises');
 
   // --- Computed Signals for UI ---

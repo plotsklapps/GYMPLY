@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailSheet extends StatelessWidget {
   const ExerciseDetailSheet({
@@ -20,6 +22,13 @@ class ExerciseDetailSheet extends StatelessWidget {
     final bool isCardio = exercise.muscleSegment == 'Cardio';
     final bool isStretch = exercise.equipmentSegment == 'Stretch';
     final bool isStrength = !isCardio && !isStretch;
+
+    // Watch the favorite IDs list.
+    final List<int> favoriteIds = workoutService.sFavoriteExercises.watch(
+      context,
+    );
+    final int exerciseId = int.parse(exercise.id);
+    final bool isFavorite = favoriteIds.contains(exerciseId);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -48,6 +57,8 @@ class ExerciseDetailSheet extends StatelessWidget {
                       label: Text(
                         exercise.muscleSegment.capitalizeFirst(),
                         style: theme.textTheme.labelLarge,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -63,6 +74,18 @@ class ExerciseDetailSheet extends StatelessWidget {
                       ),
                     ),
                   ),
+                // Favorite button.
+                IconButton(
+                  onPressed: () {
+                    workoutService.toggleFavorite(exerciseId);
+                  },
+                  icon: FaIcon(
+                    isFavorite
+                        ? FontAwesomeIcons.solidStar
+                        : FontAwesomeIcons.star,
+                    color: isFavorite ? theme.colorScheme.secondary : null,
+                  ),
+                ),
               ],
             ),
           ],

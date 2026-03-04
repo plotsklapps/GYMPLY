@@ -1,4 +1,4 @@
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 part 'settings_model.g.dart';
 
@@ -7,6 +7,7 @@ class Settings {
   Settings({
     required this.darkMode,
     required this.initialRestTime,
+    this.favoriteExercises = const <int>[],
   });
 
   @HiveField(0)
@@ -15,13 +16,18 @@ class Settings {
   @HiveField(1)
   final int initialRestTime;
 
+  @HiveField(2)
+  final List<int> favoriteExercises;
+
   Settings copyWith({
     bool? darkMode,
     int? initialRestTime,
+    List<int>? favoriteExerciseIds,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
       initialRestTime: initialRestTime ?? this.initialRestTime,
+      favoriteExercises: favoriteExerciseIds ?? favoriteExercises,
     );
   }
 }
