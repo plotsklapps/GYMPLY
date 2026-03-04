@@ -1,9 +1,12 @@
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/filter_service.dart';
+import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -23,20 +26,21 @@ class WorkoutService {
   // Initialize Logger.
   final Logger _logger = Logger();
 
-  // Box names.
-  static const String _workoutBoxName = 'workout_history';
-  static const String _activeWorkoutBoxName = 'active_session';
+  // Hive boxes.
+  late Box<Workout> _workoutBox;
+  late Box<Settings> _settingsBox;
 
-  late Box<Workout> _historyBox;
-  late Box<Workout> _activeBox;
+  // Box names (prevents typos).
+  static const String _workoutBoxName = 'workouts';
+  static const String _settingsBoxName = 'settings';
 
-  // Signal for workout history.
+  // Signal for ALL workout history.
   final Signal<List<Workout>> sWorkoutHistory = signal<List<Workout>>(
     <Workout>[],
     debugLabel: 'sWorkoutHistory',
   );
 
-  // Current active workout session Signal.
+  // Current active workout session Signal (defaults to today).
   final Signal<Workout> sActiveWorkout = signal<Workout>(
     Workout(
       id: const Uuid().v4(),
@@ -53,66 +57,87 @@ class WorkoutService {
     debugLabel: 'sSelectedExercise',
   );
 
-  /// Initialize Hive boxes and load data.
+  // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
     _logger.i('WorkoutService: Initializing Hive boxes and loading state');
 
-    _historyBox = await Hive.openBox<Workout>(_workoutBoxName);
-    _activeBox = await Hive.openBox<Workout>(_activeWorkoutBoxName);
+    _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
+    _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
 
-    // Load history into signal.
-    sWorkoutHistory.value = _historyBox.values.toList();
+    // 0. Load settings.
+    final Settings? settings = _settingsBox.get('app_settings');
+    if (settings != null) {
+      sDarkMode.value = settings.darkMode;
+      RestTimer.sInitialRestTime.value = settings.initialRestTime;
+      _logger.i(
+        'WorkoutService: Loaded settings - DarkMode: ${settings.darkMode}, RestTime: ${settings.initialRestTime}',
+      );
+    }
+
+    // 1. Load all workouts into history signal.
+    sWorkoutHistory.value = _workoutBox.values.toList();
     _logger.i(
       'WorkoutService: Loaded ${sWorkoutHistory.value.length} workouts from history',
     );
 
-    // 1. Check if there's an ongoing workout in the active box.
-    final Workout? savedActive = _activeBox.get('current');
-    if (savedActive != null) {
+    // 2. Check if there's a workout for today.
+    final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
+    final Workout? todayWorkout = _workoutBox.get(todayKey);
+
+    if (todayWorkout != null) {
       _logger.i(
-        'WorkoutService: Found unfinished active session. Resuming workout with ${savedActive.exercises.length} exercises...',
+        'WorkoutService: Resuming today\'s workout ($todayKey) with ${todayWorkout.exercises.length} exercises',
       );
-      sActiveWorkout.value = savedActive;
-      TotalTimer.sElapsedTotalTime.value = savedActive.totalDuration;
-    }
-    // 2. If no active session, check history for today.
-    else {
-      final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
-      final Workout? todayWorkout = _historyBox.get(todayKey);
-      if (todayWorkout != null) {
-        _logger.i(
-          'WorkoutService: Resuming today\'s completed workout from history with ${todayWorkout.exercises.length} exercises',
-        );
-        sActiveWorkout.value = todayWorkout;
-        TotalTimer.sElapsedTotalTime.value = todayWorkout.totalDuration;
-      }
+      sActiveWorkout.value = todayWorkout;
+      TotalTimer.sElapsedTotalTime.value = todayWorkout.totalDuration;
+    } else {
+      _logger.i(
+        'WorkoutService: No workout found for today ($todayKey). Starting fresh.',
+      );
+      // Reset signal to a fresh workout for today if it wasn't already.
+      sActiveWorkout.value = Workout(
+        id: const Uuid().v4(),
+        title: "Today's Workout",
+        dateTime: DateTime.now(),
+        totalDuration: 0,
+      );
+      TotalTimer.sElapsedTotalTime.value = 0;
     }
 
-    // Auto-save active workout when it changes.
-    // Register the effect AFTER the initial load to avoid immediate overwriting.
+    // Auto-save active workout whenever it changes.
     effect(() {
       final Workout workout = sActiveWorkout.value;
-      _activeBox.put('current', workout);
+      _workoutBox.put(workout.dateKey, workout);
+      _logger.d('WorkoutService: Auto-saved workout for ${workout.dateKey}');
+    });
+
+    // Auto-save settings whenever they change.
+    effect(() {
+      final bool darkMode = sDarkMode.value;
+      final int restTime = RestTimer.sInitialRestTime.value;
+
+      final Settings settings = Settings(
+        darkMode: darkMode,
+        initialRestTime: restTime,
+      );
+      _settingsBox.put('app_settings', settings);
+      _logger.d('WorkoutService: Auto-saved settings');
     });
   }
 
-  /// Finishes the current workout, saves it to history using the dateKey, and pauses.
+  /// Finishes the current workout session.
   Future<void> finishWorkout() async {
-    final String key = sActiveWorkout.value.dateKey;
-    _logger.i('WorkoutService: Finishing workout for date key: $key');
+    _logger.i('WorkoutService: Finishing workout');
 
     final Workout finalWorkout = sActiveWorkout.value.copyWith(
       totalDuration: TotalTimer.sElapsedTotalTime.value,
     );
 
-    // Save to history using the dateKey (YYYYMMDD) as the unique identifier.
-    await _historyBox.put(key, finalWorkout);
-    _logger.i(
-      'WorkoutService: Workout with ${finalWorkout.exercises.length} exercises saved to history box',
-    );
+    // Explicitly save the final state.
+    await _workoutBox.put(finalWorkout.dateKey, finalWorkout);
 
-    // Update history signal.
-    sWorkoutHistory.value = _historyBox.values.toList();
+    // Update history signal so UI reflects the final duration/state.
+    sWorkoutHistory.value = _workoutBox.values.toList();
 
     // Pause the timer.
     TotalTimer().pauseTimer();

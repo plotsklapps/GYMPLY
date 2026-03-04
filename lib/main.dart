@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gymply/firebase_options.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -37,7 +38,8 @@ void main() async {
     ..registerAdapter(MuscleGroupAdapter())
     ..registerAdapter(EquipmentAdapter())
     ..registerAdapter(WorkoutTypeAdapter())
-    ..registerAdapter(DurationAdapter());
+    ..registerAdapter(DurationAdapter())
+    ..registerAdapter(SettingsAdapter());
 
   // Initialize FilterService & WorkoutService.
   await filterService.init();

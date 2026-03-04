@@ -4,6 +4,7 @@
 
 import 'package:hive_ce/hive_ce.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -15,6 +16,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(CardioSetAdapter());
     registerAdapter(EquipmentAdapter());
     registerAdapter(MuscleGroupAdapter());
+    registerAdapter(SettingsAdapter());
     registerAdapter(StrengthExerciseAdapter());
     registerAdapter(StrengthSetAdapter());
     registerAdapter(StretchExerciseAdapter());
@@ -30,6 +32,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(CardioSetAdapter());
     registerAdapter(EquipmentAdapter());
     registerAdapter(MuscleGroupAdapter());
+    registerAdapter(SettingsAdapter());
     registerAdapter(StrengthExerciseAdapter());
     registerAdapter(StrengthSetAdapter());
     registerAdapter(StretchExerciseAdapter());
