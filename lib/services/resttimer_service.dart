@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
+import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/haptic_service.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -35,7 +35,6 @@ class RestTimer {
 
   Timer? _timer;
   DateTime? _endTime;
-  AudioPlayer? _audioPlayer;
 
   Future<void> startTimer() async {
     // Immediate guard to prevent concurrent timers during async gaps.
@@ -43,18 +42,6 @@ class RestTimer {
 
     sRestTimerRunning.value = true;
     sRestTimerCompleted.value = false;
-
-    // Initialize AudioPlayer.
-    if (_audioPlayer == null) {
-      _audioPlayer = AudioPlayer();
-      await _audioPlayer!.setAudioContext(
-        AudioContext(
-          android: const AudioContextAndroid(
-            audioFocus: AndroidAudioFocus.gainTransientMayDuck,
-          ),
-        ),
-      );
-    }
 
     // Give a little bzzz.
     await HapticService.light();
@@ -67,7 +54,6 @@ class RestTimer {
 
       final Duration remaining = _endTime!.difference(DateTime.now());
       // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
-      // Truncating with .inSeconds causes the UI to skip a second immediately.
       final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
 
       if (remainingSeconds > 0) {
@@ -81,8 +67,9 @@ class RestTimer {
 
         sElapsedRestTime.value = 0;
 
-        // Play audio.
-        unawaited(_audioPlayer?.play(AssetSource('sounds/timerbell.mp3')));
+        // Play rest-completed sound.
+        // ignore: unawaited_futures
+        AudioService().playRestSound();
 
         // Wait to finish before clean up or allow re-start.
         await Future<void>.delayed(const Duration(milliseconds: 500));
@@ -108,10 +95,6 @@ class RestTimer {
     _timer?.cancel();
     _timer = null;
     _endTime = null;
-
-    // Kill Audioplayer.
-    await _audioPlayer?.dispose();
-    _audioPlayer = null;
 
     sElapsedRestTime.value = sInitialRestTime.value;
     sRestTimerRunning.value = false;

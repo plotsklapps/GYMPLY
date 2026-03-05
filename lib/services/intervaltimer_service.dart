@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/workout_model.dart';
+import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/haptic_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
@@ -93,7 +93,6 @@ class IntervalTimer {
 
   Timer? _timer;
   DateTime? _endTime;
-  AudioPlayer? _audioPlayer;
 
   Future<void> startTimer() async {
     // Synchronous check to prevent multiple timers.
@@ -102,18 +101,6 @@ class IntervalTimer {
     _isIntervalSequenceActive = true;
     sIntervalTimerRunning.value = true;
     sIntervalTimerCompleted.value = false;
-
-    // Initialize AudioPlayer.
-    if (_audioPlayer == null) {
-      _audioPlayer = AudioPlayer();
-      await _audioPlayer!.setAudioContext(
-        AudioContext(
-          android: const AudioContextAndroid(
-            audioFocus: AndroidAudioFocus.gainTransientMayDuck,
-          ),
-        ),
-      );
-    }
 
     await HapticService.light();
 
@@ -142,13 +129,15 @@ class IntervalTimer {
 
         sElapsedIntervalTime.value = 0;
 
-        // Play audio.
-        unawaited(_audioPlayer?.play(AssetSource('sounds/startsound.mp3')));
+        // Play interval-completed sound.
+        // ignore: unawaited_futures
+        AudioService().playStartSound();
 
         // Wait to finish before clean up or allow re-start.
         await Future<void>.delayed(const Duration(milliseconds: 500));
 
         sIntervalTimerCompleted.value = true;
+
         // Reset to initial milliseconds.
         sElapsedIntervalTime.value = sInitialIntervalTime.value;
 
@@ -172,9 +161,6 @@ class IntervalTimer {
     _timer?.cancel();
     _timer = null;
     _endTime = null;
-
-    await _audioPlayer?.dispose();
-    _audioPlayer = null;
 
     // Reset to initial milliseconds.
     sElapsedIntervalTime.value = sInitialIntervalTime.value;
