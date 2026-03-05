@@ -41,16 +41,11 @@ class MenuSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            'MENU',
-            style: theme.textTheme.titleLarge,
-          ),
+          Text('MENU', style: theme.textTheme.titleLarge),
           const Divider(),
           SwitchListTile(
             title: const Text('Theme Mode'),
-            secondary: Icon(
-              isDarkMode ? Icons.dark_mode : Icons.light_mode,
-            ),
+            secondary: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
             value: isDarkMode,
             onChanged: (bool value) {
               sDarkMode.value = value;
@@ -59,7 +54,7 @@ class MenuSheet extends StatelessWidget {
           ListTile(
             onTap: updateApp,
             leading: const FaIcon(FontAwesomeIcons.github),
-            title: const Text('Current Version: 0.0.1+5'),
+            title: const Text('Current Version: 0.0.1+7'),
             subtitle: const Text('Deployed 20260305'),
             trailing: const FaIcon(FontAwesomeIcons.arrowsRotate),
           ),

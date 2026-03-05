@@ -129,7 +129,7 @@ class IntervalTimer {
 
         sElapsedIntervalTime.value = 0;
 
-        // Play interval-completed sound.
+        // Play interval-completed sound. Do NOT await.
         // ignore: unawaited_futures
         AudioService().playStartSound();
 

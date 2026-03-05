@@ -67,7 +67,7 @@ class RestTimer {
 
         sElapsedRestTime.value = 0;
 
-        // Play rest-completed sound.
+        // Play rest-completed sound. Do NOT await.
         // ignore: unawaited_futures
         AudioService().playRestSound();
 
