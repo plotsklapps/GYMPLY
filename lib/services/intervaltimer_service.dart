@@ -98,6 +98,9 @@ class IntervalTimer {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sIntervalTimerRunning.value) return;
 
+    // Critical: Ensure Audio context is primed while we are in the tap callback.
+    unawaited(AudioService().initialize());
+
     _isIntervalSequenceActive = true;
     sIntervalTimerRunning.value = true;
     sIntervalTimerCompleted.value = false;
@@ -129,11 +132,10 @@ class IntervalTimer {
 
         sElapsedIntervalTime.value = 0;
 
-        // Play interval-completed sound. Do NOT await.
-        // ignore: unawaited_futures
+        // Play interval-completed sound (Non-blocking).
         AudioService().playStartSound();
 
-        // Wait to finish before clean up or allow re-start.
+        // Short pause to allow sound to start before state transition.
         await Future<void>.delayed(const Duration(milliseconds: 500));
 
         sIntervalTimerCompleted.value = true;

@@ -1,109 +1,95 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:logger/logger.dart';
 
 class AudioService {
-  // Create a singleton instance of AudioService.
-  factory AudioService() {
-    return _instance;
-  }
+  // Singleton pattern.
+  factory AudioService() => _instance;
   AudioService._internal();
   static final AudioService _instance = AudioService._internal();
 
-  AudioPlayer? _silentPlayer; // Keeps AudioContext alive.
-  AudioPlayer? _fxPlayer; // Plays actual sounds.
+  final Logger _logger = Logger();
 
-  bool _isPrimed = false;
-  bool _isSilentLoopRunning = false;
+  AudioPlayer? _keepAlivePlayer;
+  AudioPlayer? _fxPlayer;
 
-  // Initialize both players + AudioContext.
-  Future<void> _init() async {
-    if (_silentPlayer != null && _fxPlayer != null) return;
+  Future<void>? _initFuture;
+  bool _isInitialized = false;
 
-    _silentPlayer = AudioPlayer();
-    _fxPlayer = AudioPlayer();
+  /// Ensures audio players and context are initialized exactly once.
+  /// This should be called on the very first user interaction (e.g., Start Button).
+  Future<void> initialize() async {
+    if (_isInitialized) return;
 
-    // Shared audio context for both players.
-    final AudioContext ctx = AudioContext(
-      android: const AudioContextAndroid(
-        audioFocus: AndroidAudioFocus.gainTransientMayDuck,
-      ),
-    );
-
-    await _silentPlayer!.setAudioContext(ctx);
-    await _fxPlayer!.setAudioContext(ctx);
+    // Ensure only one initialization process runs at a time.
+    return _initFuture ??= _performInitialization();
   }
 
-  // Prime the audio context so Chrome/Firefox/Edge do not suspend it.
-  Future<void> _prime() async {
-    if (_isPrimed || _fxPlayer == null) return;
+  Future<void> _performInitialization() async {
+    _logger.i('AudioService: Starting robust initialization...');
+    try {
+      _keepAlivePlayer = AudioPlayer();
+      _fxPlayer = AudioPlayer();
 
-    // Silent prime sequence.
-    unawaited(_fxPlayer!.setVolume(0));
-    unawaited(_fxPlayer!.play(AssetSource('sounds/startsound.mp3')));
-    unawaited(_fxPlayer!.stop());
-    unawaited(_fxPlayer!.setVolume(1));
+      // Set audio context to duck other audio and handle backgrounding.
+      final AudioContext ctx = AudioContext(
+        android: const AudioContextAndroid(
+          audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+        ),
+      );
 
-    _isPrimed = true;
+      await _keepAlivePlayer!.setAudioContext(ctx);
+      await _fxPlayer!.setAudioContext(ctx);
+
+      // 1. "Unlock" the AudioContext with a silent play.
+      // This is the most critical part for PWAs.
+      await _keepAlivePlayer!.setVolume(0);
+      await _keepAlivePlayer!.play(AssetSource('sounds/onesecsilence.mp3'));
+
+      // 2. Setup the silent keep-alive loop.
+      await _keepAlivePlayer!.setReleaseMode(ReleaseMode.loop);
+
+      _isInitialized = true;
+      _logger.i('AudioService: Initialization complete and context unlocked.');
+    } catch (e) {
+      _logger.e('AudioService: Initialization failed: $e');
+      _initFuture = null; // Allow retry.
+    }
   }
 
-  // Start a silent loop to keep the AudioContext alive.
-  Future<void> _startSilentLoop() async {
-    if (_isSilentLoopRunning || _silentPlayer == null) return;
+  /// Internal helper to ensure FX player is ready for a specific sound.
+  Future<void> _playFx(String assetPath) async {
+    try {
+      // Ensure we are initialized.
+      await initialize();
 
-    await _silentPlayer!.setVolume(0);
-    await _silentPlayer!.setReleaseMode(ReleaseMode.loop);
+      if (_fxPlayer == null) return;
 
-    // Play silent audio forever.
-    unawaited(
-      _silentPlayer!.play(
-        AssetSource('sounds/onesecsilence.mp3'),
-      ),
-    );
-
-    _isSilentLoopRunning = true;
+      // Stop any current sound and reset for next.
+      await _fxPlayer!.stop();
+      await _fxPlayer!.setVolume(1.0);
+      await _fxPlayer!.play(AssetSource(assetPath));
+      _logger.d('AudioService: Playing FX: $assetPath');
+    } catch (e) {
+      _logger.w('AudioService: Playback blocked or failed: $e');
+    }
   }
 
-  // Prepare the FX player before each sound.
-  Future<void> _prepareFxPlayer() async {
-    if (_fxPlayer == null) return;
-
-    // Reset FX player state.
-    // ignore: unawaited_futures
-    _fxPlayer!.stop();
-    await _fxPlayer!.setVolume(1);
-    await _fxPlayer!.setReleaseMode(ReleaseMode.stop);
+  /// Play the interval-completed sound (Non-blocking).
+  void playStartSound() {
+    unawaited(_playFx('sounds/startsound.mp3'));
   }
 
-  // Internal helper to ensure everything is ready before each play.
-  Future<void> _prepare() async {
-    await _init();
-    await _prime();
-    await _startSilentLoop();
-    await _prepareFxPlayer();
+  /// Play the rest-completed sound (Non-blocking).
+  void playRestSound() {
+    unawaited(_playFx('sounds/timerbell.mp3'));
   }
 
-  // Play the interval-completed sound.
-  Future<void> playStartSound() async {
-    await _prepare();
-    unawaited(_fxPlayer?.play(AssetSource('sounds/startsound.mp3')));
-  }
-
-  // Play the rest-completed sound.
-  Future<void> playRestSound() async {
-    await _prepare();
-    unawaited(_fxPlayer?.play(AssetSource('sounds/timerbell.mp3')));
-  }
-
-  // Optional: dispose if needed (not required for PWA).
   Future<void> dispose() async {
-    await _silentPlayer?.dispose();
+    await _keepAlivePlayer?.dispose();
     await _fxPlayer?.dispose();
-
-    _silentPlayer = null;
-    _fxPlayer = null;
-
-    _isPrimed = false;
-    _isSilentLoopRunning = false;
+    _isInitialized = false;
+    _initFuture = null;
   }
 }

@@ -40,6 +40,9 @@ class RestTimer {
     // Immediate guard to prevent concurrent timers during async gaps.
     if (_timer != null || sRestTimerRunning.value) return;
 
+    // Critical: Ensure Audio context is primed while we are in the tap callback.
+    unawaited(AudioService().initialize());
+
     sRestTimerRunning.value = true;
     sRestTimerCompleted.value = false;
 
@@ -67,8 +70,7 @@ class RestTimer {
 
         sElapsedRestTime.value = 0;
 
-        // Play rest-completed sound. Do NOT await.
-        // ignore: unawaited_futures
+        // Play rest-completed sound (Non-blocking).
         AudioService().playRestSound();
 
         // Wait to finish before clean up or allow re-start.
@@ -87,7 +89,7 @@ class RestTimer {
     sRestTimerRunning.value = false;
   }
 
-  // Resets Timer state and cleans up Audioplayer.
+  // Resets Timer state.
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
     await HapticService.heavy();

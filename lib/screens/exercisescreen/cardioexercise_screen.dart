@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/sheet_service.dart';
@@ -171,6 +172,9 @@ class CardioExerciseScreen extends StatelessWidget {
                       heroTag: 'cardioPlay',
                       elevation: 4,
                       onPressed: () async {
+                        // Critical for PWA: Initialize audio on first user tap.
+                        await AudioService().initialize();
+
                         if (mode == CardioMode.stopwatch) {
                           isStopwatchRunning
                               ? await StopwatchTimer().pauseTimer()

@@ -48,6 +48,7 @@ void main() async {
   // Enable Wakelock to keep screen on.
   await WakelockPlus.enable();
 
+  // Run the app.
   runApp(const MainEntry());
 }
 
