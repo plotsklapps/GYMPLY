@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:gymply/services/haptic_service.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -44,7 +44,7 @@ class StopwatchTimer {
     }
 
     // Give a little bzzz.
-    await HapticService.light();
+    await HapticFeedback.lightImpact();
 
     sStopwatchTimerRunning.value = true;
     _stopwatch.start();
@@ -58,7 +58,7 @@ class StopwatchTimer {
 
   Future<void> pauseTimer() async {
     // Give a little bzzz.
-    await HapticService.light();
+    await HapticFeedback.lightImpact();
 
     _stopwatch.stop();
     _baseTime += _stopwatch.elapsedMilliseconds;
@@ -74,7 +74,7 @@ class StopwatchTimer {
 
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
-    await HapticService.heavy();
+    await HapticFeedback.heavyImpact();
 
     _timer?.cancel();
     _timer = null;

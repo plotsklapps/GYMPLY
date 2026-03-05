@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'gymplyapp.firebasestorage.app',
     measurementId: 'G-MBH2SK8PGY',
   );
+
 }

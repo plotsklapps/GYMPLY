@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/haptic_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimer {
@@ -47,7 +47,7 @@ class RestTimer {
     sRestTimerCompleted.value = false;
 
     // Give a little bzzz.
-    await HapticService.light();
+    await HapticFeedback.lightImpact();
 
     // Calculate when the timer should end.
     _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
@@ -92,7 +92,7 @@ class RestTimer {
   // Resets Timer state.
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
-    await HapticService.heavy();
+    await HapticFeedback.heavyImpact();
 
     _timer?.cancel();
     _timer = null;

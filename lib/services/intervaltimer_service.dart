@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/haptic_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -105,7 +105,7 @@ class IntervalTimer {
     sIntervalTimerRunning.value = true;
     sIntervalTimerCompleted.value = false;
 
-    await HapticService.light();
+    await HapticFeedback.lightImpact();
 
     // Calculate when the interval should end based on current elapsed ms.
     _endTime = DateTime.now().add(
@@ -158,7 +158,7 @@ class IntervalTimer {
 
   Future<void> resetTimer() async {
     _isIntervalSequenceActive = false;
-    await HapticService.heavy();
+    await HapticFeedback.heavyImpact();
 
     _timer?.cancel();
     _timer = null;

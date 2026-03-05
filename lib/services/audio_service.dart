@@ -5,90 +5,78 @@ import 'package:logger/logger.dart';
 
 class AudioService {
   // Singleton pattern.
-  factory AudioService() => _instance;
+  factory AudioService() {
+    return _instance;
+  }
   AudioService._internal();
   static final AudioService _instance = AudioService._internal();
 
   final Logger _logger = Logger();
+  final AudioPlayer _player = AudioPlayer();
 
-  AudioPlayer? _keepAlivePlayer;
-  AudioPlayer? _fxPlayer;
-
-  Future<void>? _initFuture;
   bool _isInitialized = false;
+  Future<void>? _initFuture;
 
-  /// Ensures audio players and context are initialized exactly once.
-  /// This should be called on the very first user interaction (e.g., Start Button).
+  /// Initializes the audio player and sets the native Android context.
   Future<void> initialize() async {
     if (_isInitialized) return;
-
-    // Ensure only one initialization process runs at a time.
     return _initFuture ??= _performInitialization();
   }
 
   Future<void> _performInitialization() async {
-    _logger.i('AudioService: Starting robust initialization...');
     try {
-      _keepAlivePlayer = AudioPlayer();
-      _fxPlayer = AudioPlayer();
+      _logger.i('AudioService: Initializing native Android audio context...');
 
-      // Set audio context to duck other audio and handle backgrounding.
-      final AudioContext ctx = AudioContext(
-        android: const AudioContextAndroid(
-          audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+      // Set audio context to Media/Music for maximum compatibility.
+      await _player.setAudioContext(
+        AudioContext(
+          android: const AudioContextAndroid(
+            audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+          ),
         ),
       );
 
-      await _keepAlivePlayer!.setAudioContext(ctx);
-      await _fxPlayer!.setAudioContext(ctx);
-
-      // 1. "Unlock" the AudioContext with a silent play.
-      // This is the most critical part for PWAs.
-      await _keepAlivePlayer!.setVolume(0);
-      await _keepAlivePlayer!.play(AssetSource('sounds/onesecsilence.mp3'));
-
-      // 2. Setup the silent keep-alive loop.
-      await _keepAlivePlayer!.setReleaseMode(ReleaseMode.loop);
-
       _isInitialized = true;
-      _logger.i('AudioService: Initialization complete and context unlocked.');
-    } catch (e) {
-      _logger.e('AudioService: Initialization failed: $e');
-      _initFuture = null; // Allow retry.
+      _logger.i('AudioService: Initialized successfully.');
+    } on Exception catch (e) {
+      _logger.e('AudioService: Failed to initialize: $e');
+      _isInitialized = false;
+      _initFuture = null;
     }
   }
 
-  /// Internal helper to ensure FX player is ready for a specific sound.
-  Future<void> _playFx(String assetPath) async {
+  /// Plays a sound from assets.
+  Future<void> _playSound(String assetPath) async {
     try {
-      // Ensure we are initialized.
+      // Always ensure initialization is complete before playing.
       await initialize();
 
-      if (_fxPlayer == null) return;
+      _logger.d('AudioService: Preparing to play $assetPath');
 
-      // Stop any current sound and reset for next.
-      await _fxPlayer!.stop();
-      await _fxPlayer!.setVolume(1.0);
-      await _fxPlayer!.play(AssetSource(assetPath));
-      _logger.d('AudioService: Playing FX: $assetPath');
-    } catch (e) {
-      _logger.w('AudioService: Playback blocked or failed: $e');
+      // Stop current playback, set the source, and play.
+      await _player.stop();
+      await _player.setSource(AssetSource(assetPath));
+      await _player.resume();
+
+      _logger.d('AudioService: Playback started for $assetPath');
+    } on Exception catch (e) {
+      _logger.e('AudioService: Error playing sound: $e');
     }
   }
 
-  /// Play the interval-completed sound (Non-blocking).
+  /// Play the interval-completed sound.
   void playStartSound() {
-    unawaited(_playFx('sounds/startsound.mp3'));
+    unawaited(_playSound('sounds/startsound.mp3'));
   }
 
-  /// Play the rest-completed sound (Non-blocking).
+  /// Play the rest-completed sound.
   void playRestSound() {
-    unawaited(_playFx('sounds/timerbell.mp3'));
+    unawaited(_playSound('sounds/timerbell.mp3'));
   }
 
+  /// Clean up resources.
   Future<void> dispose() async {
-    await _keepAlivePlayer?.dispose();
-    await _fxPlayer?.dispose();
+    await _player.dispose();
     _isInitialized = false;
     _initFuture = null;
   }

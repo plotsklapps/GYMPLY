@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:gymply/services/haptic_service.dart';
+import 'package:flutter/services.dart';
 import 'package:signals/signals_flutter.dart';
 
 class TotalTimer {
@@ -38,7 +38,7 @@ class TotalTimer {
     }
 
     // Give a little bzzz.
-    await HapticService.light();
+    await HapticFeedback.lightImpact();
 
     sTotalTimerRunning.value = true;
 
@@ -65,7 +65,7 @@ class TotalTimer {
 
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
-    await HapticService.heavy();
+    await HapticFeedback.heavyImpact();
 
     _timer?.cancel();
     _timer = null;
