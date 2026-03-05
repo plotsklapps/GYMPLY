@@ -77,6 +77,7 @@ class WorkoutService {
       sDarkMode.value = settings.darkMode;
       // Set RestTimer.
       RestTimer.sInitialRestTime.value = settings.initialRestTime;
+      RestTimer.sElapsedRestTime.value = settings.initialRestTime;
       // Set Favorites.
       sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
 
@@ -285,7 +286,7 @@ class WorkoutService {
     _logger.i(
       'WorkoutService: Strength Input Updated -> '
       'Weight: ${updatedExercise.weightInput}, '
-      'Reps: ${updatedExercise.repsInput}',
+      'Sreps: ${updatedExercise.repsInput}',
     );
   }
 
@@ -495,7 +496,7 @@ class WorkoutService {
   }
 }
 
-// Custom Hive Adapter for Duration since it's not supported natively.
+/// Custom Hive Adapter for Duration since it's not supported natively.
 class DurationAdapter extends TypeAdapter<Duration> {
   @override
   final int typeId = 10;

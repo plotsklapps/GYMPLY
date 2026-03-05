@@ -66,7 +66,9 @@ class RestTimer {
       if (_endTime == null) return;
 
       final Duration remaining = _endTime!.difference(DateTime.now());
-      final int remainingSeconds = remaining.inSeconds;
+      // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
+      // Truncating with .inSeconds causes the UI to skip a second immediately.
+      final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
 
       if (remainingSeconds > 0) {
         sElapsedRestTime.value = remainingSeconds;
