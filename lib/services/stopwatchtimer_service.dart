@@ -21,8 +21,10 @@ class StopwatchTimer {
 
   // Computed signal for the formatted time.
   // Using CC (centiseconds) provides that fast-moving, smooth stopwatch feel.
-  static final Computed<String> sFormattedStopwatchTime = computed(
-    () => sElapsedStopwatchTime.value.formatHMMSSCC(),
+  static final Computed<String> cFormattedStopwatchTime = Computed<String>(
+    () {
+      return sElapsedStopwatchTime.value.formatHMMSSCC();
+    },
     debugLabel: 'sFormattedStopwatchTime',
   );
 

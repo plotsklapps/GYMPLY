@@ -8,7 +8,7 @@ import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:gymply/sheets/cardiotimer_sheet.dart';
+import 'package:gymply/sheets/intervaltimer_sheet.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum CardioMode { stopwatch, interval }
@@ -214,16 +214,16 @@ class CardioExerciseScreen extends StatelessWidget {
                           RestTimer().pauseTimer();
 
                           // Log the full prescribed interval + rest.
-                          final int cardioSec =
+                          final int cardioMs =
                               IntervalTimer.sInitialIntervalTime.value;
                           final int restSec = RestTimer.sInitialRestTime.value;
 
                           workoutService.addCardioSet(
                             exercise,
-                            cardioDuration: Duration(seconds: cardioSec),
+                            cardioDuration: Duration(milliseconds: cardioMs),
                             restDuration: Duration(seconds: restSec),
                             totalDuration: Duration(
-                              seconds: cardioSec + restSec,
+                              milliseconds: cardioMs + (restSec * 1000),
                             ),
                           );
 
@@ -256,8 +256,8 @@ class CardioExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'WORK: ${set.cardioDuration.inSeconds.formatHMMSS()}'
-                                ' REST: ${set.restDuration.inSeconds.formatHMMSS()}',
+                          : 'WORK: ${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
+                                ' REST: ${set.restDuration.inSeconds.formatMSS()}',
                     ),
                     subtitle: Text(
                       set.restDuration == Duration.zero
@@ -289,9 +289,9 @@ class _CardioTimerText extends StatelessWidget {
     // Watch ONLY the values needed for the text.
     String timerText;
     if (mode == CardioMode.stopwatch) {
-      timerText = StopwatchTimer.sFormattedStopwatchTime.watch(context);
+      timerText = StopwatchTimer.cFormattedStopwatchTime.watch(context);
     } else {
-      timerText = IntervalTimer.sElapsedIntervalTime.watch(context).formatMSS();
+      timerText = IntervalTimer.cFormattedIntervalTime.watch(context);
     }
 
     return Text(
