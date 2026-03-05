@@ -59,8 +59,8 @@ class MenuSheet extends StatelessWidget {
           ListTile(
             onTap: updateApp,
             leading: const FaIcon(FontAwesomeIcons.github),
-            title: const Text('Current Version: 0.0.1+2'),
-            subtitle: const Text('Deployed 20260304'),
+            title: const Text('Current Version: 0.0.1+3 TEST1'),
+            subtitle: const Text('Deployed 20260305'),
             trailing: const FaIcon(FontAwesomeIcons.arrowsRotate),
           ),
         ],

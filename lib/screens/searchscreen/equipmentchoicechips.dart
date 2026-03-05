@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/filter_service.dart';
+import 'package:gymply/services/scroll_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 
 class EquipmentChoiceChips extends StatelessWidget {
@@ -19,10 +20,9 @@ class EquipmentChoiceChips extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: SingleChildScrollView(
+      child: ScrollService(
         scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             // Map on current WorkoutType.
             if (workoutType == WorkoutType.strength)
