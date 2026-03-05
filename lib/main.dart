@@ -1,6 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:gymply/firebase_options.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -17,11 +15,6 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Firebase.
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
   // Initialize Hive CE.
   await Hive.initFlutter();
