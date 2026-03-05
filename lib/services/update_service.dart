@@ -22,9 +22,8 @@ class UpdateService {
   final Signal<String?> sUpdateError = signal(null);
 
   // URL pointing to your GitHub version metadata.
-  // Replace this with your actual raw GitHub URL.
   static const String _versionUrl =
-      'https://raw.githubusercontent.com/jhuch/gymply/main/version.json';
+      'https://raw.githubusercontent.com/plotsklapps/gymply/master/version.json';
 
   /// Checks for updates and returns true if a new version is available.
   Future<void> checkForUpdates() async {
