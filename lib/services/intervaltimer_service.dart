@@ -17,7 +17,6 @@ class IntervalTimer {
 
   IntervalTimer._internal() {
     // This effect handles the transition from Rest back to Interval.
-    // It is registered the first time IntervalTimer() is called (e.g. in the UI).
     effect(() async {
       final bool isRestDone = RestTimer.sRestTimerCompleted.value;
 
