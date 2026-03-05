@@ -143,7 +143,7 @@ class IntervalTimer {
         sElapsedIntervalTime.value = 0;
 
         // Play audio.
-        await _audioPlayer?.play(AssetSource('sounds/startsound.mp3'));
+        unawaited(_audioPlayer?.play(AssetSource('sounds/startsound.mp3')));
 
         // Wait to finish before clean up or allow re-start.
         await Future<void>.delayed(const Duration(milliseconds: 500));
