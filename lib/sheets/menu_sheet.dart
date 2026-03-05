@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gymply/services/update_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -12,6 +13,8 @@ class MenuSheet extends StatelessWidget {
 
     // Watch Signals.
     final bool isDarkMode = sDarkMode.watch(context);
+    final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
+    final double progress = UpdateService().sDownloadProgress.watch(context);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
@@ -28,14 +31,28 @@ class MenuSheet extends StatelessWidget {
               sDarkMode.value = value;
             },
           ),
+          if (progress > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: LinearProgressIndicator(value: progress),
+            ),
           ListTile(
-            onTap: () {
-              // Future: Add Android update logic or link to Play Store.
-            },
-            leading: const FaIcon(FontAwesomeIcons.github),
-            title: const Text('Current Version: 0.0.1+7'),
-            subtitle: const Text('Deployed 20260305'),
-            trailing: const FaIcon(FontAwesomeIcons.arrowsRotate),
+            onTap: isChecking ? null : () => UpdateService().checkForUpdates(),
+            leading: isChecking
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const FaIcon(FontAwesomeIcons.arrowsRotate),
+            title: const Text('Check for Updates'),
+            subtitle: const Text('Current Version: 0.0.1+7'),
+            trailing: const FaIcon(FontAwesomeIcons.chevronRight),
+          ),
+          const ListTile(
+            leading: FaIcon(FontAwesomeIcons.github),
+            title: Text('Source Code'),
+            subtitle: Text('GitHub Repository'),
           ),
         ],
       ),

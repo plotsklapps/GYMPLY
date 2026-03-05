@@ -233,6 +233,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.12"
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      sha256: aff32c08f92787a557dd5c0145ac91536481831a01b4648136373cddb0e64f8c
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.9.2"
+  dio_web_adapter:
+    dependency: transitive
+    description:
+      name: dio_web_adapter
+      sha256: "2f9e64323a7c3c7ef69567d5c800424a11f8337b8b228bad02524c9fb3c1f340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
   equatable:
     dependency: transitive
     description:
@@ -265,30 +281,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
-  firebase_core:
-    dependency: "direct main"
-    description:
-      name: firebase_core
-      sha256: f0997fee80fbb6d2c658c5b88ae87ba1f9506b5b37126db64fc2e75d8e977fbb
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.5.0"
-  firebase_core_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_core_platform_interface
-      sha256: cccb4f572325dc14904c02fcc7db6323ad62ba02536833dddb5c02cac7341c64
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.2"
-  firebase_core_web:
-    dependency: transitive
-    description:
-      name: firebase_core_web
-      sha256: "856ca92bf2d75a63761286ab8e791bda3a85184c2b641764433b619647acfca6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.5.0"
   fixnum:
     dependency: transitive
     description:
@@ -536,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.3.0"
+  open_filex:
+    dependency: "direct main"
+    description:
+      name: open_filex
+      sha256: "9976da61b6a72302cf3b1efbce259200cd40232643a467aac7370addf94d6900"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.0"
   package_config:
     dependency: transitive
     description:
@@ -545,7 +545,7 @@ packages:
     source: hosted
     version: "2.2.0"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: f69da0d3189a4b4ceaeb1a3defb0f329b3b352517f52bed4290f83d4f06bc08d
@@ -569,7 +569,7 @@ packages:
     source: hosted
     version: "1.9.1"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
