@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:gymply/services/resttimer_service.dart';
-import 'package:gymply/services/timeformat_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerSheet extends StatelessWidget {
@@ -23,19 +20,22 @@ class RestTimerSheet extends StatelessWidget {
           style: theme.textTheme.titleLarge,
         ),
         const Divider(),
-        const SizedBox(height: 40),
-        // Circular Picker.
-        _CircularRestPicker(
-          seconds: initialSeconds,
+        const SizedBox(height: 20),
+        // M:S Picker.
+        RestDurationPicker(
+          initialSeconds: initialSeconds,
           onChanged: (int newSeconds) {
+            // Update the initial duration.
             RestTimer.sInitialRestTime.value = newSeconds;
-            // Also update elapsed time if timer isn't running.
+
+            // Sync the elapsed duration if the timer is not currently running.
+            // This is handled manually to keep the service logic simple.
             if (!RestTimer.sRestTimerRunning.value) {
               RestTimer.sElapsedRestTime.value = newSeconds;
             }
           },
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
         // Cancel/Confirm Buttons.
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -43,6 +43,7 @@ class RestTimerSheet extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  // Reset to default.
                   RestTimer.sInitialRestTime.value = 60;
                   RestTimer.sElapsedRestTime.value = 60;
                   Navigator.pop(context);
@@ -66,138 +67,139 @@ class RestTimerSheet extends StatelessWidget {
   }
 }
 
-class _CircularRestPicker extends StatelessWidget {
-  const _CircularRestPicker({
-    required this.seconds,
+class RestDurationPicker extends StatefulWidget {
+  const RestDurationPicker({
+    required this.initialSeconds,
     required this.onChanged,
+    super.key,
   });
 
-  final int seconds;
+  final int initialSeconds;
   final ValueChanged<int> onChanged;
+
+  @override
+  State<RestDurationPicker> createState() {
+    return _RestDurationPickerState();
+  }
+}
+
+class _RestDurationPickerState extends State<RestDurationPicker> {
+  late int _minutes;
+  late int _seconds;
+
+  @override
+  void initState() {
+    super.initState();
+    final Duration duration = Duration(seconds: widget.initialSeconds);
+    _minutes = duration.inMinutes % 60;
+    _seconds = duration.inSeconds % 60;
+  }
+
+  void _updateDuration() {
+    final int totalSeconds = (_minutes * 60) + _seconds;
+    widget.onChanged(totalSeconds);
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    const int maxSeconds = 300; // 5 Minutes.
 
-    return GestureDetector(
-      onPanUpdate: (DragUpdateDetails details) {
-        _handleGesture(details.localPosition);
-      },
-      onTapDown: (TapDownDetails details) {
-        _handleGesture(details.localPosition);
-      },
-      child: Stack(
-        alignment: Alignment.center,
+    return SizedBox(
+      height: 150,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // Visual Ring.
-          CustomPaint(
-            size: const Size(200, 200),
-            painter: _RingPainter(
-              percentage: seconds / maxSeconds,
-              theme: theme,
+          _ScrollColumn(
+            label: 'MIN',
+            max: 59,
+            value: _minutes,
+            onChanged: (int val) {
+              setState(() {
+                _minutes = val;
+              });
+              _updateDuration();
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              ':',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(50),
+              ),
             ),
           ),
-          // Time Text.
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                seconds.formatMSS(),
-                style: theme.textTheme.displayLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontFeatures: const <FontFeature>[
-                    FontFeature.tabularFigures(),
-                  ],
-                ),
-              ),
-              Text(
-                'MIN:SEC',
-                style: theme.textTheme.bodyLarge,
-              ),
-            ],
+          _ScrollColumn(
+            label: 'SEC',
+            max: 59,
+            value: _seconds,
+            onChanged: (int val) {
+              setState(() {
+                _seconds = val;
+              });
+              _updateDuration();
+            },
           ),
         ],
       ),
     );
   }
-
-  void _handleGesture(Offset localPosition) {
-    const Offset center = Offset(200 / 2, 200 / 2);
-    final double dx = localPosition.dx - center.dx;
-    final double dy = localPosition.dy - center.dy;
-
-    // Calculate angle in radians (atan2 returns -PI to PI).
-    // Adjust so 0 is at the top (12 o'clock).
-    double angle = atan2(dy, dx) + (pi / 2);
-    if (angle < 0) angle += 2 * pi;
-
-    // Convert angle to seconds (0 to 300).
-    final double rawSeconds = (angle / (2 * pi)) * 300;
-
-    // Snap to nearest 10 seconds.
-    int snappedSeconds = (rawSeconds / 10).round() * 10;
-
-    // Clamp between 10 and 300 (avoid 0 for rest).
-    snappedSeconds = snappedSeconds.clamp(10, 300);
-
-    onChanged(snappedSeconds);
-  }
 }
 
-class _RingPainter extends CustomPainter {
-  _RingPainter({required this.percentage, required this.theme});
+class _ScrollColumn extends StatelessWidget {
+  const _ScrollColumn({
+    required this.label,
+    required this.max,
+    required this.value,
+    required this.onChanged,
+  });
 
-  final double percentage;
-  final ThemeData theme;
+  final String label;
+  final int max;
+  final int value;
+  final ValueChanged<int> onChanged;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    final double radius = min(size.width, size.height) / 2;
-    const double strokeWidth = 30;
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
 
-    // Background track.
-    final Paint trackPaint = Paint()
-      ..color = theme.colorScheme.surfaceContainerHighest
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    // Active progress arc.
-    final Paint progressPaint = Paint()
-      ..color = theme.colorScheme.primary
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    // Handle/Knob.
-    final Paint knobPaint = Paint()
-      ..color = theme.colorScheme.secondary
-      ..style = PaintingStyle.fill;
-
-    // Draw track.
-    canvas
-      ..drawCircle(center, radius, trackPaint)
-      // Draw progress arc (starting from top -PI/2).
-      ..drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        -pi / 2,
-        2 * pi * percentage,
-        false,
-        progressPaint,
-      );
-
-    // Draw Knob at the end of the arc.
-    final double knobAngle = (2 * pi * percentage) - (pi / 2);
-    final Offset knobOffset = Offset(
-      center.dx + radius * cos(knobAngle),
-      center.dy + radius * sin(knobAngle),
+    return Column(
+      children: <Widget>[
+        Text(label, style: theme.textTheme.labelSmall),
+        Expanded(
+          child: SizedBox(
+            width: 50,
+            child: ListWheelScrollView.useDelegate(
+              itemExtent: 40,
+              perspective: 0.005,
+              diameterRatio: 1.2,
+              physics: const FixedExtentScrollPhysics(),
+              controller: FixedExtentScrollController(initialItem: value),
+              onSelectedItemChanged: onChanged,
+              childDelegate: ListWheelChildBuilderDelegate(
+                builder: (BuildContext context, int index) {
+                  if (index < 0 || index > max) return null;
+                  final bool isSelected = index == value;
+                  return Center(
+                    child: Text(
+                      index.toString().padLeft(2, '0'),
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface.withAlpha(50),
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  );
+                },
+                childCount: max + 1,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
-    canvas.drawCircle(knobOffset, 12, knobPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) {
-    return oldDelegate.percentage != percentage || oldDelegate.theme != theme;
   }
 }

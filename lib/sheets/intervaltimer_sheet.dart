@@ -3,16 +3,16 @@ import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 class IntervalTimerSheet extends StatelessWidget {
-  const IntervalTimerSheet({
-    super.key,
-  });
+  const IntervalTimerSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final int initialMs = IntervalTimer.sInitialIntervalTime.watch(context);
+    final int initialMilliSeconds = IntervalTimer.sInitialIntervalTime.watch(
+      context,
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -24,16 +24,16 @@ class IntervalTimerSheet extends StatelessWidget {
         const Divider(),
         const SizedBox(height: 20),
         // H:M:S Picker.
-        _HMSDurationPicker(
-          initialMs: initialMs,
-          onChanged: (int newMs) {
+        IntervalDurationPicker(
+          initialMilliSeconds: initialMilliSeconds,
+          onChanged: (int newMilliSeconds) {
             // Update the initial duration.
-            IntervalTimer.sInitialIntervalTime.value = newMs;
+            IntervalTimer.sInitialIntervalTime.value = newMilliSeconds;
 
             // Sync the elapsed duration if the timer is not currently running.
             // This is handled manually to keep the service logic simple.
             if (!IntervalTimer.sIntervalTimerRunning.value) {
-              IntervalTimer.sElapsedIntervalTime.value = newMs;
+              IntervalTimer.sElapsedIntervalTime.value = newMilliSeconds;
             }
           },
         ),
@@ -45,7 +45,7 @@ class IntervalTimerSheet extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  // Reset to default (1 minute).
+                  // Reset to default.
                   IntervalTimer.sInitialIntervalTime.value = 60000;
                   IntervalTimer.sElapsedIntervalTime.value = 60000;
                   Navigator.pop(context);
@@ -69,20 +69,23 @@ class IntervalTimerSheet extends StatelessWidget {
   }
 }
 
-class _HMSDurationPicker extends StatefulWidget {
-  const _HMSDurationPicker({
-    required this.initialMs,
+class IntervalDurationPicker extends StatefulWidget {
+  const IntervalDurationPicker({
+    required this.initialMilliSeconds,
     required this.onChanged,
+    super.key,
   });
 
-  final int initialMs;
+  final int initialMilliSeconds;
   final ValueChanged<int> onChanged;
 
   @override
-  State<_HMSDurationPicker> createState() => _HMSDurationPickerState();
+  State<IntervalDurationPicker> createState() {
+    return _IntervalDurationPickerState();
+  }
 }
 
-class _HMSDurationPickerState extends State<_HMSDurationPicker> {
+class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
   late int _hours;
   late int _minutes;
   late int _seconds;
@@ -90,19 +93,24 @@ class _HMSDurationPickerState extends State<_HMSDurationPicker> {
   @override
   void initState() {
     super.initState();
-    final Duration duration = Duration(milliseconds: widget.initialMs);
+    final Duration duration = Duration(
+      milliseconds: widget.initialMilliSeconds,
+    );
     _hours = duration.inHours;
     _minutes = duration.inMinutes % 60;
     _seconds = duration.inSeconds % 60;
   }
 
   void _updateDuration() {
-    final int totalMs = ((_hours * 3600) + (_minutes * 60) + _seconds) * 1000;
-    widget.onChanged(totalMs);
+    final int totalMilliSeconds =
+        ((_hours * 3600) + (_minutes * 60) + _seconds) * 1000;
+    widget.onChanged(totalMilliSeconds);
   }
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return SizedBox(
       height: 150,
       child: Row(
@@ -113,27 +121,49 @@ class _HMSDurationPickerState extends State<_HMSDurationPicker> {
             max: 23,
             value: _hours,
             onChanged: (int val) {
-              setState(() => _hours = val);
+              setState(() {
+                _hours = val;
+              });
               _updateDuration();
             },
           ),
-          _Separator(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              ':',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(50),
+              ),
+            ),
+          ),
           _ScrollColumn(
             label: 'MIN',
             max: 59,
             value: _minutes,
             onChanged: (int val) {
-              setState(() => _minutes = val);
+              setState(() {
+                _minutes = val;
+              });
               _updateDuration();
             },
           ),
-          _Separator(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              ':',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(50),
+              ),
+            ),
+          ),
           _ScrollColumn(
             label: 'SEC',
             max: 59,
             value: _seconds,
             onChanged: (int val) {
-              setState(() => _seconds = val);
+              setState(() {
+                _seconds = val;
+              });
               _updateDuration();
             },
           ),
@@ -197,22 +227,6 @@ class _ScrollColumn extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Separator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Text(
-        ':',
-        style: theme.textTheme.headlineMedium?.copyWith(
-          color: theme.colorScheme.onSurface.withAlpha(50),
-        ),
-      ),
     );
   }
 }
