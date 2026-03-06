@@ -91,7 +91,7 @@ class CardioExerciseScreen extends StatelessWidget {
                 // CARDIOMODE CHOICECHIPS.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Wrap(
                       spacing: 4,
                       children: CardioMode.values.map((CardioMode value) {

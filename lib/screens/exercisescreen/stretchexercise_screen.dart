@@ -23,7 +23,7 @@ class StretchExerciseScreen extends StatelessWidget {
                 // 1. Header.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: Text(
                         exercise.exerciseName,

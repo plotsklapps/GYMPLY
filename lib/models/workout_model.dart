@@ -63,7 +63,7 @@ class Workout {
 
   /// Total sets across all exercise types.
   int get totalSets {
-    return exercises.fold(0, (sum, ex) => sum + ex.totalSets);
+    return exercises.fold(0, (int sum, WorkoutExercise ex) => sum + ex.totalSets);
   }
 
   // --- Strength Summaries ---
@@ -71,8 +71,8 @@ class Workout {
   /// Total weight moved (Weight * Reps) for all strength exercises.
   double get totalStrengthVolume {
     return exercises.whereType<StrengthExercise>().fold(
-      0.0,
-      (sum, ex) => sum + ex.totalWeight,
+      0,
+      (double sum, StrengthExercise ex) => sum + ex.totalWeight,
     );
   }
 
@@ -80,7 +80,7 @@ class Workout {
   int get totalReps {
     return exercises.whereType<StrengthExercise>().fold(
       0,
-      (sum, ex) => sum + ex.totalReps,
+      (int sum, StrengthExercise ex) => sum + ex.totalReps,
     );
   }
 
@@ -95,8 +95,8 @@ class Workout {
   /// Total distance covered across all cardio exercises (in km).
   double get totalCardioDistance {
     return exercises.whereType<CardioExercise>().fold(
-      0.0,
-      (sum, ex) => sum + ex.totalDistance,
+      0,
+      (double sum, CardioExercise ex) => sum + ex.totalDistance,
     );
   }
 
@@ -104,7 +104,7 @@ class Workout {
   int get totalCardioCalories {
     return exercises.whereType<CardioExercise>().fold(
       0,
-      (sum, ex) => sum + ex.totalCalories,
+      (int sum, CardioExercise ex) => sum + ex.totalCalories,
     );
   }
 
@@ -114,7 +114,7 @@ class Workout {
   Duration get totalCardioTime {
     return exercises.whereType<CardioExercise>().fold(
       Duration.zero,
-      (sum, ex) => sum + ex.totalDuration,
+      (Duration sum, CardioExercise ex) => sum + ex.totalDuration,
     );
   }
 
@@ -122,7 +122,7 @@ class Workout {
   Duration get totalStretchTime {
     return exercises.whereType<StretchExercise>().fold(
       Duration.zero,
-      (sum, ex) => sum + ex.totalDuration,
+      (Duration sum, StretchExercise ex) => sum + ex.totalDuration,
     );
   }
 

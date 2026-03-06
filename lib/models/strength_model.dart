@@ -53,6 +53,7 @@ class StrengthExercise extends WorkoutExercise {
 
   // --- Getters for statistics ---
 
+  @override
   int get totalSets {
     return sets.length;
   }
