@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -46,11 +47,22 @@ class UpdateService {
         'UpdateService: Local version: $currentVersionName ($currentBuildNumber)',
       );
 
-      // Fetch metadata from GitHub.
-      final Response<dynamic> response = await _dio.get(_versionUrl);
+      // Fetch metadata from GitHub with explicit type arguments.
+      final Response<dynamic> response = await _dio.get<dynamic>(_versionUrl);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = response.data as Map<String, dynamic>;
+        // Handle case where GitHub returns text/plain and Dio doesn't parse it automatically.
+        final dynamic rawData = response.data;
+        final Map<String, dynamic> data;
+
+        if (rawData is String) {
+          _logger.d('UpdateService: Parsing response as JSON string...');
+          data = jsonDecode(rawData) as Map<String, dynamic>;
+        } else if (rawData is Map<String, dynamic>) {
+          data = rawData;
+        } else {
+          throw Exception('Unexpected data format: ${rawData.runtimeType}');
+        }
 
         final String latestVersionName = data['version_name'] as String;
         final int latestBuildNumber = data['version_code'] as int;
