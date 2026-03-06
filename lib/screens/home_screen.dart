@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
 import 'package:gymply/screens/searchscreen/search_screen.dart';
-import 'package:gymply/screens/statistics_screen.dart';
+import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/sheet_service.dart';
