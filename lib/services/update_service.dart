@@ -1,15 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:toastification/toastification.dart';
 
 class UpdateService {
   // Singleton pattern.
-  factory UpdateService() => _instance;
+  factory UpdateService() {
+    return _instance;
+  }
   UpdateService._internal();
   static final UpdateService _instance = UpdateService._internal();
 
@@ -30,42 +35,81 @@ class UpdateService {
     sIsCheckingForUpdate.value = true;
     sUpdateError.value = null;
 
+    _logger.i('UpdateService: Starting update check...');
+
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      final String currentVersion = packageInfo.version;
+      final String currentVersionName = packageInfo.version;
       final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
 
-      _logger.i('Current Version: $currentVersion ($currentBuildNumber)');
+      _logger.i(
+        'UpdateService: Local version: $currentVersionName ($currentBuildNumber)',
+      );
 
       // Fetch metadata from GitHub.
-      final Response response = await _dio.get(_versionUrl);
+      final Response<dynamic> response = await _dio.get(_versionUrl);
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = response.data as Map<String, dynamic>;
 
-        final String latestVersion = data['version_name'] as String;
+        final String latestVersionName = data['version_name'] as String;
         final int latestBuildNumber = data['version_code'] as int;
         final String downloadUrl = data['download_url'] as String;
 
         _logger.i(
-          'Latest Version available: $latestVersion ($latestBuildNumber)',
+          'UpdateService: Remote version: $latestVersionName ($latestBuildNumber)',
         );
 
         if (latestBuildNumber > currentBuildNumber) {
-          _logger.i('New version found. Starting download...');
+          _logger.i('UpdateService: New version detected!');
+
+          toastification.show(
+            type: ToastificationType.info,
+            title: const Text('Update Found'),
+            description: Text(
+              'Upgrading from $currentVersionName ($currentBuildNumber) '
+              'to $latestVersionName ($latestBuildNumber). Starting download...',
+            ),
+            autoCloseDuration: const Duration(seconds: 5),
+          );
+
           await _downloadAndInstall(downloadUrl);
         } else {
-          _logger.i('App is already up to date.');
+          _logger.i('UpdateService: App is up to date.');
+
+          toastification.show(
+            type: ToastificationType.success,
+            title: const Text('Up to Date'),
+            description: Text(
+              'You are running the latest version: $currentVersionName ($currentBuildNumber).',
+            ),
+            autoCloseDuration: const Duration(seconds: 4),
+          );
         }
+      } else {
+        _logger.w(
+          'UpdateService: Server returned status code ${response.statusCode}',
+        );
+        throw Exception('Server error: ${response.statusCode}');
       }
     } catch (e) {
-      _logger.e('Failed to check for updates: $e');
-      sUpdateError.value = 'Update check failed. Check your connection.';
+      _logger.e('UpdateService: Error checking for updates: $e');
+      sUpdateError.value = 'Update check failed.';
+
+      toastification.show(
+        type: ToastificationType.error,
+        title: const Text('Check Failed'),
+        description: Text('Error: $e'),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
     } finally {
       sIsCheckingForUpdate.value = false;
     }
   }
 
   Future<void> _downloadAndInstall(String url) async {
+    _logger.i('UpdateService: Initiating download from $url');
+
     try {
       final Directory tempDir = await getTemporaryDirectory();
       final String filePath = '${tempDir.path}/gymply_update.apk';
@@ -77,25 +121,49 @@ class UpdateService {
         onReceiveProgress: (int count, int total) {
           if (total != -1) {
             sDownloadProgress.value = count / total;
+            // Log progress occasionally (every 10%) to avoid spamming.
+            if ((count / total * 100).toInt() % 10 == 0) {
+              _logger.d(
+                'UpdateService: Download progress: ${(count / total * 100).toStringAsFixed(0)}%',
+              );
+            }
           }
         },
       );
 
-      _logger.i('Download complete. Opening APK: $filePath');
-
-      // Clear progress.
+      _logger.i('UpdateService: Download complete. File saved to $filePath');
       sDownloadProgress.value = 0;
+
+      _logger.i(
+        'UpdateService: Requesting Android Package Installer to open the APK...',
+      );
+
+      toastification.show(
+        type: ToastificationType.success,
+        title: const Text('Download Complete'),
+        description: const Text('Opening the installer now...'),
+        autoCloseDuration: const Duration(seconds: 3),
+      );
 
       // Use OpenFilex to trigger the Android package installer.
       final OpenResult result = await OpenFilex.open(filePath);
 
       if (result.type != ResultType.done) {
-        _logger.e('Failed to open APK: ${result.message}');
-        sUpdateError.value = 'Could not open installer: ${result.message}';
+        _logger.e('UpdateService: OpenFilex failed: ${result.message}');
+        throw Exception('Installer failed: ${result.message}');
       }
     } catch (e) {
-      _logger.e('Download error: $e');
+      _logger.e('UpdateService: Download/Install error: $e');
       sUpdateError.value = 'Failed to download update.';
+
+      toastification.show(
+        type: ToastificationType.error,
+        title: const Text('Download Failed'),
+        description: const Text(
+          'Could not download or install the new version.',
+        ),
+        autoCloseDuration: const Duration(seconds: 5),
+      );
     }
   }
 }
