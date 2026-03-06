@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       // Appbar with Timers.
       appBar: AppBar(
-        toolbarHeight: 172,
+        toolbarHeight: 160,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
@@ -78,15 +78,19 @@ class _HomeScreenState extends State<HomeScreen>
         ),
 
         // TabBar with 4 tabs.
-        bottom: TabBar(
-          indicatorColor: theme.colorScheme.secondary,
-          controller: _tabController,
-          tabs: const <Widget>[
-            Tab(text: 'STATS'),
-            Tab(text: 'WORKOUT'),
-            Tab(text: 'EXERCISE'),
-            Tab(text: 'SEARCH'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(32),
+          child: TabBar(
+            indicatorColor: theme.colorScheme.secondary,
+            controller: _tabController,
+            labelPadding: EdgeInsets.zero,
+            tabs: const <Widget>[
+              Tab(text: 'STATISTICS', height: 32),
+              Tab(text: 'WORKOUT', height: 32),
+              Tab(text: 'EXERCISE', height: 32),
+              Tab(text: 'SEARCH', height: 32),
+            ],
+          ),
         ),
       ),
 
