@@ -152,7 +152,6 @@ class FilterService {
   final Signal<List<ExercisePath>> sAllExercisePaths =
       Signal<List<ExercisePath>>(
         <ExercisePath>[],
-        debugLabel: 'sAllExercisePaths',
       );
 
   // Initialize FilterService by loading and parsing the AssetManifest.

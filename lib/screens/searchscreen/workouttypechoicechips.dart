@@ -18,6 +18,7 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ...WorkoutType.values.map((WorkoutType type) {
           final bool isSelected = workoutType == type;

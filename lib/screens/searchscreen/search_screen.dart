@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
@@ -35,8 +36,41 @@ class SearchScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // 1. WorkoutType ChoiceChips.
-          WorkoutTypeChoiceChips(workoutType: workoutType, theme: theme),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // WorkoutType ChoiceChips.
+              WorkoutTypeChoiceChips(
+                workoutType: workoutType,
+                theme: theme,
+              ),
+              const SizedBox(width: 8),
+              // SearchBar.
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: SearchBar(
+                    elevation: const WidgetStatePropertyAll<double>(0),
+                    padding: const WidgetStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    hintText: 'Search...',
+                    hintStyle: WidgetStatePropertyAll<TextStyle?>(
+                      theme.textTheme.bodySmall,
+                    ),
+                    textStyle: WidgetStatePropertyAll<TextStyle?>(
+                      theme.textTheme.bodySmall,
+                    ),
+                    leading: const FaIcon(
+                      FontAwesomeIcons.magnifyingGlass,
+                      size: 16,
+                    ),
+                    onChanged: (String value) {},
+                  ),
+                ),
+              ),
+            ],
+          ),
 
           // 2. MuscleGroup ChoiceChips (Conditional).
           if (showMuscleGroups) ...<Widget>[

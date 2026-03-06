@@ -140,7 +140,10 @@ class _HomeScreenState extends State<HomeScreen>
           const SizedBox(width: 16),
           FloatingActionButton(
             heroTag: 'HomeScreenFAB2',
-            onPressed: () {},
+            onPressed: () {
+              // Navigate to SearchScreen.
+              sCurrentTab.value = 3;
+            },
             child: const FaIcon(FontAwesomeIcons.circlePlus),
           ),
         ],
