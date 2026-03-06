@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -50,7 +51,32 @@ class WorkoutScreen extends StatelessWidget {
               style: theme.textTheme.titleMedium,
             ),
             subtitle: Text(_getSubtitle(exercise)),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (String value) {
+                if (value == 'delete') {
+                  // Calls the service to delete the entire exercise from the workout.
+                  workoutService.deleteExercise(exercise);
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: <Widget>[
+                        FaIcon(
+                          FontAwesomeIcons.trashCan,
+                          color: theme.colorScheme.error,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text('Delete'),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+            ),
             onTap: () {
               // Set selected exercise and navigate.
               workoutService.sSelectedExercise.value = exercise;

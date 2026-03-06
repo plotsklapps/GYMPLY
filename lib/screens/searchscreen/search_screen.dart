@@ -5,6 +5,7 @@ import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/sheet_service.dart';
+import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/exercisedetail_sheet.dart';
 import 'package:gymply/signals/loading_signal.dart';
 import 'package:signals/signals_flutter.dart';
@@ -32,6 +33,11 @@ class SearchScreen extends StatelessWidget {
         .cFilteredExercises
         .watch(context);
     final bool isLoading = sLoading.watch(context);
+
+    // Watch Favorites to reactively show/hide stars on cards.
+    final List<int> favorites = workoutService.sFavoriteExercises.watch(
+      context,
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -123,6 +129,9 @@ class SearchScreen extends StatelessWidget {
                 itemCount: filteredExercises.length,
                 itemBuilder: (BuildContext context, int index) {
                   final ExercisePath exercise = filteredExercises[index];
+                  final bool isFavorite = favorites.contains(
+                    int.parse(exercise.id),
+                  );
 
                   return InkWell(
                     onTap: () async {
@@ -141,6 +150,17 @@ class SearchScreen extends StatelessWidget {
                             exercise.fullPath,
                             fit: BoxFit.contain,
                           ),
+                          // Favorite Star (Only shown if isFavorite).
+                          if (isFavorite)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: FaIcon(
+                                FontAwesomeIcons.solidStar,
+                                color: theme.colorScheme.secondary,
+                                size: 16,
+                              ),
+                            ),
                           // Exercise Name.
                           Positioned(
                             bottom: 8,

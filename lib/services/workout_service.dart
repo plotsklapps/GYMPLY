@@ -267,6 +267,28 @@ class WorkoutService {
     );
   }
 
+  // Deletes an entire exercise from the active workout.
+  void deleteExercise(WorkoutExercise exercise) {
+    final List<WorkoutExercise> currentExercises = List<WorkoutExercise>.from(
+      sActiveWorkout.value.exercises,
+    );
+
+    if (currentExercises.remove(exercise)) {
+      // Update sActiveWorkout Signal with the new list.
+      sActiveWorkout.value = sActiveWorkout.value.copyWith(
+        exercises: currentExercises,
+        totalDuration: TotalTimer.sElapsedTotalTime.value,
+      );
+
+      // If the deleted exercise was selected, clear the selection.
+      if (sSelectedExercise.value == exercise) {
+        sSelectedExercise.value = null;
+      }
+
+      _logger.i('WorkoutService: Deleted exercise: ${exercise.exerciseName}');
+    }
+  }
+
   // Update input state for StrengthExercise.
   void updateStrengthInput(
     StrengthExercise exercise, {
