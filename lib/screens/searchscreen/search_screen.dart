@@ -22,6 +22,8 @@ class SearchScreen extends StatelessWidget {
       context,
     );
     final Equipment? selectedEquipment = sSelectedEquipment.watch(context);
+    final String searchQuery = sSearchQuery.watch(context);
+
     final bool showMuscleGroups = filterService.sShowMuscleGroups.watch(
       context,
     );
@@ -36,23 +38,23 @@ class SearchScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          // 1. WorkoutType ChoiceChips & SearchBar.
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // WorkoutType ChoiceChips.
+              // Category Selection (Takes only needed space).
               WorkoutTypeChoiceChips(
                 workoutType: workoutType,
                 theme: theme,
               ),
               const SizedBox(width: 8),
-              // SearchBar.
+              // Keyboard Search (Fills remaining space).
               Expanded(
                 child: SizedBox(
-                  height: 40,
+                  height: 36,
                   child: SearchBar(
-                    elevation: const WidgetStatePropertyAll<double>(0),
+                    elevation: const WidgetStatePropertyAll<double>(0.0),
                     padding: const WidgetStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16),
+                      EdgeInsets.symmetric(horizontal: 12.0),
                     ),
                     hintText: 'Search...',
                     hintStyle: WidgetStatePropertyAll<TextStyle?>(
@@ -63,9 +65,12 @@ class SearchScreen extends StatelessWidget {
                     ),
                     leading: const FaIcon(
                       FontAwesomeIcons.magnifyingGlass,
-                      size: 16,
+                      size: 14,
                     ),
-                    onChanged: (String value) {},
+                    onChanged: (String value) {
+                      // Triggers snappy, per-letter filtering in FilterService.
+                      sSearchQuery.value = value;
+                    },
                   ),
                 ),
               ),
@@ -98,13 +103,15 @@ class SearchScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               ),
             )
-          else if (workoutType != null && filteredExercises.isEmpty)
+          // Show message if search results are empty and the user is actually searching/filtering.
+          else if (filteredExercises.isEmpty &&
+              (workoutType != null || searchQuery.isNotEmpty))
             const Expanded(
               child: Center(
                 child: Text('No exercises found matching these filters.'),
               ),
             )
-          else if (workoutType != null)
+          else if (filteredExercises.isNotEmpty)
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

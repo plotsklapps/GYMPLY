@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'filter_service.dart';
+part of 'exercise_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

@@ -1,8 +1,8 @@
 // Represents a Strength training exercise.
 import 'dart:math' as math;
 
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/workout_model.dart';
-import 'package:gymply/services/filter_service.dart';
 import 'package:hive_ce/hive.dart';
 
 part 'strength_model.g.dart';

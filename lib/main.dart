@@ -5,6 +5,7 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
+import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
@@ -34,8 +35,10 @@ void main() async {
     ..registerAdapter(DurationAdapter())
     ..registerAdapter(SettingsAdapter());
 
-  // Initialize FilterService & WorkoutService.
-  await filterService.init();
+  // Initialize Services.
+  // ExerciseService loads the raw assets.
+  await exerciseService.init();
+  // WorkoutService loads favorites and history.
   await workoutService.init();
 
   // Enable Wakelock to keep screen on.

@@ -1,6 +1,6 @@
 // Represents a Cardio training exercise.
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/workout_model.dart';
-import 'package:gymply/services/filter_service.dart';
 import 'package:hive_ce/hive.dart';
 
 part 'cardio_model.g.dart';
