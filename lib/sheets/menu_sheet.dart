@@ -14,6 +14,7 @@ class MenuSheet extends StatelessWidget {
 
     // Watch Signals.
     final bool isDarkMode = sDarkMode.watch(context);
+    final bool isWakelock = sWakelock.watch(context);
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
     final double progress = UpdateService().sDownloadProgress.watch(context);
 
@@ -25,8 +26,31 @@ class MenuSheet extends StatelessWidget {
           Text('MENU', style: theme.textTheme.titleLarge),
           const Divider(),
           SwitchListTile(
-            title: const Text('Theme Mode'),
-            secondary: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
+            title: isWakelock
+                ? const Text('Keep screen on')
+                : const Text('Use screensaver'),
+            subtitle: isWakelock
+                ? const Text('Prevent screen from turning off')
+                : const Text('Screen will automatically turn off'),
+            secondary: FaIcon(
+              isWakelock
+                  ? FontAwesomeIcons.mobile
+                  : FontAwesomeIcons.mobileScreen,
+            ),
+            value: isWakelock,
+            onChanged: (bool value) {
+              sWakelock.value = value;
+            },
+          ),
+          SwitchListTile(
+            title: isDarkMode
+                ? const Text('Use dark mode')
+                : const Text('Use light mode'),
+            subtitle: isDarkMode ? const Text('Dark theme for all screens') :
+            const Text('Light theme for all screens'),
+            secondary: FaIcon(
+              isDarkMode ? FontAwesomeIcons.solidMoon : FontAwesomeIcons.sun,
+            ),
             value: isDarkMode,
             onChanged: (bool value) {
               sDarkMode.value = value;

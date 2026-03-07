@@ -2,6 +2,17 @@
 import 'package:intl/intl.dart';
 
 extension TimeFormatter on int {
+  /// Formats as HH:MM
+  String formatHHMM() {
+    final int hours = this ~/ 3600;
+    final int minutes = (this % 3600) ~/ 60;
+
+    final String hoursStr = hours.toString().padLeft(2, '0');
+    final String minutesStr = minutes.toString().padLeft(2, '0');
+
+    return '$hoursStr:$minutesStr';
+  }
+
   /// Formats as H:MM:SS
   String formatHMMSS() {
     final int hours = this ~/ 3600;
@@ -54,5 +65,17 @@ extension TimeFormatter on int {
     final String tenthsStr = NumberFormat('0').format(tenths);
 
     return '$hoursStr:$minutesStr:$secondsStr:$tenthsStr';
+  }
+}
+
+extension DurationFormatter on Duration {
+  /// Formats Duration as H:MM:SS (if hours > 0) or MM:SS
+  String format() {
+    final String minutes = inMinutes.remainder(60).toString().padLeft(2, '0');
+    final String seconds = inSeconds.remainder(60).toString().padLeft(2, '0');
+    if (inHours > 0) {
+      return '$inHours:$minutes:$seconds';
+    }
+    return '$minutes:$seconds';
   }
 }

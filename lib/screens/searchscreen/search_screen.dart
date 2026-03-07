@@ -17,7 +17,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    // Watch Signals for UI state and filtering.
+    // Watch Signals.
     final WorkoutType? workoutType = sSelectedWorkoutType.watch(context);
     final MuscleGroup? selectedMuscleGroup = sSelectedMuscleGroup.watch(
       context,
@@ -33,57 +33,53 @@ class SearchScreen extends StatelessWidget {
         .cFilteredExercises
         .watch(context);
     final bool isLoading = sLoading.watch(context);
-
-    // Watch Favorites to reactively show/hide stars on cards.
     final List<int> favorites = workoutService.sFavoriteExercises.watch(
       context,
     );
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // 1. WorkoutType ChoiceChips & SearchBar.
-          Row(
-            children: <Widget>[
-              // Category Selection (Takes only needed space).
-              WorkoutTypeChoiceChips(
-                workoutType: workoutType,
-                theme: theme,
-              ),
-              const SizedBox(width: 8),
-              // Keyboard Search (Fills remaining space).
-              Expanded(
-                child: SizedBox(
-                  height: 36,
-                  child: SearchBar(
-                    elevation: const WidgetStatePropertyAll<double>(0.0),
-                    padding: const WidgetStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 12.0),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Workout Type ChoiceChips.
+                WorkoutTypeChoiceChips(
+                  workoutType: workoutType,
+                  theme: theme,
+                ),
+                const SizedBox(width: 8),
+                // Keyboard Search.
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: SearchBar(
+                      constraints: const BoxConstraints(),
+                      hintStyle: WidgetStatePropertyAll<TextStyle?>(
+                        theme.textTheme.bodySmall,
+                      ),
+                      textStyle: WidgetStatePropertyAll<TextStyle?>(
+                        theme.textTheme.bodySmall,
+                      ),
+                      leading: const FaIcon(
+                        FontAwesomeIcons.magnifyingGlass,
+                        size: 12,
+                      ),
+                      onChanged: (String value) {
+                        // Trigger per-letter filtering (FilterService).
+                        sSearchQuery.value = value;
+                      },
                     ),
-                    hintText: 'Search...',
-                    hintStyle: WidgetStatePropertyAll<TextStyle?>(
-                      theme.textTheme.bodySmall,
-                    ),
-                    textStyle: WidgetStatePropertyAll<TextStyle?>(
-                      theme.textTheme.bodySmall,
-                    ),
-                    leading: const FaIcon(
-                      FontAwesomeIcons.magnifyingGlass,
-                      size: 14,
-                    ),
-                    onChanged: (String value) {
-                      // Triggers snappy, per-letter filtering in FilterService.
-                      sSearchQuery.value = value;
-                    },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
-          // 2. MuscleGroup ChoiceChips (Conditional).
+          // MuscleGroup ChoiceChips (Conditional).
           if (showMuscleGroups) ...<Widget>[
             MuscleGroupChoiceChips(
               selectedMuscleGroup: selectedMuscleGroup,
@@ -91,7 +87,7 @@ class SearchScreen extends StatelessWidget {
             ),
           ],
 
-          // 3. Equipment ChoiceChips (Conditional).
+          // Equipment ChoiceChips (Conditional).
           if (showEquipment) ...<Widget>[
             EquipmentChoiceChips(
               workoutType: workoutType,
@@ -102,14 +98,14 @@ class SearchScreen extends StatelessWidget {
 
           const Divider(),
 
-          // 4. Exercise GridView.
+          // Exercise GridView.
           if (isLoading)
             const Expanded(
               child: Center(
                 child: CircularProgressIndicator(),
               ),
             )
-          // Show message if search results are empty and the user is actually searching/filtering.
+          // Search results empty.
           else if (filteredExercises.isEmpty &&
               (workoutType != null || searchQuery.isNotEmpty))
             const Expanded(
@@ -141,7 +137,6 @@ class SearchScreen extends StatelessWidget {
                       );
                     },
                     child: Card(
-                      clipBehavior: Clip.antiAlias,
                       child: Stack(
                         fit: StackFit.expand,
                         children: <Widget>[
@@ -150,7 +145,7 @@ class SearchScreen extends StatelessWidget {
                             exercise.fullPath,
                             fit: BoxFit.contain,
                           ),
-                          // Favorite Star (Only shown if isFavorite).
+                          // Favorite Star (Conditional).
                           if (isFavorite)
                             Positioned(
                               top: 8,

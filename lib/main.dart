@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/services/exercise_service.dart';
-import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
+  // Mandatory Flutter framework binding.
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Hive CE.
@@ -36,13 +36,10 @@ void main() async {
     ..registerAdapter(SettingsAdapter());
 
   // Initialize Services.
-  // ExerciseService loads the raw assets.
+  // ExerciseService loads raw image assets.
   await exerciseService.init();
-  // WorkoutService loads favorites and history.
+  // WorkoutService loads favorites, settings and history.
   await workoutService.init();
-
-  // Enable Wakelock to keep screen on.
-  await WakelockPlus.enable();
 
   // Run the app.
   runApp(const MainEntry());

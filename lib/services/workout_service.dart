@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class WorkoutService {
   // Create a singleton instance of WorkoutService.
@@ -80,13 +81,16 @@ class WorkoutService {
       RestTimer.sElapsedRestTime.value = settings.initialRestTime;
       // Set Favorites.
       sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
+      // Set Wakelock.
+      sWakelock.value = settings.isWakelock;
 
       // Log settings.
       _logger.i(
         'WorkoutService: Loaded settings - '
         'DarkMode: ${settings.darkMode}, '
         'RestTime: ${settings.initialRestTime}, '
-        'Favorites: ${sFavoriteExercises.value.length}',
+        'Favorites: ${sFavoriteExercises.value.length}, '
+        'Wakelock: ${settings.isWakelock}',
       );
     }
 
@@ -152,12 +156,14 @@ class WorkoutService {
       final bool darkMode = sDarkMode.value;
       final int restTime = RestTimer.sInitialRestTime.value;
       final List<int> favorites = sFavoriteExercises.value;
+      final bool isWakelock = sWakelock.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
         darkMode: darkMode,
         initialRestTime: restTime,
         favoriteExercises: favorites,
+        isWakelock: isWakelock,
       );
 
       // Store to Hive.
@@ -165,6 +171,13 @@ class WorkoutService {
 
       // Log save.
       _logger.d('WorkoutService: Auto-saved settings');
+    });
+
+    // Handle Wakelock state changes.
+    effect(() async {
+      final bool enabled = sWakelock.value;
+      await WakelockPlus.toggle(enable: enabled);
+      _logger.d('WorkoutService: Wakelock toggled to $enabled');
     });
   }
 
@@ -180,7 +193,7 @@ class WorkoutService {
       // Add to favorites.
       currentFavorites.add(exerciseId);
       // Log add.
-      _logger.i('WorkoutService: Added $exerciseId to favorites');
+      _logger.i('WorkoutService: Added $exerciseId from favorites');
     }
     // Set sFavoriteExercises Signal.
     sFavoriteExercises.value = currentFavorites;
@@ -287,6 +300,28 @@ class WorkoutService {
 
       _logger.i('WorkoutService: Deleted exercise: ${exercise.exerciseName}');
     }
+  }
+
+  // Reorder exercise within the active workout.
+  void moveExercise(int oldIndex, int newIndex) {
+    final List<WorkoutExercise> currentExercises = List<WorkoutExercise>.from(
+      sActiveWorkout.value.exercises,
+    );
+
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+
+    final WorkoutExercise item = currentExercises.removeAt(oldIndex);
+    currentExercises.insert(newIndex, item);
+
+    // Update sActiveWorkout Signal.
+    sActiveWorkout.value = sActiveWorkout.value.copyWith(
+      exercises: currentExercises,
+      totalDuration: TotalTimer.sElapsedTotalTime.value,
+    );
+
+    _logger.i('WorkoutService: Moved exercise from $oldIndex to $newIndex');
   }
 
   // Update input state for StrengthExercise.

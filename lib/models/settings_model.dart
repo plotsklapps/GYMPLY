@@ -8,6 +8,7 @@ class Settings {
     required this.darkMode,
     required this.initialRestTime,
     this.favoriteExercises = const <int>[],
+    this.isWakelock = true,
   });
 
   @HiveField(0)
@@ -19,15 +20,20 @@ class Settings {
   @HiveField(2)
   final List<int> favoriteExercises;
 
+  @HiveField(3)
+  final bool isWakelock;
+
   Settings copyWith({
     bool? darkMode,
     int? initialRestTime,
     List<int>? favoriteExerciseIds,
+    bool? isWakelock,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
       initialRestTime: initialRestTime ?? this.initialRestTime,
       favoriteExercises: favoriteExerciseIds ?? favoriteExercises,
+      isWakelock: isWakelock ?? this.isWakelock,
     );
   }
 }

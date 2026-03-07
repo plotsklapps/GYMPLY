@@ -9,14 +9,21 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:signals/signals_flutter.dart';
 
-class WorkoutScreen extends StatelessWidget {
+class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
+
+  @override
+  State<WorkoutScreen> createState() => _WorkoutScreenState();
+}
+
+class _WorkoutScreenState extends State<WorkoutScreen> {
+  bool _isMoveMode = false;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    // Watch the active workout.
+    // Watch Signals.
     final Workout workout = workoutService.sActiveWorkout.watch(context);
 
     if (workout.isEmpty) {
@@ -25,63 +32,116 @@ class WorkoutScreen extends StatelessWidget {
       );
     }
 
-    // Reverse the list so the newest exercise appears at the top.
+    // Reverse list so newest exercise appears at top.
     final List<WorkoutExercise> reversedExercises = workout.exercises.reversed
         .toList();
 
-    return ListView.builder(
+    return ReorderableListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: reversedExercises.length,
+      // Use custom handle.
+      buildDefaultDragHandles: false,
+      onReorder: (int oldIndex, int newIndex) {
+        // Map reversed indices back to original indices for WorkoutService.
+        final int originalOldIndex = workout.exercises.length - 1 - oldIndex;
+        final int originalNewIndex = workout.exercises.length - newIndex;
+
+        workoutService.moveExercise(originalOldIndex, originalNewIndex);
+      },
+      onReorderEnd: (int index) {
+        // Disable MoveMode when drag is done.
+        setState(() {
+          _isMoveMode = false;
+        });
+      },
       itemBuilder: (BuildContext context, int index) {
         final WorkoutExercise exercise = reversedExercises[index];
 
         return Card(
+          key: ValueKey<WorkoutExercise>(exercise),
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.asset(
-                exercise.imagePath,
-                width: 100,
-                fit: BoxFit.contain,
-              ),
+            leading: Image.asset(
+              exercise.imagePath,
+              width: 120,
+              fit: BoxFit.contain,
             ),
             title: Text(
               exercise.exerciseName,
-              style: theme.textTheme.titleMedium,
+              style: theme.textTheme.titleLarge,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(_getSubtitle(exercise)),
-            trailing: PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
-              onSelected: (String value) {
-                if (value == 'delete') {
-                  // Calls the service to delete the entire exercise from the workout.
-                  workoutService.deleteExercise(exercise);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return <PopupMenuEntry<String>>[
-                  PopupMenuItem<String>(
-                    value: 'delete',
-                    child: Row(
-                      children: <Widget>[
-                        FaIcon(
-                          FontAwesomeIcons.trashCan,
-                          color: theme.colorScheme.error,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Delete'),
-                      ],
+            trailing: _isMoveMode
+                ? ReorderableDragStartListener(
+                    index: index,
+                    child: const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: FaIcon(FontAwesomeIcons.grip),
                     ),
+                  )
+                : PopupMenuButton<String>(
+                    icon: const FaIcon(FontAwesomeIcons.ellipsisVertical),
+                    onSelected: (String value) {
+                      if (value == 'delete') {
+                        // Delete entire exercise from workout.
+                        workoutService.deleteExercise(exercise);
+                      } else if (value == 'move') {
+                        setState(() {
+                          _isMoveMode = true;
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'move',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text('Move'),
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.arrowsUpDown,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              const Text('Delete'),
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.trashCan,
+                                    color: theme.colorScheme.error,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
                   ),
-                ];
-              },
-            ),
-            onTap: () {
-              // Set selected exercise and navigate.
-              workoutService.sSelectedExercise.value = exercise;
-              navigateToTab(AppTabs.exercise);
-            },
+            onTap: _isMoveMode
+                ? null
+                : () {
+                    // Set selected exercise and navigate.
+                    workoutService.sSelectedExercise.value = exercise;
+                    navigateToTab(AppTabs.exercise);
+                  },
           ),
         );
       },

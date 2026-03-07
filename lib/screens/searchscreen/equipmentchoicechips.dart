@@ -43,12 +43,10 @@ class EquipmentChoiceChips extends StatelessWidget {
                           )
                         : Image.asset(
                             'assets/images/equipment/$assetName.png',
-                            height: 24,
-                            width: 24,
                           ),
                     label: Text(
                       e.name.capitalizeFirst(),
-                      style: theme.textTheme.bodyLarge,
+                      style: theme.textTheme.titleLarge,
                     ),
                     selected: isSelected,
                     onSelected: (bool selected) {

@@ -3,7 +3,7 @@ description: "GYMPLY. Lift. Log. Load."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.0.2+14
+version: 0.0.2+15
 
 environment:
   sdk: ^3.11.0

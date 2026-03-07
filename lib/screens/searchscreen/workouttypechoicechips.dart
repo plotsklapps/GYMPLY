@@ -34,7 +34,7 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
                   : null,
               label: Text(
                 type.name.capitalizeFirst(),
-                style: theme.textTheme.bodyLarge,
+                style: theme.textTheme.titleLarge,
               ),
               selected: isSelected,
               onSelected: (bool selected) {

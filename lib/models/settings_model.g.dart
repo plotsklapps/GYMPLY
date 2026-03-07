@@ -22,19 +22,22 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       favoriteExercises: fields[2] == null
           ? const <int>[]
           : (fields[2] as List).cast<int>(),
+      isWakelock: fields[3] == null ? true : fields[3] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
       ..write(obj.initialRestTime)
       ..writeByte(2)
-      ..write(obj.favoriteExercises);
+      ..write(obj.favoriteExercises)
+      ..writeByte(3)
+      ..write(obj.isWakelock);
   }
 
   @override
