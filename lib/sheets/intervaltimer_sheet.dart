@@ -112,7 +112,7 @@ class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
     final ThemeData theme = Theme.of(context);
 
     return SizedBox(
-      height: 150,
+      height: 300,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -195,9 +195,9 @@ class _ScrollColumn extends StatelessWidget {
         Text(label, style: theme.textTheme.labelSmall),
         Expanded(
           child: SizedBox(
-            width: 50,
+            width: 100,
             child: ListWheelScrollView.useDelegate(
-              itemExtent: 40,
+              itemExtent: 80,
               perspective: 0.005,
               diameterRatio: 1.2,
               physics: const FixedExtentScrollPhysics(),
@@ -210,7 +210,7 @@ class _ScrollColumn extends StatelessWidget {
                   return Center(
                     child: Text(
                       index.toString().padLeft(2, '0'),
-                      style: theme.textTheme.headlineMedium?.copyWith(
+                      style: theme.textTheme.displayLarge?.copyWith(
                         color: isSelected
                             ? theme.colorScheme.primary
                             : theme.colorScheme.onSurface.withAlpha(50),

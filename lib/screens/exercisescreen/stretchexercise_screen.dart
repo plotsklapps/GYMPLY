@@ -232,40 +232,8 @@ class StretchExerciseScreen extends StatelessWidget {
                       },
                       child: const FaIcon(FontAwesomeIcons.circlePlus),
                     ),
-                    Expanded(
-                      child: Text(
-                        exercise.exerciseName,
-                        style: theme.textTheme.headlineSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
-                        color: theme.colorScheme.secondary.withAlpha(140),
-                        size: 20,
-                      ),
-                    ),
                   ],
                 ),
-                // 2. Exercise Image.
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    exercise.imagePath,
-                    height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const Center(
-                  child: Text('Stretch logging coming soon...'),
-                ),
-                const SizedBox(height: 32),
-                const Divider(),
               ],
             ),
           ),
