@@ -4,9 +4,8 @@
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%26%20iOS-orange.svg)]()
 
-**GYMPLY.** is a straightforward, ad-free, and 100% local fitness tracking
-application built with Flutter.<br>
-We believe your workout data is yours alone, which is why **GYMPLY. collects absolutely no data** and runs entirely offline.<br>
+**GYMPLY.** is a straightforward, ad-free, and 100% local fitness tracking application built with Flutter.<br>
+We believe your workout data is yours alone, which is why **GYMPLY. collects absolutely no data** and **runs entirely offline**.<br>
 Simplicity and privacy are at the core of everything we do.
 
 ---
@@ -19,16 +18,17 @@ Simplicity and privacy are at the core of everything we do.
 *   **Ad-Free Experience:** Completely free of advertisements.
 
 ### 2. Comprehensive Exercise Database
-*   **4000+ Exercises:** Access a massive library of exercises to build any routine imaginable.<br>
-*   **Visual Guidance:** Every exercise comes complete with illustrative images/diagrams to ensure perfect form.
+*   **3200+ Exercises:** Access a massive library of exercises to build any routine imaginable.<br>
+*   **Visual Guidance:** Every exercise comes complete with illustrative images to ensure perfect form.
 
 ### 3. Tracking & Insights
 *   **Workout Diary:** Easily log your sets, reps, and weights for every session.<br>
+*   **Cardio Timers:** Set a stopwatch or (interval) timer to enhance your workout.<br>
 *   **Visual Statistics:** Gain insights into your progress with clear, visual representations of which muscle groups you've trained over time.
 
 ### 4. Deep Customization
-*   **Themes:** Choose between **Light**, **Dark**, or **System Default** themes.<br>
-*   **Aesthetics:** Personalize your experience further with **3 primary color accents** and **3 distinct font choices**.
+*   **Themes:** Choose between **Light** or **Dark** themes.<br>
+*   **Aesthetics:** Personalize your experience further with **3 primary color accents** and **3 distinct font choices** (WIP).
 
 ---
 
@@ -36,7 +36,7 @@ Simplicity and privacy are at the core of everything we do.
 
 *   **Framework:** Flutter
 *   **Language:** Dart
-*   **Data Storage:** Local Device Storage (e.g., Hive or SQLite)
+*   **Data Storage:** Local Device Storage (Hive Community Edition)
 
 ---
 
@@ -44,35 +44,18 @@ Simplicity and privacy are at the core of everything we do.
 
 ### Prerequisites
 
-You need to have the Flutter SDK installed on your development machine.
+None.
 
 ### Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/plotsklapps/gymply.git
-    cd gymply
-    ```
-2.  **Get Dependencies:**
-    ```bash
-    flutter pub get
-    ```
-3.  **Run the App:**
-    *   For Android Emulator or connected device:
-        ```bash
-        flutter run
-        ```
-    *   To build for release (Android APK/App Bundle):
-        ```bash
-        flutter build appbundle
-        ```
-
----
+1. **Download** the APK;
+2. **Install** to Android phone;
+3. **Updates** can be requested from within the app.
 
 ## 🤝 Contributing
 
 We welcome contributions from the community! As this is an open-source project focused on simplicity and privacy, contributions that enhance functionality without compromising the local-only nature are highly appreciated.<br>
-Please read our **[Contribution Guidelines](CONTRIBUTING.md)** for details on how to submit pull requests.
+Please read our **[Contribution Guidelines](CONTRIBUTING.md)** for details on how to submit pull requests (WIP).
 
 ---
 
