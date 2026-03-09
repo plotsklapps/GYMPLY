@@ -1,4 +1,3 @@
-// Represents a Stretch training exercise.
 import 'package:gymply/models/workout_model.dart';
 import 'package:hive_ce/hive.dart';
 
@@ -11,7 +10,9 @@ class StretchExercise extends WorkoutExercise {
     required super.exerciseName,
     required super.imagePath,
     required this.sets,
-    this.holdInput,
+    this.stretchDurationInput,
+    this.restDurationInput,
+    this.intensityInput,
   });
 
   @HiveField(3)
@@ -19,19 +20,29 @@ class StretchExercise extends WorkoutExercise {
 
   // Work-in-progress input for stretching duration.
   @HiveField(4)
-  final int? holdInput;
+  final Duration? stretchDurationInput;
+
+  @HiveField(5)
+  final Duration? restDurationInput;
+
+  @HiveField(6)
+  final int? intensityInput;
 
   @override
   StretchExercise copyWith({
     List<StretchSet>? sets,
-    int? holdInput,
+    Duration? stretchDurationInput,
+    Duration? restDurationInput,
+    int? intensityInput,
   }) {
     return StretchExercise(
       id: id,
       exerciseName: exerciseName,
       imagePath: imagePath,
       sets: sets ?? this.sets,
-      holdInput: holdInput ?? this.holdInput,
+      stretchDurationInput: stretchDurationInput ?? this.stretchDurationInput,
+      restDurationInput: restDurationInput ?? this.restDurationInput,
+      intensityInput: intensityInput ?? this.intensityInput,
     );
   }
 
@@ -46,7 +57,7 @@ class StretchExercise extends WorkoutExercise {
     return sets.fold(
       Duration.zero,
       (Duration sum, StretchSet set) {
-        return sum + set.duration;
+        return sum + set.totalDuration;
       },
     );
   }
@@ -54,8 +65,22 @@ class StretchExercise extends WorkoutExercise {
 
 @HiveType(typeId: 6)
 class StretchSet {
-  const StretchSet({required this.duration});
+  const StretchSet({
+    required this.stretchDuration,
+    required this.restDuration,
+    required this.totalDuration,
+    this.intensity,
+  });
 
   @HiveField(0)
-  final Duration duration;
+  final Duration stretchDuration;
+
+  @HiveField(1)
+  final Duration restDuration;
+
+  @HiveField(2)
+  final Duration totalDuration;
+
+  @HiveField(3)
+  final int? intensity;
 }

@@ -2,12 +2,6 @@ import 'package:hive_ce/hive.dart';
 
 part 'exercise_model.g.dart';
 
-/// -- CORE MODELS AND ENUMS --
-///
-/// These are the base data structures used throughout the app.
-/// IMPORTANT: Hive TypeIDs and Field indices are preserved to ensure
-/// database compatibility for live users.
-
 @HiveType(typeId: 9)
 enum WorkoutType {
   @HiveField(0)
@@ -78,7 +72,7 @@ enum Equipment {
   stretch,
 }
 
-/// Helper enums for UI filtering (Non-Hive)
+// Helper enums for UI filtering (Non-Hive).
 enum StrengthEquipment {
   bodyweight,
   barbell,
@@ -104,8 +98,8 @@ enum CardioEquipment {
   medicineball,
 }
 
-/// Metadata for an exercise parsed from its asset path.
-/// Example: assets/images/exercises/00011101-Abs-Bodyweight-3-Quarter-Sit-Up.png
+// Metadata for an exercise parsed from its asset path.
+// (assets/images/exercises/00011101-Abs-Bodyweight-3-Quarter-Sit-Up.png)
 class ExercisePath {
   ExercisePath({
     required this.fullPath,
@@ -114,10 +108,14 @@ class ExercisePath {
     required this.equipmentSegment,
     required this.exerciseName,
   });
-
-  final String fullPath; // The actual asset path
-  final String id; // Numeric ID (e.g., 00011101)
-  final String muscleSegment; // Parsed muscle group segment
-  final String equipmentSegment; // Parsed equipment segment
-  final String exerciseName; // Formatted name (e.g., "3 Quarter Sit Up")
+  // Actual asset path.
+  final String fullPath;
+  // Numeric ID (00011101).
+  final String id;
+  // Parsed muscle group segment (Chest).
+  final String muscleSegment;
+  // Parsed equipment segment (Barbell).
+  final String equipmentSegment;
+  // Formatted exercisename (3 Quarter Sit Up).
+  final String exerciseName;
 }

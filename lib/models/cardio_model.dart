@@ -13,7 +13,7 @@ class CardioExercise extends WorkoutExercise {
     required super.imagePath,
     required this.equipment,
     required this.sets,
-    this.durationInput,
+    this.cardioDurationInput,
     this.restDurationInput,
     this.distanceInput,
     this.caloriesInput,
@@ -25,9 +25,9 @@ class CardioExercise extends WorkoutExercise {
   @HiveField(4)
   final List<CardioSet> sets;
 
-  // Work-in-progress input fields for the UI (Stopwatch or Interval modes).
+  // Work-in-progress input fields for CardioExerciseScreen.
   @HiveField(5)
-  final Duration? durationInput;
+  final Duration? cardioDurationInput;
   @HiveField(6)
   final Duration? restDurationInput;
   @HiveField(7)
@@ -40,7 +40,7 @@ class CardioExercise extends WorkoutExercise {
   @override
   CardioExercise copyWith({
     List<CardioSet>? sets,
-    Duration? durationInput,
+    Duration? cardioDurationInput,
     Duration? restDurationInput,
     double? distanceInput,
     int? caloriesInput,
@@ -52,7 +52,7 @@ class CardioExercise extends WorkoutExercise {
       imagePath: imagePath,
       equipment: equipment,
       sets: sets ?? this.sets,
-      durationInput: durationInput ?? this.durationInput,
+      cardioDurationInput: cardioDurationInput ?? this.cardioDurationInput,
       restDurationInput: restDurationInput ?? this.restDurationInput,
       distanceInput: distanceInput ?? this.distanceInput,
       caloriesInput: caloriesInput ?? this.caloriesInput,
@@ -107,9 +107,9 @@ class CardioSet {
   @HiveField(2)
   final Duration totalDuration;
   @HiveField(3)
-  final double? distance; // In km
+  final double? distance;
   @HiveField(4)
   final int? calories;
   @HiveField(5)
-  final int? intensity; // 1, 2, or 3
+  final int? intensity;
 }

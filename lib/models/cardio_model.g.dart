@@ -22,7 +22,7 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       imagePath: fields[2] as String,
       equipment: fields[3] as Equipment,
       sets: (fields[4] as List).cast<CardioSet>(),
-      durationInput: fields[5] as Duration?,
+      cardioDurationInput: fields[5] as Duration?,
       restDurationInput: fields[6] as Duration?,
       distanceInput: (fields[7] as num?)?.toDouble(),
       caloriesInput: (fields[8] as num?)?.toInt(),
@@ -45,7 +45,7 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       ..writeByte(4)
       ..write(obj.sets)
       ..writeByte(5)
-      ..write(obj.durationInput)
+      ..write(obj.cardioDurationInput)
       ..writeByte(6)
       ..write(obj.restDurationInput)
       ..writeByte(7)

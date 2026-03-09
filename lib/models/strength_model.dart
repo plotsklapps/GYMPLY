@@ -27,7 +27,7 @@ class StrengthExercise extends WorkoutExercise {
   @HiveField(5)
   final List<StrengthSet> sets;
 
-  // Work-in-progress input fields for the UI.
+  // Work-in-progress input fields for UI.
   @HiveField(6)
   final double? weightInput;
   @HiveField(7)

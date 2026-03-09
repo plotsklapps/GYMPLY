@@ -49,42 +49,58 @@ class Workout {
 
   // --- Date Helpers ---
 
-  // Return date formatted at YYYYMMDD.
+  // Return date formatted as YYYYMMDD.
   String get dateKey {
     return DateFormat('yyyyMMdd').format(dateTime);
   }
 
-  String get formattedDate => DateFormat.yMMMMd().format(dateTime);
+  String get formattedDate {
+    return DateFormat.yMMMMd().format(dateTime);
+  }
 
   // --- Aggregate Statistics ---
 
-  int get exerciseCount => exercises.length;
-  bool get isEmpty => exercises.isEmpty;
+  int get exerciseCount {
+    return exercises.length;
+  }
 
-  /// Total sets across all exercise types.
+  bool get isEmpty {
+    return exercises.isEmpty;
+  }
+
+  // Total sets across all exercise types.
   int get totalSets {
-    return exercises.fold(0, (int sum, WorkoutExercise ex) => sum + ex.totalSets);
+    return exercises.fold(
+      0,
+      (int sum, WorkoutExercise ex) {
+        return sum + ex.totalSets;
+      },
+    );
   }
 
   // --- Strength Summaries ---
 
-  /// Total weight moved (Weight * Reps) for all strength exercises.
+  // Total weight moved (Weight * Reps) for all strength exercises.
   double get totalStrengthVolume {
     return exercises.whereType<StrengthExercise>().fold(
       0,
-      (double sum, StrengthExercise ex) => sum + ex.totalWeight,
+      (double sum, StrengthExercise ex) {
+        return sum + ex.totalWeight;
+      },
     );
   }
 
-  /// Total number of repetitions performed across all strength exercises.
+  // Total number of repetitions performed across all strength exercises.
   int get totalReps {
     return exercises.whereType<StrengthExercise>().fold(
       0,
-      (int sum, StrengthExercise ex) => sum + ex.totalReps,
+      (int sum, StrengthExercise ex) {
+        return sum + ex.totalReps;
+      },
     );
   }
 
-  /// Average weight per rep across the entire workout.
+  // Average weight per rep across the entire workout.
   double get avgWorkoutWeight {
     final int reps = totalReps;
     return reps == 0 ? 0 : totalStrengthVolume / reps;
@@ -92,43 +108,54 @@ class Workout {
 
   // --- Cardio Summaries ---
 
-  /// Total distance covered across all cardio exercises (in km).
+  // Total distance covered across all cardio exercises (in km).
   double get totalCardioDistance {
     return exercises.whereType<CardioExercise>().fold(
       0,
-      (double sum, CardioExercise ex) => sum + ex.totalDistance,
+      (double sum, CardioExercise ex) {
+        return sum + ex.totalDistance;
+      },
     );
   }
 
-  /// Total calories burned across all cardio exercises.
+  // Total calories burned across all cardio exercises.
   int get totalCardioCalories {
     return exercises.whereType<CardioExercise>().fold(
       0,
-      (int sum, CardioExercise ex) => sum + ex.totalCalories,
+      (int sum, CardioExercise ex) {
+        return sum + ex.totalCalories;
+      },
     );
   }
 
   // --- Time & Duration Summaries ---
 
-  /// Total time spent specifically on Cardio exercises.
+  // Total time spent specifically on Cardio exercises.
   Duration get totalCardioTime {
     return exercises.whereType<CardioExercise>().fold(
       Duration.zero,
-      (Duration sum, CardioExercise ex) => sum + ex.totalDuration,
+      (Duration sum, CardioExercise ex) {
+        return sum + ex.totalDuration;
+      },
     );
   }
 
-  /// Total time spent specifically on Stretching exercises.
+  // Total time spent specifically on Stretching exercises.
   Duration get totalStretchTime {
     return exercises.whereType<StretchExercise>().fold(
       Duration.zero,
-      (Duration sum, StretchExercise ex) => sum + ex.totalDuration,
+      (Duration sum, StretchExercise ex) {
+        return sum + ex.totalDuration;
+      },
     );
   }
 
-  /// Combined duration of all active exercises (Cardio + Stretch).
-  /// Note: This is different from Workout.totalDuration which tracks the wall-clock time.
-  Duration get totalCardioDuration => totalCardioTime + totalStretchTime;
+  // Combined duration of all active exercises (Cardio + Stretch).
+  // Note: This is different from Workout.totalDuration which tracks
+  // wall-clock time.
+  Duration get totalCardioDuration {
+    return totalCardioTime + totalStretchTime;
+  }
 }
 
 // Base class for all exercises in a workout.
@@ -146,7 +173,7 @@ abstract class WorkoutExercise {
   @HiveField(2)
   final String imagePath;
 
-  /// Every exercise type must report its total number of sets.
+  // Every exercise type must report its total number of sets.
   int get totalSets;
 
   WorkoutExercise copyWith();

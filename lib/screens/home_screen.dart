@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
-    // Kill the TabController and cleanup.
+    // Kill the TabController and clean up.
     _tabSubscription();
     _tabController.dispose();
     super.dispose();

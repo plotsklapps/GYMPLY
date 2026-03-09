@@ -350,7 +350,7 @@ class WorkoutService {
   // Updates input state for CardioExercise.
   void updateCardioInput(
     CardioExercise exercise, {
-    Duration? duration,
+    Duration? cardioDuration,
     Duration? restDuration,
     double? distance,
     int? calories,
@@ -358,7 +358,7 @@ class WorkoutService {
   }) {
     // Create CardioExercise Object.
     final CardioExercise updatedExercise = exercise.copyWith(
-      durationInput: duration,
+      cardioDurationInput: cardioDuration,
       restDurationInput: restDuration,
       distanceInput: distance,
       caloriesInput: calories,
@@ -371,7 +371,7 @@ class WorkoutService {
     // Log the input.
     _logger.i(
       'WorkoutService: Cardio Input Updated -> '
-      'Duration: ${updatedExercise.durationInput}, '
+      'Duration: ${updatedExercise.cardioDurationInput}, '
       'RestDuration: ${updatedExercise.restDurationInput}, '
       'Distance: ${updatedExercise.distanceInput}'
       'Calories: ${updatedExercise.caloriesInput}, '
@@ -382,11 +382,15 @@ class WorkoutService {
   // Update input state for StretchExercise.
   void updateStretchInput(
     StretchExercise exercise, {
-    int? hold,
+    Duration? stretchDuration,
+    Duration? restDuration,
+    int? intensity,
   }) {
     // Create StretchExercise Object.
     final StretchExercise updatedExercise = exercise.copyWith(
-      holdInput: hold,
+      stretchDurationInput: stretchDuration,
+      restDurationInput: restDuration,
+      intensityInput: intensity,
     );
 
     // Helper method to replace the Object inside the active workout.
@@ -395,7 +399,7 @@ class WorkoutService {
     // Log the input.
     _logger.i(
       'WorkoutService: Stretch Input Updated -> '
-      'Hold: ${updatedExercise.holdInput}',
+      'Hold: ${updatedExercise.stretchDurationInput}',
     );
   }
 
@@ -487,9 +491,20 @@ class WorkoutService {
   }
 
   // Add set to StretchExercise.
-  void addStretchSet(StretchExercise exercise, Duration duration) {
+  void addStretchSet(
+    StretchExercise exercise, {
+    required Duration stretchDuration,
+    required Duration restDuration,
+    required Duration totalDuration,
+    int? intensity,
+  }) {
     // Create StretchSet Object.
-    final StretchSet newSet = StretchSet(duration: duration);
+    final StretchSet newSet = StretchSet(
+      stretchDuration: stretchDuration,
+      restDuration: restDuration,
+      totalDuration: totalDuration,
+      intensity: intensity,
+    );
 
     // Add StretchSet to StretchExercise Object.
     final StretchExercise updatedExercise = exercise.copyWith(
@@ -500,7 +515,10 @@ class WorkoutService {
     _replaceExercise(exercise, updatedExercise);
 
     // Log addition.
-    _logger.i('WorkoutService: Adding Stretch set - ${duration.inSeconds}s');
+    _logger.i(
+      'WorkoutService: Adding Stretch set - '
+      '${newSet.totalDuration.inSeconds}s',
+    );
   }
 
   // Delete set from StretchExercise.

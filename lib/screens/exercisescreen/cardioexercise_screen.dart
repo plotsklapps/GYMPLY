@@ -14,7 +14,7 @@ import 'package:signals/signals_flutter.dart';
 
 enum CardioMode { stopwatch, interval }
 
-// Global CardioMode Signal (Stopwatch, Interval).
+// Global CardioMode Signal
 final Signal<CardioMode> sCardioMode = Signal<CardioMode>(
   CardioMode.stopwatch,
   debugLabel: 'sCardioMode',
@@ -61,8 +61,7 @@ class CardioExerciseScreen extends StatelessWidget {
                           onPressed: () {},
                           icon: FaIcon(
                             FontAwesomeIcons.clockRotateLeft,
-                            color: theme.colorScheme.secondary.withAlpha(140),
-                            size: 20,
+                            color: theme.colorScheme.secondary.withAlpha(150),
                           ),
                         ),
                         // STATISTICS BUTTON.
@@ -145,9 +144,7 @@ class CardioExerciseScreen extends StatelessWidget {
                       );
                     }
                   },
-                  child: _CardioTimerText(
-                    mode: mode,
-                  ),
+                  child: CardioTimerText(mode: mode),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -281,8 +278,11 @@ class CardioExerciseScreen extends StatelessWidget {
 }
 
 // CardioTimer Text Widget to handle high-frequency timer updates.
-class _CardioTimerText extends StatelessWidget {
-  const _CardioTimerText({required this.mode});
+class CardioTimerText extends StatelessWidget {
+  const CardioTimerText({
+    required this.mode,
+    super.key,
+  });
 
   final CardioMode mode;
 
