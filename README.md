@@ -65,7 +65,7 @@ This project is licensed under the **GNU General Public License v3.0 (GPLv3)** -
 
 **IMPORTANT NOTE ON ASSETS:**
 The source code and underlying logic of **GYMPLY.** are released under GPLv3.<br>
-However, the entire contents of the `/assets/` folder, which contains the high-quality exercise images, are **EXCLUDED** from this open-source license. These assets represent a significant investment (€400) and are proprietary.<br>
+However, the entire contents of the `/assets/` folder, which contains the high-quality exercise images, are **EXCLUDED** from this open-source license. These assets represent a significant investment and are proprietary.<br>
 If you fork or copy this repository, you **MUST** create or acquire your own set of exercise assets to replace the excluded folder for the application to function fully.
 
 ---
