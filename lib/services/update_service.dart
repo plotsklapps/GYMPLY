@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:open_filex/open_filex.dart';
@@ -20,22 +19,33 @@ class UpdateService {
   static final UpdateService _instance = UpdateService._internal();
 
   final Logger _logger = Logger();
-  final Dio _dio = Dio();
+  final HttpClient _httpClient = HttpClient();
 
   // Signals for tracking update state.
-  final Signal<bool> sIsCheckingForUpdate = signal(false);
-  final Signal<double> sDownloadProgress = signal(0);
-  final Signal<String?> sUpdateError = signal(null);
+  final Signal<bool> sIsCheckingForUpdate = Signal<bool>(
+    false,
+    debugLabel: 'sIsCheckingForUpdate',
+  );
+  final Signal<double> sDownloadProgress = Signal<double>(
+    0,
+    debugLabel: 'sDownloadProgress',
+  );
+  final Signal<String?> sUpdateError = Signal<String?>(
+    null,
+    debugLabel: 'sUpdateError',
+  );
 
-  // URL pointing to your GitHub version metadata.
+  // URL pointing to GitHub version metadata.
   static const String _versionUrl =
       'https://raw.githubusercontent.com/plotsklapps/gymply/master/version.json';
 
-  /// Checks for updates and returns true if a new version is available.
+  // Checks for updates and returns true if new version is available.
   Future<void> checkForUpdates() async {
+    // Set Signals.
     sIsCheckingForUpdate.value = true;
     sUpdateError.value = null;
 
+    // Log the status.
     _logger.i('UpdateService: Starting update check...');
 
     try {
@@ -43,71 +53,81 @@ class UpdateService {
       final String currentVersionName = packageInfo.version;
       final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
 
+      // Log local version.
       _logger.i(
-        'UpdateService: Local version: $currentVersionName ($currentBuildNumber)',
+        'UpdateService: Local version: $currentVersionName '
+        '($currentBuildNumber)',
       );
 
-      // Fetch metadata from GitHub with explicit type arguments.
-      final Response<dynamic> response = await _dio.get<dynamic>(_versionUrl);
+      // Fetch metadata using native HttpClient.
+      final HttpClientRequest request = await _httpClient.getUrl(
+        Uri.parse(_versionUrl),
+      );
+      final HttpClientResponse response = await request.close();
 
-      if (response.statusCode == 200) {
-        // Handle case where GitHub returns text/plain and Dio doesn't parse it automatically.
-        final dynamic rawData = response.data;
-        final Map<String, dynamic> data;
-
-        if (rawData is String) {
-          _logger.d('UpdateService: Parsing response as JSON string...');
-          data = jsonDecode(rawData) as Map<String, dynamic>;
-        } else if (rawData is Map<String, dynamic>) {
-          data = rawData;
-        } else {
-          throw Exception('Unexpected data format: ${rawData.runtimeType}');
-        }
+      if (response.statusCode == HttpStatus.ok) {
+        final String contents = await response.transform(utf8.decoder).join();
+        final Map<String, dynamic> data =
+            jsonDecode(contents) as Map<String, dynamic>;
 
         final String latestVersionName = data['version_name'] as String;
         final int latestBuildNumber = data['version_code'] as int;
         final String downloadUrl = data['download_url'] as String;
 
+        // Log remote version.
         _logger.i(
-          'UpdateService: Remote version: $latestVersionName ($latestBuildNumber)',
+          'UpdateService: Remote version: $latestVersionName '
+          '($latestBuildNumber)',
         );
 
+        // Compare versions.
         if (latestBuildNumber > currentBuildNumber) {
+          // Log the update.
           _logger.i('UpdateService: New version detected!');
 
+          // Show toast to user.
           toastification.show(
             type: ToastificationType.info,
             title: const Text('Update Found'),
             description: Text(
               'Upgrading from $currentVersionName ($currentBuildNumber) '
-              'to $latestVersionName ($latestBuildNumber). Starting download...',
+              'to $latestVersionName ($latestBuildNumber). '
+              'Starting download...',
             ),
             autoCloseDuration: const Duration(seconds: 5),
           );
 
           await _downloadAndInstall(downloadUrl);
         } else {
+          // Log no update.
           _logger.i('UpdateService: App is up to date.');
 
+          // Show toast to user.
           toastification.show(
             type: ToastificationType.success,
             title: const Text('Up to Date'),
             description: Text(
-              'You are running the latest version: $currentVersionName ($currentBuildNumber).',
+              'You are running the latest version: $currentVersionName '
+              '($currentBuildNumber).',
             ),
-            autoCloseDuration: const Duration(seconds: 4),
+            autoCloseDuration: const Duration(seconds: 5),
           );
         }
       } else {
+        // Log warning.
         _logger.w(
           'UpdateService: Server returned status code ${response.statusCode}',
         );
         throw Exception('Server error: ${response.statusCode}');
       }
-    } catch (e) {
+    } on Exception catch (e) {
+      // Log error.
       _logger.e('UpdateService: Error checking for updates: $e');
+
+      // Set Signal.
       sUpdateError.value = 'Update check failed.';
 
+      // Show toast to user.
       toastification.show(
         type: ToastificationType.error,
         title: const Text('Check Failed'),
@@ -115,41 +135,83 @@ class UpdateService {
         autoCloseDuration: const Duration(seconds: 5),
       );
     } finally {
+      // Set Signal.
       sIsCheckingForUpdate.value = false;
     }
   }
 
+  // Download and install update.
   Future<void> _downloadAndInstall(String url) async {
+    // Log the status.
     _logger.i('UpdateService: Initiating download from $url');
 
     try {
       final Directory tempDir = await getTemporaryDirectory();
       final String filePath = '${tempDir.path}/gymply_update.apk';
+      final File file = File(filePath);
 
-      // Download APK with progress tracking.
-      await _dio.download(
-        url,
-        filePath,
-        onReceiveProgress: (int count, int total) {
-          if (total != -1) {
-            sDownloadProgress.value = count / total;
-            // Log progress occasionally (every 10%) to avoid spamming.
-            if ((count / total * 100).toInt() % 10 == 0) {
-              _logger.d(
-                'UpdateService: Download progress: ${(count / total * 100).toStringAsFixed(0)}%',
-              );
-            }
-          }
-        },
+      // Download using native HttpClient.
+      final HttpClientRequest request = await _httpClient.getUrl(
+        Uri.parse(url),
       );
+      final HttpClientResponse response = await request.close();
 
+      if (response.statusCode != HttpStatus.ok) {
+        // Log warning.
+        _logger.w(
+          'UpdateService: Server returned status code ${response.statusCode}',
+        );
+        throw Exception('Failed to download file: ${response.statusCode}');
+      }
+
+      final int totalBytes = response.contentLength;
+      int receivedBytes = 0;
+
+      final IOSink sink = file.openWrite();
+
+      // Listen to response stream to track progress and save file.
+      await response
+          .listen(
+            (List<int> chunk) {
+              receivedBytes += chunk.length;
+              sink.add(chunk);
+
+              if (totalBytes != -1) {
+                // Set Signal.
+                sDownloadProgress.value = receivedBytes / totalBytes;
+
+                // Log progress occasionally (every 10%) to avoid spamming.
+                if ((receivedBytes / totalBytes * 100).toInt() % 10 == 0) {
+                  _logger.d(
+                    'UpdateService: Download progress: '
+                    '${(receivedBytes / totalBytes * 100).toStringAsFixed(0)}%',
+                  );
+                }
+              }
+            },
+            onDone: () async {
+              await sink.flush();
+              await sink.close();
+            },
+            onError: (Exception e) async {
+              await sink.close();
+              throw e;
+            },
+            cancelOnError: true,
+          )
+          .asFuture<void>();
+
+      // Log download completion.
       _logger.i('UpdateService: Download complete. File saved to $filePath');
       sDownloadProgress.value = 0;
 
+      // Log install status.
       _logger.i(
-        'UpdateService: Requesting Android Package Installer to open the APK...',
+        'UpdateService: Requesting Android Package Installer to open '
+        'the APK...',
       );
 
+      // Show toast to user.
       toastification.show(
         type: ToastificationType.success,
         title: const Text('Download Complete'),
@@ -161,13 +223,18 @@ class UpdateService {
       final OpenResult result = await OpenFilex.open(filePath);
 
       if (result.type != ResultType.done) {
+        // Log error.
         _logger.e('UpdateService: OpenFilex failed: ${result.message}');
         throw Exception('Installer failed: ${result.message}');
       }
-    } catch (e) {
+    } on Exception catch (e) {
+      // Log error.
       _logger.e('UpdateService: Download/Install error: $e');
+
+      // Set Signal.
       sUpdateError.value = 'Failed to download update.';
 
+      // Show toast to user.
       toastification.show(
         type: ToastificationType.error,
         title: const Text('Download Failed'),
