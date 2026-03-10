@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/monthstat_widget.dart';
@@ -7,6 +6,7 @@ import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -169,22 +169,22 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           StatTile(
                             label: 'Exercises',
                             value: currentWorkout.exerciseCount.toString(),
-                            icon: FontAwesomeIcons.dumbbell,
+                            icon: LucideIcons.dumbbell,
                           ),
                           StatTile(
                             label: 'Sets',
                             value: currentWorkout.totalSets.toString(),
-                            icon: FontAwesomeIcons.arrowUpWideShort,
+                            icon: LucideIcons.arrowUpWideNarrow,
                           ),
                           StatTile(
                             label: 'Time',
                             value: currentWorkout.totalDuration.formatHHMM(),
-                            icon: FontAwesomeIcons.stopwatch,
+                            icon: LucideIcons.timer,
                           ),
                         ],
                       ),
                       // Strength Totals Section (Conditional).
-                      if (currentWorkout.totalStrengthVolume > 0) ...<Widget>[
+                      if (currentWorkout.strengthExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
                         const StatisticsSectionHeader(title: 'STRENGTH TOTALS'),
                         GridView.count(
@@ -197,25 +197,24 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             StatTile(
                               label: 'Volume',
                               value: '${currentWorkout.totalStrengthVolume} kg',
-                              icon: FontAwesomeIcons.weightHanging,
+                              icon: LucideIcons.weight,
                             ),
                             StatTile(
                               label: 'Reps',
                               value: currentWorkout.totalReps.toString(),
-                              icon: FontAwesomeIcons.arrowUp19,
+                              icon: LucideIcons.arrowUp10,
                             ),
                             StatTile(
                               label: 'Avg Weight',
                               value:
                                   '${currentWorkout.avgWorkoutWeight.toStringAsFixed(1)}kg',
-                              icon: FontAwesomeIcons.gauge,
+                              icon: LucideIcons.circleGauge,
                             ),
                           ],
                         ),
                       ],
                       // Cardio Totals Section (Conditional).
-                      if (currentWorkout.totalCardioDuration >
-                          Duration.zero) ...<Widget>[
+                      if (currentWorkout.cardioExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
                         const StatisticsSectionHeader(title: 'CARDIO TOTALS'),
                         GridView.count(
@@ -229,25 +228,24 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               label: 'Distance',
                               value:
                                   '${currentWorkout.totalCardioDistance.toStringAsFixed(1)}km',
-                              icon: FontAwesomeIcons.personRunning,
+                              icon: LucideIcons.rulerDimensionLine,
                             ),
                             StatTile(
                               label: 'Calories',
                               value:
                                   '${currentWorkout.totalCardioCalories}kcal',
-                              icon: FontAwesomeIcons.fire,
+                              icon: LucideIcons.flame,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalCardioTime.format(),
-                              icon: FontAwesomeIcons.solidClock,
+                              icon: LucideIcons.clock,
                             ),
                           ],
                         ),
                       ],
                       // Stretch Totals Section (Conditional).
-                      if (currentWorkout.totalStretchTime >
-                          Duration.zero) ...<Widget>[
+                      if (currentWorkout.stretchExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
                         const StatisticsSectionHeader(
                           title: 'STRETCH TOTALS',
@@ -260,15 +258,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           mainAxisSpacing: 8,
                           children: <Widget>[
                             StatTile(
+                              label: 'Stretch Count',
+                              value: currentWorkout.stretchExerciseCount
+                                  .toString(),
+                              icon: LucideIcons.arrowUp10,
+                            ),
+                            StatTile(
                               label: 'Stretch',
                               value: currentWorkout.totalStretchTime.format(),
-                              icon: FontAwesomeIcons.personBurst,
+                              icon: LucideIcons.personStanding,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalCardioDuration
                                   .format(),
-                              icon: FontAwesomeIcons.personPraying,
+                              icon: LucideIcons.timer,
                             ),
                           ],
                         ),

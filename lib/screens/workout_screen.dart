@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -7,6 +6,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorkoutScreen extends StatefulWidget {
@@ -78,11 +78,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     index: index,
                     child: const Padding(
                       padding: EdgeInsets.all(16),
-                      child: FaIcon(FontAwesomeIcons.grip),
+                      child: Icon(LucideIcons.gripHorizontal),
                     ),
                   )
                 : PopupMenuButton<String>(
-                    icon: const FaIcon(FontAwesomeIcons.ellipsisVertical),
+                    icon: const Icon(LucideIcons.circleEllipsis),
                     onSelected: (String value) {
                       if (value == 'delete') {
                         // Delete entire exercise from workout.
@@ -105,9 +105,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.arrowsUpDown,
-                                  ),
+                                  child: Icon(LucideIcons.separatorHorizontal),
                                 ),
                               ),
                             ],
@@ -123,8 +121,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.trashCan,
+                                  child: Icon(
+                                    LucideIcons.trash,
                                     color: theme.colorScheme.error,
                                   ),
                                 ),
@@ -150,7 +148,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   String _getSubtitle(WorkoutExercise exercise) {
     if (exercise is StrengthExercise) {
-      return '${exercise.muscleGroup.name.capitalizeFirst()} • ${exercise.equipment.name.capitalizeFirst()}';
+      return '${exercise.muscleGroup.name.capitalizeFirst()} • '
+          '${exercise.equipment.name.capitalizeFirst()}';
     } else if (exercise is CardioExercise) {
       return 'Cardio • ${exercise.equipment.name.capitalizeFirst()}';
     } else if (exercise is StretchExercise) {

@@ -72,21 +72,22 @@ class FilterService {
       if (query.isNotEmpty) {
         final List<String> tokens = query
             .split(' ')
-            .where((t) => t.isNotEmpty)
+            .where((String t) => t.isNotEmpty)
             .toList();
         final String searchBlob =
             '${ex.exerciseName} ${ex.id} ${ex.muscleSegment} ${ex.equipmentSegment}'
                 .toLowerCase();
 
         // Match ONLY if EVERY token typed by the user exists somewhere in the exercise data.
-        if (!tokens.every((token) => searchBlob.contains(token))) return false;
+        if (!tokens.every(searchBlob.contains)) return false;
       }
 
       // B. WorkoutType (Strength / Cardio / Stretch) logic.
       if (type != null) {
         if (type == WorkoutType.strength) {
-          if (ex.muscleSegment == 'Cardio' || ex.equipmentSegment == 'Stretch')
+          if (ex.muscleSegment == 'Cardio' || ex.equipmentSegment == 'Stretch') {
             return false;
+          }
         } else if (type == WorkoutType.cardio) {
           if (ex.muscleSegment != 'Cardio') return false;
         } else if (type == WorkoutType.stretch) {
@@ -96,14 +97,16 @@ class FilterService {
 
       // C. Muscle Group Chip logic.
       if (muscle != null && type != WorkoutType.cardio) {
-        if (ex.muscleSegment.toLowerCase() != muscle.name.toLowerCase())
+        if (ex.muscleSegment.toLowerCase() != muscle.name.toLowerCase()) {
           return false;
+        }
       }
 
       // D. Equipment Chip logic.
       if (equip != null && type != WorkoutType.stretch) {
-        if (ex.equipmentSegment.toLowerCase() != equip.name.toLowerCase())
+        if (ex.equipmentSegment.toLowerCase() != equip.name.toLowerCase()) {
           return false;
+        }
       }
 
       return true;
@@ -126,12 +129,12 @@ class FilterService {
   /// These signals decide which UI elements (like Muscle Chips) should be visible.
 
   late final Computed<bool> sShowMuscleGroups = computed(() {
-    final type = sSelectedWorkoutType.value;
+    final WorkoutType? type = sSelectedWorkoutType.value;
     return type == WorkoutType.strength || type == WorkoutType.stretch;
   }, debugLabel: 'sShowMuscleGroups');
 
   late final Computed<bool> sShowEquipment = computed(() {
-    final type = sSelectedWorkoutType.value;
+    final WorkoutType? type = sSelectedWorkoutType.value;
     return type == WorkoutType.strength || type == WorkoutType.cardio;
   }, debugLabel: 'sShowEquipment');
 }

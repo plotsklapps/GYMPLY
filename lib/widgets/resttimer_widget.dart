@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/sheets/resttimer_sheet.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerWidget extends StatelessWidget {
@@ -56,17 +56,18 @@ class RestTimerWidget extends StatelessWidget {
                 await restTimer.resetTimer();
               },
               child: FloatingActionButton(
-                heroTag: 'RestTimerWidgetFAB1',
+                heroTag: 'RestTimerWidgetFAB',
+                elevation: 0,
                 onPressed: () async {
                   if (isRestTimerRunning) {
-                    restTimer.pauseTimer();
+                    await restTimer.pauseTimer();
                   } else {
                     await restTimer.startTimer();
                   }
                 },
                 child: isRestTimerRunning
-                    ? const FaIcon(FontAwesomeIcons.solidCirclePause)
-                    : const FaIcon(FontAwesomeIcons.solidCirclePlay),
+                    ? const Icon(LucideIcons.circlePause)
+                    : const Icon(LucideIcons.circlePlay),
               ),
             ),
           ],

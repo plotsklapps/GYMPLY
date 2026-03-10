@@ -149,7 +149,10 @@ class IntervalTimer {
     });
   }
 
-  void pauseTimer() {
+  Future<void> pauseTimer() async {
+    // Give a little bzzz.
+    await HapticFeedback.lightImpact();
+
     _timer?.cancel();
     _timer = null;
     _endTime = null;

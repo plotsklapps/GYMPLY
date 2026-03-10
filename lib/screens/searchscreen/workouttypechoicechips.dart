@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/textformat_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class WorkoutTypeChoiceChips extends StatelessWidget {
   const WorkoutTypeChoiceChips({
@@ -28,8 +28,8 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
             child: ChoiceChip(
               showCheckmark: false,
               avatar: isSelected
-                  ? const FaIcon(
-                      FontAwesomeIcons.solidCircleCheck,
+                  ? const Icon(
+                      LucideIcons.circleCheck,
                     )
                   : null,
               label: Text(

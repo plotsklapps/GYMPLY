@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class StrengthExerciseScreen extends StatelessWidget {
   const StrengthExerciseScreen({required this.exercise, super.key});
@@ -37,8 +38,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           onPressed: () {
                             // History logic later.
                           },
-                          icon: FaIcon(
-                            FontAwesomeIcons.clockRotateLeft,
+                          icon: Icon(
+                            LucideIcons.history,
                             color: theme.colorScheme.secondary.withAlpha(140),
                             size: 20,
                           ),
@@ -47,8 +48,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           onPressed: () {
                             // Statistics logic later.
                           },
-                          icon: FaIcon(
-                            FontAwesomeIcons.chartColumn,
+                          icon: Icon(
+                            LucideIcons.chartColumn,
                             color: theme.colorScheme.secondary.withAlpha(140),
                             size: 20,
                           ),
@@ -109,7 +110,7 @@ class StrengthExerciseScreen extends StatelessWidget {
                         );
                       }
                     },
-                    icon: const FaIcon(FontAwesomeIcons.circlePlus),
+                    icon: const Icon(LucideIcons.circlePlus),
                     label: const Text('ADD SET'),
                   ),
                 ),
@@ -158,8 +159,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                             value: 'delete',
                             child: Row(
                               children: <Widget>[
-                                FaIcon(
-                                  FontAwesomeIcons.trashCan,
+                                Icon(
+                                  LucideIcons.trash,
                                   color: theme.colorScheme.error,
                                 ),
                                 const SizedBox(width: 8),
@@ -210,24 +211,34 @@ class WeightControls extends StatelessWidget {
         FloatingActionButton(
           heroTag: 'WeightDecrement10',
           elevation: 0,
-          onPressed: onDecrementLarge,
-          child: const FaIcon(FontAwesomeIcons.solidCircleDown),
+          onPressed: () async {
+            onDecrementLarge();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronsDown),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'WeightDecrement1',
           elevation: 0,
-          onPressed: onDecrementSmall,
-          child: const FaIcon(FontAwesomeIcons.circleChevronDown),
+          onPressed: () async {
+            onDecrementSmall();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronDown),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             currentValue == null ? 'WEIGHT' : currentValue!.toStringAsFixed(0),
-            style: theme.textTheme.displayLarge?.copyWith(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.bold,
-            ),
+            style:
+                (currentValue == null
+                        ? theme.textTheme.displayMedium
+                        : theme.textTheme.displayLarge)
+                    ?.copyWith(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -235,15 +246,21 @@ class WeightControls extends StatelessWidget {
         FloatingActionButton(
           heroTag: 'WeightIncrement1',
           elevation: 0,
-          onPressed: onIncrementSmall,
-          child: const FaIcon(FontAwesomeIcons.circleChevronUp),
+          onPressed: () async {
+            onIncrementSmall();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronUp),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'WeightIncrement10',
           elevation: 0,
-          onPressed: onIncrementLarge,
-          child: const FaIcon(FontAwesomeIcons.solidCircleUp),
+          onPressed: () async {
+            onIncrementLarge();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronsUp),
         ),
       ],
     );
@@ -275,24 +292,34 @@ class RepControls extends StatelessWidget {
         FloatingActionButton(
           heroTag: 'RepsDecrement10',
           elevation: 0,
-          onPressed: onDecrementLarge,
-          child: const FaIcon(FontAwesomeIcons.solidCircleDown),
+          onPressed: () async {
+            onDecrementLarge();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronsDown),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'RepsDecrement1',
           elevation: 0,
-          onPressed: onDecrementSmall,
-          child: const FaIcon(FontAwesomeIcons.circleChevronDown),
+          onPressed: () async {
+            onDecrementSmall();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronDown),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             currentValue == null ? 'REPS' : currentValue!.toString(),
-            style: theme.textTheme.displayLarge?.copyWith(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.bold,
-            ),
+            style:
+                (currentValue == null
+                        ? theme.textTheme.displayMedium
+                        : theme.textTheme.displayLarge)
+                    ?.copyWith(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -300,15 +327,21 @@ class RepControls extends StatelessWidget {
         FloatingActionButton(
           heroTag: 'RepsIncrement1',
           elevation: 0,
-          onPressed: onIncrementSmall,
-          child: const FaIcon(FontAwesomeIcons.circleChevronUp),
+          onPressed: () async {
+            onIncrementSmall();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronUp),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'RepsIncrement10',
           elevation: 0,
-          onPressed: onIncrementLarge,
-          child: const FaIcon(FontAwesomeIcons.solidCircleUp),
+          onPressed: () async {
+            onIncrementLarge();
+            await HapticFeedback.lightImpact();
+          },
+          child: const Icon(LucideIcons.chevronsUp),
         ),
       ],
     );

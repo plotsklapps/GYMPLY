@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
-import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/sheet_service.dart';
@@ -10,6 +9,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/intervaltimer_sheet.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum CardioMode { stopwatch, interval }
@@ -45,7 +45,7 @@ class CardioExerciseScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // FIXED TOP SECTION.
+          // Fixed Top Section.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
@@ -56,26 +56,26 @@ class CardioExerciseScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        // HISTORY BUTTON.
+                        // History Button.
                         IconButton(
                           onPressed: () {},
-                          icon: FaIcon(
-                            FontAwesomeIcons.clockRotateLeft,
+                          icon: Icon(
+                            LucideIcons.history,
                             color: theme.colorScheme.secondary.withAlpha(150),
                           ),
                         ),
-                        // STATISTICS BUTTON.
+                        // Statistics Button.
                         IconButton(
                           onPressed: () {},
-                          icon: FaIcon(
-                            FontAwesomeIcons.chartColumn,
+                          icon: Icon(
+                            LucideIcons.chartColumn,
                             color: theme.colorScheme.secondary.withAlpha(140),
                             size: 20,
                           ),
                         ),
                       ],
                     ),
-                    // EXERCISE IMAGE.
+                    // Exercise Image.
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
@@ -87,7 +87,7 @@ class CardioExerciseScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // CARDIOMODE CHOICECHIPS.
+                // CardioMode ChoiceChips.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -98,10 +98,11 @@ class CardioExerciseScreen extends StatelessWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? const FaIcon(FontAwesomeIcons.solidCircleCheck)
+                              ? const Icon(LucideIcons.circleCheck)
                               : null,
                           label: Text(
                             value.name.capitalizeFirst(),
+                            style: theme.textTheme.titleLarge,
                           ),
                           selected: isSelected,
                           onSelected: (bool selected) {
@@ -110,14 +111,14 @@ class CardioExerciseScreen extends StatelessWidget {
                         );
                       }).toList(),
                     ),
-                    // AUTO-INTERVAL SWITCH.
+                    // Auto-Interval Switch.
                     if (mode == CardioMode.interval)
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Text('Auto'),
+                            Text('Auto', style: theme.textTheme.titleMedium),
                             Switch(
                               value: IntervalTimer.sAutoIntervalOn.watch(
                                 context,
@@ -134,7 +135,7 @@ class CardioExerciseScreen extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // TIMER.
+                // Timer.
                 TextButton(
                   onPressed: () async {
                     if (mode != CardioMode.stopwatch) {
@@ -149,11 +150,14 @@ class CardioExerciseScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // RESET FAB.
+                    // Reset FAB.
                     FloatingActionButton(
                       heroTag: 'cardioReset',
                       elevation: 0,
                       onPressed: () async {
+                        // Give a bigger bzzz.
+                        await HapticFeedback.heavyImpact();
+
                         if (mode == CardioMode.stopwatch) {
                           await StopwatchTimer().resetTimer();
                         } else {
@@ -161,16 +165,16 @@ class CardioExerciseScreen extends StatelessWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.solidCircleXmark),
+                      child: const Icon(LucideIcons.circleX),
                     ),
                     const SizedBox(width: 8),
-                    // START/PAUSE FAB.
+                    // Start/Pause FAB.
                     FloatingActionButton.large(
                       heroTag: 'cardioPlay',
-                      elevation: 4,
+                      elevation: 0,
                       onPressed: () async {
-                        // Critical for PWA: Initialize audio on first user tap.
-                        await AudioService().initialize();
+                        // Give a little bzzz.
+                        await HapticFeedback.lightImpact();
 
                         if (mode == CardioMode.stopwatch) {
                           isStopwatchRunning
@@ -178,9 +182,9 @@ class CardioExerciseScreen extends StatelessWidget {
                               : await StopwatchTimer().startTimer();
                         } else {
                           if (isRestRunning) {
-                            RestTimer().pauseTimer();
+                            await RestTimer().pauseTimer();
                           } else if (isIntervalRunning) {
-                            IntervalTimer().pauseTimer();
+                            await IntervalTimer().pauseTimer();
                           } else {
                             await IntervalTimer().startTimer();
                           }
@@ -190,15 +194,18 @@ class CardioExerciseScreen extends StatelessWidget {
                           (mode == CardioMode.stopwatch
                               ? isStopwatchRunning
                               : (isIntervalRunning || isRestRunning))
-                          ? const FaIcon(FontAwesomeIcons.solidCirclePause)
-                          : const FaIcon(FontAwesomeIcons.solidCirclePlay),
+                          ? const Icon(LucideIcons.circlePause)
+                          : const Icon(LucideIcons.circlePlay),
                     ),
                     const SizedBox(width: 8),
-                    // ADD SET FAB.
+                    // Add set FAB.
                     FloatingActionButton(
                       heroTag: 'cardioAdd',
                       elevation: 0,
                       onPressed: () async {
+                        // Give a little bzzz.
+                        await HapticFeedback.lightImpact();
+
                         if (mode == CardioMode.stopwatch) {
                           await StopwatchTimer().pauseTimer();
                           final int elapsed =
@@ -232,7 +239,7 @@ class CardioExerciseScreen extends StatelessWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.circlePlus),
+                      child: const Icon(LucideIcons.circlePlus),
                     ),
                   ],
                 ),
@@ -257,7 +264,7 @@ class CardioExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'WORK: ${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
+                          : 'CARDIO: ${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
                                 ' REST: ${set.restDuration.inSeconds.formatMSS()}',
                     ),
                     subtitle: Text(

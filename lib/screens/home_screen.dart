@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
 import 'package:gymply/screens/searchscreen/search_screen.dart';
 import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
@@ -10,6 +10,7 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/menu_sheet.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -110,13 +111,18 @@ class _HomeScreenState extends State<HomeScreen>
         child: Row(
           children: <Widget>[
             FloatingActionButton(
+              heroTag: 'menuFAB',
+              elevation: 0,
               onPressed: () async {
+                // Give a little bzzz.
+                await HapticFeedback.lightImpact();
+
                 await SheetService.showSheet(
                   context: context,
                   child: const MenuSheet(),
                 );
               },
-              child: const FaIcon(FontAwesomeIcons.circleChevronUp),
+              child: const Icon(LucideIcons.circleChevronUp),
             ),
             const SizedBox(width: 16),
             Text(
@@ -137,18 +143,28 @@ class _HomeScreenState extends State<HomeScreen>
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FloatingActionButton(
-            heroTag: 'HomeScreenFAB1',
-            onPressed: workoutService.finishWorkout,
-            child: const FaIcon(FontAwesomeIcons.solidCircleStop),
+            heroTag: 'saveFAB',
+            elevation: 0,
+            onPressed: () async {
+              // Give a bigger bzzz.
+              await HapticFeedback.heavyImpact();
+
+              // Save current workout.
+              await workoutService.finishWorkout();
+            },
+            child: const Icon(LucideIcons.circleStop),
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
-            heroTag: 'HomeScreenFAB2',
-            onPressed: () {
+            heroTag: 'newFAB',
+            elevation: 0,
+            onPressed: () async {
+              // Give a little bzzz.
+              await HapticFeedback.lightImpact();
               // Navigate to SearchScreen.
               sCurrentTab.value = 3;
             },
-            child: const FaIcon(FontAwesomeIcons.circlePlus),
+            child: const Icon(LucideIcons.circlePlus),
           ),
         ],
       ),

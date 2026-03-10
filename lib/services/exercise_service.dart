@@ -22,7 +22,7 @@ class ExerciseService {
   /// RAW DATA SIGNAL
   /// This holds the complete, unfiltered list of all exercises found in assets.
   final Signal<List<ExercisePath>> sAllExercisePaths =
-      Signal<List<ExercisePath>>([]);
+      Signal<List<ExercisePath>>(<ExercisePath>[]);
 
   /// INITIALIZATION
   /// Call this when the app starts to load the database from assets.
@@ -68,7 +68,7 @@ class ExerciseService {
       );
     } catch (e) {
       _logger.e('Failed to load exercises: $e');
-      sAllExercisePaths.value = [];
+      sAllExercisePaths.value = <ExercisePath>[];
     } finally {
       sLoading.value = false;
     }

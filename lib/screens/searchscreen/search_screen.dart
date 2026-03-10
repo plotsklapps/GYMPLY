@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
@@ -8,10 +7,28 @@ import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/exercisedetail_sheet.dart';
 import 'package:gymply/signals/loading_signal.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() {
+    return _SearchScreenState();
+  }
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final SearchController searchController = SearchController();
+  final FocusNode searchFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,41 +59,48 @@ class SearchScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // Workout Type ChoiceChips.
-                WorkoutTypeChoiceChips(
-                  workoutType: workoutType,
-                  theme: theme,
-                ),
-                const SizedBox(width: 8),
-                // Keyboard Search.
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: SearchBar(
-                      constraints: const BoxConstraints(),
-                      hintStyle: WidgetStatePropertyAll<TextStyle?>(
-                        theme.textTheme.bodySmall,
-                      ),
-                      textStyle: WidgetStatePropertyAll<TextStyle?>(
-                        theme.textTheme.bodySmall,
-                      ),
-                      leading: const FaIcon(
-                        FontAwesomeIcons.magnifyingGlass,
-                        size: 12,
-                      ),
-                      onChanged: (String value) {
-                        // Trigger per-letter filtering (FilterService).
-                        sSearchQuery.value = value;
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: SearchBar(
+              controller: searchController,
+              focusNode: searchFocusNode,
+              onTapOutside: (PointerDownEvent event) {
+                searchFocusNode.unfocus();
+              },
+              leading: searchQuery.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        // Clear SearchBar.
+                        searchController.clear();
+
+                        // Clear Signal.
+                        sSearchQuery.value = '';
+
+                        // Dismiss keyboard.
+                        searchFocusNode.unfocus();
                       },
+                      icon: const Icon(LucideIcons.searchX),
+                    )
+                  : IconButton(
+                      onPressed: () {},
+                      icon: const Icon(LucideIcons.search),
                     ),
-                  ),
-                ),
-              ],
+              onChanged: (String value) {
+                // Trigger per-letter filtering (FilterService).
+                sSearchQuery.value = value;
+              },
             ),
+          ),
+          Row(
+            children: <Widget>[
+              // Workout Type ChoiceChips.
+              WorkoutTypeChoiceChips(
+                workoutType: workoutType,
+                theme: theme,
+              ),
+
+              // Keyboard Search.
+            ],
           ),
 
           // MuscleGroup ChoiceChips (Conditional).
@@ -131,6 +155,10 @@ class SearchScreen extends StatelessWidget {
 
                   return InkWell(
                     onTap: () async {
+                      // Dismiss keyboard.
+                      searchFocusNode.unfocus();
+
+                      // Show ExerciseDetailSheet.
                       await SheetService.showSheet(
                         context: context,
                         child: ExerciseDetailSheet(exercise: exercise),
@@ -150,8 +178,8 @@ class SearchScreen extends StatelessWidget {
                             Positioned(
                               top: 8,
                               right: 8,
-                              child: FaIcon(
-                                FontAwesomeIcons.solidStar,
+                              child: Icon(
+                                LucideIcons.star,
                                 color: theme.colorScheme.secondary,
                                 size: 16,
                               ),

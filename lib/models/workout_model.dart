@@ -68,6 +68,18 @@ class Workout {
     return exercises.isEmpty;
   }
 
+  int get strengthExerciseCount {
+    return exercises.whereType<StrengthExercise>().length;
+  }
+
+  int get cardioExerciseCount {
+    return exercises.whereType<CardioExercise>().length;
+  }
+
+  int get stretchExerciseCount {
+    return exercises.whereType<StretchExercise>().length;
+  }
+
   // Total sets across all exercise types.
   int get totalSets {
     return exercises.fold(

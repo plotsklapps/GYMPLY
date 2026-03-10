@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/models/stretch_model.dart';
-import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/sheets/intervaltimer_sheet.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
@@ -44,30 +45,30 @@ class StretchExerciseScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // FIXED TOP SECTION
+          // Fixed Top Section.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Stack(
-                  children: [
+                  children: <Widget>[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         // History Button.
                         IconButton(
                           onPressed: () {},
-                          icon: FaIcon(
-                            FontAwesomeIcons.clockRotateLeft,
+                          icon: Icon(
+                            LucideIcons.history,
                             color: theme.colorScheme.secondary.withAlpha(150),
                           ),
                         ),
                         // Statistics Button.
                         IconButton(
                           onPressed: () {},
-                          icon: FaIcon(
-                            FontAwesomeIcons.chartColumn,
+                          icon: Icon(
+                            LucideIcons.chartColumn,
                             color: theme.colorScheme.secondary.withAlpha(150),
                           ),
                         ),
@@ -96,10 +97,11 @@ class StretchExerciseScreen extends StatelessWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? const FaIcon(FontAwesomeIcons.solidCircleCheck)
+                              ? const Icon(LucideIcons.circleCheck)
                               : null,
                           label: Text(
                             value.name.capitalizeFirst(),
+                            style: theme.textTheme.titleLarge,
                           ),
                           selected: isSelected,
                           onSelected: (bool selected) {
@@ -108,14 +110,17 @@ class StretchExerciseScreen extends StatelessWidget {
                         );
                       }).toList(),
                     ),
-                    // AUTO-INTERVAL SWITCH.
+                    // Auto-Interval Switch.
                     if (mode == StretchMode.interval)
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Text('Auto'),
+                            Text(
+                              'Auto',
+                              style: theme.textTheme.titleMedium,
+                            ),
                             Switch(
                               value: IntervalTimer.sAutoIntervalOn.watch(
                                 context,
@@ -152,6 +157,9 @@ class StretchExerciseScreen extends StatelessWidget {
                       heroTag: 'stretchReset',
                       elevation: 0,
                       onPressed: () async {
+                        // Give a little bzzz.
+                        await HapticFeedback.lightImpact();
+
                         if (mode == StretchMode.stopwatch) {
                           await StopwatchTimer().resetTimer();
                         } else {
@@ -159,16 +167,16 @@ class StretchExerciseScreen extends StatelessWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.solidCircleXmark),
+                      child: const Icon(LucideIcons.circleX),
                     ),
                     const SizedBox(width: 8),
                     // Start/Pause FAB.
                     FloatingActionButton.large(
                       heroTag: 'stretchPlay',
-                      elevation: 4,
+                      elevation: 0,
                       onPressed: () async {
-                        // Critical for PWA: Initialize audio on first user tap.
-                        await AudioService().initialize();
+                        // Give a little bzzz.
+                        await HapticFeedback.lightImpact();
 
                         if (mode == StretchMode.stopwatch) {
                           isStopwatchRunning
@@ -176,9 +184,9 @@ class StretchExerciseScreen extends StatelessWidget {
                               : await StopwatchTimer().startTimer();
                         } else {
                           if (isRestRunning) {
-                            RestTimer().pauseTimer();
+                            await RestTimer().pauseTimer();
                           } else if (isIntervalRunning) {
-                            IntervalTimer().pauseTimer();
+                            await IntervalTimer().pauseTimer();
                           } else {
                             await IntervalTimer().startTimer();
                           }
@@ -188,8 +196,8 @@ class StretchExerciseScreen extends StatelessWidget {
                           (mode == StretchMode.stopwatch
                               ? isStopwatchRunning
                               : (isIntervalRunning || isRestRunning))
-                          ? const FaIcon(FontAwesomeIcons.solidCirclePause)
-                          : const FaIcon(FontAwesomeIcons.solidCirclePlay),
+                          ? const Icon(LucideIcons.circlePause)
+                          : const Icon(LucideIcons.circlePlay),
                     ),
                     const SizedBox(width: 8),
                     // Add set FAB.
@@ -209,8 +217,8 @@ class StretchExerciseScreen extends StatelessWidget {
                           );
                           await StopwatchTimer().resetTimer();
                         } else {
-                          IntervalTimer().pauseTimer();
-                          RestTimer().pauseTimer();
+                          await IntervalTimer().pauseTimer();
+                          await RestTimer().pauseTimer();
 
                           // Log the full prescribed interval + rest.
                           final int stretchMs =
@@ -230,11 +238,43 @@ class StretchExerciseScreen extends StatelessWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const FaIcon(FontAwesomeIcons.circlePlus),
+                      child: const Icon(LucideIcons.circlePlus),
                     ),
                   ],
                 ),
               ],
+            ),
+          ),
+          const Divider(),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              itemCount: exercise.sets.length,
+              itemBuilder: (BuildContext context, int index) {
+                final int displayIndex = exercise.sets.length - index;
+                final StretchSet set = exercise.sets.reversed.toList()[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      child: Text(displayIndex.toString()),
+                    ),
+                    title: Text(
+                      set.restDuration == Duration.zero
+                          ? set.totalDuration.inMilliseconds.formatHMMSSCC()
+                          : 'STRETCH: ${set.stretchDuration.inMilliseconds.formatHMMSSCC()} REST: '
+                                '${set.restDuration.inSeconds.formatMSS()}',
+                    ),
+                    subtitle: Text(
+                      set.restDuration == Duration.zero
+                          ? 'STOPWATCH'
+                          : 'INTERVAL',
+                    ),
+                    trailing: const Icon(Icons.more_vert),
+                  ),
+                );
+              },
             ),
           ),
         ],

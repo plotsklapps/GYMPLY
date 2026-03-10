@@ -56,7 +56,10 @@ class TotalTimer {
     });
   }
 
-  void pauseTimer() {
+  Future<void> pauseTimer() async {
+    // Give a little bzzz.
+    await HapticFeedback.lightImpact();
+
     _timer?.cancel();
     _timer = null;
     sTotalTimerRunning.value = false;

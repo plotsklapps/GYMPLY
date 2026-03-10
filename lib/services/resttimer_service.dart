@@ -40,7 +40,8 @@ class RestTimer {
     // Immediate guard to prevent concurrent timers during async gaps.
     if (_timer != null || sRestTimerRunning.value) return;
 
-    // Critical: Ensure Audio context is primed while we are in the tap callback.
+    // Critical: Ensure Audio context is primed while we are in the
+    // tap callback.
     unawaited(AudioService().initialize());
 
     sRestTimerRunning.value = true;
@@ -82,7 +83,10 @@ class RestTimer {
     });
   }
 
-  void pauseTimer() {
+  Future<void> pauseTimer() async {
+    // Give a little bzzz.
+    await HapticFeedback.lightImpact();
+
     _timer?.cancel();
     _timer = null;
     _endTime = null;

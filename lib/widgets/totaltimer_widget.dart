@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class TotalTimerWidget extends StatelessWidget {
@@ -53,17 +53,18 @@ class TotalTimerWidget extends StatelessWidget {
                 await totalTimer.resetTimer();
               },
               child: FloatingActionButton(
-                heroTag: 'TotalTimerWidgetFAB1',
+                heroTag: 'TotalTimerWidgetFAB',
+                elevation: 0,
                 onPressed: () async {
                   if (isTotalTimerRunning) {
-                    totalTimer.pauseTimer();
+                    await totalTimer.pauseTimer();
                   } else {
                     await totalTimer.startTimer();
                   }
                 },
                 child: isTotalTimerRunning
-                    ? const FaIcon(FontAwesomeIcons.solidCirclePause)
-                    : const FaIcon(FontAwesomeIcons.solidCirclePlay),
+                    ? const Icon(LucideIcons.circlePause)
+                    : const Icon(LucideIcons.circlePlay),
               ),
             ),
           ],
