@@ -57,4 +57,3 @@ Since GYMPLY is distributed as a native Android APK via GitHub (without the Play
 ## ⚠️ Important Notes
 *   **Raw URL:** Ensure `UpdateService.dart` always points to the **Raw** GitHub URL (e.g., `https://raw.githubusercontent.com/.../version.json`).
 *   **First Install:** The very first time a user updates this way, Android will ask: *"Allow GYMPLY to install apps from this source?"* The user must select **Allow**.
-*   **Firebase:** This project is now **Firebase-Free**. No hosting or initialization is required.
