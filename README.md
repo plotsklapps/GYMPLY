@@ -5,14 +5,14 @@
 [![Platform](https://img.shields.io/badge/Platform-Android%20%26%20iOS-orange.svg)]()
 
 **GYMPLY.** is a straightforward, ad-free, and 100% local fitness tracking application built with Flutter.<br>
-We believe your workout data is yours alone, which is why **GYMPLY. collects absolutely no data** and **runs entirely offline**.<br>
+We believe your workout data is yours alone, which is why GYMPLY. **collects absolutely no data** and **runs entirely offline**.<br>
 Simplicity and privacy are at the core of everything we do.
 
 ---
 
 ## ✨ Key Features
 
-### 1. Ultimate Privacy & Offline Use (USP)
+### 1. Ultimate Privacy & Offline Use
 *   **100% Local Storage:** All your workout logs, metrics, and settings are stored only on your device.<br>
 *   **No Data Collection:** We do not track usage, metrics, or personal information. Ever.<br>
 *   **Ad-Free Experience:** Completely free of advertisements.
