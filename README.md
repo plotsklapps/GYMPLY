@@ -52,6 +52,8 @@ None.
 2. **Install** to Android phone;
 3. **Updates** can be requested from within the app.
 
+---
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! As this is an open-source project focused on simplicity and privacy, contributions that enhance functionality without compromising the local-only nature are highly appreciated.<br>
@@ -61,11 +63,11 @@ Please read our **[Contribution Guidelines](CONTRIBUTING.md)** for details on ho
 
 ## 📄 License & Assets Scope
 
-This project is licensed under the **GNU General Public License v3.0 (GPLv3)** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)** - see the **[LICENSE](LICENSE.md)** file for details.
 
 **IMPORTANT NOTE ON ASSETS:**
 The source code and underlying logic of **GYMPLY.** are released under GPLv3.<br>
-However, the entire contents of the `/assets/` folder, which contains the high-quality exercise images, are **EXCLUDED** from this open-source license. These assets represent a significant investment and are proprietary.<br>
+However, the entire contents of the `/assets/` folder, which contains the high-quality exercise images, are **EXCLUDED** from this open-source license and project. These assets represent a significant investment and are proprietary.<br>
 If you fork or copy this repository, you **MUST** create or acquire your own set of exercise assets to replace the excluded folder for the application to function fully.
 
 ---
