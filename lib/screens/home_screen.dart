@@ -7,7 +7,7 @@ import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:gymply/sheets/menu_sheet.dart';
+import 'package:gymply/modals/menu_sheet.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

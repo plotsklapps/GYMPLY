@@ -5,6 +5,7 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
@@ -213,10 +214,16 @@ class WorkoutService {
     sWorkoutHistory.value = _workoutBox.values.toList();
 
     // Pause the timer.
-    TotalTimer().pauseTimer();
+    await TotalTimer().pauseTimer();
 
     // Log the save.
     _logger.i('WorkoutService: Workout saved ${sWorkoutHistory.value.length}');
+
+    // Show toast to user.
+    ToastService.showSuccess(
+      title: 'Workout saved',
+      subtitle: 'Your workout data has been securely stored to your device.',
+    );
   }
 
   // Add exercise to sActiveWorkout Signal.

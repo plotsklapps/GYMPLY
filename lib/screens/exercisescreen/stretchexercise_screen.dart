@@ -8,7 +8,7 @@ import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:gymply/sheets/intervaltimer_sheet.dart';
+import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 

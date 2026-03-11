@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -103,20 +104,23 @@ class UpdateService {
           _logger.i('UpdateService: App is up to date.');
 
           // Show toast to user.
-          toastification.show(
-            type: ToastificationType.success,
-            title: const Text('Up to Date'),
-            description: Text(
-              'You are running the latest version: $currentVersionName '
-              '($currentBuildNumber).',
-            ),
-            autoCloseDuration: const Duration(seconds: 5),
+          ToastService.showSuccess(
+            title: 'Up to Date',
+            subtitle:
+                'You are running the latest version: $currentVersionName '
+                '($currentBuildNumber)',
           );
         }
       } else {
         // Log warning.
         _logger.w(
           'UpdateService: Server returned status code ${response.statusCode}',
+        );
+
+        // Show toast to user.
+        ToastService.showWarning(
+          title: 'Server status ${response.statusCode}',
+          subtitle: 'Could not download the new version...',
         );
         throw Exception('Server error: ${response.statusCode}');
       }
@@ -128,11 +132,9 @@ class UpdateService {
       sUpdateError.value = 'Update check failed.';
 
       // Show toast to user.
-      toastification.show(
-        type: ToastificationType.error,
-        title: const Text('Check Failed'),
-        description: Text('Error: $e'),
-        autoCloseDuration: const Duration(seconds: 5),
+      ToastService.showError(
+        title: 'Update check failed',
+        subtitle: '$e',
       );
     } finally {
       // Set Signal.
@@ -161,6 +163,13 @@ class UpdateService {
         _logger.w(
           'UpdateService: Server returned status code ${response.statusCode}',
         );
+
+        // Show toast to user.
+        ToastService.showWarning(
+          title: 'Server status ${response.statusCode}',
+          subtitle: 'Could not download the new version...',
+        );
+
         throw Exception('Failed to download file: ${response.statusCode}');
       }
 
@@ -212,11 +221,9 @@ class UpdateService {
       );
 
       // Show toast to user.
-      toastification.show(
-        type: ToastificationType.success,
-        title: const Text('Download Complete'),
-        description: const Text('Opening the installer now...'),
-        autoCloseDuration: const Duration(seconds: 3),
+      ToastService.showSuccess(
+        title: 'Download Complete',
+        subtitle: 'Opening installer now...',
       );
 
       // Use OpenFilex to trigger the Android package installer.
@@ -235,13 +242,9 @@ class UpdateService {
       sUpdateError.value = 'Failed to download update.';
 
       // Show toast to user.
-      toastification.show(
-        type: ToastificationType.error,
-        title: const Text('Download Failed'),
-        description: const Text(
-          'Could not download or install the new version.',
-        ),
-        autoCloseDuration: const Duration(seconds: 5),
+      ToastService.showError(
+        title: 'Download Failed',
+        subtitle: 'Could not download or install the new version...',
       );
     }
   }
