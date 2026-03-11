@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:gymply/services/backup_service.dart';
@@ -26,9 +28,13 @@ class MenuModal extends StatelessWidget {
       context,
     );
 
-    // Backup Signals.
-    final bool isBackupProcessing = backupService.sIsProcessing.watch(context);
+    // Backup/Restore Signals.
+    final bool isBackingUp = backupService.sIsBackingUp.watch(context);
+    final bool isRestoring = backupService.sIsRestoring.watch(context);
     final double backupProgress = backupService.sProgress.watch(context);
+
+    // Master processing state to disable all buttons during any activity.
+    final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
 
     // Use whichever progress is active.
     final double currentProgress = updateProgress > 0
@@ -115,10 +121,12 @@ class MenuModal extends StatelessWidget {
               child: LinearProgressIndicator(value: currentProgress),
             ),
           ListTile(
-            onTap: (isChecking || isBackupProcessing)
+            onTap: isAnyProcessing
                 ? null
-                : () => _showBackupOptions(context),
-            leading: isBackupProcessing
+                : () async {
+                    await backupService.backupToLocal();
+                  },
+            leading: isBackingUp
                 ? const SizedBox(
                     width: 24,
                     height: 24,
@@ -126,13 +134,25 @@ class MenuModal extends StatelessWidget {
                   )
                 : const Icon(LucideIcons.save),
             title: const Text('Backup Data'),
-            subtitle: const Text('Save your workout history'),
+            subtitle: const Text('Save your workout history to device'),
           ),
           ListTile(
-            onTap: (isChecking || isBackupProcessing)
+            onTap: isAnyProcessing
                 ? null
-                : () => _showRestoreOptions(context),
-            leading: isBackupProcessing
+                : () async {
+                    final Uint8List? bytes = await backupService
+                        .pickLocalBackup();
+                    if (bytes != null && context.mounted) {
+                      final bool confirm = await _showRestoreConfirm(context);
+                      if (confirm) {
+                        await backupService.applyRestore(bytes);
+                      } else {
+                        // User cancelled confirmation, reset signal.
+                        backupService.cancelRestore();
+                      }
+                    }
+                  },
+            leading: isRestoring
                 ? const SizedBox(
                     width: 24,
                     height: 24,
@@ -140,7 +160,7 @@ class MenuModal extends StatelessWidget {
                   )
                 : const Icon(LucideIcons.fileUp),
             title: const Text('Restore Data'),
-            subtitle: const Text('Load data from a backup'),
+            subtitle: const Text('Load data from a backup file'),
           ),
           const Divider(),
           FutureBuilder<PackageInfo>(
@@ -153,7 +173,7 @@ class MenuModal extends StatelessWidget {
                       : 'Checking...';
 
                   return ListTile(
-                    onTap: (isChecking || isBackupProcessing)
+                    onTap: isAnyProcessing
                         ? null
                         : () async {
                             await UpdateService().checkForUpdates();
@@ -196,79 +216,47 @@ class MenuModal extends StatelessWidget {
     );
   }
 
-  Future<void> _showBackupOptions(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
+  Future<bool> _showRestoreConfirm(BuildContext context) async {
+    final bool? result = await showModalBottomSheet<bool>(
       showDragHandle: true,
+      isScrollControlled: true,
+      context: context,
       builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text('Backup Destination'),
+              const Text('Restore Backup'),
               const Divider(),
-              ListTile(
-                leading: const Icon(LucideIcons.smartphone),
-                title: const Text('Save to Device'),
-                subtitle: const Text('Store a .zip file on your phone'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await backupService.backupToLocal(context);
-                },
+              const Text(
+                'This will overwrite all current data. This action '
+                'cannot be undone.',
               ),
-              ListTile(
-                leading: const Icon(LucideIcons.cloud),
-                title: const Text('Google Drive Sync'),
-                subtitle: const Text(
-                  'Store your data in your private Drive folder',
-                ),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await backupService.backupToCloud(context);
-                },
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('CANCEL'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('RESTORE'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         );
       },
     );
-  }
-
-  Future<void> _showRestoreOptions(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text('Restore Source'),
-              const Divider(),
-              ListTile(
-                leading: const Icon(LucideIcons.file),
-                title: const Text('From Local File'),
-                subtitle: const Text('Select a .zip file from your phone'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await backupService.restoreFromLocal(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.cloud),
-                title: const Text('From Google Drive'),
-                subtitle: const Text('Download your data from the cloud'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await backupService.restoreFromCloud(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    return result ?? false;
   }
 }

@@ -35,7 +35,6 @@ void main() async {
     ..registerAdapter(DurationAdapter())
     ..registerAdapter(SettingsAdapter());
 
-  // Initialize Services.
   // ExerciseService loads raw image assets.
   await exerciseService.init();
   // WorkoutService loads favorites, settings and history.

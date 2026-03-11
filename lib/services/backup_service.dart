@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:gymply/services/googledrive_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:hive_ce/hive.dart';
@@ -27,9 +25,13 @@ class BackupService {
   final Logger _logger = Logger();
 
   // Signals for tracking state.
-  final Signal<bool> sIsProcessing = Signal<bool>(
+  final Signal<bool> sIsBackingUp = Signal<bool>(
     false,
-    debugLabel: 'sIsProcessing',
+    debugLabel: 'sIsBackingUp',
+  );
+  final Signal<bool> sIsRestoring = Signal<bool>(
+    false,
+    debugLabel: 'sIsRestoring',
   );
   final Signal<double> sProgress = Signal<double>(0, debugLabel: 'sProgress');
 
@@ -61,7 +63,7 @@ class BackupService {
       final ZipEncoder zipEncoder = ZipEncoder();
       final List<int> zipBytes = zipEncoder.encode(archive);
       return Uint8List.fromList(zipBytes);
-    } on Exception catch (e) {
+    } catch (e) {
       // Log error.
       _logger.e('BackupService: ZIP generation failed: $e');
 
@@ -72,8 +74,8 @@ class BackupService {
   }
 
   // Create backup and save it LOCALLY.
-  Future<void> backupToLocal(BuildContext context) async {
-    sIsProcessing.value = true;
+  Future<void> backupToLocal() async {
+    sIsBackingUp.value = true;
     sProgress.value = 0;
 
     try {
@@ -117,7 +119,7 @@ class BackupService {
         // Log warning.
         _logger.w('BackupService: Local backup cancelled.');
       }
-    } on Exception catch (e) {
+    } catch (e) {
       // Log error.
       _logger.e('BackupService: Local backup failed: $e');
 
@@ -126,224 +128,99 @@ class BackupService {
     } finally {
       // Refresh app.
       await workoutService.init();
-      sIsProcessing.value = false;
+      sIsBackingUp.value = false;
       sProgress.value = 0;
     }
   }
 
-  // Create backup and sync it to GOOGLE DRIVE.
-  Future<void> backupToCloud(BuildContext context) async {
-    sIsProcessing.value = true;
+  // Pick backup from a LOCAL file.
+  Future<Uint8List?> pickLocalBackup() async {
+    sIsRestoring.value = true;
     sProgress.value = 0;
 
     try {
       // Log status.
-      _logger.i('BackupService: Starting cloud backup...');
-
-      final Uint8List? zipBytes = await _generateBackupBytes();
-      if (zipBytes == null) throw Exception('Failed to create ZIP archive.');
-
-      // Use fixed name for the cloud backup to make syncing easier.
-      const String fileName = 'GYMPLY_cloud_backup.zip';
-
-      final bool success = await googleDriveService.uploadBackup(
-        zipBytes,
-        fileName,
-        onProgress: (double p) => sProgress.value = p,
-      );
-
-      if (success) {
-        // Log success.
-        _logger.i('GoogleDriveService: Backup successfully synced to Cloud.');
-
-        // Show toast to user.
-        ToastService.showSuccess(
-          title: 'Cloud Sync Successful',
-          subtitle: 'Data backed up to Google Drive',
-        );
-      } else {
-        // Log warning.
-        _logger.w('GoogleDriveService: Backup failed to sync to Cloud.');
-
-        // Show toast to user.
-        ToastService.showWarning(
-          title: 'Sync Failed',
-          subtitle:
-              'Could not '
-              'connect to Google Drive',
-        );
-
-        throw Exception('Could not connect to Google Drive.');
-      }
-    } on Exception catch (e) {
-      // Log error.
-      _logger.e('BackupService: Cloud backup failed: $e');
-
-      // Show toast to user.
-      ToastService.showError(title: 'Sync Failed', subtitle: '$e');
-    } finally {
-      // Refresh app.
-      await workoutService.init();
-      sIsProcessing.value = false;
-      sProgress.value = 0;
-    }
-  }
-
-  // Restore backup from a LOCAL file.
-  Future<void> restoreFromLocal(BuildContext context) async {
-    sIsProcessing.value = true;
-    sProgress.value = 0;
-
-    try {
-      // Log status.
-      _logger.i('BackupService: Restoring from local file...');
+      _logger.i('BackupService: Picking local file...');
 
       final FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: <String>['zip'],
+        withData: true,
       );
 
-      if (result == null || result.files.single.path == null) return;
-
-      final Uint8List bytes = await File(
-        result.files.single.path!,
-      ).readAsBytes();
-
-      if (context.mounted) {
-        await _applyRestore(context, bytes);
+      if (result == null) {
+        sIsRestoring.value = false;
+        return null;
       }
-    } on Exception catch (e) {
+
+      if (result.files.single.bytes != null) {
+        return result.files.single.bytes;
+      } else if (result.files.single.path != null) {
+        return await File(result.files.single.path!).readAsBytes();
+      }
+      sIsRestoring.value = false;
+      return null;
+    } catch (e) {
       // Log error.
-      _logger.e('BackupService: Local restore failed: $e');
+      _logger.e('BackupService: Local pick failed: $e');
 
       // Show toast to user.
       ToastService.showError(title: 'Restore Failed', subtitle: '$e');
-
-      // Refresh app.
-      await workoutService.init();
-    } finally {
-      sIsProcessing.value = false;
-      sProgress.value = 0;
-    }
-  }
-
-  // Restore backup from Google Drive.
-  Future<void> restoreFromCloud(BuildContext context) async {
-    sIsProcessing.value = true;
-    sProgress.value = 0;
-
-    try {
-      // Log status.
-      _logger.i('BackupService: Restoring from Google Drive...');
-
-      const String fileName = 'gymply_cloud_backup.zip';
-      final List<int>? zipBytes = await googleDriveService.downloadBackup(
-        fileName,
-        onProgress: (double p) => sProgress.value = p,
-      );
-
-      if (zipBytes == null) {
-        throw Exception('No backup found on Google Drive.');
-      }
-
-      if (context.mounted) {
-        await _applyRestore(context, Uint8List.fromList(zipBytes));
-      }
-    } on Exception catch (e) {
-      // Log error.
-      _logger.e('BackupService: Cloud restore failed: $e');
-
-      // Show toast to user.
-      ToastService.showError(title: 'Restore Failed', subtitle: '$e');
-
-      // Refresh app.
-      await workoutService.init();
-    } finally {
-      sIsProcessing.value = false;
-      sProgress.value = 0;
+      sIsRestoring.value = false;
+      return null;
     }
   }
 
   /// Shared helper to apply the ZIP contents to Hive.
-  Future<void> _applyRestore(BuildContext context, Uint8List zipBytes) async {
-    // Confirm restore.
-    final bool? confirm = await showModalBottomSheet<bool>(
-      showDragHandle: true,
-      isScrollControlled: true,
-      context: context,
-      builder: _buildRestoreConfirm,
-    );
+  Future<void> applyRestore(Uint8List zipBytes) async {
+    sIsRestoring.value = true;
+    try {
+      await Hive.close();
+      final Directory appDocDir = await getApplicationDocumentsDirectory();
+      final String hivePath = appDocDir.path;
 
-    if (confirm != true) return;
-
-    await Hive.close();
-    final Directory appDocDir = await getApplicationDocumentsDirectory();
-    final String hivePath = appDocDir.path;
-
-    // Clear existing.
-    final Directory hiveDir = Directory(hivePath);
-    if (hiveDir.existsSync()) {
-      for (final FileSystemEntity file in hiveDir.listSync()) {
-        if (file is File &&
-            (file.path.endsWith('.hive') || file.path.endsWith('.lock'))) {
-          await file.delete();
+      // Clear existing.
+      final Directory hiveDir = Directory(hivePath);
+      if (hiveDir.existsSync()) {
+        for (final FileSystemEntity file in hiveDir.listSync()) {
+          if (file is File &&
+              (file.path.endsWith('.hive') || file.path.endsWith('.lock'))) {
+            await file.delete();
+          }
         }
       }
-    }
 
-    // Extract.
-    final Archive archive = ZipDecoder().decodeBytes(zipBytes);
-    for (final ArchiveFile file in archive) {
-      if (file.isFile) {
-        final List<int> data = file.content as List<int>;
-        File('$hivePath${Platform.pathSeparator}${file.name}')
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
+      // Extract.
+      final Archive archive = ZipDecoder().decodeBytes(zipBytes);
+      for (final ArchiveFile file in archive) {
+        if (file.isFile) {
+          final List<int> data = file.content as List<int>;
+          File('$hivePath${Platform.pathSeparator}${file.name}')
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        }
       }
-    }
 
-    _logger.i('BackupService: Restore complete.');
-    await workoutService.init();
-    ToastService.showSuccess(
-      title: 'Restore Successful',
-      subtitle: 'Your data has been restored.',
-    );
+      _logger.i('BackupService: Restore complete.');
+      await workoutService.init();
+      ToastService.showSuccess(
+        title: 'Restore Successful',
+        subtitle: 'Your data has been restored.',
+      );
+    } catch (e) {
+      _logger.e('BackupService: Apply restore failed: $e');
+      ToastService.showError(title: 'Restore Failed', subtitle: '$e');
+      await workoutService.init();
+    } finally {
+      sIsRestoring.value = false;
+      sProgress.value = 0;
+    }
   }
 
-  Widget _buildRestoreConfirm(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Text('Restore Backup'),
-          const Divider(),
-          const Text(
-            'This will overwrite all current data. This action '
-            'cannot be undone.',
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('CANCEL'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('RESTORE'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+  // Cancel restore if user cancels the confirmation dialog.
+  void cancelRestore() {
+    sIsRestoring.value = false;
+    sProgress.value = 0;
   }
 }
 
