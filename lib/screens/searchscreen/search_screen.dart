@@ -4,7 +4,8 @@ import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
 import 'package:gymply/services/filter_service.dart';
-import 'package:gymply/services/sheet_service.dart';
+import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/loading_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -159,10 +160,18 @@ class _SearchScreenState extends State<SearchScreen> {
                       searchFocusNode.unfocus();
 
                       // Show ExerciseDetailSheet.
-                      await SheetService.showSheet(
+                      final bool confirm = await ModalService.showModal(
                         context: context,
                         child: ExerciseDetailSheet(exercise: exercise),
                       );
+
+                      if (confirm) {
+                        // Add the exercise to today's workout.
+                        workoutService.addExercise(exercise);
+
+                        // Navigate to WorkoutScreen.
+                        navigateToTab(AppTabs.workout);
+                      }
                     },
                     child: Card(
                       child: Stack(

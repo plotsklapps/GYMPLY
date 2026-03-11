@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
-import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
@@ -139,7 +139,7 @@ class CardioExerciseScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     if (mode != CardioMode.stopwatch) {
-                      await SheetService.showSheet(
+                      await ModalService.showModal(
                         context: context,
                         child: const IntervalTimerSheet(),
                       );
@@ -218,8 +218,8 @@ class CardioExerciseScreen extends StatelessWidget {
                           );
                           await StopwatchTimer().resetTimer();
                         } else {
-                          IntervalTimer().pauseTimer();
-                          RestTimer().pauseTimer();
+                          await IntervalTimer().pauseTimer();
+                          await RestTimer().pauseTimer();
 
                           // Log the full prescribed interval + rest.
                           final int cardioMs =

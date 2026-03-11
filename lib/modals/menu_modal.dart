@@ -2,7 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/services/backup_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -17,18 +19,18 @@ class MenuModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    // Watch Signals.
+    // Watch settings Signals.
     final bool isDarkMode = sDarkMode.watch(context);
     final bool isWakelock = sWakelock.watch(context);
     final FlexScheme flexScheme = sFlexScheme.watch(context);
 
-    // Update Signals.
+    // Watch update Signals.
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
     final double updateProgress = UpdateService().sDownloadProgress.watch(
       context,
     );
 
-    // Backup/Restore Signals.
+    // Watch backup/restore Signals.
     final bool isBackingUp = backupService.sIsBackingUp.watch(context);
     final bool isRestoring = backupService.sIsRestoring.watch(context);
     final double backupProgress = backupService.sProgress.watch(context);
@@ -48,6 +50,8 @@ class MenuModal extends StatelessWidget {
         children: <Widget>[
           Text('MENU', style: theme.textTheme.titleLarge),
           const Divider(),
+
+          // Wakelock ListTile.
           SwitchListTile(
             title: isWakelock
                 ? const Text('Keep screen on')
@@ -65,6 +69,8 @@ class MenuModal extends StatelessWidget {
               sWakelock.value = value;
             },
           ),
+
+          // ThemeMode ListTile.
           SwitchListTile(
             title: isDarkMode
                 ? const Text('Use dark mode')
@@ -80,6 +86,8 @@ class MenuModal extends StatelessWidget {
               sDarkMode.value = value;
             },
           ),
+
+          // Colors ListTile.
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
@@ -115,11 +123,15 @@ class MenuModal extends StatelessWidget {
             ),
           ),
           const Divider(),
+
+          // ProgressIndicator (Conditional).
           if (currentProgress > 0)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: LinearProgressIndicator(value: currentProgress),
             ),
+
+          // Backup ListTile.
           ListTile(
             onTap: isAnyProcessing
                 ? null
@@ -130,12 +142,14 @@ class MenuModal extends StatelessWidget {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(),
                   )
-                : const Icon(LucideIcons.save),
+                : const Icon(LucideIcons.hardDriveDownload),
             title: const Text('Backup Data'),
             subtitle: const Text('Save your workout history to device'),
           ),
+
+          // Restore ListTile.
           ListTile(
             onTap: isAnyProcessing
                 ? null
@@ -143,7 +157,10 @@ class MenuModal extends StatelessWidget {
                     final Uint8List? bytes = await backupService
                         .pickLocalBackup();
                     if (bytes != null && context.mounted) {
-                      final bool confirm = await _showRestoreConfirm(context);
+                      final bool confirm = await ModalService.showModal(
+                        context: context,
+                        child: const RestoreBackupModal(),
+                      );
                       if (confirm) {
                         await backupService.applyRestore(bytes);
                       } else {
@@ -156,13 +173,15 @@ class MenuModal extends StatelessWidget {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(),
                   )
-                : const Icon(LucideIcons.fileUp),
+                : const Icon(LucideIcons.hardDriveUpload),
             title: const Text('Restore Data'),
             subtitle: const Text('Load data from a backup file'),
           ),
           const Divider(),
+
+          // App Update ListTile.
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder:
@@ -182,7 +201,7 @@ class MenuModal extends StatelessWidget {
                         ? const SizedBox(
                             width: 24,
                             height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(),
                           )
                         : const Icon(LucideIcons.cloudSync),
                     title: const Text('Check for Updates'),
@@ -191,6 +210,8 @@ class MenuModal extends StatelessWidget {
                   );
                 },
           ),
+
+          // GitHub ListTile.
           ListTile(
             onTap: () async {
               await launchUrl(
@@ -202,6 +223,8 @@ class MenuModal extends StatelessWidget {
             subtitle: const Text('Source code, file issues'),
             trailing: const Icon(LucideIcons.chevronRight),
           ),
+
+          // Licenses ListTile.
           ListTile(
             onTap: () async {
               showLicensePage(context: context);
@@ -214,49 +237,5 @@ class MenuModal extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<bool> _showRestoreConfirm(BuildContext context) async {
-    final bool? result = await showModalBottomSheet<bool>(
-      showDragHandle: true,
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text('Restore Backup'),
-              const Divider(),
-              const Text(
-                'This will overwrite all current data. This action '
-                'cannot be undone.',
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('CANCEL'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('RESTORE'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-    return result ?? false;
   }
 }

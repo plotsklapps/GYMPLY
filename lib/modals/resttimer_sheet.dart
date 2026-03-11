@@ -46,7 +46,9 @@ class RestTimerSheet extends StatelessWidget {
                   // Reset to default.
                   RestTimer.sInitialRestTime.value = 60;
                   RestTimer.sElapsedRestTime.value = 60;
-                  Navigator.pop(context);
+
+                  // Pop and return false.
+                  Navigator.pop(context, false);
                 },
                 child: const Text('DEFAULT'),
               ),
@@ -55,7 +57,8 @@ class RestTimerSheet extends StatelessWidget {
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () {
-                  Navigator.pop(context);
+                  // Pop and return true.
+                  Navigator.pop(context, true);
                 },
                 child: const Text('CONFIRM'),
               ),

@@ -36,7 +36,7 @@ class BackupService {
   final Signal<double> sProgress = Signal<double>(0, debugLabel: 'sProgress');
 
   // Helper: Generate the ZIP bytes of all Hive data.
-  Future<Uint8List?> _generateBackupBytes() async {
+  Future<Uint8List?> _generateZIPBackup() async {
     try {
       // Get the directory where Hive stores its boxes.
       final Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -44,9 +44,11 @@ class BackupService {
 
       // Close all open Hive boxes to ensure data consistency.
       await Hive.close();
-      _logger.d('BackupService: Closed all Hive boxes.');
 
-      // Create the ZIP archive.
+      // Log status.
+      _logger.i('BackupService: Closed all Hive boxes. Hivepath: $hivePath');
+
+      // Create ZIP archive (archive package).
       final Archive archive = Archive();
       final Directory hiveDir = Directory(hivePath);
       final List<FileSystemEntity> files = hiveDir.listSync();
@@ -62,8 +64,9 @@ class BackupService {
 
       final ZipEncoder zipEncoder = ZipEncoder();
       final List<int> zipBytes = zipEncoder.encode(archive);
+
       return Uint8List.fromList(zipBytes);
-    } catch (e) {
+    } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: ZIP generation failed: $e');
 
@@ -73,7 +76,7 @@ class BackupService {
     }
   }
 
-  // Create backup and save it LOCALLY.
+  // Create LOCAL backup.
   Future<void> backupToLocal() async {
     sIsBackingUp.value = true;
     sProgress.value = 0;
@@ -82,7 +85,7 @@ class BackupService {
       // Log status.
       _logger.i('BackupService: Starting local backup...');
 
-      // Request Storage Permission ONLY for older Android versions (API < 30).
+      // Request Storage Permission Android versions < 30.
       if (Platform.isAndroid) {
         final AndroidDeviceInfo androidInfo =
             await DeviceInfoPlugin().androidInfo;
@@ -92,11 +95,11 @@ class BackupService {
         }
       }
 
-      final Uint8List? zipBytes = await _generateBackupBytes();
+      final Uint8List? zipBytes = await _generateZIPBackup();
       if (zipBytes == null) throw Exception('Failed to create ZIP archive.');
 
       final String timestamp = DateFormat('yyyyMMdd').format(DateTime.now());
-      final String fileName = 'gymply_$timestamp.zip';
+      final String fileName = 'GYMPLY_$timestamp.zip';
 
       final String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: 'Save Backup',
@@ -113,13 +116,13 @@ class BackupService {
         // Show toast to user.
         ToastService.showSuccess(
           title: 'Backup Successful',
-          subtitle: 'Data saved to your device',
+          subtitle: 'Data saved to your device: $outputFile',
         );
       } else {
         // Log warning.
         _logger.w('BackupService: Local backup cancelled.');
       }
-    } catch (e) {
+    } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: Local backup failed: $e');
 
@@ -133,7 +136,7 @@ class BackupService {
     }
   }
 
-  // Pick backup from a LOCAL file.
+  // Restore LOCAL backup.
   Future<Uint8List?> pickLocalBackup() async {
     sIsRestoring.value = true;
     sProgress.value = 0;
@@ -159,8 +162,9 @@ class BackupService {
         return await File(result.files.single.path!).readAsBytes();
       }
       sIsRestoring.value = false;
+
       return null;
-    } catch (e) {
+    } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: Local pick failed: $e');
 
@@ -171,9 +175,10 @@ class BackupService {
     }
   }
 
-  /// Shared helper to apply the ZIP contents to Hive.
+  /// Helper to apply ZIP contents to Hive.
   Future<void> applyRestore(Uint8List zipBytes) async {
     sIsRestoring.value = true;
+
     try {
       await Hive.close();
       final Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -190,7 +195,7 @@ class BackupService {
         }
       }
 
-      // Extract.
+      // Extract Archive.
       final Archive archive = ZipDecoder().decodeBytes(zipBytes);
       for (final ArchiveFile file in archive) {
         if (file.isFile) {
@@ -201,15 +206,25 @@ class BackupService {
         }
       }
 
+      // Log success.
       _logger.i('BackupService: Restore complete.');
-      await workoutService.init();
+
+      // Show toast to user.
       ToastService.showSuccess(
         title: 'Restore Successful',
         subtitle: 'Your data has been restored.',
       );
-    } catch (e) {
+
+      // Refresh app.
+      await workoutService.init();
+    } on Object catch (e) {
+      // Log error.
       _logger.e('BackupService: Apply restore failed: $e');
+
+      // Show toast to user.
       ToastService.showError(title: 'Restore Failed', subtitle: '$e');
+
+      // Refresh app.
       await workoutService.init();
     } finally {
       sIsRestoring.value = false;
@@ -217,11 +232,12 @@ class BackupService {
     }
   }
 
-  // Cancel restore if user cancels the confirmation dialog.
+  // Cancel restore if user cancels confirmation sheet.
   void cancelRestore() {
     sIsRestoring.value = false;
     sProgress.value = 0;
   }
 }
 
+// Globalize BackupService.
 final BackupService backupService = BackupService();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/filter_service.dart';
-import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -104,7 +103,8 @@ class ExerciseDetailSheet extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  // Pop and return false.
+                  Navigator.pop(context, false);
                 },
                 child: const Text('CANCEL'),
               ),
@@ -113,14 +113,8 @@ class ExerciseDetailSheet extends StatelessWidget {
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () {
-                  // Add the exercise to today's workout
-                  workoutService.addExercise(exercise);
-
-                  // Pop the sheet.
-                  Navigator.pop(context);
-
-                  // Navigate to WorkoutScreen.
-                  navigateToTab(AppTabs.workout);
+                  // Pop and return true.
+                  Navigator.pop(context, true);
                 },
                 child: const Text('ADD TO WORKOUT'),
               ),

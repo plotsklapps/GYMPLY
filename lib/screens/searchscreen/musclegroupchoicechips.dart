@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/filter_service.dart';
-import 'package:gymply/services/scroll_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -18,7 +17,7 @@ class MuscleGroupChoiceChips extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ScrollService(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: <Widget>[

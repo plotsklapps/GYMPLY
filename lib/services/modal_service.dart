@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/services/scroll_service.dart';
 
-class SheetService {
-  static Future<void> showSheet({
+// Service to show consistent modal sheets that return a bool.
+class ModalService {
+  static Future<bool> showModal({
     required BuildContext context,
     required Widget child,
   }) async {
-    await showModalBottomSheet<void>(
+    final bool? result = await showModalBottomSheet<bool>(
       showDragHandle: true,
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-          child: ScrollService(scrollDirection: Axis.vertical, child: child),
+          child: SingleChildScrollView(child: child),
         );
       },
     );
+    return result ?? false;
   }
 }

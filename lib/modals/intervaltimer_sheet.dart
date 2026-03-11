@@ -48,7 +48,9 @@ class IntervalTimerSheet extends StatelessWidget {
                   // Reset to default.
                   IntervalTimer.sInitialIntervalTime.value = 60000;
                   IntervalTimer.sElapsedIntervalTime.value = 60000;
-                  Navigator.pop(context);
+
+                  // Pop and return false.
+                  Navigator.pop(context, false);
                 },
                 child: const Text('DEFAULT'),
               ),
@@ -57,7 +59,8 @@ class IntervalTimerSheet extends StatelessWidget {
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () {
-                  Navigator.pop(context);
+                  // Pop and return true;
+                  Navigator.pop(context, true);
                 },
                 child: const Text('CONFIRM'),
               ),
