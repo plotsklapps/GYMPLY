@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/exercisedetail_sheet.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/sheet_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:gymply/modals/exercisedetail_sheet.dart';
 import 'package:gymply/signals/loading_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';

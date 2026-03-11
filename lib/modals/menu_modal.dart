@@ -19,8 +19,21 @@ class MenuModal extends StatelessWidget {
     final bool isDarkMode = sDarkMode.watch(context);
     final bool isWakelock = sWakelock.watch(context);
     final FlexScheme flexScheme = sFlexScheme.watch(context);
+
+    // Update Signals.
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
-    final double progress = UpdateService().sDownloadProgress.watch(context);
+    final double updateProgress = UpdateService().sDownloadProgress.watch(
+      context,
+    );
+
+    // Backup Signals.
+    final bool isBackupProcessing = backupService.sIsProcessing.watch(context);
+    final double backupProgress = backupService.sProgress.watch(context);
+
+    // Use whichever progress is active.
+    final double currentProgress = updateProgress > 0
+        ? updateProgress
+        : backupProgress;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
@@ -96,28 +109,40 @@ class MenuModal extends StatelessWidget {
             ),
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(LucideIcons.save),
-            title: const Text('Backup Data'),
-            subtitle: const Text('Save your workout history to a .zip file'),
-            onTap: () async {
-              await backupService.backupData(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(LucideIcons.fileUp),
-            title: const Text('Restore Data'),
-            subtitle: const Text('Load data from a previous backup'),
-            onTap: () async {
-              await backupService.restoreData(context);
-            },
-          ),
-          const Divider(),
-          if (progress > 0)
+          if (currentProgress > 0)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: LinearProgressIndicator(value: progress),
+              child: LinearProgressIndicator(value: currentProgress),
             ),
+          ListTile(
+            onTap: (isChecking || isBackupProcessing)
+                ? null
+                : () => _showBackupOptions(context),
+            leading: isBackupProcessing
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(LucideIcons.save),
+            title: const Text('Backup Data'),
+            subtitle: const Text('Save your workout history'),
+          ),
+          ListTile(
+            onTap: (isChecking || isBackupProcessing)
+                ? null
+                : () => _showRestoreOptions(context),
+            leading: isBackupProcessing
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(LucideIcons.fileUp),
+            title: const Text('Restore Data'),
+            subtitle: const Text('Load data from a backup'),
+          ),
+          const Divider(),
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder:
@@ -127,16 +152,16 @@ class MenuModal extends StatelessWidget {
                       : 'Checking...';
 
                   return ListTile(
-                    onTap: isChecking
+                    onTap: (isChecking || isBackupProcessing)
                         ? null
                         : () async {
                             await UpdateService().checkForUpdates();
                           },
                     leading: isChecking
                         ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(),
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(LucideIcons.cloudSync),
                     title: const Text('Check for Updates'),
@@ -167,6 +192,82 @@ class MenuModal extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showBackupOptions(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Backup Destination'),
+              const Divider(),
+              ListTile(
+                leading: const Icon(LucideIcons.smartphone),
+                title: const Text('Save to Device'),
+                subtitle: const Text('Store a .zip file on your phone'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await backupService.backupToLocal(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.cloud),
+                title: const Text('Google Drive Sync'),
+                subtitle: const Text(
+                  'Store your data in your private Drive folder',
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await backupService.backupToCloud(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showRestoreOptions(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Restore Source'),
+              const Divider(),
+              ListTile(
+                leading: const Icon(LucideIcons.file),
+                title: const Text('From Local File'),
+                subtitle: const Text('Select a .zip file from your phone'),
+                onTap: () {
+                  Navigator.pop(context);
+                  backupService.restoreFromLocal(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.cloud),
+                title: const Text('From Google Drive'),
+                subtitle: const Text('Download your data from the cloud'),
+                onTap: () {
+                  Navigator.pop(context);
+                  backupService.restoreFromCloud(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
