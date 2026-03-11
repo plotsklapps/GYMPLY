@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:toastification/toastification.dart';
 
 class UpdateService {
   // Singleton pattern.
@@ -87,15 +85,12 @@ class UpdateService {
           _logger.i('UpdateService: New version detected!');
 
           // Show toast to user.
-          toastification.show(
-            type: ToastificationType.info,
-            title: const Text('Update Found'),
-            description: Text(
-              'Upgrading from $currentVersionName ($currentBuildNumber) '
-              'to $latestVersionName ($latestBuildNumber). '
-              'Starting download...',
-            ),
-            autoCloseDuration: const Duration(seconds: 5),
+          ToastService.showSuccess(
+            title: 'Update Found',
+            subtitle:
+                'Upgrading from $currentVersionName ($currentBuildNumber) '
+                'to $latestVersionName ($latestBuildNumber). '
+                'Starting download...',
           );
 
           await _downloadAndInstall(downloadUrl);

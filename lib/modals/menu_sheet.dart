@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -57,6 +58,24 @@ class MenuSheet extends StatelessWidget {
               sDarkMode.value = value;
             },
           ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(LucideIcons.save),
+            title: const Text('Backup Data'),
+            subtitle: const Text('Save your workout history to a .zip file'),
+            onTap: () async {
+              await backupService.backupData(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(LucideIcons.fileUp),
+            title: const Text('Restore Data'),
+            subtitle: const Text('Load data from a previous backup'),
+            onTap: () async {
+              await backupService.restoreData(context);
+            },
+          ),
+          const Divider(),
           if (progress > 0)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
