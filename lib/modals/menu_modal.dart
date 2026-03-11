@@ -148,7 +148,8 @@ class MenuModal extends StatelessWidget {
             builder:
                 (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
                   final String versionDisplay = snapshot.hasData
-                      ? '${snapshot.data!.version}+${snapshot.data!.buildNumber}'
+                      ? '${snapshot.data!.version}+'
+                            '${snapshot.data!.buildNumber}'
                       : 'Checking...';
 
                   return ListTile(
@@ -250,18 +251,18 @@ class MenuModal extends StatelessWidget {
                 leading: const Icon(LucideIcons.file),
                 title: const Text('From Local File'),
                 subtitle: const Text('Select a .zip file from your phone'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  backupService.restoreFromLocal(context);
+                  await backupService.restoreFromLocal(context);
                 },
               ),
               ListTile(
                 leading: const Icon(LucideIcons.cloud),
                 title: const Text('From Google Drive'),
                 subtitle: const Text('Download your data from the cloud'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  backupService.restoreFromCloud(context);
+                  await backupService.restoreFromCloud(context);
                 },
               ),
             ],
