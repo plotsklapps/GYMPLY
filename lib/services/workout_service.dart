@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -84,6 +85,8 @@ class WorkoutService {
       sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
       // Set Wakelock.
       sWakelock.value = settings.isWakelock;
+      // Set FlexScheme.
+      sFlexScheme.value = settings.flexScheme;
 
       // Log settings.
       _logger.i(
@@ -91,7 +94,8 @@ class WorkoutService {
         'DarkMode: ${settings.darkMode}, '
         'RestTime: ${settings.initialRestTime}, '
         'Favorites: ${sFavoriteExercises.value.length}, '
-        'Wakelock: ${settings.isWakelock}',
+        'Wakelock: ${settings.isWakelock}, '
+        'FlexScheme: ${settings.flexScheme}',
       );
     }
 
@@ -158,6 +162,7 @@ class WorkoutService {
       final int restTime = RestTimer.sInitialRestTime.value;
       final List<int> favorites = sFavoriteExercises.value;
       final bool isWakelock = sWakelock.value;
+      final FlexScheme flexScheme = sFlexScheme.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -165,6 +170,7 @@ class WorkoutService {
         initialRestTime: restTime,
         favoriteExercises: favorites,
         isWakelock: isWakelock,
+        flexScheme: flexScheme,
       );
 
       // Store to Hive.
@@ -535,7 +541,7 @@ class WorkoutService {
       ..remove(set);
 
     // Create updated StretchExercise Object.
-    final StretchExercise updatedExercise = exercise.copyWith(
+    final WorkoutExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
     );
 

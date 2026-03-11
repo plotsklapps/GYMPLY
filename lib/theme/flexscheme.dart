@@ -3,6 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
+enum FlexSchemes { shark, indigo, redWine }
+
+final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
+  FlexScheme.shark,
+  debugLabel: 'sFlexScheme',
+);
+
 final Signal<bool> sDarkMode = Signal<bool>(true, debugLabel: 'sDarkMode');
 
 final Signal<bool> sWakelock = Signal<bool>(true, debugLabel: 'sWakelock');
@@ -18,7 +25,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
   if (sDarkMode.value) {
     return FlexThemeData.dark(
       // Using FlexColorScheme built-in FlexScheme enum based colors.
-      scheme: FlexScheme.shark,
+      scheme: sFlexScheme.value,
       // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
       // Convenience direct styling properties.
@@ -193,7 +200,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
   } else {
     return FlexThemeData.light(
       // Using FlexColorScheme built-in FlexScheme enum based colors
-      scheme: FlexScheme.shark,
+      scheme: sFlexScheme.value,
       // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
       // Convenience direct styling properties.
