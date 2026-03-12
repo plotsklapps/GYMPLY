@@ -23,13 +23,16 @@ class SettingsAdapter extends TypeAdapter<Settings> {
           ? const <int>[]
           : (fields[2] as List).cast<int>(),
       isWakelock: fields[3] == null ? true : fields[3] as bool,
+      flexScheme: fields[4] == null
+          ? FlexScheme.shark
+          : fields[4] as FlexScheme,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -37,7 +40,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(2)
       ..write(obj.favoriteExercises)
       ..writeByte(3)
-      ..write(obj.isWakelock);
+      ..write(obj.isWakelock)
+      ..writeByte(4)
+      ..write(obj.flexScheme);
   }
 
   @override
