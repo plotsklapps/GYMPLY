@@ -264,8 +264,10 @@ class CardioExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'CARDIO: ${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
-                                ' REST: ${set.restDuration.inSeconds.formatMSS()}',
+                          : 'CARDIO: '
+                                '${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
+                                ' REST: '
+                                '${set.restDuration.inSeconds.formatMSS()}',
                     ),
                     subtitle: Text(
                       set.restDuration == Duration.zero

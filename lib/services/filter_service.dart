@@ -66,61 +66,63 @@ class FilterService {
     if (type == null && query.isEmpty) return <ExercisePath>[];
 
     // 3. APPLY FILTERING CRITERIA (AND Logic)
-    final List<ExercisePath> filtered = all.where((ExercisePath ex) {
-      // A. Tokenized Search Logic (Fuzzy search)
-      // Allows for queries like "bench chest" to find "Chest - Bench Press"
-      if (query.isNotEmpty) {
-        final List<String> tokens = query
-            .split(' ')
-            .where((String t) => t.isNotEmpty)
-            .toList();
-        final String searchBlob =
-            '${ex.exerciseName} ${ex.id} ${ex.muscleSegment} ${ex.equipmentSegment}'
-                .toLowerCase();
+    final List<ExercisePath> filtered =
+        all.where((ExercisePath ex) {
+            // A. Tokenized Search Logic (Fuzzy search)
+            // Allows for queries like "bench chest" to find "Chest - Bench Press"
+            if (query.isNotEmpty) {
+              final List<String> tokens = query
+                  .split(' ')
+                  .where((String t) => t.isNotEmpty)
+                  .toList();
+              final String searchBlob =
+                  '${ex.exerciseName} ${ex.id} ${ex.muscleSegment} ${ex.equipmentSegment}'
+                      .toLowerCase();
 
-        // Match ONLY if EVERY token typed by the user exists somewhere in the exercise data.
-        if (!tokens.every(searchBlob.contains)) return false;
-      }
+              // Match ONLY if EVERY token typed by the user exists somewhere in the exercise data.
+              if (!tokens.every(searchBlob.contains)) return false;
+            }
 
-      // B. WorkoutType (Strength / Cardio / Stretch) logic.
-      if (type != null) {
-        if (type == WorkoutType.strength) {
-          if (ex.muscleSegment == 'Cardio' || ex.equipmentSegment == 'Stretch') {
-            return false;
-          }
-        } else if (type == WorkoutType.cardio) {
-          if (ex.muscleSegment != 'Cardio') return false;
-        } else if (type == WorkoutType.stretch) {
-          if (ex.equipmentSegment != 'Stretch') return false;
-        }
-      }
+            // B. WorkoutType (Strength / Cardio / Stretch) logic.
+            if (type != null) {
+              if (type == WorkoutType.strength) {
+                if (ex.muscleSegment == 'Cardio' ||
+                    ex.equipmentSegment == 'Stretch') {
+                  return false;
+                }
+              } else if (type == WorkoutType.cardio) {
+                if (ex.muscleSegment != 'Cardio') return false;
+              } else if (type == WorkoutType.stretch) {
+                if (ex.equipmentSegment != 'Stretch') return false;
+              }
+            }
 
-      // C. Muscle Group Chip logic.
-      if (muscle != null && type != WorkoutType.cardio) {
-        if (ex.muscleSegment.toLowerCase() != muscle.name.toLowerCase()) {
-          return false;
-        }
-      }
+            // C. Muscle Group Chip logic.
+            if (muscle != null && type != WorkoutType.cardio) {
+              if (ex.muscleSegment.toLowerCase() != muscle.name.toLowerCase()) {
+                return false;
+              }
+            }
 
-      // D. Equipment Chip logic.
-      if (equip != null && type != WorkoutType.stretch) {
-        if (ex.equipmentSegment.toLowerCase() != equip.name.toLowerCase()) {
-          return false;
-        }
-      }
+            // D. Equipment Chip logic.
+            if (equip != null && type != WorkoutType.stretch) {
+              if (ex.equipmentSegment.toLowerCase() !=
+                  equip.name.toLowerCase()) {
+                return false;
+              }
+            }
 
-      return true;
-    }).toList();
+            return true;
+          }).toList()
+          // 4. APPLY SORTING (Favorites first, then Alphabetical)
+          ..sort((ExercisePath a, ExercisePath b) {
+            final bool isAFavorite = favorites.contains(int.parse(a.id));
+            final bool isBFavorite = favorites.contains(int.parse(b.id));
 
-    // 4. APPLY SORTING (Favorites first, then Alphabetical)
-    filtered.sort((ExercisePath a, ExercisePath b) {
-      final bool isAFavorite = favorites.contains(int.parse(a.id));
-      final bool isBFavorite = favorites.contains(int.parse(b.id));
-
-      if (isAFavorite && !isBFavorite) return -1;
-      if (!isAFavorite && isBFavorite) return 1;
-      return a.exerciseName.compareTo(b.exerciseName);
-    });
+            if (isAFavorite && !isBFavorite) return -1;
+            if (!isAFavorite && isBFavorite) return 1;
+            return a.exerciseName.compareTo(b.exerciseName);
+          });
 
     return filtered;
   }, debugLabel: 'cFilteredExercises');

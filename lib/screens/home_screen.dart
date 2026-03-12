@@ -117,10 +117,12 @@ class _HomeScreenState extends State<HomeScreen>
                 // Give a little bzzz.
                 await HapticFeedback.lightImpact();
 
-                await ModalService.showModal(
-                  context: context,
-                  child: const MenuModal(),
-                );
+                if (context.mounted) {
+                  await ModalService.showModal(
+                    context: context,
+                    child: const MenuModal(),
+                  );
+                }
               },
               child: const Icon(LucideIcons.circleChevronUp),
             ),

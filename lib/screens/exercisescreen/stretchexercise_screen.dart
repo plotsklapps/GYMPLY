@@ -263,7 +263,9 @@ class StretchExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'STRETCH: ${set.stretchDuration.inMilliseconds.formatHMMSSCC()} REST: '
+                          : 'STRETCH: '
+                                '${set.stretchDuration.inMilliseconds.formatHMMSSCC()} '
+                                'REST: '
                                 '${set.restDuration.inSeconds.formatMSS()}',
                     ),
                     subtitle: Text(

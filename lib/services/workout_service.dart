@@ -317,16 +317,17 @@ class WorkoutService {
 
   // Reorder exercise within the active workout.
   void moveExercise(int oldIndex, int newIndex) {
+    int adjustedNewIndex = newIndex;
     final List<WorkoutExercise> currentExercises = List<WorkoutExercise>.from(
       sActiveWorkout.value.exercises,
     );
 
-    if (newIndex > oldIndex) {
-      newIndex -= 1;
+    if (adjustedNewIndex > oldIndex) {
+      adjustedNewIndex -= 1;
     }
 
     final WorkoutExercise item = currentExercises.removeAt(oldIndex);
-    currentExercises.insert(newIndex, item);
+    currentExercises.insert(adjustedNewIndex, item);
 
     // Update sActiveWorkout Signal.
     sActiveWorkout.value = sActiveWorkout.value.copyWith(
@@ -334,7 +335,9 @@ class WorkoutService {
       totalDuration: TotalTimer.sElapsedTotalTime.value,
     );
 
-    _logger.i('WorkoutService: Moved exercise from $oldIndex to $newIndex');
+    _logger.i(
+      'WorkoutService: Moved exercise from $oldIndex to $adjustedNewIndex',
+    );
   }
 
   // Update input state for StrengthExercise.

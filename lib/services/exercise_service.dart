@@ -66,7 +66,7 @@ class ExerciseService {
       _logger.i(
         'Loaded ${parsedExercisePaths.length} exercises into ExerciseService.',
       );
-    } catch (e) {
+    } on Object catch (e) {
       _logger.e('Failed to load exercises: $e');
       sAllExercisePaths.value = <ExercisePath>[];
     } finally {
