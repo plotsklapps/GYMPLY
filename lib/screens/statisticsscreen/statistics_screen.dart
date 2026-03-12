@@ -70,7 +70,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: <Widget>[
           // QUARTERLY MONTH STATS (Heatmap).
           SizedBox(
-            height: 94,
+            height: 100,
             child: PageView.builder(
               controller: _pageController,
               itemCount: 4,

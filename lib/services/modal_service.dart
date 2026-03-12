@@ -5,15 +5,20 @@ class ModalService {
   static Future<bool> showModal({
     required BuildContext context,
     required Widget child,
+    bool scrollable = true,
   }) async {
     final bool? result = await showModalBottomSheet<bool>(
       showDragHandle: true,
       isScrollControlled: true,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+      ),
       context: context,
       builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-          child: SingleChildScrollView(child: child),
+          child: scrollable ? SingleChildScrollView(child: child) : child,
         );
       },
     );
