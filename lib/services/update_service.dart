@@ -8,6 +8,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
   // Singleton pattern.
@@ -38,27 +39,29 @@ class UpdateService {
   static const String _versionUrl =
       'https://raw.githubusercontent.com/plotsklapps/gymply/master/version.json';
 
-  // Checks for updates and returns true if new version is available.
+  // URL for the Play Store page.
+  static const String _playStoreUrl =
+      'https://play.google.com/store/apps/details?id=dev.plotsklapps.gymply';
+
+  // Checks for updates and handles logic based on installer source.
   Future<void> checkForUpdates() async {
-    // Set Signals.
     sIsCheckingForUpdate.value = true;
     sUpdateError.value = null;
 
-    // Log the status.
     _logger.i('UpdateService: Starting update check...');
 
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       final String currentVersionName = packageInfo.version;
       final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+      final String installerStore = packageInfo.installerStore ?? '';
 
-      // Log local version.
       _logger.i(
         'UpdateService: Local version: $currentVersionName '
-        '($currentBuildNumber)',
+        '($currentBuildNumber), Installer: $installerStore',
       );
 
-      // Fetch metadata using native HttpClient.
+      // Fetch metadata.
       final HttpClientRequest request = await _httpClient.getUrl(
         Uri.parse(_versionUrl),
       );
@@ -73,170 +76,110 @@ class UpdateService {
         final int latestBuildNumber = data['version_code'] as int;
         final String downloadUrl = data['download_url'] as String;
 
-        // Log remote version.
         _logger.i(
           'UpdateService: Remote version: $latestVersionName '
           '($latestBuildNumber)',
         );
 
-        // Compare versions.
         if (latestBuildNumber > currentBuildNumber) {
-          // Log the update.
           _logger.i('UpdateService: New version detected!');
 
-          // Show toast to user.
-          ToastService.showSuccess(
-            title: 'Update Found',
-            subtitle:
-                'Upgrading from $currentVersionName ($currentBuildNumber) '
-                'to $latestVersionName ($latestBuildNumber). '
-                'Starting download...',
-          );
+          // SMART LOGIC: Check where the app was installed from.
+          // common installer stores: 'com.android.vending' (Play Store),
+          // 'com.google.android.packageinstaller' (Manual APK), etc.
+          final bool isPlayStore = installerStore == 'com.android.vending';
 
-          await _downloadAndInstall(downloadUrl);
+          if (isPlayStore) {
+            // PLAY STORE VERSION: Just point to the store.
+            _logger.i('UpdateService: Redirecting to Play Store...');
+            ToastService.showSuccess(
+              title: 'Update Available',
+              subtitle:
+                  'Opening the Google Play Store for version '
+                  '$latestVersionName...',
+            );
+
+            final Uri url = Uri.parse(_playStoreUrl);
+            if (await canLaunchUrl(url)) {
+              await launchUrl(url, mode: LaunchMode.externalApplication);
+            }
+          } else {
+            // GITHUB/APK VERSION: Download and install manually.
+            _logger.i('UpdateService: Starting GitHub APK download...');
+            ToastService.showSuccess(
+              title: 'Update Found',
+              subtitle: 'Downloading version $latestVersionName from GitHub...',
+            );
+            await _downloadAndInstall(downloadUrl);
+          }
         } else {
-          // Log no update.
           _logger.i('UpdateService: App is up to date.');
-
-          // Show toast to user.
           ToastService.showSuccess(
             title: 'Up to Date',
-            subtitle:
-                'You are running the latest version: $currentVersionName '
-                '($currentBuildNumber)',
+            subtitle: 'You are running the latest version: $currentVersionName',
           );
         }
       } else {
-        // Log warning.
-        _logger.w(
-          'UpdateService: Server returned status code ${response.statusCode}',
-        );
-
-        // Show toast to user.
-        ToastService.showWarning(
-          title: 'Server status ${response.statusCode}',
-          subtitle: 'Could not download the new version...',
-        );
         throw Exception('Server error: ${response.statusCode}');
       }
     } on Exception catch (e) {
-      // Log error.
       _logger.e('UpdateService: Error checking for updates: $e');
-
-      // Set Signal.
       sUpdateError.value = 'Update check failed.';
-
-      // Show toast to user.
       ToastService.showError(
         title: 'Update check failed',
         subtitle: '$e',
       );
     } finally {
-      // Set Signal.
       sIsCheckingForUpdate.value = false;
     }
   }
 
-  // Download and install update.
+  // Download and install update (only for non-Play Store installs).
   Future<void> _downloadAndInstall(String url) async {
-    // Log the status.
     _logger.i('UpdateService: Initiating download from $url');
 
     try {
       final Directory tempDir = await getTemporaryDirectory();
-      final String filePath = '${tempDir.path}/gymply_update.apk';
+      final String filePath = '${tempDir.path}/GYMPLY-update.apk';
       final File file = File(filePath);
 
-      // Download using native HttpClient.
       final HttpClientRequest request = await _httpClient.getUrl(
         Uri.parse(url),
       );
       final HttpClientResponse response = await request.close();
 
       if (response.statusCode != HttpStatus.ok) {
-        // Log warning.
-        _logger.w(
-          'UpdateService: Server returned status code ${response.statusCode}',
-        );
-
-        // Show toast to user.
-        ToastService.showWarning(
-          title: 'Server status ${response.statusCode}',
-          subtitle: 'Could not download the new version...',
-        );
-
         throw Exception('Failed to download file: ${response.statusCode}');
       }
 
       final int totalBytes = response.contentLength;
       int receivedBytes = 0;
-
       final IOSink sink = file.openWrite();
 
-      // Listen to response stream to track progress and save file.
-      await response
-          .listen(
-            (List<int> chunk) {
-              receivedBytes += chunk.length;
-              sink.add(chunk);
+      try {
+        // Use await for to process the stream safely and await completion.
+        await for (final List<int> chunk in response) {
+          receivedBytes += chunk.length;
+          sink.add(chunk);
+          if (totalBytes != -1) {
+            sDownloadProgress.value = receivedBytes / totalBytes;
+          }
+        }
+      } finally {
+        await sink.flush();
+        await sink.close();
+      }
 
-              if (totalBytes != -1) {
-                // Set Signal.
-                sDownloadProgress.value = receivedBytes / totalBytes;
-
-                // Log progress occasionally (every 10%) to avoid spamming.
-                if ((receivedBytes / totalBytes * 100).toInt() % 10 == 0) {
-                  _logger.d(
-                    'UpdateService: Download progress: '
-                    '${(receivedBytes / totalBytes * 100).toStringAsFixed(0)}%',
-                  );
-                }
-              }
-            },
-            onDone: () async {
-              await sink.flush();
-              await sink.close();
-            },
-            onError: (Exception e) async {
-              await sink.close();
-              throw e;
-            },
-            cancelOnError: true,
-          )
-          .asFuture<void>();
-
-      // Log download completion.
-      _logger.i('UpdateService: Download complete. File saved to $filePath');
+      _logger.i('UpdateService: Download complete. Requesting install...');
       sDownloadProgress.value = 0;
 
-      // Log install status.
-      _logger.i(
-        'UpdateService: Requesting Android Package Installer to open '
-        'the APK...',
-      );
-
-      // Show toast to user.
-      ToastService.showSuccess(
-        title: 'Download Complete',
-        subtitle: 'Opening installer now...',
-      );
-
-      // Use OpenFilex to trigger the Android package installer.
       final OpenResult result = await OpenFilex.open(filePath);
-
       if (result.type != ResultType.done) {
-        // Log error.
-        _logger.e('UpdateService: OpenFilex failed: ${result.message}');
         throw Exception('Installer failed: ${result.message}');
       }
     } on Exception catch (e) {
-      // Log error.
       _logger.e('UpdateService: Download/Install error: $e');
-
-      // Set Signal.
       sUpdateError.value = 'Failed to download update.';
-
-      // Show toast to user.
       ToastService.showError(
         title: 'Download Failed',
         subtitle: 'Could not download or install the new version...',

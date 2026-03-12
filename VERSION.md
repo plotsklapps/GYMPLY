@@ -1,6 +1,6 @@
-# GYMPLY Release & Update Guide
+# GYMPLY. Release & Update Guide
 
-Since GYMPLY is distributed as a native Android APK via GitHub (without the Play Store), follow this specific workflow to push updates to your users.
+Since GYMPLY. is distributed as a native Android APK via GitHub (without the Play Store), follow this specific workflow to push updates to your users.
 
 ---
 
@@ -14,17 +14,17 @@ Since GYMPLY is distributed as a native Android APK via GitHub (without the Play
     flutter build apk --release
     ```
 *   **Locate & Rename:** Go to `build/app/outputs/flutter-apk/`.
-*   **Rename** `app-release.apk` to `gymply.apk`.
+*   **Rename** `app-release.apk` to `GYMPLY..apk`.
 
 ### 2. Host the APK (GitHub Releases)
 *   Go to your repository on GitHub.com.
 *   Click **Releases** (on the right sidebar) ➡️ **Draft a new release**.
 *   **Tag:** Create a new tag (e.g., `v0.0.1.9`).
-*   **Upload:** Drag and drop your renamed `gymply.apk` into the "Attach binaries" box.
+*   **Upload:** Drag and drop your renamed `GYMPLY..apk` into the "Attach binaries" box.
 *   **Publish:** Click **Publish release**.
 *   **Get Direct Link:** 
     1. Once published, look at the "Assets" section of the release.
-    2. Right-click on `gymply.apk`.
+    2. Right-click on `GYMPLY..apk`.
     3. Select **Copy link address**. (You will need this for the next step).
 
 ### 3. Update Metadata (GitHub Push)
@@ -56,4 +56,4 @@ Since GYMPLY is distributed as a native Android APK via GitHub (without the Play
 
 ## ⚠️ Important Notes
 *   **Raw URL:** Ensure `UpdateService.dart` always points to the **Raw** GitHub URL (e.g., `https://raw.githubusercontent.com/.../version.json`).
-*   **First Install:** The very first time a user updates this way, Android will ask: *"Allow GYMPLY to install apps from this source?"* The user must select **Allow**.
+*   **First Install:** The very first time a user updates this way, Android will ask: *"Allow GYMPLY. to install apps from this source?"* The user must select **Allow**.

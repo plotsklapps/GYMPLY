@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -10,7 +9,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:signals/signals_flutter.dart';
 
 class BackupService {
@@ -76,51 +75,58 @@ class BackupService {
     }
   }
 
-  // Create LOCAL backup.
+  // Create LOCAL backup and share it.
   Future<void> backupToLocal() async {
     sIsBackingUp.value = true;
     sProgress.value = 0;
 
     try {
       // Log status.
-      _logger.i('BackupService: Starting local backup...');
-
-      // Request Storage Permission Android versions < 30.
-      if (Platform.isAndroid) {
-        final AndroidDeviceInfo androidInfo =
-            await DeviceInfoPlugin().androidInfo;
-        if (androidInfo.version.sdkInt < 30) {
-          final PermissionStatus status = await Permission.storage.request();
-          if (status.isDenied) throw Exception('Storage permission denied.');
-        }
-      }
+      _logger.i('BackupService: Starting local backup for sharing...');
 
       final Uint8List? zipBytes = await _generateZIPBackup();
       if (zipBytes == null) throw Exception('Failed to create ZIP archive.');
 
+      // Get temporary directory to save the ZIP file for sharing.
+      final Directory tempDir = await getTemporaryDirectory();
       final String timestamp = DateFormat('yyyyMMdd').format(DateTime.now());
       final String fileName = 'GYMPLY_$timestamp.zip';
+      final String filePath = '${tempDir.path}/$fileName';
 
-      final String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save Backup',
-        fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: <String>['zip'],
-        bytes: zipBytes,
+      final File zipFile = File(filePath);
+      await zipFile.writeAsBytes(zipBytes);
+
+      // Log status.
+      _logger.i(
+        'BackupService: ZIP created at $filePath. Opening share sheet...',
       );
 
-      if (outputFile != null) {
+      // Share file using share_plus API.
+      final ShareResult result = await SharePlus.instance.share(
+        ShareParams(
+          files: <XFile>[XFile(filePath)],
+          subject: 'GYMPLY. Backup $timestamp',
+        ),
+      );
+
+      if (result.status == ShareResultStatus.success) {
         // Log success.
-        _logger.i('BackupService: Local backup saved to $outputFile');
+        _logger.i('BackupService: Local backup shared successfully.');
 
         // Show toast to user.
         ToastService.showSuccess(
-          title: 'Backup Successful',
-          subtitle: 'Data saved to your device: $outputFile',
+          title: 'Backup Exported',
+          subtitle: 'Your backup was successfully shared/saved.',
         );
       } else {
-        // Log warning.
-        _logger.w('BackupService: Local backup cancelled.');
+        // Log warning/cancel.
+        _logger.w('BackupService: Sharing was cancelled or failed.');
+      }
+
+      // Cleanup: remove temporary file.
+      if (await zipFile.exists()) {
+        await zipFile.delete();
+        _logger.d('BackupService: Temporary backup file deleted.');
       }
     } on Object catch (e) {
       // Log error.
