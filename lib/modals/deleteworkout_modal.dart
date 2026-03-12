@@ -5,8 +5,6 @@ class DeleteWorkoutModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[

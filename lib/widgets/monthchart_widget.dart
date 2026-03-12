@@ -68,8 +68,9 @@ class MonthChart extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: value > 0
                                   ? theme.colorScheme.secondary
-                                  : theme.colorScheme.outlineVariant
-                                        .withOpacity(0.2),
+                                  : theme.colorScheme.outlineVariant.withAlpha(
+                                      80,
+                                    ),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),

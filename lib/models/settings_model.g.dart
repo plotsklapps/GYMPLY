@@ -17,15 +17,13 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Settings(
-      darkMode: fields[0] as bool,
-      initialRestTime: (fields[1] as num).toInt(),
+      darkMode: fields[0] == null ? true : fields[0] as bool,
+      initialRestTime: fields[1] == null ? 60 : (fields[1] as num).toInt(),
+      flexSchemeIndex: fields[4] == null ? 0 : (fields[4] as num).toInt(),
       favoriteExercises: fields[2] == null
-          ? const <int>[]
+          ? []
           : (fields[2] as List).cast<int>(),
       isWakelock: fields[3] == null ? true : fields[3] as bool,
-      flexScheme: fields[4] == null
-          ? FlexScheme.shark
-          : fields[4] as FlexScheme,
     );
   }
 
@@ -42,7 +40,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(3)
       ..write(obj.isWakelock)
       ..writeByte(4)
-      ..write(obj.flexScheme);
+      ..write(obj.flexSchemeIndex);
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -95,7 +94,7 @@ class WorkoutService {
         'RestTime: ${settings.initialRestTime}, '
         'Favorites: ${sFavoriteExercises.value.length}, '
         'Wakelock: ${settings.isWakelock}, '
-        'FlexScheme: ${settings.flexScheme}',
+        'FlexScheme: ${settings.flexScheme.name}',
       );
     }
 
@@ -171,7 +170,7 @@ class WorkoutService {
       final int restTime = RestTimer.sInitialRestTime.value;
       final List<int> favorites = sFavoriteExercises.value;
       final bool isWakelock = sWakelock.value;
-      final FlexScheme flexScheme = sFlexScheme.value;
+      final FlexSchemes flexScheme = sFlexScheme.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -179,7 +178,7 @@ class WorkoutService {
         initialRestTime: restTime,
         favoriteExercises: favorites,
         isWakelock: isWakelock,
-        flexScheme: flexScheme,
+        flexSchemeIndex: flexScheme.index,
       );
 
       // Store to Hive.

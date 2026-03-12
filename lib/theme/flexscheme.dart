@@ -5,8 +5,21 @@ import 'package:signals/signals_flutter.dart';
 
 enum FlexSchemes { shark, greyLaw, sanJuanBlue }
 
-final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
-  FlexScheme.shark,
+extension FlexSchemesExtension on FlexSchemes {
+  FlexScheme get libraryScheme {
+    switch (this) {
+      case FlexSchemes.shark:
+        return FlexScheme.shark;
+      case FlexSchemes.greyLaw:
+        return FlexScheme.greyLaw;
+      case FlexSchemes.sanJuanBlue:
+        return FlexScheme.sanJuanBlue;
+    }
+  }
+}
+
+final Signal<FlexSchemes> sFlexScheme = Signal<FlexSchemes>(
+  FlexSchemes.shark,
   debugLabel: 'sFlexScheme',
 );
 
@@ -22,10 +35,12 @@ const TextTheme _textThemeOverrides = TextTheme(
 );
 
 final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
+  final FlexScheme activeScheme = sFlexScheme.value.libraryScheme;
+
   if (sDarkMode.value) {
     return FlexThemeData.dark(
       // Using FlexColorScheme built-in FlexScheme enum based colors.
-      scheme: sFlexScheme.value,
+      scheme: activeScheme,
       // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
       // Convenience direct styling properties.
@@ -200,7 +215,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
   } else {
     return FlexThemeData.light(
       // Using FlexColorScheme built-in FlexScheme enum based colors
-      scheme: sFlexScheme.value,
+      scheme: activeScheme,
       // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
       // Convenience direct styling properties.

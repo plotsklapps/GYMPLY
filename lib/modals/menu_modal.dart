@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/services/backup_service.dart';
@@ -22,7 +21,7 @@ class MenuModal extends StatelessWidget {
     // Watch settings Signals.
     final bool isDarkMode = sDarkMode.watch(context);
     final bool isWakelock = sWakelock.watch(context);
-    final FlexScheme flexScheme = sFlexScheme.watch(context);
+    final FlexSchemes flexScheme = sFlexScheme.watch(context);
 
     // Watch update Signals.
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
@@ -95,26 +94,26 @@ class MenuModal extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   width: double.infinity,
-                  child: SegmentedButton<FlexScheme>(
-                    segments: const <ButtonSegment<FlexScheme>>[
-                      ButtonSegment<FlexScheme>(
-                        value: FlexScheme.shark,
+                  child: SegmentedButton<FlexSchemes>(
+                    segments: const <ButtonSegment<FlexSchemes>>[
+                      ButtonSegment<FlexSchemes>(
+                        value: FlexSchemes.shark,
                         label: Text('Orange'),
                         icon: Icon(LucideIcons.citrus),
                       ),
-                      ButtonSegment<FlexScheme>(
-                        value: FlexScheme.greyLaw,
+                      ButtonSegment<FlexSchemes>(
+                        value: FlexSchemes.greyLaw,
                         label: Text('Purple'),
                         icon: Icon(LucideIcons.brush),
                       ),
-                      ButtonSegment<FlexScheme>(
-                        value: FlexScheme.sanJuanBlue,
+                      ButtonSegment<FlexSchemes>(
+                        value: FlexSchemes.sanJuanBlue,
                         label: Text('Red'),
                         icon: Icon(LucideIcons.wine),
                       ),
                     ],
-                    selected: <FlexScheme>{flexScheme},
-                    onSelectionChanged: (Set<FlexScheme> newSelection) {
+                    selected: <FlexSchemes>{flexScheme},
+                    onSelectionChanged: (Set<FlexSchemes> newSelection) {
                       sFlexScheme.value = newSelection.first;
                     },
                   ),
