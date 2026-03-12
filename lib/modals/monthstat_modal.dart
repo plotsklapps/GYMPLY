@@ -6,18 +6,17 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/monthchart_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:signals/signals_flutter.dart';
 
 enum WorkoutMetric { volume, reps, sets, time, distance, calories }
 
 class MonthStatModal extends StatefulWidget {
   const MonthStatModal({
     required this.date,
-    required this.workoutDateKeys,
     super.key,
   });
 
   final DateTime date;
-  final Set<String> workoutDateKeys;
 
   @override
   State<MonthStatModal> createState() {
@@ -32,6 +31,20 @@ class _MonthStatModalState extends State<MonthStatModal> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    // Watch Signals to ensure the modal rebuilds on deletion or changes.
+    final List<Workout> history = workoutService.sWorkoutHistory.watch(context);
+    final Workout active = workoutService.sActiveWorkout.watch(context);
+
+    // Calculate workout keys dynamically.
+    final Set<String> workoutDateKeys = history.map((Workout w) {
+      return w.dateKey;
+    }).toSet();
+
+    // Add active workout to keys if it has exercises.
+    if (active.exercises.isNotEmpty) {
+      workoutDateKeys.add(active.dateKey);
+    }
 
     final String monthName = DateFormat(
       'MMMM yyyy',
@@ -54,14 +67,12 @@ class _MonthStatModalState extends State<MonthStatModal> {
     final List<String> weekdays = <String>['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     // Filter workouts for this month.
-    final List<Workout> monthWorkouts = workoutService.sWorkoutHistory.value
-        .where(
-          (Workout w) {
-            return w.dateTime.year == widget.date.year &&
-                w.dateTime.month == widget.date.month;
-          },
-        )
-        .toList();
+    final List<Workout> monthWorkouts = history.where(
+      (Workout w) {
+        return w.dateTime.year == widget.date.year &&
+            w.dateTime.month == widget.date.month;
+      },
+    ).toList();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -116,7 +127,7 @@ class _MonthStatModalState extends State<MonthStatModal> {
               day,
             );
             final String key = DateFormat('yyyyMMdd').format(currentDay);
-            final bool hasWorkout = widget.workoutDateKeys.contains(key);
+            final bool hasWorkout = workoutDateKeys.contains(key);
             final bool isToday =
                 DateFormat('yyyyMMdd').format(DateTime.now()) == key;
 
@@ -124,16 +135,10 @@ class _MonthStatModalState extends State<MonthStatModal> {
               onTap: hasWorkout
                   ? () async {
                       // Find workout in history or active workout.
-                      final Workout? historical = workoutService
-                          .sWorkoutHistory
-                          .value
-                          .where((Workout w) {
-                            return w.dateKey == key;
-                          })
-                          .firstOrNull;
+                      final Workout? historical = history.where((Workout w) {
+                        return w.dateKey == key;
+                      }).firstOrNull;
 
-                      final Workout active =
-                          workoutService.sActiveWorkout.value;
                       final Workout? activeIfMatch =
                           (active.dateKey == key && active.exercises.isNotEmpty)
                           ? active

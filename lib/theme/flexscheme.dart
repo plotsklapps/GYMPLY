@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-enum FlexSchemes { shark, indigo, redWine }
+enum FlexSchemes { shark, greyLaw, sanJuanBlue }
 
 final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
   FlexScheme.shark,

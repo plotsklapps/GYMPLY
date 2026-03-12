@@ -32,7 +32,6 @@ class MonthStat extends StatelessWidget {
           context: context,
           child: MonthStatModal(
             date: date,
-            workoutDateKeys: workoutDateKeys,
           ),
         );
       },

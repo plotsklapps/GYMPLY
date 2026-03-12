@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class WorkoutSummaryModal extends StatelessWidget {
@@ -41,6 +44,48 @@ class WorkoutSummaryModal extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(LucideIcons.circleEllipsis),
+              onSelected: (String value) async {
+                if (value == 'delete') {
+                  // Confirm deletion.
+                  final bool confirm = await ModalService.showModal(
+                    context: context,
+                    child: const DeleteWorkoutModal(),
+                  );
+
+                  if (confirm) {
+                    // Close WorkoutSummary modal first.
+                    if (context.mounted) Navigator.pop(context);
+                    // Perform actual deletion.
+                    await workoutService.deleteWorkout(workout.dateKey);
+                  }
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text('Delete'),
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Center(
+                            child: Icon(
+                              LucideIcons.trash,
+                              color: theme.colorScheme.error,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ];
+              },
             ),
             IconButton(
               onPressed: () {
@@ -215,7 +260,9 @@ class WorkoutSummaryModal extends StatelessWidget {
                 const SizedBox(height: 12),
                 const StatisticsSectionHeader(title: 'EXERCISE BREAKDOWN'),
                 ...workout.exercises.map(
-                  (WorkoutExercise ex) => ExerciseDetailCard(exercise: ex),
+                  (WorkoutExercise ex) {
+                    return ExerciseDetailCard(exercise: ex);
+                  },
                 ),
               ],
             ),

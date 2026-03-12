@@ -103,12 +103,12 @@ class MenuModal extends StatelessWidget {
                         icon: Icon(LucideIcons.citrus),
                       ),
                       ButtonSegment<FlexScheme>(
-                        value: FlexScheme.indigo,
+                        value: FlexScheme.greyLaw,
                         label: Text('Purple'),
                         icon: Icon(LucideIcons.brush),
                       ),
                       ButtonSegment<FlexScheme>(
-                        value: FlexScheme.redWine,
+                        value: FlexScheme.sanJuanBlue,
                         label: Text('Red'),
                         icon: Icon(LucideIcons.wine),
                       ),

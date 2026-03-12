@@ -148,11 +148,20 @@ class WorkoutService {
       // Create Workout Object.
       final Workout workout = sActiveWorkout.value;
 
-      // Store to Hive.
-      await _workoutBox.put(workout.dateKey, workout);
+      // Only auto-save if workout is "real".
+      if (workout.exercises.isNotEmpty || workout.totalDuration > 0) {
+        // Store to Hive.
+        await _workoutBox.put(workout.dateKey, workout);
 
-      // Log save.
-      _logger.d('WorkoutService: Auto-saved workout for ${workout.dateKey}');
+        // Update the history signal so Statistics reflects the changes.
+        sWorkoutHistory.value = _workoutBox.values.toList();
+
+        // Log success.
+        _logger.i('WorkoutService: Auto-saved workout for ${workout.dateKey}');
+      } else {
+        // Log warning.
+        _logger.w('WorkoutService: Skipping auto-save for empty template.');
+      }
     });
 
     // Auto-save settings whenever they change.
@@ -229,6 +238,35 @@ class WorkoutService {
     ToastService.showSuccess(
       title: 'Workout saved',
       subtitle: 'Your workout data has been securely stored to your device.',
+    );
+  }
+
+  // Deletes a workout by its dateKey.
+  Future<void> deleteWorkout(String dateKey) async {
+    // 1. Remove from Hive.
+    await _workoutBox.delete(dateKey);
+
+    // 2. Update history Signal.
+    sWorkoutHistory.value = _workoutBox.values.toList();
+
+    // 3. If it was the active workout, reset it.
+    if (sActiveWorkout.value.dateKey == dateKey) {
+      sActiveWorkout.value = Workout(
+        id: const Uuid().v4(),
+        title: "Today's Workout",
+        dateTime: DateTime.now(),
+        totalDuration: 0,
+      );
+      // Also reset timer.
+      TotalTimer.sElapsedTotalTime.value = 0;
+    }
+
+    _logger.i('WorkoutService: Workout $dateKey deleted.');
+
+    // Show toast.
+    ToastService.showSuccess(
+      title: 'Workout deleted',
+      subtitle: 'The workout has been removed from your history.',
     );
   }
 

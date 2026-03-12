@@ -158,13 +158,19 @@ class StrengthExerciseScreen extends StatelessWidget {
                           PopupMenuItem<String>(
                             value: 'delete',
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Icon(
-                                  LucideIcons.trash,
-                                  color: theme.colorScheme.error,
-                                ),
-                                const SizedBox(width: 8),
                                 const Text('Delete'),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.trash,
+                                      color: theme.colorScheme.error,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
