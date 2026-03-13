@@ -6,6 +6,7 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/monthchart_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum WorkoutMetric { volume, reps, sets, time, distance, calories }
@@ -77,12 +78,29 @@ class _MonthStatModalState extends State<MonthStatModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // Month + Year.
-        Text(
-          monthName,
-          style: theme.textTheme.titleLarge,
+        Row(
+          children: <Widget>[
+            // Empty SizedBox to balance Icon and Text.
+            const SizedBox(width: 48),
+            Expanded(
+              child: Text(
+                // Month + Year.
+                monthName,
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                // Pop and return false.
+                Navigator.pop(context, false);
+              },
+              icon: const Icon(LucideIcons.circleX),
+            ),
+          ],
         ),
-        const Divider(height: 24),
+
+        const Divider(),
 
         // Weekday Header.
         Row(

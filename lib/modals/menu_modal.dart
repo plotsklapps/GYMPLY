@@ -42,199 +42,214 @@ class MenuModal extends StatelessWidget {
         ? updateProgress
         : backupProgress;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text('MENU', style: theme.textTheme.titleLarge),
-          const Divider(),
-
-          // Wakelock ListTile.
-          SwitchListTile(
-            title: isWakelock
-                ? const Text('Keep screen on')
-                : const Text('Use screensaver'),
-            subtitle: isWakelock
-                ? const Text('Prevent screen from turning off')
-                : const Text('Screen will automatically turn off'),
-            secondary: Icon(
-              isWakelock
-                  ? LucideIcons.smartphoneCharging
-                  : LucideIcons.smartphone,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            // Empty SizedBox to balance Icon and Text.
+            const SizedBox(width: 48),
+            Expanded(
+              child: Text(
+                'SETTINGS MENU',
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
-            value: isWakelock,
-            onChanged: (bool value) {
-              sWakelock.value = value;
-            },
-          ),
-
-          // ThemeMode ListTile.
-          SwitchListTile(
-            title: isDarkMode
-                ? const Text('Use dark mode')
-                : const Text('Use light mode'),
-            subtitle: isDarkMode
-                ? const Text('Dark theme for all screens')
-                : const Text('Light theme for all screens'),
-            secondary: Icon(
-              isDarkMode ? LucideIcons.moon : LucideIcons.sun,
+            IconButton(
+              onPressed: () {
+                // Pop and return false.
+                Navigator.pop(context, false);
+              },
+              icon: const Icon(LucideIcons.circleX),
             ),
-            value: isDarkMode,
-            onChanged: (bool value) {
-              sDarkMode.value = value;
-            },
-          ),
+          ],
+        ),
+        const Divider(),
 
-          // Colors ListTile.
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(
-                  width: double.infinity,
-                  child: SegmentedButton<FlexSchemes>(
-                    segments: const <ButtonSegment<FlexSchemes>>[
-                      ButtonSegment<FlexSchemes>(
-                        value: FlexSchemes.shark,
-                        label: Text('Orange'),
-                        icon: Icon(LucideIcons.citrus),
-                      ),
-                      ButtonSegment<FlexSchemes>(
-                        value: FlexSchemes.greyLaw,
-                        label: Text('Purple'),
-                        icon: Icon(LucideIcons.brush),
-                      ),
-                      ButtonSegment<FlexSchemes>(
-                        value: FlexSchemes.sanJuanBlue,
-                        label: Text('Red'),
-                        icon: Icon(LucideIcons.wine),
-                      ),
-                    ],
-                    selected: <FlexSchemes>{flexScheme},
-                    onSelectionChanged: (Set<FlexSchemes> newSelection) {
-                      sFlexScheme.value = newSelection.first;
-                    },
-                  ),
+        // Wakelock ListTile.
+        SwitchListTile(
+          title: isWakelock
+              ? const Text('Keep screen on')
+              : const Text('Use screensaver'),
+          subtitle: isWakelock
+              ? const Text('Prevent screen from turning off')
+              : const Text('Screen will automatically turn off'),
+          secondary: Icon(
+            isWakelock
+                ? LucideIcons.smartphoneCharging
+                : LucideIcons.smartphone,
+          ),
+          value: isWakelock,
+          onChanged: (bool value) {
+            sWakelock.value = value;
+          },
+        ),
+
+        // ThemeMode ListTile.
+        SwitchListTile(
+          title: isDarkMode
+              ? const Text('Use dark mode')
+              : const Text('Use light mode'),
+          subtitle: isDarkMode
+              ? const Text('Dark theme for all screens')
+              : const Text('Light theme for all screens'),
+          secondary: Icon(
+            isDarkMode ? LucideIcons.moon : LucideIcons.sun,
+          ),
+          value: isDarkMode,
+          onChanged: (bool value) {
+            sDarkMode.value = value;
+          },
+        ),
+
+        // Colors ListTile.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<FlexSchemes>(
+                  segments: const <ButtonSegment<FlexSchemes>>[
+                    ButtonSegment<FlexSchemes>(
+                      value: FlexSchemes.shark,
+                      label: Text('Orange'),
+                      icon: Icon(LucideIcons.citrus),
+                    ),
+                    ButtonSegment<FlexSchemes>(
+                      value: FlexSchemes.greyLaw,
+                      label: Text('Purple'),
+                      icon: Icon(LucideIcons.brush),
+                    ),
+                    ButtonSegment<FlexSchemes>(
+                      value: FlexSchemes.sanJuanBlue,
+                      label: Text('Red'),
+                      icon: Icon(LucideIcons.wine),
+                    ),
+                  ],
+                  selected: <FlexSchemes>{flexScheme},
+                  onSelectionChanged: (Set<FlexSchemes> newSelection) {
+                    sFlexScheme.value = newSelection.first;
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const Divider(),
+        ),
+        const Divider(),
 
-          // ProgressIndicator (Conditional).
-          if (currentProgress > 0)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: LinearProgressIndicator(value: currentProgress),
-            ),
-
-          // Backup ListTile.
-          ListTile(
-            onTap: isAnyProcessing
-                ? null
-                : () async {
-                    await backupService.backupToLocal();
-                  },
-            leading: isBackingUp
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(),
-                  )
-                : const Icon(LucideIcons.hardDriveDownload),
-            title: const Text('Backup Data'),
-            subtitle: const Text('Save your workout history to device'),
+        // ProgressIndicator (Conditional).
+        if (currentProgress > 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: LinearProgressIndicator(value: currentProgress),
           ),
 
-          // Restore ListTile.
-          ListTile(
-            onTap: isAnyProcessing
-                ? null
-                : () async {
-                    final Uint8List? bytes = await backupService
-                        .pickLocalBackup();
-                    if (bytes != null && context.mounted) {
-                      final bool confirm = await ModalService.showModal(
-                        context: context,
-                        child: const RestoreBackupModal(),
-                      );
-                      if (confirm) {
-                        await backupService.applyRestore(bytes);
-                      } else {
-                        // User cancelled confirmation, reset signal.
-                        backupService.cancelRestore();
-                      }
-                    }
-                  },
-            leading: isRestoring
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(),
-                  )
-                : const Icon(LucideIcons.hardDriveUpload),
-            title: const Text('Restore Data'),
-            subtitle: const Text('Load data from a backup file'),
-          ),
-          const Divider(),
-
-          // App Update ListTile.
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
-            builder:
-                (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
-                  final String versionDisplay = snapshot.hasData
-                      ? '${snapshot.data!.version}+'
-                            '${snapshot.data!.buildNumber}'
-                      : 'Checking...';
-
-                  return ListTile(
-                    onTap: isAnyProcessing
-                        ? null
-                        : () async {
-                            await UpdateService().checkForUpdates();
-                          },
-                    leading: isChecking
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(),
-                          )
-                        : const Icon(LucideIcons.cloudSync),
-                    title: const Text('Check for Updates'),
-                    subtitle: Text('Current Version: $versionDisplay'),
-                    trailing: const Icon(LucideIcons.chevronRight),
-                  );
+        // Backup ListTile.
+        ListTile(
+          onTap: isAnyProcessing
+              ? null
+              : () async {
+                  await backupService.backupToLocal();
                 },
-          ),
+          leading: isBackingUp
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(),
+                )
+              : const Icon(LucideIcons.hardDriveDownload),
+          title: const Text('Backup Data'),
+          subtitle: const Text('Save your workout history to device'),
+        ),
 
-          // GitHub ListTile.
-          ListTile(
-            onTap: () async {
-              await launchUrl(
-                Uri.parse('https://github.com/plotsklapps/gymply'),
-              );
-            },
-            leading: const Icon(LucideIcons.github),
-            title: const Text('Github Repository'),
-            subtitle: const Text('Source code, file issues'),
-            trailing: const Icon(LucideIcons.chevronRight),
-          ),
+        // Restore ListTile.
+        ListTile(
+          onTap: isAnyProcessing
+              ? null
+              : () async {
+                  final Uint8List? bytes = await backupService
+                      .pickLocalBackup();
+                  if (bytes != null && context.mounted) {
+                    final bool confirm = await ModalService.showModal(
+                      context: context,
+                      child: const RestoreBackupModal(),
+                    );
+                    if (confirm) {
+                      await backupService.applyRestore(bytes);
+                    } else {
+                      // User cancelled confirmation, reset signal.
+                      backupService.cancelRestore();
+                    }
+                  }
+                },
+          leading: isRestoring
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(),
+                )
+              : const Icon(LucideIcons.hardDriveUpload),
+          title: const Text('Restore Data'),
+          subtitle: const Text('Load data from a backup file'),
+        ),
+        const Divider(),
 
-          // Licenses ListTile.
-          ListTile(
-            onTap: () async {
-              showLicensePage(context: context);
-            },
-            leading: const Icon(LucideIcons.fileBraces),
-            title: const Text('Licenses'),
-            subtitle: const Text('Third party packages used by GYMPLY.'),
-            trailing: const Icon(LucideIcons.chevronRight),
-          ),
-        ],
-      ),
+        // App Update ListTile.
+        FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
+            final String versionDisplay = snapshot.hasData
+                ? '${snapshot.data!.version}+'
+                      '${snapshot.data!.buildNumber}'
+                : 'Checking...';
+
+            return ListTile(
+              onTap: isAnyProcessing
+                  ? null
+                  : () async {
+                      await UpdateService().checkForUpdates();
+                    },
+              leading: isChecking
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(),
+                    )
+                  : const Icon(LucideIcons.cloudSync),
+              title: const Text('Check for Updates'),
+              subtitle: Text('Current Version: $versionDisplay'),
+              trailing: const Icon(LucideIcons.chevronRight),
+            );
+          },
+        ),
+
+        // GitHub ListTile.
+        ListTile(
+          onTap: () async {
+            await launchUrl(
+              Uri.parse('https://github.com/plotsklapps/gymply'),
+            );
+          },
+          leading: const Icon(LucideIcons.github),
+          title: const Text('Github Repository'),
+          subtitle: const Text('Source code, file issues'),
+          trailing: const Icon(LucideIcons.chevronRight),
+        ),
+
+        // Licenses ListTile.
+        ListTile(
+          onTap: () async {
+            showLicensePage(context: context);
+          },
+          leading: const Icon(LucideIcons.fileBraces),
+          title: const Text('Licenses'),
+          subtitle: const Text('Third party packages used by GYMPLY.'),
+          trailing: const Icon(LucideIcons.chevronRight),
+        ),
+      ],
     );
   }
 }

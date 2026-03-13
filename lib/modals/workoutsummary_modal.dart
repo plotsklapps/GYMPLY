@@ -96,7 +96,7 @@ class WorkoutSummaryModal extends StatelessWidget {
           ],
         ),
 
-        // Subtle row for ID and dateKey.
+        // ID and dateKey.
         const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,7 +116,7 @@ class WorkoutSummaryModal extends StatelessWidget {
           ],
         ),
 
-        const Divider(height: 24),
+        const Divider(),
 
         // --- SCROLLABLE BODY ---
         Flexible(
@@ -124,6 +124,7 @@ class WorkoutSummaryModal extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                const SizedBox(height: 16),
                 if (workout.notes.isNotEmpty) ...<Widget>[
                   Container(
                     width: double.infinity,

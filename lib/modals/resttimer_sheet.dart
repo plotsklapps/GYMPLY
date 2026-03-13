@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/resttimer_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerSheet extends StatelessWidget {
@@ -15,12 +16,28 @@ class RestTimerSheet extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
-          'SET REST DURATION',
-          style: theme.textTheme.titleLarge,
+        Row(
+          children: <Widget>[
+            // Empty SizedBox to balance Icon and Text.
+            const SizedBox(width: 48),
+            Expanded(
+              child: Text(
+                'SET INTERVAL TIMER',
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                // Pop and return false.
+                Navigator.pop(context, false);
+              },
+              icon: const Icon(LucideIcons.circleX),
+            ),
+          ],
         ),
         const Divider(),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         // M:S Picker.
         RestDurationPicker(
           initialSeconds: initialSeconds,
@@ -35,13 +52,13 @@ class RestTimerSheet extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         // Cancel/Confirm Buttons.
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: () {
                   // Reset to default.
                   RestTimer.sInitialRestTime.value = 60;
@@ -168,7 +185,12 @@ class _ScrollColumn extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        Text(label, style: theme.textTheme.labelSmall),
+        Text(
+          label,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.secondary,
+          ),
+        ),
         Expanded(
           child: SizedBox(
             width: 100,
@@ -188,7 +210,7 @@ class _ScrollColumn extends StatelessWidget {
                       index.toString().padLeft(2, '0'),
                       style: theme.textTheme.displayLarge?.copyWith(
                         color: isSelected
-                            ? theme.colorScheme.primary
+                            ? theme.colorScheme.onPrimary.withAlpha(200)
                             : theme.colorScheme.onSurface.withAlpha(50),
                         fontWeight: isSelected
                             ? FontWeight.bold

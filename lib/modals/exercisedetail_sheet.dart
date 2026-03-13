@@ -88,20 +88,19 @@ class ExerciseDetailSheet extends StatelessWidget {
           ],
         ),
         const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              exercise.fullPath,
-              fit: BoxFit.contain,
-            ),
+        const SizedBox(height: 16),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            exercise.fullPath,
+            fit: BoxFit.contain,
           ),
         ),
+        const SizedBox(height: 24),
         Row(
           children: <Widget>[
             Expanded(
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: () {
                   // Pop and return false.
                   Navigator.pop(context, false);
