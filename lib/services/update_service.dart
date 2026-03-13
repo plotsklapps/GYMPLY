@@ -116,7 +116,9 @@ class UpdateService {
           _logger.i('UpdateService: App is up to date.');
           ToastService.showSuccess(
             title: 'Up to Date',
-            subtitle: 'You are running the latest version: $currentVersionName',
+            subtitle:
+                'You are running the latest version: '
+                '$currentVersionName+$currentBuildNumber',
           );
         }
       } else {
