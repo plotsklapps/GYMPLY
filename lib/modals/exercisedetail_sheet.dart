@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/exercisehistory_modal.dart';
+import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/strength_model.dart';
+import 'package:gymply/models/stretch_model.dart';
+import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/filter_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -73,6 +79,50 @@ class ExerciseDetailSheet extends StatelessWidget {
                       ),
                     ),
                   ),
+                // History button.
+                IconButton(
+                  onPressed: () async {
+                    // Create a temporary WorkoutExercise to pass to modal.
+                    final WorkoutExercise dummy;
+                    if (isCardio) {
+                      dummy = CardioExercise(
+                        id: exerciseId,
+                        exerciseName: exercise.exerciseName,
+                        imagePath: exercise.fullPath,
+                        equipment: Equipment.values.byName(
+                          exercise.equipmentSegment.toLowerCase(),
+                        ),
+                        sets: <CardioSet>[],
+                      );
+                    } else if (isStretch) {
+                      dummy = StretchExercise(
+                        id: exerciseId,
+                        exerciseName: exercise.exerciseName,
+                        imagePath: exercise.fullPath,
+                        sets: <StretchSet>[],
+                      );
+                    } else {
+                      dummy = StrengthExercise(
+                        id: exerciseId,
+                        exerciseName: exercise.exerciseName,
+                        imagePath: exercise.fullPath,
+                        muscleGroup: MuscleGroup.values.byName(
+                          exercise.muscleSegment.toLowerCase(),
+                        ),
+                        equipment: Equipment.values.byName(
+                          exercise.equipmentSegment.toLowerCase(),
+                        ),
+                        sets: <StrengthSet>[],
+                      );
+                    }
+
+                    await ModalService.showModal(
+                      context: context,
+                      child: ExerciseHistoryModal(exercise: dummy),
+                    );
+                  },
+                  icon: const Icon(LucideIcons.history),
+                ),
                 // Favorite button.
                 IconButton(
                   onPressed: () {
