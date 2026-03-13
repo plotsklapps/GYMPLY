@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
@@ -66,7 +67,12 @@ class CardioExerciseScreen extends StatelessWidget {
                         ),
                         // Statistics Button.
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await ModalService.showModal(
+                              context: context,
+                              child: ExerciseStatsModal(exercise: exercise),
+                            );
+                          },
                           icon: Icon(
                             LucideIcons.chartColumn,
                             color: theme.colorScheme.secondary.withAlpha(140),

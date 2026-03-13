@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -45,8 +47,11 @@ class StrengthExerciseScreen extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            // Statistics logic later.
+                          onPressed: () async {
+                            await ModalService.showModal(
+                              context: context,
+                              child: ExerciseStatsModal(exercise: exercise),
+                            );
                           },
                           icon: Icon(
                             LucideIcons.chartColumn,
@@ -211,6 +216,9 @@ class WeightControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final TextStyle? displayLargeStyle = theme.textTheme.displayLarge?.copyWith(
+      fontWeight: FontWeight.bold,
+    );
 
     return Row(
       children: <Widget>[
@@ -245,6 +253,8 @@ class WeightControls extends StatelessWidget {
                       color: theme.colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                     ),
+            // StrutStyle to ensure height stays consistent.
+            strutStyle: StrutStyle.fromTextStyle(displayLargeStyle!),
             textAlign: TextAlign.center,
           ),
         ),
@@ -292,6 +302,9 @@ class RepControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final TextStyle? displayLargeStyle = theme.textTheme.displayLarge?.copyWith(
+      fontWeight: FontWeight.bold,
+    );
 
     return Row(
       children: <Widget>[
@@ -326,6 +339,8 @@ class RepControls extends StatelessWidget {
                       color: theme.colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                     ),
+            // StrutStyle to ensure height stays consistent.
+            strutStyle: StrutStyle.fromTextStyle(displayLargeStyle!),
             textAlign: TextAlign.center,
           ),
         ),
