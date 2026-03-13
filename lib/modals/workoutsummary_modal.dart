@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
+import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -13,6 +16,47 @@ class WorkoutSummaryModal extends StatelessWidget {
   const WorkoutSummaryModal({required this.workout, super.key});
 
   final Workout workout;
+
+  Future<void> _showFullScreenImage(BuildContext context, String path) async {
+    final ThemeData theme = Theme.of(context);
+
+    // Show user's picture.
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(12),
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  File(path),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.onSecondary,
+                    foregroundColor: theme.colorScheme.secondary,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(LucideIcons.circleX),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,17 +172,95 @@ class WorkoutSummaryModal extends StatelessWidget {
                 if (workout.notes.isNotEmpty) ...<Widget>[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
                     ),
-                    child: Text(
-                      'Notes: ${workout.notes}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontStyle: FontStyle.italic,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant,
+                        width: 1,
                       ),
                     ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Icon(
+                          LucideIcons.notebookPen,
+                          size: 20,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            workout.notes,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontStyle: FontStyle.italic,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
+                // --- IMAGES SECTION ---
+                if (workout.imagePaths.isNotEmpty) ...<Widget>[
+                  Row(
+                    children: <Widget>[
+                      for (int i = 0; i < workout.imagePaths.length; i++)
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: i == 0 ? 0 : 4,
+                              right: i == workout.imagePaths.length - 1 ? 0 : 4,
+                            ),
+                            child: FutureBuilder<String>(
+                              future: imageService.getAbsolutePath(
+                                workout.imagePaths[i],
+                              ),
+                              builder:
+                                  (
+                                    BuildContext context,
+                                    AsyncSnapshot<String> snapshot,
+                                  ) {
+                                    if (snapshot.hasData) {
+                                      return GestureDetector(
+                                        onTap: () => _showFullScreenImage(
+                                          context,
+                                          snapshot.data!,
+                                        ),
+                                        child: Card(
+                                          clipBehavior: Clip.antiAlias,
+                                          child: SizedBox(
+                                            height: 160,
+                                            child: Image.file(
+                                              File(snapshot.data!),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox(
+                                      height: 160,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    );
+                                  },
+                            ),
+                          ),
+                        ),
+                      // Fill remaining space if only 1 image.
+                      if (workout.imagePaths.length == 1)
+                        const Expanded(child: SizedBox()),
+                    ],
                   ),
                   const SizedBox(height: 12),
                 ],

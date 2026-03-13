@@ -17,7 +17,12 @@ class ModalService {
       context: context,
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 0,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+          ),
           child: scrollable ? SingleChildScrollView(child: child) : child,
         );
       },

@@ -16,26 +16,30 @@ class Workout {
     required this.totalDuration,
     this.exercises = const <WorkoutExercise>[],
     this.notes = '',
+    this.imagePaths = const <String>[],
   });
 
-  @HiveField(0)
+  @HiveField(0, defaultValue: '')
   final String id;
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   final String title;
   @HiveField(2)
   final DateTime dateTime;
-  @HiveField(3)
+  @HiveField(3, defaultValue: 0)
   final int totalDuration;
-  @HiveField(4)
+  @HiveField(4, defaultValue: <WorkoutExercise>[])
   final List<WorkoutExercise> exercises;
-  @HiveField(5)
+  @HiveField(5, defaultValue: '')
   final String notes;
+  @HiveField(6, defaultValue: <String>[])
+  final List<String> imagePaths;
 
   Workout copyWith({
     String? title,
     int? totalDuration,
     List<WorkoutExercise>? exercises,
     String? notes,
+    List<String>? imagePaths,
   }) {
     return Workout(
       id: id,
@@ -44,6 +48,7 @@ class Workout {
       totalDuration: totalDuration ?? this.totalDuration,
       exercises: exercises ?? this.exercises,
       notes: notes ?? this.notes,
+      imagePaths: imagePaths ?? this.imagePaths,
     );
   }
 
@@ -178,11 +183,11 @@ abstract class WorkoutExercise {
     required this.imagePath,
   });
 
-  @HiveField(0)
+  @HiveField(0, defaultValue: 0)
   final int id;
-  @HiveField(1)
+  @HiveField(1, defaultValue: '')
   final String exerciseName;
-  @HiveField(2)
+  @HiveField(2, defaultValue: '')
   final String imagePath;
 
   // Every exercise type must report its total number of sets.

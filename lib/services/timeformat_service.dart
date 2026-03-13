@@ -79,3 +79,30 @@ extension DurationFormatter on Duration {
     return '$minutes:$seconds';
   }
 }
+
+extension DateTimeFormatter on DateTime {
+  /// Returns date formatted as yyyyMMdd (e.g. 20231027)
+  String get yyyyMMdd {
+    return DateFormat('yyyyMMdd').format(this);
+  }
+
+  /// Returns a descriptive default workout title.
+  /// Example: "20231027 Saturday Morning Workout"
+  String get defaultWorkoutTitle {
+    final String dateStr = yyyyMMdd;
+    final String dayStr = DateFormat('EEEE').format(this);
+
+    String timeOfDay;
+    if (hour >= 5 && hour < 12) {
+      timeOfDay = 'Morning';
+    } else if (hour >= 12 && hour < 17) {
+      timeOfDay = 'Afternoon';
+    } else if (hour >= 17 && hour < 22) {
+      timeOfDay = 'Evening';
+    } else {
+      timeOfDay = 'Night';
+    }
+
+    return '$dateStr $dayStr $timeOfDay Workout';
+  }
+}

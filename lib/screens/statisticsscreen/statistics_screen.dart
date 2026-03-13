@@ -105,7 +105,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Expanded(
-                            // Today's workout and Date.
+                            // Workout Title and Date.
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -139,23 +139,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           ),
                         ],
                       ),
-                      // Notes section.
-                      if (currentWorkout.notes.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            'Notes: ${currentWorkout.notes}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                      ],
                       const SizedBox(height: 12),
                       // Workout Overview Section.
                       const StatisticsSectionHeader(title: 'WORKOUT OVERVIEW'),

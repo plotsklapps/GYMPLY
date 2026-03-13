@@ -25,13 +25,16 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
           ? const <WorkoutExercise>[]
           : (fields[4] as List).cast<WorkoutExercise>(),
       notes: fields[5] == null ? '' : fields[5] as String,
+      imagePaths: fields[6] == null
+          ? const <String>[]
+          : (fields[6] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Workout obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -43,7 +46,9 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       ..writeByte(4)
       ..write(obj.exercises)
       ..writeByte(5)
-      ..write(obj.notes);
+      ..write(obj.notes)
+      ..writeByte(6)
+      ..write(obj.imagePaths);
   }
 
   @override

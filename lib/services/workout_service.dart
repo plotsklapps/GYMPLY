@@ -5,6 +5,7 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
@@ -46,7 +47,7 @@ class WorkoutService {
   final Signal<Workout> sActiveWorkout = Signal<Workout>(
     Workout(
       id: const Uuid().v4(),
-      title: "Today's Workout",
+      title: DateTime.now().defaultWorkoutTitle,
       dateTime: DateTime.now(),
       totalDuration: 0,
     ),
@@ -121,19 +122,19 @@ class WorkoutService {
       // Log workout for today.
       _logger.i(
         'WorkoutService: '
-        "Resuming today's workout ($todayKey) with "
+        "Resuming current session ($todayKey) with "
         '${todayWorkout.exercises.length} exercises',
       );
     } else {
       // Log no workout found.
       _logger.i(
         'WorkoutService: '
-        'No workout found for today ($todayKey).',
+        'No workout found for current date ($todayKey).',
       );
       // Reset Signal to a fresh workout.
       sActiveWorkout.value = Workout(
         id: const Uuid().v4(),
-        title: "Today's Workout",
+        title: DateTime.now().defaultWorkoutTitle,
         dateTime: DateTime.now(),
         totalDuration: 0,
       );
@@ -215,13 +216,23 @@ class WorkoutService {
   }
 
   // Finish current workout.
-  Future<void> finishWorkout() async {
+  Future<void> finishWorkout({
+    String? title,
+    String? notes,
+    List<String>? imagePaths,
+  }) async {
     // Create Workout Object.
     final Workout finalWorkout = sActiveWorkout.value.copyWith(
+      title: title,
       totalDuration: TotalTimer.sElapsedTotalTime.value,
+      notes: notes,
+      imagePaths: imagePaths,
     );
 
-    // Explicitly save the final state.
+    // Update the active workout signal so state is preserved.
+    sActiveWorkout.value = finalWorkout;
+
+    // Explicitly save the final state to Hive.
     await _workoutBox.put(finalWorkout.dateKey, finalWorkout);
 
     // Update history Signal so UI reflects the final duration/state.
@@ -252,7 +263,7 @@ class WorkoutService {
     if (sActiveWorkout.value.dateKey == dateKey) {
       sActiveWorkout.value = Workout(
         id: const Uuid().v4(),
-        title: "Today's Workout",
+        title: DateTime.now().defaultWorkoutTitle,
         dateTime: DateTime.now(),
         totalDuration: 0,
       );

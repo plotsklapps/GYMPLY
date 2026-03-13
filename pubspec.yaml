@@ -1,5 +1,5 @@
 name: gymply
-description: "GYMPLY. Lift. Log. Load."
+description: "GYMPLY. The SIMPLE gym tracker."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -19,11 +19,13 @@ dependencies:
     sdk: flutter
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
+  image_picker: ^1.2.1
   intl: ^0.20.2
   logger: ^2.6.2
   lucide_icons_flutter: ^3.1.10
   open_filex: ^4.7.0
   package_info_plus: ^9.0.0
+  path: ^1.9.0
   path_provider: ^2.1.5
   permission_handler: ^12.0.1
   share_plus: ^12.0.1
