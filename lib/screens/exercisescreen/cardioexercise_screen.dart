@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/models/cardio_model.dart';
@@ -54,15 +55,31 @@ class CardioExerciseScreen extends StatelessWidget {
               children: <Widget>[
                 Stack(
                   children: <Widget>[
+                    // Exercise Image.
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        exercise.imagePath,
+                        height: 140,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         // History Button.
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await ModalService.showModal(
+                              context: context,
+                              child: ExerciseHistoryModal(exercise: exercise),
+                            );
+                          },
                           icon: Icon(
                             LucideIcons.history,
-                            color: theme.colorScheme.secondary.withAlpha(150),
+                            color: theme.colorScheme.secondary,
+                            size: 20,
                           ),
                         ),
                         // Statistics Button.
@@ -75,21 +92,11 @@ class CardioExerciseScreen extends StatelessWidget {
                           },
                           icon: Icon(
                             LucideIcons.chartColumn,
-                            color: theme.colorScheme.secondary.withAlpha(140),
+                            color: theme.colorScheme.secondary,
                             size: 20,
                           ),
                         ),
                       ],
-                    ),
-                    // Exercise Image.
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        exercise.imagePath,
-                        height: 140,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
                     ),
                   ],
                 ),

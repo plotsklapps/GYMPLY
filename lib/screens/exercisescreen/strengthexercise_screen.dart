@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -32,17 +33,30 @@ class StrengthExerciseScreen extends StatelessWidget {
               children: <Widget>[
                 Stack(
                   children: <Widget>[
-                    // 1. History/Statistics Buttons.
+                    // Exercise Image.
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        exercise.imagePath,
+                        height: 140,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    // History/Statistics Buttons.
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {
-                            // History logic later.
+                          onPressed: () async {
+                            await ModalService.showModal(
+                              context: context,
+                              child: ExerciseHistoryModal(exercise: exercise),
+                            );
                           },
                           icon: Icon(
                             LucideIcons.history,
-                            color: theme.colorScheme.secondary.withAlpha(140),
+                            color: theme.colorScheme.secondary,
                             size: 20,
                           ),
                         ),
@@ -55,21 +69,11 @@ class StrengthExerciseScreen extends StatelessWidget {
                           },
                           icon: Icon(
                             LucideIcons.chartColumn,
-                            color: theme.colorScheme.secondary.withAlpha(140),
+                            color: theme.colorScheme.secondary,
                             size: 20,
                           ),
                         ),
                       ],
-                    ),
-                    // 2. Exercise Image.
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        exercise.imagePath,
-                        height: 140,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
                     ),
                   ],
                 ),
