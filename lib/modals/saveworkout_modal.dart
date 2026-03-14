@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/addimage_modal.dart';
+import 'package:gymply/modals/sharetosocials_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -288,7 +290,16 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                   );
 
                   if (context.mounted) {
+                    // Close the current modal.
                     Navigator.pop(context, true);
+
+                    // Open the Share sheet.
+                    await ModalService.showModal(
+                      context: context,
+                      child: ShareToSocialsModal(
+                        workout: workoutService.sActiveWorkout.value,
+                      ),
+                    );
                   }
                 },
                 child: const Text('SAVE'),

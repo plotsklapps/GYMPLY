@@ -87,9 +87,8 @@ extension DateTimeFormatter on DateTime {
   }
 
   /// Returns a descriptive default workout title.
-  /// Example: "20231027 Saturday Morning Workout"
+  /// Example: "Saturday Morning Workout"
   String get defaultWorkoutTitle {
-    final String dateStr = yyyyMMdd;
     final String dayStr = DateFormat('EEEE').format(this);
 
     String timeOfDay;
@@ -103,6 +102,6 @@ extension DateTimeFormatter on DateTime {
       timeOfDay = 'Night';
     }
 
-    return '$dateStr $dayStr $timeOfDay Workout';
+    return '$dayStr $timeOfDay Workout';
   }
 }

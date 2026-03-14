@@ -122,7 +122,7 @@ class WorkoutService {
       // Log workout for today.
       _logger.i(
         'WorkoutService: '
-        "Resuming current session ($todayKey) with "
+        'Resuming current session ($todayKey) with '
         '${todayWorkout.exercises.length} exercises',
       );
     } else {

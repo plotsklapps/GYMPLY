@@ -178,11 +178,10 @@ class WorkoutSummaryModal extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest
-                          .withOpacity(0.5),
+                          .withAlpha(100),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: theme.colorScheme.outlineVariant,
-                        width: 1,
                       ),
                     ),
                     child: Row(

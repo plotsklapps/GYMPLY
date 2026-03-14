@@ -20,7 +20,6 @@ class ModalService {
           padding: EdgeInsets.only(
             left: 16,
             right: 16,
-            top: 0,
             bottom: MediaQuery.of(context).viewInsets.bottom + 32,
           ),
           child: scrollable ? SingleChildScrollView(child: child) : child,
