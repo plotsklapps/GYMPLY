@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
@@ -134,7 +135,6 @@ class ProfileScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 24),
             child: Card(
-              color: theme.colorScheme.surfaceContainerHighest.withAlpha(150),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -145,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         const Expanded(
                           child: Text(
-                            'Watch-only Mode Active',
+                            'Read-only Mode Active',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -153,16 +153,23 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'You can see the global feed, but you cannot post '
-                      'your workouts. Import your nsec to enable posting.',
+                      'You can see the GYMPLY. feed, but you cannot post '
+                      'your workouts or react to other users. Import your '
+                      'nsec to enable posting.',
                     ),
                     const SizedBox(height: 12),
-                    TextButton.icon(
-                      onPressed: () {
-                        _showImportKeysDialog(context);
-                      },
-                      icon: const Icon(LucideIcons.lock),
-                      label: const Text('Import Private Key (nsec)'),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: () {
+                              _showImportKeysDialog(context);
+                            },
+                            icon: const Icon(LucideIcons.lock),
+                            label: const Text('Import Private Key (nsec)'),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -193,81 +200,112 @@ class ProfileScreen extends StatelessWidget {
           ),
 
         const SizedBox(height: 32),
-        OutlinedButton.icon(
-          onPressed: () async {
-            await nostrService.logout();
-          },
-          icon: const Icon(LucideIcons.logOut),
-          label: const Text('Logout and delete keys'),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            foregroundColor: theme.colorScheme.error,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () async {
+                  await nostrService.logout();
+                },
+                icon: const Icon(LucideIcons.logOut),
+                label: const Text('Logout and delete keys from device'),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  void _showImportKeysDialog(BuildContext context) {
+  Future<bool> _showImportKeysDialog(BuildContext context) async {
+    final ThemeData theme = Theme.of(context);
     final TextEditingController controller = TextEditingController();
-    showDialog<void>(
+    return ModalService.showModal(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Import Keys'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+      child: Column(
+        children: [
+          Row(
             children: <Widget>[
-              const Text(
-                'Enter your nsec for full access or npub for watch-only mode.',
-                style: TextStyle(fontSize: 12),
+              // Empty SizedBox to balance Icon and Text.
+              const SizedBox(width: 48),
+              Expanded(
+                child: Text(
+                  'IMPORT KEYS',
+                  style: theme.textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'nsec1... or npub1...',
-                  hintText: 'nsec1...',
+              IconButton(
+                onPressed: () {
+                  // Pop and return false.
+                  Navigator.pop(context, false);
+                },
+                icon: const Icon(LucideIcons.circleX),
+              ),
+            ],
+          ),
+          const Divider(),
+          const SizedBox(height: 16),
+          const Text(
+            'Enter your nsec for full access or npub for watch-only mode.',
+            style: TextStyle(fontSize: 12),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'nsec or npub',
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    // Pop and return false.
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text('CANCEL'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () async {
+                    final String input = controller.text.trim();
+                    final bool success = await nostrService.useExistingKeys(
+                      input,
+                    );
+                    if (context.mounted) {
+                      Navigator.pop(context, success);
+                      if (success) {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.success,
+                          title: const Text('Keys Imported!'),
+                          autoCloseDuration: const Duration(seconds: 3),
+                        );
+                      } else {
+                        toastification.show(
+                          context: context,
+                          type: ToastificationType.error,
+                          title: const Text('Invalid Key!'),
+                          description: const Text(
+                            'Please check your npub or nsec.',
+                          ),
+                          autoCloseDuration: const Duration(seconds: 3),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('IMPORT'),
                 ),
               ),
             ],
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final String input = controller.text.trim();
-                final bool success = await nostrService.useExistingKeys(input);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  if (success) {
-                    toastification.show(
-                      context: context,
-                      type: ToastificationType.success,
-                      title: const Text('Keys Imported!'),
-                      autoCloseDuration: const Duration(seconds: 3),
-                    );
-                  } else {
-                    toastification.show(
-                      context: context,
-                      type: ToastificationType.error,
-                      title: const Text('Invalid Key!'),
-                      description: const Text(
-                        'Please check your npub or nsec.',
-                      ),
-                      autoCloseDuration: const Duration(seconds: 3),
-                    );
-                  }
-                }
-              },
-              child: const Text('Import'),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 }
