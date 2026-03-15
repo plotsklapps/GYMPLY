@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -21,19 +22,19 @@ class ShareService {
       if (boundary == null) return;
 
       // 2. Convert boundary to an image (high pixel ratio for quality).
-      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ui.Image image = await boundary.toImage(pixelRatio: 3);
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData == null) return;
 
-      final pngBytes = byteData.buffer.asUint8List();
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
 
       // 3. Save to a temporary directory.
-      final directory = await getTemporaryDirectory();
+      final Directory directory = await getTemporaryDirectory();
       final String fileName =
           'GYMPLY_${DateTime.now().millisecondsSinceEpoch}.png';
-      final imagePath = '${directory.path}/$fileName';
-      final imageFile = File(imagePath);
+      final String imagePath = '${directory.path}/$fileName';
+      final File imageFile = File(imagePath);
       await imageFile.writeAsBytes(pngBytes);
 
       // 4. Share the file using the modern SharePlus API.

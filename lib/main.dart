@@ -7,6 +7,7 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/services/exercise_service.dart';
+import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/adapters.dart';
@@ -37,8 +38,12 @@ void main() async {
 
   // ExerciseService loads raw image assets.
   await exerciseService.init();
+
   // WorkoutService loads favorites, settings and history.
   await workoutService.init();
+
+  // NostrService loads keys from secure storage.
+  await nostrService.init();
 
   // Run the app.
   runApp(const MainEntry());

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
+import 'package:gymply/screens/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
@@ -66,6 +67,26 @@ class MenuModal extends StatelessWidget {
           ],
         ),
         const Divider(),
+
+        ListTile(
+          onTap: () async {
+            // Pop the modal first.
+            Navigator.pop(context);
+            // Push the ProfileScreen.
+            await Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const ProfileScreen();
+                },
+              ),
+            );
+          },
+          leading: const Icon(LucideIcons.userRound),
+          title: const Text('Account'),
+          subtitle: const Text('Manage your account settings'),
+          trailing: const Icon(LucideIcons.chevronRight),
+        ),
 
         // Wakelock ListTile.
         SwitchListTile(
