@@ -170,7 +170,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         workoutService.addExercise(exercise);
 
                         // Navigate to WorkoutScreen.
-                        navigateToTab(AppTabs.workout);
+                        navigateToTab(AppTab.workout);
                       }
                     },
                     child: Card(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
+import 'package:gymply/screens/feed_screen.dart';
 import 'package:gymply/screens/searchscreen/search_screen.dart';
 import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
@@ -22,42 +23,78 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late EffectCleanup _tabSubscription;
+  late EffectCleanup _feedToggleSubscription;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    // Determine initial length based on whether we show the feed.
+    final int initialLength = cShowFeed.value ? 5 : 4;
+    _tabController = TabController(
+      length: initialLength,
+      vsync: this,
+      initialIndex: _getClampedIndex(sCurrentTab.value, initialLength),
+    );
 
     // Sync TabController with sCurrentTab Signal.
-    _tabController.index = sCurrentTab.value;
-
-    // Update sCurrentTab on tap/swipe.
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         sCurrentTab.value = _tabController.index;
       }
     });
 
-    // Listen to sCurrentTab changes.
+    // Listen to sCurrentTab changes (Manual navigation via code).
     _tabSubscription = sCurrentTab.subscribe((int index) {
-      if (_tabController.index != index) {
+      final int target = _getClampedIndex(index, _tabController.length);
+      if (_tabController.index != target) {
         _tabController.animateTo(
-          index,
+          target,
           duration: const Duration(milliseconds: 1000),
           curve: Curves.easeInOut,
         );
       }
     });
+
+    // Listen for Nostr login/logout to recreate the TabController.
+    _feedToggleSubscription = cShowFeed.subscribe((bool showFeed) {
+      final int newLength = showFeed ? 5 : 4;
+      if (_tabController.length != newLength) {
+        _recreateTabController(newLength);
+      }
+    });
+  }
+
+  int _getClampedIndex(int index, int length) {
+    if (index >= length) return length - 1;
+    if (index < 0) return 0;
+    return index;
+  }
+
+  void _recreateTabController(int newLength) {
+    final int oldIndex = _tabController.index;
+    _tabController.dispose();
+    setState(() {
+      _tabController = TabController(
+        length: newLength,
+        vsync: this,
+        initialIndex: _getClampedIndex(oldIndex, newLength),
+      );
+      // Re-attach listener to the new controller.
+      _tabController.addListener(() {
+        if (!_tabController.indexIsChanging) {
+          sCurrentTab.value = _tabController.index;
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
-    // Kill the TabController and clean up.
     _tabSubscription();
+    _feedToggleSubscription();
     _tabController.dispose();
     super.dispose();
   }
@@ -65,9 +102,9 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool showFeed = cShowFeed.watch(context);
 
     return Scaffold(
-      // Appbar with Timers.
       appBar: AppBar(
         toolbarHeight: 160,
         title: const Row(
@@ -77,36 +114,50 @@ class _HomeScreenState extends State<HomeScreen>
             RestTimerWidget(),
           ],
         ),
-
-        // TabBar with 4 tabs.
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(32),
           child: TabBar(
+            // Use TabAlignment.fill for non-scrollable tab bars.
+            tabAlignment: TabAlignment.fill,
             indicatorColor: theme.colorScheme.secondary,
             controller: _tabController,
             labelPadding: EdgeInsets.zero,
-            tabs: const <Widget>[
-              Tab(text: 'STATISTICS', height: 32),
-              Tab(text: 'WORKOUT', height: 32),
-              Tab(text: 'EXERCISE', height: 32),
-              Tab(text: 'SEARCH', height: 32),
+            tabs: <Widget>[
+              if (showFeed)
+                const Tab(
+                  icon: Icon(LucideIcons.rss, size: 18),
+                  height: 32,
+                ),
+              const Tab(
+                icon: Icon(LucideIcons.trendingUp, size: 18),
+                height: 32,
+              ),
+              const Tab(
+                icon: Icon(LucideIcons.dumbbell, size: 18),
+                height: 32,
+              ),
+              const Tab(
+                icon: Icon(LucideIcons.notebookPen, size: 18),
+                height: 32,
+              ),
+              const Tab(
+                icon: Icon(LucideIcons.search, size: 18),
+                height: 32,
+              ),
             ],
           ),
         ),
       ),
-
-      // Main Content for current Tab.
       body: TabBarView(
         controller: _tabController,
-        children: const <Widget>[
-          StatisticsScreen(),
-          WorkoutScreen(),
-          ExerciseScreen(),
-          SearchScreen(),
+        children: <Widget>[
+          if (showFeed) const FeedScreen(),
+          const StatisticsScreen(),
+          const WorkoutScreen(),
+          const ExerciseScreen(),
+          const SearchScreen(),
         ],
       ),
-
-      // BottomAppBar with Menu and Title.
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: <Widget>[
@@ -114,9 +165,7 @@ class _HomeScreenState extends State<HomeScreen>
               heroTag: 'menuFAB',
               elevation: 0,
               onPressed: () async {
-                // Give a little bzzz.
                 await HapticFeedback.lightImpact();
-
                 if (context.mounted) {
                   await ModalService.showModal(
                     context: context,
@@ -138,8 +187,6 @@ class _HomeScreenState extends State<HomeScreen>
           ],
         ),
       ),
-
-      // Row FABs inside the BottomAppBar.
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -160,10 +207,9 @@ class _HomeScreenState extends State<HomeScreen>
             heroTag: 'newFAB',
             elevation: 0,
             onPressed: () async {
-              // Give a little bzzz.
               await HapticFeedback.lightImpact();
               // Navigate to SearchScreen.
-              sCurrentTab.value = 3;
+              navigateToTab(AppTab.search);
             },
             child: const Icon(LucideIcons.circlePlus),
           ),

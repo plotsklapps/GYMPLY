@@ -13,7 +13,9 @@ class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
 
   @override
-  State<WorkoutScreen> createState() => _WorkoutScreenState();
+  State<WorkoutScreen> createState() {
+    return _WorkoutScreenState();
+  }
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
@@ -138,7 +140,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 : () {
                     // Set selected exercise and navigate.
                     workoutService.sSelectedExercise.value = exercise;
-                    navigateToTab(AppTabs.exercise);
+                    navigateToTab(AppTab.exercise);
                   },
           ),
         );

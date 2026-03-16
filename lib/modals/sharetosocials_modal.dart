@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
+import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/share_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:signals/signals_flutter.dart';
 
 // Toggleable metrics.
 enum ShareableMetric {
@@ -44,6 +48,8 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
   // Toggles initialized in initState.
   late bool _showPhotos;
   late bool _showNotes;
+  bool _postToNostr = true;
+  bool _isSharing = false;
 
   // Default to share volume, sets & duration.
   final List<ShareableMetric> _selectedMetrics = <ShareableMetric>[
@@ -110,6 +116,10 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    // Watch if the user has a private key to enable Nostr sharing.
+    final String? nsec = nostrService.sNsec.watch(context);
+    final bool canPostToNostr = nsec != null;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -333,6 +343,19 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
           },
         ),
 
+        // Post to GYMPLY Feed Switch (Only if logged in).
+        if (canPostToNostr)
+          SwitchListTile(
+            title: const Text('Post to GYMPLY feed'),
+            secondary: const Icon(LucideIcons.rss),
+            value: _postToNostr,
+            onChanged: _isSharing
+                ? null
+                : (bool val) {
+                    setState(() => _postToNostr = val);
+                  },
+          ),
+
         const SizedBox(height: 24),
 
         // Share Button.
@@ -340,20 +363,61 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
           width: double.infinity,
           child: FilledButton.icon(
             style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
-            onPressed: () async {
-              // Capture and share workout.
-              await shareService.captureAndShare(
-                _boundaryKey,
-                workoutTitle: widget.workout.title,
-              );
+            onPressed: _isSharing
+                ? null
+                : () async {
+                    setState(() => _isSharing = true);
 
-              // Pop.
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
-            },
-            icon: const Icon(LucideIcons.share2),
-            label: const Text('SHARE WORKOUT'),
+                    try {
+                      // 1. Capture the image bytes.
+                      final Uint8List? imageBytes = await shareService
+                          .captureImage(_boundaryKey);
+
+                      if (imageBytes == null) {
+                        throw Exception('Could not capture workout image.');
+                      }
+
+                      // 2. Handle Nostr Posting (if enabled).
+                      if (canPostToNostr && _postToNostr) {
+                        await nostrService.publishWorkoutPost(
+                          imageBytes: imageBytes,
+                        );
+                        ToastService.showSuccess(
+                          title: 'Posted to Feed!',
+                          subtitle: 'Your workout is live on GYMPLY.',
+                        );
+                      }
+
+                      // 3. Trigger standard system share.
+                      // We do this last as it might pause the app/modal.
+                      await shareService.captureAndShare(
+                        _boundaryKey,
+                        workoutTitle: widget.workout.title,
+                      );
+
+                      // 4. Close the modal.
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    } catch (e) {
+                      ToastService.showError(
+                        title: 'Sharing Failed',
+                        subtitle: e.toString(),
+                      );
+                    } finally {
+                      if (mounted) {
+                        setState(() => _isSharing = false);
+                      }
+                    }
+                  },
+            icon: _isSharing
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(LucideIcons.share2),
+            label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
           ),
         ),
       ],

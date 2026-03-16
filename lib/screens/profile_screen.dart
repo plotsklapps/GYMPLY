@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
@@ -104,8 +105,8 @@ class ProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         OutlinedButton(
-          onPressed: () {
-            _showImportKeysDialog(context);
+          onPressed: () async {
+            await _showImportKeysDialog(context);
           },
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
@@ -162,8 +163,8 @@ class ProfileScreen extends StatelessWidget {
                       children: <Widget>[
                         Expanded(
                           child: FilledButton.icon(
-                            onPressed: () {
-                              _showImportKeysDialog(context);
+                            onPressed: () async {
+                              await _showImportKeysDialog(context);
                             },
                             icon: const Icon(LucideIcons.lock),
                             label: const Text('Import Private Key (nsec)'),
@@ -201,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
 
         const SizedBox(height: 32),
         Row(
-          children: [
+          children: <Widget>[
             Expanded(
               child: FilledButton.icon(
                 onPressed: () async {
@@ -223,7 +224,7 @@ class ProfileScreen extends StatelessWidget {
     return ModalService.showModal(
       context: context,
       child: Column(
-        children: [
+        children: <Widget>[
           Row(
             children: <Widget>[
               // Empty SizedBox to balance Icon and Text.
@@ -259,7 +260,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
@@ -374,8 +375,6 @@ class _MetadataFormState extends State<_MetadataForm> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -384,42 +383,46 @@ class _MetadataFormState extends State<_MetadataForm> {
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
         ),
         const SizedBox(height: 16),
-        _buildTextField('Name', _nameController, 'Your unique name'),
-        _buildTextField(
-          'Display Name',
-          _displayNameController,
-          'How people see you',
+        _MetadataTextField(
+          label: 'Name',
+          controller: _nameController,
+          hint: 'Your unique name',
         ),
-        _buildTextField(
-          'About',
-          _aboutController,
-          'Tell the world about your gains',
+        _MetadataTextField(
+          label: 'Display Name',
+          controller: _displayNameController,
+          hint: 'How people see you',
+        ),
+        _MetadataTextField(
+          label: 'About',
+          controller: _aboutController,
+          hint: 'Tell the world about your gains',
           maxLines: 3,
         ),
-        _buildTextField(
-          'Picture URL',
-          _pictureController,
-          'https://example.com/avatar.jpg',
+        _MetadataTextField(
+          label: 'Picture URL',
+          controller: _pictureController,
+          hint: 'https://example.com/avatar.jpg',
         ),
-        _buildTextField(
-          'Banner URL',
-          _bannerController,
-          'https://example.com/banner.jpg',
+        _MetadataTextField(
+          label: 'Banner URL',
+          controller: _bannerController,
+          hint: 'https://example.com/banner.jpg',
         ),
-        _buildTextField(
-          'NIP-05 Verification',
-          _nip05Controller,
-          'user@domain.com',
+        _MetadataTextField(
+          label: 'NIP-05 Verification',
+          controller: _nip05Controller,
+          hint: 'user@domain.com',
         ),
-        _buildTextField(
-          'Lightning Address (LUD-16)',
-          _lud16Controller,
-          'user@getalby.com',
+        _MetadataTextField(
+          label: 'Lightning Address (LUD-16)',
+          controller: _lud16Controller,
+          hint: 'user@getalby.com',
         ),
-        _buildTextField(
-          'Website',
-          _websiteController,
-          'https://yourwebsite.com',
+        _MetadataTextField(
+          label: 'Website',
+          controller: _websiteController,
+          hint: 'https://yourwebsite.com',
         ),
         const SizedBox(height: 24),
         if (widget.canSign)
@@ -447,12 +450,61 @@ class _MetadataFormState extends State<_MetadataForm> {
     );
   }
 
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    String hint, {
-    int maxLines = 1,
-  }) {
+  Future<void> _saveMetadata() async {
+    setState(() {
+      _isSaving = true;
+    });
+    try {
+      final Metadata metadata =
+          widget.metadata?.copyWith() ??
+                Metadata(pubKey: Nip19.decode(nostrService.sNpub.value!))
+            ..name = _nameController.text.trim()
+            ..displayName = _displayNameController.text.trim()
+            ..about = _aboutController.text.trim()
+            ..picture = _pictureController.text.trim()
+            ..banner = _bannerController.text.trim()
+            ..nip05 = _nip05Controller.text.trim()
+            ..lud16 = _lud16Controller.text.trim()
+            ..website = _websiteController.text.trim();
+
+      await nostrService.updateMetadata(metadata);
+
+      if (mounted) {
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          title: const Text('Profile Updated!'),
+          autoCloseDuration: const Duration(seconds: 3),
+        );
+      }
+    } on Object catch (e) {
+      // Show toast to user.
+      ToastService.showError(title: 'Update Failed', subtitle: '$e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+}
+
+class _MetadataTextField extends StatelessWidget {
+  const _MetadataTextField({
+    required this.label,
+    required this.controller,
+    required this.hint,
+    this.maxLines = 1,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String hint;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
@@ -466,47 +518,6 @@ class _MetadataFormState extends State<_MetadataForm> {
         ),
       ),
     );
-  }
-
-  Future<void> _saveMetadata() async {
-    setState(() => _isSaving = true);
-    try {
-      final Metadata metadata =
-          widget.metadata?.copyWith() ??
-          Metadata(pubKey: Nip19.decode(nostrService.sNpub.value!));
-
-      metadata.name = _nameController.text.trim();
-      metadata.displayName = _displayNameController.text.trim();
-      metadata.about = _aboutController.text.trim();
-      metadata.picture = _pictureController.text.trim();
-      metadata.banner = _bannerController.text.trim();
-      metadata.nip05 = _nip05Controller.text.trim();
-      metadata.lud16 = _lud16Controller.text.trim();
-      metadata.website = _websiteController.text.trim();
-
-      await nostrService.updateMetadata(metadata);
-
-      if (mounted) {
-        toastification.show(
-          context: context,
-          type: ToastificationType.success,
-          title: const Text('Profile Updated!'),
-          autoCloseDuration: const Duration(seconds: 3),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        toastification.show(
-          context: context,
-          type: ToastificationType.error,
-          title: const Text('Update Failed'),
-          description: Text(e.toString()),
-          autoCloseDuration: const Duration(seconds: 3),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
-    }
   }
 }
 
@@ -524,7 +535,9 @@ class _KeyCard extends StatefulWidget {
   final bool isSensitive;
 
   @override
-  State<_KeyCard> createState() => _KeyCardState();
+  State<_KeyCard> createState() {
+    return _KeyCardState();
+  }
 }
 
 class _KeyCardState extends State<_KeyCard> {
@@ -579,16 +592,13 @@ class _KeyCardState extends State<_KeyCard> {
                     await Clipboard.setData(
                       ClipboardData(text: widget.keyValue),
                     );
-                    if (context.mounted) {
-                      toastification.show(
-                        context: context,
-                        type: ToastificationType.info,
-                        title: const Text('Copied to Clipboard!'),
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
-                    }
+                    // Show toast to user.
+                    ToastService.showSuccess(
+                      title: 'Copied to Clipboard',
+                      subtitle: 'Use the key at your own discretion',
+                    );
                   },
-                  icon: const Icon(LucideIcons.copy, size: 16),
+                  icon: const Icon(LucideIcons.copy),
                 ),
               ],
             ),
