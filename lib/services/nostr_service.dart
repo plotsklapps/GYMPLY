@@ -27,10 +27,7 @@ class NostrService {
     'wss://relay.snort.social',
     'wss://offchain.pub',
     'wss://nostr.mom',
-    'wss://relay.nostr.band',
-    'wss://relay.current.xyz',
     'wss://nostr.bitcoiner.social',
-    'wss://relay.taxi',
   ];
 
   // Default Blossom servers for image hosting.

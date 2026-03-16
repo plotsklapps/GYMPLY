@@ -58,7 +58,7 @@ class _FeedScreenState extends State<FeedScreen> {
         await _resolveMetadata(event.pubKey);
 
         // Update reaction subscription to include this new post.
-        await _updateReactionSubscription();
+        _updateReactionSubscription();
       }
 
       if (_isLoading && nostrService.sFeedEvents.value.isNotEmpty) {
@@ -77,8 +77,9 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   /// Subscribes to Kind 7 reactions for all currently visible posts.
-  Future<void> _updateReactionSubscription() async {
-    await _reactionSubscription?.cancel();
+  void _updateReactionSubscription() {
+    // We don't await here because this is called frequently from a stream listener.
+    _reactionSubscription?.cancel();
     final List<String> eventIds = nostrService.sFeedEvents.value
         .map((Nip01Event e) => e.id)
         .toList();
@@ -102,7 +103,9 @@ class _FeedScreenState extends State<FeedScreen> {
             Map<String, Set<String>>.from(nostrService.sFeedReactions.value);
         final Set<String> eventLikes = Set<String>.from(
           reactions[targetEventId] ?? <String>{},
-        )..add(reaction.pubKey);
+        );
+
+        eventLikes.add(reaction.pubKey);
         reactions[targetEventId] = eventLikes;
         nostrService.sFeedReactions.value = reactions;
       }
@@ -131,6 +134,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Future<void> _onRefresh() async {
     nostrService.sFeedEvents.value = <Nip01Event>[];
     nostrService.sFeedReactions.value = <String, Set<String>>{};
+    // Here we DO await the cancellations for a clean restart.
     await _subscription?.cancel();
     await _reactionSubscription?.cancel();
     _startSubscription();
@@ -139,9 +143,10 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   @override
-  Future<void> dispose() async {
-    await _subscription?.cancel();
-    await _reactionSubscription?.cancel();
+  void dispose() {
+    // dispose() MUST be synchronous.
+    _subscription?.cancel();
+    _reactionSubscription?.cancel();
     super.dispose();
   }
 
@@ -235,13 +240,10 @@ class _WorkoutPostCard extends StatelessWidget {
         content = decoded;
       }
     } on Object catch (_) {
-      // SILENT FAIL: If parsing fails, we skip showing the card.
-      // This happens for Kind-colliding non-JSON events from other apps.
       return const SizedBox.shrink();
     }
 
     final String? imageUrl = content['image'] as String?;
-    // Only show if it's a GYMPLY post with a valid image.
     if (imageUrl == null || content['app'] != 'GYMPLY.') {
       return const SizedBox.shrink();
     }
@@ -321,8 +323,8 @@ class _WorkoutPostCard extends StatelessWidget {
                         LucideIcons.bicepsFlexed,
                         color: hasLiked ? theme.colorScheme.secondary : null,
                       ),
-                      onPressed: () async {
-                        await nostrService.sendBicepsReaction(event.id);
+                      onPressed: () {
+                        nostrService.sendBicepsReaction(event.id);
                       },
                     ),
                     if (likes.isNotEmpty)
@@ -373,7 +375,6 @@ class _WorkoutPostCard extends StatelessWidget {
 
   String _formatTimestamp(int createdAt) {
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(createdAt * 1000);
-    // Format: 2026, March 16
     return DateFormat('yyyy, MMMM dd').format(date);
   }
 }

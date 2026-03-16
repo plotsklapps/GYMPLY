@@ -13,8 +13,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     // Watch Nostr keys and metadata from service.
     final String? npub = nostrService.sNpub.watch(context);
     final String? nsec = nostrService.sNsec.watch(context);
@@ -26,35 +24,31 @@ class ProfileScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
         child: Column(
           children: <Widget>[
-            if (metadata?.picture != null && metadata!.picture!.isNotEmpty)
-              CircleAvatar(
-                radius: 40,
-                backgroundImage: NetworkImage(metadata.picture!),
-                onBackgroundImageError: (_, _) => const Icon(
-                  LucideIcons.userRound,
-                  size: 80,
-                ),
-              )
-            else
-              const Icon(
-                LucideIcons.userRound,
-                size: 80,
+            // The new Profile Header with Banner and Avatar.
+            _ProfileHeader(metadata: metadata),
+
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: <Widget>[
+                  if (npub == null)
+                    _buildOnboarding(context)
+                  else
+                    _buildProfile(context, npub, nsec, metadata),
+                ],
               ),
-            const SizedBox(height: 24),
-            if (npub == null)
-              _buildOnboarding(context, theme)
-            else
-              _buildProfile(context, theme, npub, nsec, metadata),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOnboarding(BuildContext context, ThemeData theme) {
+  Widget _buildOnboarding(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Column(
       children: <Widget>[
         Text(
@@ -119,11 +113,12 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildProfile(
     BuildContext context,
-    ThemeData theme,
     String npub,
     String? nsec,
     Metadata? metadata,
   ) {
+    final ThemeData theme = Theme.of(context);
+
     return Column(
       children: <Widget>[
         Text(
@@ -224,7 +219,7 @@ class ProfileScreen extends StatelessWidget {
     return ModalService.showModal(
       context: context,
       child: Column(
-        children: <Widget>[
+        children: [
           Row(
             children: <Widget>[
               // Empty SizedBox to balance Icon and Text.
@@ -260,7 +255,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Row(
-            children: <Widget>[
+            children: [
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
@@ -307,6 +302,61 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({this.metadata});
+
+  final Metadata? metadata;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final String? bannerUrl = metadata?.banner;
+    final String? pictureUrl = metadata?.picture;
+
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        // 1. BANNER
+        Container(
+          height: 160,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.secondary,
+            image: bannerUrl != null && bannerUrl.isNotEmpty
+                ? DecorationImage(
+                    image: NetworkImage(bannerUrl),
+                    fit: BoxFit.cover,
+                  )
+                : null,
+          ),
+        ),
+
+        // 2. AVATAR (Overlapping)
+        Positioned(
+          bottom: -40,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: theme.colorScheme.surface,
+                width: 4,
+              ),
+            ),
+            child: CircleAvatar(
+              radius: 40,
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
+              backgroundImage: pictureUrl != null && pictureUrl.isNotEmpty
+                  ? NetworkImage(pictureUrl)
+                  : const AssetImage('assets/icons/gymplyIcon.png'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -378,6 +428,7 @@ class _MetadataFormState extends State<_MetadataForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        const SizedBox(height: 48), // Space for overlapping avatar
         const Text(
           'PROFILE DETAILS',
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
