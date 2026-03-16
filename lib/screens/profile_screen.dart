@@ -219,7 +219,7 @@ class ProfileScreen extends StatelessWidget {
     return ModalService.showModal(
       context: context,
       child: Column(
-        children: [
+        children: <Widget>[
           Row(
             children: <Widget>[
               // Empty SizedBox to balance Icon and Text.
@@ -255,7 +255,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
