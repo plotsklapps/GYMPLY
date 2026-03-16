@@ -4,9 +4,7 @@ import 'dart:io';
 
 import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,10 +23,6 @@ class UpdateService {
   final Signal<bool> sIsCheckingForUpdate = Signal<bool>(
     false,
     debugLabel: 'sIsCheckingForUpdate',
-  );
-  final Signal<double> sDownloadProgress = Signal<double>(
-    0,
-    debugLabel: 'sDownloadProgress',
   );
   final Signal<String?> sUpdateError = Signal<String?>(
     null,
@@ -84,9 +78,6 @@ class UpdateService {
         if (latestBuildNumber > currentBuildNumber) {
           _logger.i('UpdateService: New version detected!');
 
-          // SMART LOGIC: Check where the app was installed from.
-          // common installer stores: 'com.android.vending' (Play Store),
-          // 'com.google.android.packageinstaller' (Manual APK), etc.
           final bool isPlayStore = installerStore == 'com.android.vending';
 
           if (isPlayStore) {
@@ -94,23 +85,19 @@ class UpdateService {
             _logger.i('UpdateService: Redirecting to Play Store...');
             ToastService.showSuccess(
               title: 'Update Available',
-              subtitle:
-                  'Opening the Google Play Store for version '
-                  '$latestVersionName...',
+              subtitle: 'Opening Google Play for version $latestVersionName...',
             );
 
-            final Uri url = Uri.parse(_playStoreUrl);
-            if (await canLaunchUrl(url)) {
-              await launchUrl(url, mode: LaunchMode.externalApplication);
-            }
+            await _launchLink(_playStoreUrl);
           } else {
-            // GITHUB/APK VERSION: Download and install manually.
-            _logger.i('UpdateService: Starting GitHub APK download...');
+            // GITHUB/APK VERSION: Open browser to the APK download.
+            _logger.i('UpdateService: Redirecting to GitHub APK download...');
             ToastService.showSuccess(
               title: 'Update Found',
-              subtitle: 'Downloading version $latestVersionName from GitHub...',
+              subtitle:
+                  'Opening download link for version $latestVersionName...',
             );
-            await _downloadAndInstall(downloadUrl);
+            await _launchLink(downloadUrl);
           }
         } else {
           _logger.i('UpdateService: App is up to date.');
@@ -136,56 +123,13 @@ class UpdateService {
     }
   }
 
-  // Download and install update (only for non-Play Store installs).
-  Future<void> _downloadAndInstall(String url) async {
-    _logger.i('UpdateService: Initiating download from $url');
-
-    try {
-      final Directory tempDir = await getTemporaryDirectory();
-      final String filePath = '${tempDir.path}/GYMPLY-update.apk';
-      final File file = File(filePath);
-
-      final HttpClientRequest request = await _httpClient.getUrl(
-        Uri.parse(url),
-      );
-      final HttpClientResponse response = await request.close();
-
-      if (response.statusCode != HttpStatus.ok) {
-        throw Exception('Failed to download file: ${response.statusCode}');
-      }
-
-      final int totalBytes = response.contentLength;
-      int receivedBytes = 0;
-      final IOSink sink = file.openWrite();
-
-      try {
-        // Use await for to process the stream safely and await completion.
-        await for (final List<int> chunk in response) {
-          receivedBytes += chunk.length;
-          sink.add(chunk);
-          if (totalBytes != -1) {
-            sDownloadProgress.value = receivedBytes / totalBytes;
-          }
-        }
-      } finally {
-        await sink.flush();
-        await sink.close();
-      }
-
-      _logger.i('UpdateService: Download complete. Requesting install...');
-      sDownloadProgress.value = 0;
-
-      final OpenResult result = await OpenFilex.open(filePath);
-      if (result.type != ResultType.done) {
-        throw Exception('Installer failed: ${result.message}');
-      }
-    } on Exception catch (e) {
-      _logger.e('UpdateService: Download/Install error: $e');
-      sUpdateError.value = 'Failed to download update.';
-      ToastService.showError(
-        title: 'Download Failed',
-        subtitle: 'Could not download or install the new version...',
-      );
+  // Simple helper to launch a URL.
+  Future<void> _launchLink(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch $urlString');
     }
   }
 }

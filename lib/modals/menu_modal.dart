@@ -26,9 +26,6 @@ class MenuModal extends StatelessWidget {
 
     // Watch update Signals.
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
-    final double updateProgress = UpdateService().sDownloadProgress.watch(
-      context,
-    );
 
     // Watch backup/restore Signals.
     final bool isBackingUp = backupService.sIsBackingUp.watch(context);
@@ -38,10 +35,8 @@ class MenuModal extends StatelessWidget {
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
 
-    // Use whichever progress is active.
-    final double currentProgress = updateProgress > 0
-        ? updateProgress
-        : backupProgress;
+    // The progress indicator now only tracks backups, since updates are handled by the browser.
+    final double currentProgress = backupProgress;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

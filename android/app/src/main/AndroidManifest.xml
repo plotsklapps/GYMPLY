@@ -6,9 +6,6 @@
         android:name="android.permission.VIBRATE"/>
     <uses-permission
         android:name="android.permission.WAKE_LOCK"/>
-    <!-- REQUEST_INSTALL_PACKAGES is required for in-app updates (APK installation) -->
-    <uses-permission
-        android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
         android:label="GYMPLY."
@@ -23,8 +20,7 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="sensorPortrait">
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme"/>
@@ -33,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- FileProvider for secure APK installation and potentially file sharing -->
+        <!-- FileProvider for secure file sharing (Keep this for future use) -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -54,13 +50,6 @@
                 android:name="android.intent.action.VIEW"/>
             <data
                 android:scheme="https"/>
-        </intent>
-        <!-- For open_filex (APK installation) -->
-        <intent>
-            <action
-                android:name="android.intent.action.VIEW"/>
-            <data
-                android:mimeType="application/vnd.android.package-archive"/>
         </intent>
         <intent>
             <action

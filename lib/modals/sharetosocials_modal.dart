@@ -399,7 +399,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
-                    } catch (e) {
+                    } on Object catch (e) {
                       ToastService.showError(
                         title: 'Sharing Failed',
                         subtitle: e.toString(),

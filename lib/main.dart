@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/settings_model.dart';
@@ -17,6 +18,12 @@ import 'package:toastification/toastification.dart';
 void main() async {
   // Mandatory Flutter framework binding.
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Lock orientation to portrait.
+  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   // Initialize Hive CE.
   await Hive.initFlutter();
