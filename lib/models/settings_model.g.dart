@@ -27,13 +27,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       age: fields[5] == null ? 0 : (fields[5] as num).toInt(),
       height: fields[6] == null ? 0 : (fields[6] as num).toDouble(),
       weight: fields[7] == null ? 0 : (fields[7] as num).toDouble(),
+      sex: fields[8] == null ? 0 : (fields[8] as num).toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -49,7 +50,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(6)
       ..write(obj.height)
       ..writeByte(7)
-      ..write(obj.weight);
+      ..write(obj.weight)
+      ..writeByte(8)
+      ..write(obj.sex);
   }
 
   @override

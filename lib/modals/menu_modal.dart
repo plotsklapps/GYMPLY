@@ -98,7 +98,7 @@ class MenuModal extends StatelessWidget {
                   onTap: () async {
                     await ModalService.showModal(
                       context: context,
-                      child: const PersonalStatsModal(),
+                      child: const BodyMetricsModal(),
                     );
                   },
                   leading: const Icon(LucideIcons.database),
