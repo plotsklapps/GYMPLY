@@ -17,17 +17,15 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Workout(
-      id: fields[0] as String,
-      title: fields[1] as String,
+      id: fields[0] == null ? '' : fields[0] as String,
+      title: fields[1] == null ? '' : fields[1] as String,
       dateTime: fields[2] as DateTime,
-      totalDuration: (fields[3] as num).toInt(),
+      totalDuration: fields[3] == null ? 0 : (fields[3] as num).toInt(),
       exercises: fields[4] == null
-          ? const <WorkoutExercise>[]
+          ? []
           : (fields[4] as List).cast<WorkoutExercise>(),
       notes: fields[5] == null ? '' : fields[5] as String,
-      imagePaths: fields[6] == null
-          ? const <String>[]
-          : (fields[6] as List).cast<String>(),
+      imagePaths: fields[6] == null ? [] : (fields[6] as List).cast<String>(),
     );
   }
 

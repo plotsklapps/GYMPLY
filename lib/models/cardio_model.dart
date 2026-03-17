@@ -82,6 +82,23 @@ class CardioExercise extends WorkoutExercise {
     });
   }
 
+  /// Calculates total calories for all sets in this exercise.
+  int calculateTotalCalories({
+    required double userWeight,
+    required int userAge,
+    required int userSex,
+  }) {
+    return sets.fold(0, (int sum, CardioSet set) {
+      return sum +
+          set.calculateEstimatedCalories(
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          );
+    });
+  }
+
+  // Legacy getter (might return 0 if sets.calories is null).
   int get totalCalories {
     return sets.fold(0, (int sum, CardioSet set) {
       return sum + (set.calories ?? 0);
@@ -112,4 +129,46 @@ class CardioSet {
   final int? calories;
   @HiveField(5)
   final int? intensity;
+
+  /// Calculates estimated calories burned based on MET values.
+  /// If [userWeight] or [userAge] are 0, returns the stored [calories] or 0.
+  /// [userSex] should be 0 for male, 1 for female.
+  int calculateEstimatedCalories({
+    required double userWeight,
+    required int userAge,
+    required int userSex,
+  }) {
+    if (calories != null) return calories!;
+    if (userWeight <= 0) return 0;
+
+    // MET (Metabolic Equivalent of Task) mapping for intensity levels (0, 1, 2).
+    double met;
+    switch (intensity ?? 1) {
+      case 0:
+        met = 3.5; // Brisk walk / Light cardio
+        break;
+      case 2:
+        met = 12.0; // Sprint / Hard cardio
+        break;
+      case 1:
+      default:
+        met = 7.0; // Jog / Moderate cardio
+        break;
+    }
+
+    // Standard formula: Calories = MET * weight_kg * (duration_hours)
+    final double durationHours = cardioDuration.inSeconds / 3600.0;
+    double estimated = met * userWeight * durationHours;
+
+    // Small adjustments for age and sex (simplified).
+    if (userSex == 1) {
+      // 1 = female
+      estimated *= 0.9;
+    }
+    if (userAge > 40) {
+      estimated *= 0.95;
+    }
+
+    return estimated.round();
+  }
 }

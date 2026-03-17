@@ -17,9 +17,9 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CardioExercise(
-      id: (fields[0] as num).toInt(),
-      exerciseName: fields[1] as String,
-      imagePath: fields[2] as String,
+      id: fields[0] == null ? 0 : (fields[0] as num).toInt(),
+      exerciseName: fields[1] == null ? '' : fields[1] as String,
+      imagePath: fields[2] == null ? '' : fields[2] as String,
       equipment: fields[3] as Equipment,
       sets: (fields[4] as List).cast<CardioSet>(),
       cardioDurationInput: fields[5] as Duration?,

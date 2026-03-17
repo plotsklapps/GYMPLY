@@ -169,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 if (context.mounted) {
                   await ModalService.showModal(
                     context: context,
+                    scrollable: false,
                     child: const MenuModal(),
                   );
                 }

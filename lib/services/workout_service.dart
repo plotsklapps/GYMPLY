@@ -16,6 +16,15 @@ import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+// Signals for personal stats.
+final Signal<int> sAge = Signal<int>(0, debugLabel: 'sAge');
+final Signal<double> sHeight = Signal<double>(0, debugLabel: 'sHeight');
+final Signal<double> sWeight = Signal<double>(0, debugLabel: 'sWeight');
+final Signal<int> sSex = Signal<int>(
+  0,
+  debugLabel: 'sSex',
+); // 0 = male, 1 = female
+
 class WorkoutService {
   // Create a singleton instance of WorkoutService.
   factory WorkoutService() {
@@ -87,6 +96,11 @@ class WorkoutService {
       sWakelock.value = settings.isWakelock;
       // Set FlexScheme.
       sFlexScheme.value = settings.flexScheme;
+      // Set Personal Stats.
+      sAge.value = settings.age;
+      sHeight.value = settings.height;
+      sWeight.value = settings.weight;
+      sSex.value = settings.sex;
 
       // Log settings.
       _logger.i(
@@ -95,7 +109,11 @@ class WorkoutService {
         'RestTime: ${settings.initialRestTime}, '
         'Favorites: ${sFavoriteExercises.value.length}, '
         'Wakelock: ${settings.isWakelock}, '
-        'FlexScheme: ${settings.flexScheme.name}',
+        'FlexScheme: ${settings.flexScheme.name}, '
+        'Age: ${settings.age}, '
+        'Height: ${settings.height}, '
+        'Weight: ${settings.weight}, '
+        'Sex: ${settings.sex == 0 ? "Male" : "Female"}',
       );
     }
 
@@ -172,6 +190,10 @@ class WorkoutService {
       final List<int> favorites = sFavoriteExercises.value;
       final bool isWakelock = sWakelock.value;
       final FlexSchemes flexScheme = sFlexScheme.value;
+      final int age = sAge.value;
+      final double height = sHeight.value;
+      final double weight = sWeight.value;
+      final int sex = sSex.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -180,6 +202,10 @@ class WorkoutService {
         favoriteExercises: favorites,
         isWakelock: isWakelock,
         flexSchemeIndex: flexScheme.index,
+        age: age,
+        height: height,
+        weight: weight,
+        sex: sex,
       );
 
       // Store to Hive.
@@ -552,6 +578,41 @@ class WorkoutService {
 
     // Log deletion.
     _logger.i('WorkoutService: Deleting Cardio set');
+  }
+
+  // Update set in CardioExercise.
+  void updateCardioSet(
+    CardioExercise exercise,
+    CardioSet oldSet, {
+    Duration? cardioDuration,
+    Duration? restDuration,
+    Duration? totalDuration,
+    double? distance,
+    int? calories,
+    int? intensity,
+  }) {
+    final int index = exercise.sets.indexOf(oldSet);
+    if (index == -1) return;
+
+    final CardioSet newSet = CardioSet(
+      cardioDuration: cardioDuration ?? oldSet.cardioDuration,
+      restDuration: restDuration ?? oldSet.restDuration,
+      totalDuration: totalDuration ?? oldSet.totalDuration,
+      distance: distance ?? oldSet.distance,
+      calories: calories ?? oldSet.calories,
+      intensity: intensity ?? oldSet.intensity,
+    );
+
+    final List<CardioSet> updatedSets = List<CardioSet>.from(exercise.sets);
+    updatedSets[index] = newSet;
+
+    final CardioExercise updatedExercise = exercise.copyWith(
+      sets: updatedSets,
+    );
+
+    _replaceExercise(exercise, updatedExercise);
+
+    _logger.i('WorkoutService: Updated Cardio set');
   }
 
   // Add set to StretchExercise.

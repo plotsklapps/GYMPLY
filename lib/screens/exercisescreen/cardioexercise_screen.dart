@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/modals/cardiosetstats_modal.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
@@ -43,6 +44,11 @@ class CardioExerciseScreen extends StatelessWidget {
       context,
     );
     final bool isRestRunning = RestTimer.sRestTimerRunning.watch(context);
+
+    // Watch personal stats for calorie calculation.
+    final double userWeight = sWeight.watch(context);
+    final int userAge = sAge.watch(context);
+    final int userSex = sSex.watch(context); // 0 = male, 1 = female
 
     return Scaffold(
       body: Column(
@@ -228,6 +234,7 @@ class CardioExerciseScreen extends StatelessWidget {
                             cardioDuration: Duration(milliseconds: elapsed),
                             restDuration: Duration.zero,
                             totalDuration: Duration(milliseconds: elapsed),
+                            intensity: exercise.intensityInput ?? 1,
                           );
                           await StopwatchTimer().resetTimer();
                         } else {
@@ -246,6 +253,7 @@ class CardioExerciseScreen extends StatelessWidget {
                             totalDuration: Duration(
                               milliseconds: cardioMs + (restSec * 1000),
                             ),
+                            intensity: exercise.intensityInput ?? 1,
                           );
 
                           await IntervalTimer().resetTimer();
@@ -282,12 +290,101 @@ class CardioExerciseScreen extends StatelessWidget {
                                 ' REST: '
                                 '${set.restDuration.inSeconds.formatMSS()}',
                     ),
-                    subtitle: Text(
-                      set.restDuration == Duration.zero
-                          ? 'STOPWATCH'
-                          : 'INTERVAL',
+                    subtitle: Row(
+                      children: <Widget>[
+                        Text(
+                          '${set.restDuration == Duration.zero ? 'STOPWATCH' : 'INTERVAL'}'
+                          '${set.distance != null ? ' • ${set.distance!.toStringAsFixed(2)} km' : ''}'
+                          '${userWeight > 0 ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal' : ''}',
+                        ),
+                        const SizedBox(width: 8),
+                        // Flame icons for intensity.
+                        ...List<Widget>.generate(
+                          (set.intensity ?? 1) + 1,
+                          (int index) => Icon(
+                            LucideIcons.flame,
+                            size: 14,
+                            color: (set.intensity ?? 1) == 2
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
                     ),
-                    trailing: const Icon(Icons.more_vert),
+                    trailing: PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert),
+                      onSelected: (String value) async {
+                        if (value == 'deleteSet') {
+                          workoutService.deleteCardioSet(exercise, set);
+                        } else if (value == 'addStats') {
+                          await ModalService.showModal(
+                            context: context,
+                            child: CardioSetStatsModal(
+                              initialDistance: set.distance ?? 0.0,
+                              initialIntensity: set.intensity ?? 1,
+                              onConfirm: (double distance, int intensity) {
+                                // Update current set.
+                                workoutService
+                                  ..updateCardioSet(
+                                    exercise,
+                                    set,
+                                    distance: distance,
+                                    intensity: intensity,
+                                  )
+                                  // Stickily update exercise input.
+                                  ..updateCardioInput(
+                                    exercise,
+                                    intensity: intensity,
+                                  );
+                              },
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'addStats',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text('Add Stats'),
+                                SizedBox(width: 4),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.plus,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'deleteSet',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                const Text('Delete Set'),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.trash,
+                                      color: theme.colorScheme.error,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
                   ),
                 );
               },

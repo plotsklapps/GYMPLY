@@ -17,9 +17,9 @@ class StrengthExerciseAdapter extends TypeAdapter<StrengthExercise> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return StrengthExercise(
-      id: (fields[0] as num).toInt(),
-      exerciseName: fields[1] as String,
-      imagePath: fields[2] as String,
+      id: fields[0] == null ? 0 : (fields[0] as num).toInt(),
+      exerciseName: fields[1] == null ? '' : fields[1] as String,
+      imagePath: fields[2] == null ? '' : fields[2] as String,
       muscleGroup: fields[3] as MuscleGroup,
       equipment: fields[4] as Equipment,
       sets: (fields[5] as List).cast<StrengthSet>(),

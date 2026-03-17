@@ -3,8 +3,8 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class RestTimerSheet extends StatelessWidget {
-  const RestTimerSheet({super.key});
+class RestTimerModal extends StatelessWidget {
+  const RestTimerModal({super.key});
 
   @override
   Widget build(BuildContext context) {

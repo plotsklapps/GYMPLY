@@ -5,6 +5,8 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/workout_service.dart';
+import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailCard extends StatelessWidget {
   const ExerciseDetailCard({
@@ -64,6 +66,12 @@ class ExerciseDetailCard extends StatelessWidget {
       ]);
     } else if (exercise is CardioExercise) {
       final CardioExercise ex = exercise as CardioExercise;
+
+      // Watch personal stats for calorie calculation.
+      final double userWeight = sWeight.watch(context);
+      final int userAge = sAge.watch(context);
+      final int userSex = sSex.watch(context);
+
       detailRows.addAll(<Widget>[
         ExerciseDetailRow(
           label: 'Equipment',
@@ -78,7 +86,15 @@ class ExerciseDetailCard extends StatelessWidget {
           label: 'Distance',
           value: '${ex.totalDistance.toStringAsFixed(2)} km',
         ),
-        ExerciseDetailRow(label: 'Calories', value: '${ex.totalCalories} kcal'),
+        ExerciseDetailRow(
+          label: 'Calories',
+          value:
+              '${ex.calculateTotalCalories(
+                userWeight: userWeight,
+                userAge: userAge,
+                userSex: userSex,
+              )} kcal',
+        ),
       ]);
     } else if (exercise is StretchExercise) {
       final StretchExercise ex = exercise as StretchExercise;

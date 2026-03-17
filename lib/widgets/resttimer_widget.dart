@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/modals/resttimer_sheet.dart';
+import 'package:gymply/modals/resttimer_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
@@ -33,7 +33,7 @@ class RestTimerWidget extends StatelessWidget {
           onPressed: () async {
             await ModalService.showModal(
               context: context,
-              child: const RestTimerSheet(),
+              child: const RestTimerModal(),
             );
           },
           style: TextButton.styleFrom(padding: EdgeInsets.zero),

@@ -50,6 +50,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     // Watch sActiveWorkout for live statistics of current workout.
     final Workout activeWorkout = workoutService.sActiveWorkout.watch(context);
 
+    // Watch personal stats for calorie calculation.
+    final double userWeight = sWeight.watch(context);
+    final int userAge = sAge.watch(context);
+    final int userSex = sSex.watch(context);
+
     // Store workout dates in a Set for quick lookups in heatmap.
     final Set<String> workoutDateKeys = history.map((Workout w) {
       return w.dateKey;
@@ -216,7 +221,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             StatTile(
                               label: 'Calories',
                               value:
-                                  '${currentWorkout.totalCardioCalories}kcal',
+                                  '${currentWorkout.calculateTotalCardioCalories(
+                                    userWeight: userWeight,
+                                    userAge: userAge,
+                                    userSex: userSex,
+                                  )}kcal',
                               icon: LucideIcons.flame,
                             ),
                             StatTile(

@@ -11,6 +11,10 @@ class Settings {
     this.flexSchemeIndex = 0,
     this.favoriteExercises = const <int>[],
     this.isWakelock = true,
+    this.age = 0,
+    this.height = 0,
+    this.weight = 0,
+    this.sex = 0,
   });
 
   @HiveField(0, defaultValue: true)
@@ -28,6 +32,18 @@ class Settings {
   @HiveField(4, defaultValue: 0)
   final int flexSchemeIndex;
 
+  @HiveField(5, defaultValue: 0)
+  final int age;
+
+  @HiveField(6, defaultValue: 0)
+  final double height;
+
+  @HiveField(7, defaultValue: 0)
+  final double weight;
+
+  @HiveField(8, defaultValue: 0)
+  final int sex;
+
   // Custom enum mapping.
   FlexSchemes get flexScheme {
     return FlexSchemes.values[flexSchemeIndex];
@@ -39,6 +55,10 @@ class Settings {
     List<int>? favoriteExerciseIds,
     bool? isWakelock,
     FlexSchemes? flexScheme,
+    int? age,
+    double? height,
+    double? weight,
+    int? sex,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
@@ -46,6 +66,10 @@ class Settings {
       favoriteExercises: favoriteExerciseIds ?? favoriteExercises,
       isWakelock: isWakelock ?? this.isWakelock,
       flexSchemeIndex: flexScheme?.index ?? flexSchemeIndex,
+      age: age ?? this.age,
+      height: height ?? this.height,
+      weight: weight ?? this.weight,
+      sex: sex ?? this.sex,
     );
   }
 }

@@ -17,9 +17,9 @@ class StretchExerciseAdapter extends TypeAdapter<StretchExercise> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return StretchExercise(
-      id: (fields[0] as num).toInt(),
-      exerciseName: fields[1] as String,
-      imagePath: fields[2] as String,
+      id: fields[0] == null ? 0 : (fields[0] as num).toInt(),
+      exerciseName: fields[1] == null ? '' : fields[1] as String,
+      imagePath: fields[2] == null ? '' : fields[2] as String,
       sets: (fields[3] as List).cast<StretchSet>(),
       stretchDurationInput: fields[4] as Duration?,
       restDurationInput: fields[5] as Duration?,

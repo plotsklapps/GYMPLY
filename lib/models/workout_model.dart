@@ -135,7 +135,26 @@ class Workout {
     );
   }
 
-  // Total calories burned across all cardio exercises.
+  // Calculates total calories for all cardio exercises in this workout.
+  int calculateTotalCardioCalories({
+    required double userWeight,
+    required int userAge,
+    required int userSex,
+  }) {
+    return exercises.whereType<CardioExercise>().fold(0, (
+      int sum,
+      CardioExercise ex,
+    ) {
+      return sum +
+          ex.calculateTotalCalories(
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          );
+    });
+  }
+
+  // Total calories burned across all cardio exercises (Legacy).
   int get totalCardioCalories {
     return exercises.whereType<CardioExercise>().fold(
       0,
