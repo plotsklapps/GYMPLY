@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
-import 'package:gymply/services/toast_service.dart';
 
 class NostrOnboarding extends StatelessWidget {
   const NostrOnboarding({super.key});
@@ -49,20 +48,7 @@ class NostrOnboarding extends StatelessWidget {
               Expanded(
                 child: FilledButton(
                   onPressed: () async {
-                    final bool success = await nostrService.generateKeys();
-                    if (context.mounted) {
-                      if (success) {
-                        ToastService.showSuccess(
-                          title: 'Keys Generated',
-                          subtitle: 'You are now a Nostrich',
-                        );
-                      } else {
-                        ToastService.showError(
-                          title: 'Failed to Generate Keys',
-                          subtitle: 'Please try again later',
-                        );
-                      }
-                    }
+                    await nostrService.generateKeys();
                   },
                   child: const Text('Create New Keys'),
                 ),
@@ -70,14 +56,20 @@ class NostrOnboarding extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          OutlinedButton(
-            onPressed: () async {
-              await ModalService.showModal(
-                context: context,
-                child: const ImportKeysModal(),
-              );
-            },
-            child: const Text('Use Existing Keys'),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await ModalService.showModal(
+                      context: context,
+                      child: const ImportKeysModal(),
+                    );
+                  },
+                  child: const Text('Use Existing Keys'),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:ndk/ndk.dart' hide Logger; // Hide conflicting Logger from NDK
 import 'package:ndk/shared/nips/nip01/bip340.dart';
@@ -96,6 +97,12 @@ class NostrService {
 
   Future<void> _loginToNdk(String npub, String? nsec) async {
     final String pubkeyHex = Nip19.decode(npub);
+
+    // If npub already exists in NDK, remove it first.
+    if (_ndk.accounts.hasAccount(pubkeyHex)) {
+      _ndk.accounts.removeAccount(pubkey: pubkeyHex);
+    }
+
     if (nsec != null) {
       final String privkeyHex = Nip19.decode(nsec);
       _ndk.accounts.loginPrivateKey(pubkey: pubkeyHex, privkey: privkeyHex);
@@ -254,9 +261,27 @@ class NostrService {
       sNsec.value = keyPair.privateKeyBech32;
       await _loginToNdk(sNpub.value!, sNsec.value);
       await fetchMetadata();
+
+      // Log success.
+      _logger.i('Keys generated successfully');
+
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Keys Generated',
+        subtitle: 'You now have complete access to Nostr',
+      );
+
       return true;
     } on Object catch (e) {
+      // Log error.
       _logger.e('Error generating keys: $e');
+
+      // Show toast to user.
+      ToastService.showError(
+        title: 'Error Generating Keys',
+        subtitle: '$e',
+      );
+
       return false;
     }
   }
@@ -282,9 +307,27 @@ class NostrService {
       }
       await _loginToNdk(sNpub.value!, sNsec.value);
       await fetchMetadata();
+
+      // Log success.
+      _logger.i('Keys imported successfully');
+
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Keys Imported',
+        subtitle: 'You now have complete access to Nostr',
+      );
+
       return true;
     } on Object catch (e) {
+      // Log error.
       _logger.e('Error using existing keys: $e');
+
+      // Show toast to user.
+      ToastService.showError(
+        title: 'Error Importing Keys',
+        subtitle: '$e',
+      );
+
       return false;
     }
   }

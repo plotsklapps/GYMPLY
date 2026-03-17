@@ -20,7 +20,7 @@ class MetaDataForm extends StatefulWidget {
 }
 
 class _MetaDataFormState extends State<MetaDataForm> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _pictureController = TextEditingController();
@@ -47,7 +47,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
 
   void _populateFields() {
     if (widget.metadata != null) {
-      _nameController.text = widget.metadata!.name ?? '';
+      _userNameController.text = widget.metadata!.name ?? '';
       _displayNameController.text = widget.metadata!.displayName ?? '';
       _aboutController.text = widget.metadata!.about ?? '';
       _pictureController.text = widget.metadata!.picture ?? '';
@@ -60,7 +60,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _userNameController.dispose();
     _displayNameController.dispose();
     _aboutController.dispose();
     _pictureController.dispose();
@@ -76,15 +76,14 @@ class _MetaDataFormState extends State<MetaDataForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const SizedBox(height: 48), // Space for overlapping avatar
         const Text(
           'PROFILE DETAILS',
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
         ),
         const SizedBox(height: 16),
         MetadataTextField(
-          label: 'Name',
-          controller: _nameController,
+          label: '@Username',
+          controller: _userNameController,
           hint: 'Your unique name',
         ),
         MetadataTextField(
@@ -123,21 +122,24 @@ class _MetaDataFormState extends State<MetaDataForm> {
           controller: _websiteController,
           hint: 'https://yourwebsite.com',
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
         if (widget.canSign)
-          FilledButton.icon(
-            onPressed: _isSaving ? null : _saveMetadata,
-            icon: _isSaving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(LucideIcons.save),
-            label: const Text('Save Profile Changes'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-            ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _isSaving ? null : _saveMetadata,
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Icon(LucideIcons.save),
+                  label: const Text('Save Profile Changes'),
+                ),
+              ),
+            ],
           )
         else
           const Text(
@@ -157,7 +159,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
       final Metadata metadata =
           widget.metadata?.copyWith() ??
                 Metadata(pubKey: Nip19.decode(nostrService.sNpub.value!))
-            ..name = _nameController.text.trim()
+            ..name = _userNameController.text.trim()
             ..displayName = _displayNameController.text.trim()
             ..about = _aboutController.text.trim()
             ..picture = _pictureController.text.trim()
@@ -168,13 +170,11 @@ class _MetaDataFormState extends State<MetaDataForm> {
 
       await nostrService.updateMetadata(metadata);
 
-      if (mounted) {
-        // Show toast to user.
-        ToastService.showSuccess(
-          title: 'Profile Updated',
-          subtitle: 'Your changes are now live',
-        );
-      }
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Profile Updated',
+        subtitle: 'Your changes are now live',
+      );
     } on Object catch (e) {
       // Show toast to user.
       ToastService.showError(
