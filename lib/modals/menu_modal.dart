@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
-import 'package:gymply/screens/profile_screen.dart';
+import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
@@ -35,7 +35,8 @@ class MenuModal extends StatelessWidget {
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
 
-    // The progress indicator now only tracks backups, since updates are handled by the browser.
+    // The progress indicator now only tracks backups, since updates are
+    //handled by the browser.
     final double currentProgress = backupProgress;
 
     return Column(

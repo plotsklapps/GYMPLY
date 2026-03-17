@@ -245,14 +245,20 @@ class NostrService {
     sMetadata.value = updated;
   }
 
-  Future<void> generateKeys() async {
-    final KeyPair keyPair = Bip340.generatePrivateKey();
-    await _storage.write(key: 'nostr_npub', value: keyPair.publicKeyBech32);
-    await _storage.write(key: 'nostr_nsec', value: keyPair.privateKeyBech32);
-    sNpub.value = keyPair.publicKeyBech32;
-    sNsec.value = keyPair.privateKeyBech32;
-    await _loginToNdk(sNpub.value!, sNsec.value);
-    await fetchMetadata();
+  Future<bool> generateKeys() async {
+    try {
+      final KeyPair keyPair = Bip340.generatePrivateKey();
+      await _storage.write(key: 'nostr_npub', value: keyPair.publicKeyBech32);
+      await _storage.write(key: 'nostr_nsec', value: keyPair.privateKeyBech32);
+      sNpub.value = keyPair.publicKeyBech32;
+      sNsec.value = keyPair.privateKeyBech32;
+      await _loginToNdk(sNpub.value!, sNsec.value);
+      await fetchMetadata();
+      return true;
+    } on Object catch (e) {
+      _logger.e('Error generating keys: $e');
+      return false;
+    }
   }
 
   Future<bool> useExistingKeys(String input) async {
