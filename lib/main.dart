@@ -28,7 +28,8 @@ void main() async {
   // Initialize Hive CE.
   await Hive.initFlutter();
 
-  // Register Hive Adapters.
+  // Register Hive Adapters, when altered, run:
+  // $ dart run build_runner build --delete-conflicting-outputs
   Hive
     ..registerAdapter(WorkoutAdapter())
     ..registerAdapter(StrengthExerciseAdapter())

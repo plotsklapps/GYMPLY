@@ -146,14 +146,11 @@ class CardioSet {
     switch (intensity ?? 1) {
       case 0:
         met = 3.5; // Brisk walk / Light cardio
-        break;
       case 2:
         met = 12.0; // Sprint / Hard cardio
-        break;
       case 1:
       default:
         met = 7.0; // Jog / Moderate cardio
-        break;
     }
 
     // Standard formula: Calories = MET * weight_kg * (duration_hours)

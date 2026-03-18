@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
-import 'package:gymply/screens/feed_screen.dart';
+import 'package:gymply/screens/feedscreen/feed_screen.dart';
 import 'package:gymply/screens/searchscreen/search_screen.dart';
 import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';

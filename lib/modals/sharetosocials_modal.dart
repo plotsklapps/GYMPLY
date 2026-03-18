@@ -48,7 +48,8 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
   // Toggles initialized in initState.
   late bool _showPhotos;
   late bool _showNotes;
-  bool _postToNostr = true;
+  // Set to false, to prevent double posting.
+  bool _postToNostr = false;
   bool _isSharing = false;
 
   // Default to share volume, sets & duration.

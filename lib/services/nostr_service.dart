@@ -72,6 +72,16 @@ class NostrService {
         debugLabel: 'sFeedReactions',
       );
 
+  // Signal for loading state.
+  final Signal<bool> sIsLoadingFeed = Signal<bool>(
+    false,
+    debugLabel: 'sIsLoadingFeed',
+  );
+
+  // --- SUBSCRIPTIONS ---
+  StreamSubscription<Nip01Event>? _feedSubscription;
+  StreamSubscription<Nip01Event>? _reactionSubscription;
+
   // --- METHODS ---
 
   // Initialize service.
@@ -225,26 +235,109 @@ class NostrService {
     }
   }
 
-  // Subscription for the global GYMPLY feed.
-  Stream<Nip01Event> getGymplyFeedStream() {
-    return _ndk.requests
+  // --- FEED LOGIC ---
+
+  void startFeedSubscriptions() {
+    if (_feedSubscription != null) return;
+
+    sIsLoadingFeed.value = true;
+
+    _feedSubscription = _ndk.requests
         .subscription(
           name: 'gymply-global-feed',
           filter: Filter(kinds: <int>[kGymplyWorkoutKind], limit: 50),
         )
-        .stream;
+        .stream
+        .listen((Nip01Event event) async {
+          if (!sFeedEvents.value.any((Nip01Event e) => e.id == event.id)) {
+            final List<Nip01Event> newList =
+                <Nip01Event>[event, ...sFeedEvents.value]..sort(
+                  (Nip01Event a, Nip01Event b) =>
+                      b.createdAt.compareTo(a.createdAt),
+                );
+            sFeedEvents.value = newList;
+
+            await _resolveMetadata(event.pubKey);
+            _updateReactionSubscription();
+          }
+
+          if (sIsLoadingFeed.value && sFeedEvents.value.isNotEmpty) {
+            sIsLoadingFeed.value = false;
+          }
+        });
+
+    Future<void>.delayed(const Duration(seconds: 5), () {
+      if (sIsLoadingFeed.value) {
+        sIsLoadingFeed.value = false;
+      }
+    });
   }
 
-  /// Subscription for reactions related to the currently visible posts.
-  Stream<Nip01Event> getReactionsStream(List<String> eventIds) {
-    if (eventIds.isEmpty) return const Stream.empty();
-    return _ndk.requests
+  void _updateReactionSubscription() {
+    unawaited(_reactionSubscription?.cancel());
+
+    final List<String> eventIds = sFeedEvents.value
+        .map((Nip01Event e) => e.id)
+        .toList();
+
+    if (eventIds.isEmpty) return;
+
+    _reactionSubscription = _ndk.requests
         .subscription(
           name: 'gymply-reactions',
           filter: Filter(kinds: <int>[7], eTags: eventIds),
         )
-        .stream;
+        .stream
+        .listen((Nip01Event reaction) {
+          final List<String> eTag = reaction.tags.firstWhere(
+            (List<String> t) => t.length >= 2 && t[0] == 'e',
+            orElse: () => <String>[],
+          );
+
+          if (eTag.isNotEmpty && reaction.content == '💪') {
+            final String targetEventId = eTag[1];
+            final Map<String, Set<String>> reactions =
+                Map<String, Set<String>>.from(sFeedReactions.value);
+            final Set<String> eventLikes = Set<String>.from(
+              reactions[targetEventId] ?? <String>{},
+            )..add(reaction.pubKey);
+            reactions[targetEventId] = eventLikes;
+            sFeedReactions.value = reactions;
+          }
+        });
   }
+
+  Future<void> _resolveMetadata(String pubkey) async {
+    if (sFeedMetadata.value.containsKey(pubkey)) return;
+    try {
+      final Metadata? meta = await getMetadataForPubkey(pubkey);
+      if (meta != null) {
+        final Map<String, Metadata> newMap = Map<String, Metadata>.from(
+          sFeedMetadata.value,
+        );
+        newMap[pubkey] = meta;
+        sFeedMetadata.value = newMap;
+      }
+    } on Object catch (e) {
+      _logger.w('Could not resolve metadata for $pubkey: $e');
+    }
+  }
+
+  Future<void> stopFeedSubscriptions() async {
+    await _feedSubscription?.cancel();
+    await _reactionSubscription?.cancel();
+    _feedSubscription = null;
+    _reactionSubscription = null;
+  }
+
+  Future<void> refreshFeed() async {
+    sFeedEvents.value = <Nip01Event>[];
+    sFeedReactions.value = <String, Set<String>>{};
+    await stopFeedSubscriptions();
+    startFeedSubscriptions();
+  }
+
+  // --- OTHERS ---
 
   Future<void> updateMetadata(Metadata metadata) async {
     if (sNpub.value == null) return;
@@ -342,6 +435,7 @@ class NostrService {
     sFeedEvents.value = <Nip01Event>[];
     sFeedMetadata.value = <String, Metadata>{};
     sFeedReactions.value = <String, Set<String>>{};
+    await stopFeedSubscriptions();
   }
 }
 

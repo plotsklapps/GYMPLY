@@ -66,6 +66,12 @@ extension TimeFormatter on int {
 
     return '$hoursStr:$minutesStr:$secondsStr:$tenthsStr';
   }
+
+  /// Formats a Unix timestamp (seconds) as "yyyy, MMMM dd"
+  String formatWorkoutDate() {
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch(this * 1000);
+    return DateFormat('yyyy, MMMM dd').format(date);
+  }
 }
 
 extension DurationFormatter on Duration {
