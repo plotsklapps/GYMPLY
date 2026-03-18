@@ -235,6 +235,57 @@ class NostrService {
     }
   }
 
+  // Deletes WorkoutNote by sending Kind 5 (Event Deletion) event.
+  Future<void> deleteWorkoutNote(String eventId) async {
+    if (sNsec.value == null) return;
+
+    // Optimistic UI update: Remove from sFeedEvents signal immediately.
+    final List<Nip01Event> events = List<Nip01Event>.from(sFeedEvents.value)
+      ..removeWhere((Nip01Event e) {
+        return e.id == eventId;
+      });
+    sFeedEvents.value = events;
+
+    // Refresh reaction subscription to exclude the deleted event.
+    _updateReactionSubscription();
+
+    // Create Kind 5 deletion event.
+    final Nip01Event deletionEvent = Nip01Event(
+      pubKey: Nip19.decode(sNpub.value!),
+      kind: 5,
+      content: 'Deleted by user in GYMPLY.',
+      createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      tags: <List<String>>[
+        <String>['e', eventId],
+      ],
+    );
+
+    // Broadcast to relays.
+    try {
+      await _ndk.broadcast
+          .broadcast(nostrEvent: deletionEvent)
+          .broadcastDoneFuture;
+
+      // Log success.
+      _logger.i('Deletion request (Kind 5) broadcasted for event: $eventId');
+
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Deletion Requested',
+        subtitle: 'Nostr deletion event created',
+      );
+    } on Object catch (e) {
+      // Log error.
+      _logger.e('Failed to broadcast deletion request: $e');
+
+      // Show toast to user.
+      ToastService.showError(
+        title: 'Deletion Request Failed',
+        subtitle: '$e',
+      );
+    }
+  }
+
   // --- FEED LOGIC ---
 
   void startFeedSubscriptions() {

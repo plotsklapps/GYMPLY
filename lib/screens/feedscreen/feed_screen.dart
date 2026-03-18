@@ -89,6 +89,7 @@ class _FeedScreenState extends State<FeedScreen> {
       );
     }
 
+    // Feed of WorkoutNotes.
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: ListView.builder(
