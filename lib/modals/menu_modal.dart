@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:gymply/modals/personalstats_modal.dart';
+import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
@@ -101,7 +101,7 @@ class MenuModal extends StatelessWidget {
                       child: const BodyMetricsModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.database),
+                  leading: const Icon(LucideIcons.personStanding),
                   title: const Text('Body Metrics'),
                   subtitle: const Text('Age, height, weight and more'),
                   trailing: const Icon(LucideIcons.chevronRight),

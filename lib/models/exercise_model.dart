@@ -72,6 +72,8 @@ enum Equipment {
   stretch,
   @HiveField(16)
   heavybag,
+  @HiveField(17)
+  battlerope,
 }
 
 // Helper enums for UI filtering (Non-Hive).
@@ -99,6 +101,7 @@ enum CardioEquipment {
   kettlebell,
   medicineball,
   heavybag,
+  battlerope,
 }
 
 // Metadata for an exercise parsed from its asset path.

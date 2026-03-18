@@ -187,10 +187,9 @@ class _ScrollColumn extends StatelessWidget {
       children: <Widget>[
         Text(
           label,
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-          ),
+          style: theme.textTheme.labelMedium,
         ),
+
         Expanded(
           child: SizedBox(
             width: 100,
@@ -210,8 +209,8 @@ class _ScrollColumn extends StatelessWidget {
                       index.toString().padLeft(2, '0'),
                       style: theme.textTheme.displayLarge?.copyWith(
                         color: isSelected
-                            ? theme.colorScheme.onPrimary.withAlpha(200)
-                            : theme.colorScheme.onSurface.withAlpha(50),
+                            ? theme.colorScheme.secondary.withAlpha(200)
+                            : theme.colorScheme.primary.withAlpha(50),
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,
