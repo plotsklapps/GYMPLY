@@ -380,7 +380,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
 
                       // 2. Handle Nostr Posting (if enabled).
                       if (canPostToNostr && _postToNostr) {
-                        await nostrService.publishWorkoutPost(
+                        await nostrService.publishWorkoutNote(
                           imageBytes: imageBytes,
                         );
                         ToastService.showSuccess(

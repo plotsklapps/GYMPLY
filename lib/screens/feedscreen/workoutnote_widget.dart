@@ -44,9 +44,10 @@ class WorkoutNote extends StatelessWidget {
         metadata?.name ?? 'User ${event.pubKey.substring(0, 8)}';
     final String? avatar = metadata?.picture;
 
-    // Check reaction state.
+    // Check ownership and reaction state.
     final String? myNpub = nostrService.sNpub.value;
     final String myPubkey = myNpub != null ? Nip19.decode(myNpub) : '';
+    final bool isMine = event.pubKey == myPubkey;
     final bool hasLiked = likes.contains(myPubkey);
 
     return Card(
@@ -71,6 +72,36 @@ class WorkoutNote extends StatelessWidget {
               event.createdAt.formatWorkoutDate(),
               style: theme.textTheme.labelSmall,
             ),
+            trailing: isMine
+                ? PopupMenuButton<String>(
+                    icon: const Icon(LucideIcons.ellipsisVertical),
+                    onSelected: (String value) async {
+                      if (value == 'delete') {
+                        await nostrService.deleteWorkoutNote(event.id);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  LucideIcons.trash,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                  )
+                : null,
           ),
 
           // BODY (The Workout Image)
@@ -114,8 +145,8 @@ class WorkoutNote extends StatelessWidget {
                         LucideIcons.bicepsFlexed,
                         color: hasLiked ? theme.colorScheme.secondary : null,
                       ),
-                      onPressed: () {
-                        nostrService.sendBicepsReaction(event.id);
+                      onPressed: () async {
+                        await nostrService.sendBicepsReaction(event.id);
                       },
                     ),
                     if (likes.isNotEmpty)

@@ -47,7 +47,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
     final Map<String, Set<String>> reactionsMap = nostrService.sFeedReactions
         .watch(context);
-    final bool isLoading = nostrService.sIsLoadingFeed.watch(context);
+    final bool isLoading = nostrService.sLoadingFeed.watch(context);
 
     // Loading Spinner.
     if (isLoading && events.isEmpty) {
