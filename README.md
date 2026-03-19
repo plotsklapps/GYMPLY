@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Open%20Source-blue.svg)](https://github.com/plotsklapps/gymply)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%26%20iOS-orange.svg)]()
+![Platform](https://img.shields.io/badge/Platform-Android-green)
 
 **GYMPLY.** is a straightforward, ad-free, and 100% local fitness tracking application built with Flutter.<br>
 We believe your workout data is yours alone, which is why GYMPLY. **collects absolutely no data** and **runs entirely offline**.<br>
