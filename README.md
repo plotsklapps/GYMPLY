@@ -8,15 +8,15 @@
 We believe your workout data is yours alone, which is why GYMPLY. **collects absolutely no data** and **runs entirely offline**.<br>
 Simplicity and privacy are at the core of everything we do.
 
-**GYMPLY.** supports the Nostr protocol. You are able to share your workouts with other GYMPLY. users, without compromising your
-identity and security. This is an entirely **optional feature**.
+**GYMPLY.** supports the **Nostr protocol** allowing you to share your workouts with other GYMPLY. users, without compromising your
+identity and security. This feature is entirely **optional**.
 
 ---
 
 ## ✨ Key Features
 
 ### 1. Ultimate Privacy & Offline Use
-*   **100% Local Storage:** All your workout logs, metrics, and settings are stored only on your device.<br>
+*   **100% Local Storage:** All your workout logs, metrics, and settings remain on your device.<br>
 *   **No Data Collection:** We do not track usage, metrics, or personal information. Ever.<br>
 *   **Ad-Free Experience:** Completely free of advertisements.
 
@@ -29,17 +29,17 @@ identity and security. This is an entirely **optional feature**.
 *   **Cardio Timers:** Set a stopwatch or (interval) timer to enhance your workout.<br>
 *   **Visual Statistics:** Gain insights into your progress with clear, visual representations of which muscle groups you've trained over time.
 
-### 4. Nostr Integration
+### 4. Nostr Integration (Optional)
 *   **Workouts Feed:** Private feed for GYMPLY users, powered by the Nostr protocol.
 *   **Nostr Profile:** Easy profile customization for the entire Nostr ecosystem.
 *   **Secure Key Storage:** Nostr keys (npub/nsec) NEVER leave your device and are stored securely.
 
-### 4. Deep Customization
+### 5. Customization
 *   **Themes:** Choose between **Light** or **Dark** themes.<br>
 *   **Aesthetics:** Personalize your experience further with **3 primary color accents**.
 
-### 5. Free. Forever.
-*   **No Costs App:** GYMPLY. is and forever will be free. No subscriptions, no paywalled features. The complete app, for free.
+### 6. Free. Forever.
+*   **Zero Costs:** GYMPLY. is and forever will be free. No subscriptions, no paywalled features. The complete app, for free.
 
 ---
 
@@ -63,6 +63,8 @@ None.
 1. **Download** the APK;
 2. **Install** to Android phone;
 3. **Updates** can be requested from within the app.
+
+No accounts, no setup, instant start.
 
 ---
 
