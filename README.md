@@ -8,6 +8,9 @@
 We believe your workout data is yours alone, which is why GYMPLY. **collects absolutely no data** and **runs entirely offline**.<br>
 Simplicity and privacy are at the core of everything we do.
 
+**GYMPLY.** supports the Nostr protocol. You are able to share your workouts with other GYMPLY. users, without compromising your
+identity and security. This is an entirely **optional feature**.
+
 ---
 
 ## ✨ Key Features
@@ -26,9 +29,17 @@ Simplicity and privacy are at the core of everything we do.
 *   **Cardio Timers:** Set a stopwatch or (interval) timer to enhance your workout.<br>
 *   **Visual Statistics:** Gain insights into your progress with clear, visual representations of which muscle groups you've trained over time.
 
+### 4. Nostr Integration
+*   **Workouts Feed:** Private feed for GYMPLY users, powered by the Nostr protocol.
+*   **Nostr Profile:** Easy profile customization for the entire Nostr ecosystem.
+*   **Secure Key Storage:** Nostr keys (npub/nsec) NEVER leave your device and are stored securely.
+
 ### 4. Deep Customization
 *   **Themes:** Choose between **Light** or **Dark** themes.<br>
-*   **Aesthetics:** Personalize your experience further with **3 primary color accents** and **3 distinct font choices** (WIP).
+*   **Aesthetics:** Personalize your experience further with **3 primary color accents**.
+
+### 5. Free. Forever.
+*   **No Costs App:** GYMPLY. is and forever will be free. No subscriptions, no paywalled features. The complete app, for free.
 
 ---
 
@@ -37,6 +48,7 @@ Simplicity and privacy are at the core of everything we do.
 *   **Framework:** Flutter
 *   **Language:** Dart
 *   **Data Storage:** Local Device Storage (Hive Community Edition)
+*   **Sharing Protocol:** Nostr
 
 ---
 
