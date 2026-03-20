@@ -2,18 +2,21 @@
 
 [![Status](https://img.shields.io/badge/Status-Open%20Source-blue.svg)](https://github.com/plotsklapps/gymply)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%26%20iOS-orange.svg)]()
+![Platform](https://img.shields.io/badge/Platform-Android-green)
 
 **GYMPLY.** is a straightforward, ad-free, and 100% local fitness tracking application built with Flutter.<br>
 We believe your workout data is yours alone, which is why GYMPLY. **collects absolutely no data** and **runs entirely offline**.<br>
 Simplicity and privacy are at the core of everything we do.
+
+**GYMPLY.** supports the **Nostr protocol** allowing you to share your workouts with other GYMPLY. users, without compromising your
+identity and security. This feature is entirely **optional**.
 
 ---
 
 ## ✨ Key Features
 
 ### 1. Ultimate Privacy & Offline Use
-*   **100% Local Storage:** All your workout logs, metrics, and settings are stored only on your device.<br>
+*   **100% Local Storage:** All your workout logs, metrics, and settings remain on your device.<br>
 *   **No Data Collection:** We do not track usage, metrics, or personal information. Ever.<br>
 *   **Ad-Free Experience:** Completely free of advertisements.
 
@@ -26,9 +29,17 @@ Simplicity and privacy are at the core of everything we do.
 *   **Cardio Timers:** Set a stopwatch or (interval) timer to enhance your workout.<br>
 *   **Visual Statistics:** Gain insights into your progress with clear, visual representations of which muscle groups you've trained over time.
 
-### 4. Deep Customization
+### 4. Nostr Integration (Optional)
+*   **Workouts Feed:** Private feed for GYMPLY users, powered by the Nostr protocol.
+*   **Nostr Profile:** Easy profile customization for the entire Nostr ecosystem.
+*   **Secure Key Storage:** Nostr keys (npub/nsec) NEVER leave your device and are stored securely.
+
+### 5. Customization
 *   **Themes:** Choose between **Light** or **Dark** themes.<br>
-*   **Aesthetics:** Personalize your experience further with **3 primary color accents** and **3 distinct font choices** (WIP).
+*   **Aesthetics:** Personalize your experience further with **3 primary color accents**.
+
+### 6. Free. Forever.
+*   **Zero Costs:** GYMPLY. is and forever will be free. No subscriptions, no paywalled features. The complete app, for free.
 
 ---
 
@@ -37,6 +48,7 @@ Simplicity and privacy are at the core of everything we do.
 *   **Framework:** Flutter
 *   **Language:** Dart
 *   **Data Storage:** Local Device Storage (Hive Community Edition)
+*   **Sharing Protocol:** Nostr
 
 ---
 
@@ -51,6 +63,8 @@ None.
 1. **Download** the APK;
 2. **Install** to Android phone;
 3. **Updates** can be requested from within the app.
+
+No accounts, no setup, instant start.
 
 ---
 
