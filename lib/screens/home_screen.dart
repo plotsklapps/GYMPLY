@@ -9,6 +9,7 @@ import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -165,8 +166,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               heroTag: 'menuFAB',
               elevation: 0,
               onPressed: () async {
+                // Give a little bzzz.
                 await HapticFeedback.lightImpact();
+
                 if (context.mounted) {
+                  // Open menu modal.
                   await ModalService.showModal(
                     context: context,
                     scrollable: false,
@@ -196,10 +200,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             heroTag: 'saveFAB',
             elevation: 0,
             onPressed: () async {
-              await ModalService.showModal(
-                context: context,
-                child: const SaveWorkoutModal(),
-              );
+              // Give a bigger bzzz.
+              await HapticFeedback.heavyImpact();
+
+              if (context.mounted) {
+                // Open save workout modal.
+                await ModalService.showModal(
+                  context: context,
+                  child: const SaveWorkoutModal(),
+                );
+              }
             },
             child: const Icon(LucideIcons.circleStop),
           ),
@@ -208,7 +218,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             heroTag: 'newFAB',
             elevation: 0,
             onPressed: () async {
+              // Give a little bzzz.
               await HapticFeedback.lightImpact();
+
+              // If sTotalTimer is not running, start it.
+              if (!TotalTimer.sTotalTimerRunning.value) {
+                await TotalTimer().startTimer();
+              }
+
               // Navigate to SearchScreen.
               navigateToTab(AppTab.search);
             },

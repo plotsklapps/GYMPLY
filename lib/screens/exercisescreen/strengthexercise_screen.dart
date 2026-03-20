@@ -231,7 +231,7 @@ class WeightControls extends StatelessWidget {
           elevation: 0,
           onPressed: () async {
             onDecrementLarge();
-            await HapticFeedback.lightImpact();
+            await HapticFeedback.heavyImpact();
           },
           child: const Icon(LucideIcons.chevronsDown),
         ),
@@ -278,7 +278,7 @@ class WeightControls extends StatelessWidget {
           elevation: 0,
           onPressed: () async {
             onIncrementLarge();
-            await HapticFeedback.lightImpact();
+            await HapticFeedback.heavyImpact();
           },
           child: const Icon(LucideIcons.chevronsUp),
         ),

@@ -171,6 +171,7 @@ class StretchExerciseScreen extends StatelessWidget {
                       heroTag: 'stretchReset',
                       elevation: 0,
                       onPressed: () async {
+                        // Check WorkoutType before reset.
                         if (mode == StretchMode.stopwatch) {
                           await StopwatchTimer().resetTimer();
                         } else {

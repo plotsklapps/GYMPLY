@@ -174,9 +174,7 @@ class CardioExerciseScreen extends StatelessWidget {
                       heroTag: 'cardioReset',
                       elevation: 0,
                       onPressed: () async {
-                        // Give a bigger bzzz.
-                        await HapticFeedback.heavyImpact();
-
+                        // Check WorkoutType before reset.
                         if (mode == CardioMode.stopwatch) {
                           await StopwatchTimer().resetTimer();
                         } else {
@@ -192,9 +190,7 @@ class CardioExerciseScreen extends StatelessWidget {
                       heroTag: 'cardioPlay',
                       elevation: 0,
                       onPressed: () async {
-                        // Give a little bzzz.
-                        await HapticFeedback.lightImpact();
-
+                        // Check WorkoutType before starting/pausing.
                         if (mode == CardioMode.stopwatch) {
                           isStopwatchRunning
                               ? await StopwatchTimer().pauseTimer()
@@ -222,9 +218,7 @@ class CardioExerciseScreen extends StatelessWidget {
                       heroTag: 'cardioAdd',
                       elevation: 0,
                       onPressed: () async {
-                        // Give a little bzzz.
-                        await HapticFeedback.lightImpact();
-
+                        // Check WorkoutType before adding set.
                         if (mode == CardioMode.stopwatch) {
                           await StopwatchTimer().pauseTimer();
                           final int elapsed =
