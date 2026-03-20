@@ -187,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 color: theme.colorScheme.secondary,
                 fontFamily: 'BebasNeue',
                 fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
               ),
             ),
           ],
