@@ -63,7 +63,7 @@ class BackupService {
 
       // 2. Add Images.
       final Directory imageDir = Directory(path.join(baseDir, _imageSubDir));
-      if (await imageDir.exists()) {
+      if (imageDir.existsSync()) {
         final List<FileSystemEntity> imageFiles = imageDir.listSync();
         for (final FileSystemEntity entity in imageFiles) {
           if (entity is File) {
@@ -128,7 +128,7 @@ class BackupService {
         _logger.w('BackupService: Sharing was cancelled or failed.');
       }
 
-      if (await zipFile.exists()) {
+      if (zipFile.existsSync()) {
         await zipFile.delete();
         _logger.d('BackupService: Temporary backup file deleted.');
       }
