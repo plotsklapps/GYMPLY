@@ -70,6 +70,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         ? null
         : activeWorkout;
 
+    // Pre-calculate formatted strings for totals sections to keep lines short.
+    final String avgWeight =
+        currentWorkout?.avgWorkoutWeight.toStringAsFixed(1) ?? '0.0';
+    final String cardioDist =
+        currentWorkout?.totalCardioDistance.toStringAsFixed(1) ?? '0.0';
+    final String cardioCals =
+        currentWorkout
+            ?.calculateTotalCardioCalories(
+              userWeight: userWeight,
+              userAge: userAge,
+              userSex: userSex,
+            )
+            .toString() ??
+        '0';
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -194,8 +209,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             ),
                             StatTile(
                               label: 'Avg Weight',
-                              value:
-                                  '${currentWorkout.avgWorkoutWeight.toStringAsFixed(1)}kg',
+                              value: '${avgWeight}kg',
                               icon: LucideIcons.circleGauge,
                             ),
                           ],
@@ -214,18 +228,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           children: <Widget>[
                             StatTile(
                               label: 'Distance',
-                              value:
-                                  '${currentWorkout.totalCardioDistance.toStringAsFixed(1)}km',
+                              value: '${cardioDist}km',
                               icon: LucideIcons.rulerDimensionLine,
                             ),
                             StatTile(
                               label: 'Calories',
-                              value:
-                                  '${currentWorkout.calculateTotalCardioCalories(
-                                    userWeight: userWeight,
-                                    userAge: userAge,
-                                    userSex: userSex,
-                                  )}kcal',
+                              value: '${cardioCals}kcal',
                               icon: LucideIcons.flame,
                             ),
                             StatTile(

@@ -42,7 +42,8 @@ class TotalTimer {
 
     sTotalTimerRunning.value = true;
 
-    // Calculate start time based on current elapsed time to allow accurate resumption.
+    // Calculate start time based on current elapsed time to allow
+    // accurate resumption.
     _startTime = DateTime.now().subtract(
       Duration(seconds: sElapsedTotalTime.value),
     );

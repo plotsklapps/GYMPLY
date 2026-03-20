@@ -67,7 +67,8 @@ class BackupService {
         final List<FileSystemEntity> imageFiles = imageDir.listSync();
         for (final FileSystemEntity entity in imageFiles) {
           if (entity is File) {
-            // Use forward slashes for internal ZIP paths to ensure cross-platform compatibility.
+            // Use forward slashes for internal ZIP paths to ensure
+            // cross-platform compatibility.
             final String zipPath =
                 '$_imageSubDir/${path.basename(entity.path)}';
             final Uint8List bytes = await entity.readAsBytes();

@@ -98,7 +98,8 @@ class IntervalTimer {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sIntervalTimerRunning.value) return;
 
-    // Critical: Ensure Audio context is primed while we are in the tap callback.
+    // Critical: Ensure Audio context is primed while we are in the
+    // tap callback.
     unawaited(AudioService().initialize());
 
     _isIntervalSequenceActive = true;

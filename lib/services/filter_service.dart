@@ -11,12 +11,14 @@ export 'package:gymply/models/exercise_model.dart';
 ///
 /// Responsibility: Business Logic and UI State Management.
 /// This service takes the "Raw Data" from the ExerciseService and the
-/// "User Input" (Search query, ChoiceChips) to calculate the final filtered list.
+/// "User Input" (Search query, ChoiceChips) to calculate the final
+/// filtered list.
 ///
 /// RELATIONS:
 /// - Watches ExerciseService.sAllExercisePaths for the raw list.
 /// - Watches WorkoutService.sFavoriteExercises for sorting favorites.
-/// - Provides a final Computed signal: cFilteredExercises for the UI to consume.
+/// - Provides a final Computed signal: cFilteredExercises for the UI
+///   to consume.
 
 class FilterService {
   // Singleton pattern for globally shared logic state.
@@ -57,7 +59,8 @@ class FilterService {
     final Equipment? equip = sSelectedEquipment.value;
     final String query = sSearchQuery.value.trim().toLowerCase();
 
-    // Fetch raw database from ExerciseService and user favorites from WorkoutService
+    // Fetch raw database from ExerciseService and user favorites
+    // from WorkoutService
     final List<ExercisePath> all = exerciseService.sAllExercisePaths.value;
     final List<int> favorites = workoutService.sFavoriteExercises.value;
 
@@ -69,17 +72,20 @@ class FilterService {
     final List<ExercisePath> filtered =
         all.where((ExercisePath ex) {
             // A. Tokenized Search Logic (Fuzzy search)
-            // Allows for queries like "bench chest" to find "Chest - Bench Press"
+            // Allows for queries like "bench chest" to find
+            // "Chest - Bench Press"
             if (query.isNotEmpty) {
               final List<String> tokens = query
                   .split(' ')
                   .where((String t) => t.isNotEmpty)
                   .toList();
               final String searchBlob =
-                  '${ex.exerciseName} ${ex.id} ${ex.muscleSegment} ${ex.equipmentSegment}'
+                  '${ex.exerciseName} ${ex.id} '
+                          '${ex.muscleSegment} ${ex.equipmentSegment}'
                       .toLowerCase();
 
-              // Match ONLY if EVERY token typed by the user exists somewhere in the exercise data.
+              // Match ONLY if EVERY token typed by the user exists somewhere
+              // in the exercise data.
               if (!tokens.every(searchBlob.contains)) return false;
             }
 
@@ -128,7 +134,8 @@ class FilterService {
   }, debugLabel: 'cFilteredExercises');
 
   /// -- UI HELPER SIGNALS --
-  /// These signals decide which UI elements (like Muscle Chips) should be visible.
+  /// These signals decide which UI elements (like Muscle Chips) should
+  /// be visible.
 
   late final Computed<bool> sShowMuscleGroups = computed(() {
     final WorkoutType? type = sSelectedWorkoutType.value;
@@ -145,7 +152,8 @@ class FilterService {
 final FilterService filterService = FilterService();
 
 /// COMPATIBILITY REDIRECTS
-/// These ensure your existing UI files (which watch these signals) do not break.
+/// These ensure your existing UI files (which watch these signals)
+/// do not break.
 Signal<WorkoutType?> get sSelectedWorkoutType =>
     filterService.sSelectedWorkoutType;
 Signal<MuscleGroup?> get sSelectedMuscleGroup =>

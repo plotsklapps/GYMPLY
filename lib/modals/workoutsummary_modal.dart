@@ -61,6 +61,9 @@ class WorkoutSummaryModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final String cardioDistance = workout.totalCardioDistance.toStringAsFixed(
+      1,
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -332,8 +335,7 @@ class WorkoutSummaryModal extends StatelessWidget {
                     children: <Widget>[
                       StatTile(
                         label: 'Distance',
-                        value:
-                            '${workout.totalCardioDistance.toStringAsFixed(1)}km',
+                        value: '${cardioDistance}km',
                         icon: LucideIcons.rulerDimensionLine,
                       ),
                       StatTile(

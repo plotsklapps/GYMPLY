@@ -275,6 +275,24 @@ class CardioExerciseScreen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final int displayIndex = exercise.sets.length - index;
                 final CardioSet set = exercise.sets.reversed.toList()[index];
+                final String cardioTime = set.cardioDuration.inMilliseconds
+                    .formatHMMSSCC();
+                final String restTime = set.restDuration.inSeconds.formatMSS();
+
+                final String modeLabel = set.restDuration == Duration.zero
+                    ? 'STOPWATCH'
+                    : 'INTERVAL';
+                final String distanceLabel = set.distance != null
+                    ? ' • ${set.distance!.toStringAsFixed(2)} km'
+                    : '';
+                final String caloriesLabel = userWeight > 0
+                    ? ' • ${set.calculateEstimatedCalories(
+                        userWeight: userWeight,
+                        userAge: userAge,
+                        userSex: userSex,
+                      )} kcal'
+                    : '';
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
@@ -285,18 +303,11 @@ class CardioExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'CARDIO: '
-                                '${set.cardioDuration.inMilliseconds.formatHMMSSCC()}'
-                                ' REST: '
-                                '${set.restDuration.inSeconds.formatMSS()}',
+                          : 'CARDIO: $cardioTime REST: $restTime',
                     ),
                     subtitle: Row(
                       children: <Widget>[
-                        Text(
-                          '${set.restDuration == Duration.zero ? 'STOPWATCH' : 'INTERVAL'}'
-                          '${set.distance != null ? ' • ${set.distance!.toStringAsFixed(2)} km' : ''}'
-                          '${userWeight > 0 ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal' : ''}',
-                        ),
+                        Text('$modeLabel$distanceLabel$caloriesLabel'),
                         const SizedBox(width: 8),
                         // Flame icons for intensity.
                         ...List<Widget>.generate(

@@ -11,7 +11,8 @@ final Computed<bool> cShowFeed = Computed<bool>(
 );
 
 // Signal<int> to track current PHYSICAL tab index.
-// Defaulting to the index of Statistics (which is 1 if feed is shown, 0 if not).
+// Defaulting to the index of Statistics (which is 1 if feed is shown,
+// 0 if not).
 final Signal<int> sCurrentTab = Signal<int>(
   nostrService.sNpub.value != null ? 1 : 0,
   debugLabel: 'sCurrentTab',

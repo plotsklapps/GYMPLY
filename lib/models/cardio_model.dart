@@ -141,7 +141,8 @@ class CardioSet {
     if (calories != null) return calories!;
     if (userWeight <= 0) return 0;
 
-    // MET (Metabolic Equivalent of Task) mapping for intensity levels (0, 1, 2).
+    // MET (Metabolic Equivalent of Task) mapping for intensity levels
+    // (0, 1, 2).
     double met;
     switch (intensity ?? 1) {
       case 0:

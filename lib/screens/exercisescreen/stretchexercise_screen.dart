@@ -264,6 +264,10 @@ class StretchExerciseScreen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final int displayIndex = exercise.sets.length - index;
                 final StretchSet set = exercise.sets.reversed.toList()[index];
+                final String stretchTime = set.stretchDuration.inMilliseconds
+                    .formatHMMSSCC();
+                final String restTime = set.restDuration.inSeconds.formatMSS();
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
@@ -274,10 +278,7 @@ class StretchExerciseScreen extends StatelessWidget {
                     title: Text(
                       set.restDuration == Duration.zero
                           ? set.totalDuration.inMilliseconds.formatHMMSSCC()
-                          : 'STRETCH: '
-                                '${set.stretchDuration.inMilliseconds.formatHMMSSCC()} '
-                                'REST: '
-                                '${set.restDuration.inSeconds.formatMSS()}',
+                          : 'STRETCH: $stretchTime REST: $restTime',
                     ),
                     subtitle: Text(
                       set.restDuration == Duration.zero
