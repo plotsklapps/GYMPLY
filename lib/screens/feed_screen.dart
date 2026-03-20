@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gymply/screens/feedscreen/workoutnote_widget.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/widgets/error_boundary.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart' hide Logger;
 import 'package:signals/signals_flutter.dart';
@@ -89,21 +90,24 @@ class _FeedScreenState extends State<FeedScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: events.length,
-        itemBuilder: (BuildContext context, int index) {
-          final Nip01Event event = events[index];
-          final Metadata? meta = metadataMap[event.pubKey];
-          final Set<String> likes = reactionsMap[event.id] ?? <String>{};
-          return WorkoutNote(
-            event: event,
-            metadata: meta,
-            likes: likes,
-          );
-        },
+    // Fallback for actual errors.
+    return ErrorBoundary(
+      child: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: events.length,
+          itemBuilder: (BuildContext context, int index) {
+            final Nip01Event event = events[index];
+            final Metadata? meta = metadataMap[event.pubKey];
+            final Set<String> likes = reactionsMap[event.id] ?? <String>{};
+            return WorkoutNote(
+              event: event,
+              metadata: meta,
+              likes: likes,
+            );
+          },
+        ),
       ),
     );
   }

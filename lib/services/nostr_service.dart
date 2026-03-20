@@ -202,6 +202,9 @@ class NostrService {
 
     final String imageUrl = success.descriptor!.url;
 
+    // Log which server was used.
+    _logger.i('Image uploaded successfully to: $imageUrl');
+
     // Create Nip01Event. Specifically use kGymplyWorkoutKind, and GYMPLY tags.
     final Nip01Event event = Nip01Event(
       pubKey: Nip19.decode(sNpub.value!),
