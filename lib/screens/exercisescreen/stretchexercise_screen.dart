@@ -171,9 +171,6 @@ class StretchExerciseScreen extends StatelessWidget {
                       heroTag: 'stretchReset',
                       elevation: 0,
                       onPressed: () async {
-                        // Give a little bzzz.
-                        await HapticFeedback.lightImpact();
-
                         if (mode == StretchMode.stopwatch) {
                           await StopwatchTimer().resetTimer();
                         } else {
