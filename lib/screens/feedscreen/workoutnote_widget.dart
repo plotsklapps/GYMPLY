@@ -82,19 +82,25 @@ class WorkoutNote extends StatelessWidget {
                     },
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
+                          PopupMenuItem<String>(
                             value: 'delete',
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Icon(
-                                  LucideIcons.trash,
-                                  color: Colors.red,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
+                                const Text(
                                   'Delete',
-                                  style: TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.trash,
+                                      color: theme.colorScheme.error,
+                                      size: 20,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
