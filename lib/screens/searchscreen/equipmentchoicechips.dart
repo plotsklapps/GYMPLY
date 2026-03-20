@@ -32,6 +32,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                 final bool isSelected = selectedEquipment == equipment;
                 final String assetName = equipment.name.capitalizeFirst();
 
+                // Equipment ChoiceChips on Strength.
                 return Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: ChoiceChip(
@@ -60,6 +61,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                 final bool isSelected = selectedEquipment == equip;
                 final String assetName = equip.name.capitalizeFirst();
 
+                // Equipment ChoiceChips on Cardio.
                 return Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: ChoiceChip(
@@ -75,7 +77,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                           ),
                     label: Text(
                       e.name.capitalizeFirst(),
-                      style: theme.textTheme.bodyLarge,
+                      style: theme.textTheme.titleLarge,
                     ),
                     selected: isSelected,
                     onSelected: (bool selected) {
