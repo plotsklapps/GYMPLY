@@ -739,6 +739,9 @@ class WorkoutService {
 
     // Iterate through all workouts in history.
     for (final Workout workout in sWorkoutHistory.value) {
+      // Strictly exclude the current active session if includeActive is false.
+      if (!includeActive && workout.id == sActiveWorkout.value.id) continue;
+
       for (final WorkoutExercise exercise in workout.exercises) {
         if (exercise is StrengthExercise && exercise.id == exerciseId) {
           processExercise(exercise);

@@ -29,7 +29,7 @@ class ExerciseScreen extends StatelessWidget {
       );
     }
 
-    // Dispatch logic: Return the specialized screen based on type.
+    // Return specialized screen based on type.
     return switch (exercise) {
       final StrengthExercise strengthExercise => StrengthExerciseScreen(
         exercise: strengthExercise,
