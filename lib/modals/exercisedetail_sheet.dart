@@ -81,6 +81,7 @@ class ExerciseDetailSheet extends StatelessWidget {
                   ),
                 // History button.
                 IconButton(
+                  visualDensity: VisualDensity.compact,
                   onPressed: () async {
                     // Create a temporary WorkoutExercise to pass to modal.
                     final WorkoutExercise dummy;
@@ -122,15 +123,26 @@ class ExerciseDetailSheet extends StatelessWidget {
                     );
                   },
                   icon: const Icon(LucideIcons.history),
+                  style: IconButton.styleFrom(
+                    padding: const EdgeInsets.only(left: 16),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                 ),
                 // Favorite button.
                 IconButton(
+                  visualDensity: VisualDensity.compact,
                   onPressed: () {
                     workoutService.toggleFavorite(exerciseId);
                   },
                   icon: Icon(
                     isFavorite ? LucideIcons.star : LucideIcons.starHalf,
                     color: isFavorite ? theme.colorScheme.secondary : null,
+                  ),
+                  style: IconButton.styleFrom(
+                    padding: const EdgeInsets.only(left: 12),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),
               ],

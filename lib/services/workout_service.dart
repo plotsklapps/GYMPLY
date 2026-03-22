@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/personal_record_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -693,6 +696,71 @@ class WorkoutService {
       // Log failure.
       _logger.w('WorkoutService: Could not find exercise to replace');
     }
+  }
+
+  /// Calculates Personal Records for a specific Strength Exercise ID.
+  /// If [includeActive] is false, it only considers historical workouts.
+  PersonalRecord getPersonalRecords(
+    int exerciseId, {
+    bool includeActive = true,
+  }) {
+    double maxWeight = 0;
+    double maxSetVolume = 0;
+    double maxExerciseVolume = 0;
+    double maxLombardi = 0;
+    double maxBrzycki = 0;
+    double maxEpley = 0;
+
+    void processExercise(StrengthExercise exercise) {
+      if (exercise.totalWeight > maxExerciseVolume) {
+        maxExerciseVolume = exercise.totalWeight;
+      }
+
+      for (final StrengthSet set in exercise.sets) {
+        if (set.weight > maxWeight) {
+          maxWeight = set.weight;
+        }
+        final double setVolume = set.weight * set.reps;
+        if (setVolume > maxSetVolume) {
+          maxSetVolume = setVolume;
+        }
+
+        if (set.reps > 0) {
+          final double lombardi = set.weight * math.pow(set.reps, 0.1);
+          final double brzycki = set.weight / (1.0278 - (0.0278 * set.reps));
+          final double epley = set.weight * (1 + (set.reps / 30));
+
+          if (lombardi > maxLombardi) maxLombardi = lombardi;
+          if (brzycki > maxBrzycki) maxBrzycki = brzycki;
+          if (epley > maxEpley) maxEpley = epley;
+        }
+      }
+    }
+
+    // Iterate through all workouts in history.
+    for (final Workout workout in sWorkoutHistory.value) {
+      for (final WorkoutExercise exercise in workout.exercises) {
+        if (exercise is StrengthExercise && exercise.id == exerciseId) {
+          processExercise(exercise);
+        }
+      }
+    }
+
+    if (includeActive) {
+      // Check current active workout if it's not empty and contains exercise.
+      final Workout active = sActiveWorkout.value;
+      for (final WorkoutExercise exercise in active.exercises) {
+        if (exercise is StrengthExercise && exercise.id == exerciseId) {
+          processExercise(exercise);
+        }
+      }
+    }
+
+    return PersonalRecord(
+      maxWeight: maxWeight,
+      maxSetVolume: maxSetVolume,
+      maxExerciseVolume: maxExerciseVolume,
+    );
   }
 }
 

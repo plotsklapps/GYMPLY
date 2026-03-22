@@ -69,6 +69,36 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Epley (rep range 1-10)',
           value: '${ex.oneRepMaxEpley.toStringAsFixed(1)} kg',
         ),
+        Divider(height: 32, color: theme.colorScheme.outlineVariant),
+        Text(
+          'Personal Records',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Builder(
+          builder: (context) {
+            final pr = workoutService.getPersonalRecords(ex.id);
+            return Column(
+              children: [
+                _StatRow(
+                  label: 'Max Weight',
+                  value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Max Set Volume',
+                  value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Max Exercise Volume',
+                  value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+                ),
+              ],
+            );
+          },
+        ),
       ]);
     } else if (exercise is CardioExercise) {
       final CardioExercise ex = exercise as CardioExercise;

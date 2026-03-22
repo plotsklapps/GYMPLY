@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
+import 'package:gymply/models/personal_record_model.dart';
+import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -112,7 +114,153 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
               });
             },
           ),
+
+          if (widget.exercise is StrengthExercise) ...<Widget>[
+            const SizedBox(height: 24),
+            const Divider(),
+            Builder(
+              builder: (BuildContext context) {
+                // Create PersonalRecord Object for this exercise.
+                final PersonalRecord pr = workoutService.getPersonalRecords(
+                  widget.exercise.id,
+                );
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'PERSONAL RECORDS',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        _PersonalRecordItem(
+                          label: 'REP PR',
+                          value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+                        ),
+                        _PersonalRecordItem(
+                          label: 'SET PR',
+                          value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+                        ),
+                        _PersonalRecordItem(
+                          label: 'SESSION PR',
+                          value:
+                              '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    Text(
+                      '1RM ESTIMATES',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        _OneRepMaxItem(
+                          label: 'LOMBARDI',
+                          repRange: '1-5 reps',
+                          value:
+                              '${(widget.exercise as StrengthExercise).oneRepMaxLombardi.toStringAsFixed(1)} kg',
+                        ),
+                        _OneRepMaxItem(
+                          label: 'BRZYCKI',
+                          repRange: '5-10 reps',
+                          value:
+                              '${(widget.exercise as StrengthExercise).oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+                        ),
+                        _OneRepMaxItem(
+                          label: 'EPLEY',
+                          repRange: '1-10 reps',
+                          value:
+                              '${(widget.exercise as StrengthExercise).oneRepMaxEpley.toStringAsFixed(1)} kg',
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
         ],
+      ],
+    );
+  }
+}
+
+class _PersonalRecordItem extends StatelessWidget {
+  const _PersonalRecordItem({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OneRepMaxItem extends StatelessWidget {
+  const _OneRepMaxItem({
+    required this.label,
+    required this.repRange,
+    required this.value,
+  });
+
+  final String label;
+  final String repRange;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          repRange,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }

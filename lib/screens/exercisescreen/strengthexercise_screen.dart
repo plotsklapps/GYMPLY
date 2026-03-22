@@ -130,63 +130,119 @@ class StrengthExerciseScreen extends StatelessWidget {
 
           // SCROLLABLE LIST SECTION
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              itemCount: exercise.sets.length,
-              itemBuilder: (BuildContext context, int index) {
-                // Reverse index for visual ordering (latest on top)
-                final int displayIndex = exercise.sets.length - index;
-                final StrengthSet set = exercise.sets.reversed.toList()[index];
+            child: Builder(
+              builder: (BuildContext context) {
+                // Fetch historical PRs (excluding current session) to detect "New PR"
+                final historicalPR = workoutService.getPersonalRecords(
+                  exercise.id,
+                  includeActive: false,
+                );
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Text(
-                        displayIndex.toString(),
-                        style: TextStyle(
-                          color: theme.colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      '${set.weight.toStringAsFixed(0)} kg x ${set.reps} reps',
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    trailing: PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert),
-                      onSelected: (String value) {
-                        if (value == 'delete') {
-                          workoutService.deleteStrengthSet(exercise, set);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return <PopupMenuEntry<String>>[
-                          PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                const Text('Delete'),
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Center(
-                                    child: Icon(
-                                      LucideIcons.trash,
-                                      color: theme.colorScheme.error,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                return ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  itemCount: exercise.sets.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // Reverse index for visual ordering (latest on top)
+                    final int displayIndex = exercise.sets.length - index;
+                    final StrengthSet set =
+                        exercise.sets.reversed.toList()[index];
+
+                    // Logic to detect New PR
+                    final bool isWeightPR =
+                        historicalPR.maxWeight > 0 &&
+                        set.weight > historicalPR.maxWeight;
+                    final bool isVolumePR =
+                        historicalPR.maxSetVolume > 0 &&
+                        (set.weight * set.reps) > historicalPR.maxSetVolume;
+                    final bool isNewPR = isWeightPR || isVolumePR;
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      color:
+                          isNewPR
+                              ? theme.colorScheme.secondaryContainer
+                              : theme.cardTheme.color,
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              isNewPR
+                                  ? theme.colorScheme.secondary
+                                  : theme.colorScheme.primaryContainer,
+                          child: Text(
+                            displayIndex.toString(),
+                            style: TextStyle(
+                              color:
+                                  isNewPR
+                                      ? theme.colorScheme.onSecondary
+                                      : theme.colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ];
-                      },
-                    ),
-                  ),
+                        ),
+                        title: Row(
+                          children: <Widget>[
+                            Text(
+                              '${set.weight.toStringAsFixed(0)} kg x ${set.reps} reps',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight:
+                                    isNewPR
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                              ),
+                            ),
+                            if (isNewPR) ...<Widget>[
+                              const SizedBox(width: 8),
+                              Icon(
+                                LucideIcons.trophy,
+                                size: 16,
+                                color: theme.colorScheme.secondary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'PR!',
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: theme.colorScheme.secondary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        trailing: PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert),
+                          onSelected: (String value) {
+                            if (value == 'delete') {
+                              workoutService.deleteStrengthSet(exercise, set);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    const Text('Delete'),
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Center(
+                                        child: Icon(
+                                          LucideIcons.trash,
+                                          color: theme.colorScheme.error,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ];
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
