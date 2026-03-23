@@ -763,7 +763,74 @@ class WorkoutService {
       maxWeight: maxWeight,
       maxSetVolume: maxSetVolume,
       maxExerciseVolume: maxExerciseVolume,
+      oneRepMaxLombardi: maxLombardi,
+      oneRepMaxBrzycki: maxBrzycki,
+      oneRepMaxEpley: maxEpley,
     );
+  }
+
+  /// Returns a list of PRs achieved in the given workout.
+  List<Map<String, dynamic>> getWorkoutPRs(Workout workout) {
+    final List<Map<String, dynamic>> prs = <Map<String, dynamic>>[];
+    for (final WorkoutExercise exercise in workout.exercises) {
+      if (exercise is StrengthExercise) {
+        final PersonalRecord historicalPR = getPersonalRecords(
+          exercise.id,
+          includeActive: false,
+        );
+
+        double maxWeightInSession = 0;
+        double maxSetVolInSession = 0;
+
+        for (final StrengthSet set in exercise.sets) {
+          if (set.weight > maxWeightInSession) {
+            maxWeightInSession = set.weight;
+          }
+          final double vol = set.weight * set.reps;
+          if (vol > maxSetVolInSession) {
+            maxSetVolInSession = vol;
+          }
+        }
+
+        // Check for Rep PR.
+        if (maxWeightInSession > historicalPR.maxWeight) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'REP',
+            'value': maxWeightInSession,
+          });
+        }
+
+        // Check for Set Volume PR.
+        if (maxSetVolInSession > historicalPR.maxSetVolume) {
+          final StrengthSet volSet = exercise.sets.firstWhere(
+            (StrengthSet s) {
+              return (s.weight * s.reps) == maxSetVolInSession;
+            },
+          );
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'SET',
+            'value': maxSetVolInSession,
+            'weight': volSet.weight,
+            'reps': volSet.reps,
+          });
+        }
+
+        // Check for Total Exercise Volume PR (Session PR).
+        if (exercise.totalWeight > historicalPR.maxExerciseVolume) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'TOTAL',
+            'value': exercise.totalWeight,
+          });
+        }
+      }
+    }
+    return prs;
   }
 }
 

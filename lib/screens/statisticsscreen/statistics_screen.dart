@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/monthstat_widget.dart';
+import 'package:gymply/screens/statisticsscreen/prcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/timeformat_service.dart';
@@ -85,6 +86,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             .toString() ??
         '0';
 
+    // Fetch PRs for the current workout.
+    final List<Map<String, dynamic>> workoutPRs = currentWorkout != null
+        ? workoutService.getWorkoutPRs(currentWorkout)
+        : <Map<String, dynamic>>[];
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -159,6 +165,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      // If any PR's were broken, show them.
+                      if (workoutPRs.isNotEmpty) ...<Widget>[
+                        const StatisticsSectionHeader(
+                          title: 'NEW ACHIEVEMENTS',
+                        ),
+                        PRCard(workoutPRs: workoutPRs),
+                      ],
                       const SizedBox(height: 12),
                       // Workout Overview Section.
                       const StatisticsSectionHeader(title: 'WORKOUT OVERVIEW'),

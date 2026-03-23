@@ -49,40 +49,41 @@ class ExerciseStatsModal extends StatelessWidget {
           value: '${ex.avgWeightPerSet.toStringAsFixed(1)} kg',
         ),
         Divider(height: 32, color: theme.colorScheme.outlineVariant),
-        Text(
-          '1RM Estimates',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        _StatRow(
-          label: 'Lombardi (rep range 1-5)',
-          value: '${ex.oneRepMaxLombardi.toStringAsFixed(1)} kg',
-        ),
-        _StatRow(
-          label: 'Brzycki (rep range 5-10)',
-          value: '${ex.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
-        ),
-        _StatRow(
-          label: 'Epley (rep range 1-10)',
-          value: '${ex.oneRepMaxEpley.toStringAsFixed(1)} kg',
-        ),
-        Divider(height: 32, color: theme.colorScheme.outlineVariant),
-        Text(
-          'Personal Records',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
         Builder(
           builder: (context) {
             final pr = workoutService.getPersonalRecords(ex.id);
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '1RM Estimates',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _StatRow(
+                  label: 'Lombardi (rep range 1-5)',
+                  value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Brzycki (rep range 5-10)',
+                  value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Epley (rep range 1-10)',
+                  value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
+                ),
+                Divider(height: 32, color: theme.colorScheme.outlineVariant),
+                Text(
+                  'Personal Records',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 _StatRow(
                   label: 'Max Weight',
                   value: '${pr.maxWeight.toStringAsFixed(1)} kg',

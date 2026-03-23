@@ -170,19 +170,17 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                           label: 'LOMBARDI',
                           repRange: '1-5 reps',
                           value:
-                              '${(widget.exercise as StrengthExercise).oneRepMaxLombardi.toStringAsFixed(1)} kg',
+                              '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
                         ),
                         _OneRepMaxItem(
                           label: 'BRZYCKI',
                           repRange: '5-10 reps',
-                          value:
-                              '${(widget.exercise as StrengthExercise).oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+                          value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
                         ),
                         _OneRepMaxItem(
                           label: 'EPLEY',
                           repRange: '1-10 reps',
-                          value:
-                              '${(widget.exercise as StrengthExercise).oneRepMaxEpley.toStringAsFixed(1)} kg',
+                          value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
                         ),
                       ],
                     ),
