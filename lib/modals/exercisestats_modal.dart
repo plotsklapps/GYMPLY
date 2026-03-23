@@ -135,11 +135,26 @@ class ExerciseStatsModal extends StatelessWidget {
       ]);
     } else if (exercise is StretchExercise) {
       final StretchExercise ex = exercise as StretchExercise;
+
+      // Watch personal stats for calorie calculation.
+      final double userWeight = sWeight.watch(context);
+      final int userAge = sAge.watch(context);
+      final int userSex = sSex.watch(context);
+
       detailRows.addAll(<Widget>[
         _StatRow(label: 'Sets', value: ex.totalSets.toString()),
         _StatRow(
           label: 'Duration',
           value: ex.totalDuration.format(),
+        ),
+        _StatRow(
+          label: 'Calories',
+          value:
+              '${ex.calculateTotalCalories(
+                userWeight: userWeight,
+                userAge: userAge,
+                userSex: userSex,
+              )} kcal',
         ),
       ]);
     }

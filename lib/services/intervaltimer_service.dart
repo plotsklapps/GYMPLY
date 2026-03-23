@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
@@ -37,6 +38,19 @@ class IntervalTimer {
                   sInitialIntervalTime.value +
                   (RestTimer.sInitialRestTime.value * 1000),
             ),
+            intensity: exercise.intensityInput ?? 1,
+          );
+        } else if (exercise is StretchExercise) {
+          workoutService.addStretchSet(
+            exercise,
+            stretchDuration: Duration(milliseconds: sInitialIntervalTime.value),
+            restDuration: Duration(seconds: RestTimer.sInitialRestTime.value),
+            totalDuration: Duration(
+              milliseconds:
+                  sInitialIntervalTime.value +
+                  (RestTimer.sInitialRestTime.value * 1000),
+            ),
+            intensity: exercise.intensityInput ?? 1,
           );
         }
 

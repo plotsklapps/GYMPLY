@@ -477,12 +477,14 @@ class WorkoutService {
     StretchExercise exercise, {
     Duration? stretchDuration,
     Duration? restDuration,
+    int? calories,
     int? intensity,
   }) {
     // Create StretchExercise Object.
     final StretchExercise updatedExercise = exercise.copyWith(
       stretchDurationInput: stretchDuration,
       restDurationInput: restDuration,
+      caloriesInput: calories,
       intensityInput: intensity,
     );
 
@@ -492,7 +494,10 @@ class WorkoutService {
     // Log the input.
     _logger.i(
       'WorkoutService: Stretch Input Updated -> '
-      'Hold: ${updatedExercise.stretchDurationInput}',
+      'Hold: ${updatedExercise.stretchDurationInput}, '
+      'Rest: ${updatedExercise.restDurationInput}, '
+      'Calories: ${updatedExercise.caloriesInput}, '
+      'Intensity: ${updatedExercise.intensityInput}',
     );
   }
 
@@ -624,6 +629,7 @@ class WorkoutService {
     required Duration stretchDuration,
     required Duration restDuration,
     required Duration totalDuration,
+    int? calories,
     int? intensity,
   }) {
     // Create StretchSet Object.
@@ -631,6 +637,7 @@ class WorkoutService {
       stretchDuration: stretchDuration,
       restDuration: restDuration,
       totalDuration: totalDuration,
+      calories: calories,
       intensity: intensity,
     );
 
@@ -647,6 +654,39 @@ class WorkoutService {
       'WorkoutService: Adding Stretch set - '
       '${newSet.totalDuration.inSeconds}s',
     );
+  }
+
+  // Update set in StretchExercise.
+  void updateStretchSet(
+    StretchExercise exercise,
+    StretchSet oldSet, {
+    Duration? stretchDuration,
+    Duration? restDuration,
+    Duration? totalDuration,
+    int? calories,
+    int? intensity,
+  }) {
+    final int index = exercise.sets.indexOf(oldSet);
+    if (index == -1) return;
+
+    final StretchSet newSet = StretchSet(
+      stretchDuration: stretchDuration ?? oldSet.stretchDuration,
+      restDuration: restDuration ?? oldSet.restDuration,
+      totalDuration: totalDuration ?? oldSet.totalDuration,
+      calories: calories ?? oldSet.calories,
+      intensity: intensity ?? oldSet.intensity,
+    );
+
+    final List<StretchSet> updatedSets = List<StretchSet>.from(exercise.sets);
+    updatedSets[index] = newSet;
+
+    final StretchExercise updatedExercise = exercise.copyWith(
+      sets: updatedSets,
+    );
+
+    _replaceExercise(exercise, updatedExercise);
+
+    _logger.i('WorkoutService: Updated Stretch set');
   }
 
   // Delete set from StretchExercise.
