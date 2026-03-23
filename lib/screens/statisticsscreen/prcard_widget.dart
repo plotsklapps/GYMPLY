@@ -36,7 +36,7 @@ class PRCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'CONGRATULATIONS!',
+                        'CONGRATULATIONS',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.onSecondary,
@@ -91,7 +91,7 @@ class PRCard extends StatelessWidget {
                 ),
                 subtitle: Text(
                   detail,
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSecondary,
                   ),
                 ),

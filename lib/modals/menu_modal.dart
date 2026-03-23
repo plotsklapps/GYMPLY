@@ -168,7 +168,7 @@ class MenuModal extends StatelessWidget {
                             ),
                             ButtonSegment<FlexSchemes>(
                               value: FlexSchemes.sanJuanBlue,
-                              label: Text('Red'),
+                              label: Text('Pink'),
                               icon: Icon(LucideIcons.wine),
                             ),
                           ],

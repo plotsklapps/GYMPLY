@@ -74,7 +74,7 @@ class StopwatchTimer {
 
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
-    await HapticFeedback.heavyImpact();
+    await HapticFeedback.mediumImpact();
 
     _timer?.cancel();
     _timer = null;

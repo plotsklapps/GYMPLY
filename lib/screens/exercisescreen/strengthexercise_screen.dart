@@ -338,7 +338,7 @@ class WeightControls extends StatelessWidget {
           elevation: 0,
           onPressed: () async {
             onDecrementLarge();
-            await HapticFeedback.heavyImpact();
+            await HapticFeedback.mediumImpact();
           },
           child: const Icon(LucideIcons.chevronsDown),
         ),
@@ -384,8 +384,10 @@ class WeightControls extends StatelessWidget {
           heroTag: 'WeightIncrement10',
           elevation: 0,
           onPressed: () async {
+            // Give a bigger bzzz.
+            await HapticFeedback.mediumImpact();
+
             onIncrementLarge();
-            await HapticFeedback.heavyImpact();
           },
           child: const Icon(LucideIcons.chevronsUp),
         ),

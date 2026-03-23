@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             elevation: 0,
             onPressed: () async {
               // Give a bigger bzzz.
-              await HapticFeedback.heavyImpact();
+              await HapticFeedback.mediumImpact();
 
               if (context.mounted) {
                 // Open save workout modal.

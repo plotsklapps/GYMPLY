@@ -162,7 +162,9 @@ class IntervalTimer {
 
   Future<void> resetTimer() async {
     _isIntervalSequenceActive = false;
-    await HapticFeedback.heavyImpact();
+
+    // Give a bigger bzzz.
+    await HapticFeedback.mediumImpact();
 
     _timer?.cancel();
     _timer = null;

@@ -274,7 +274,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
             Expanded(
               child: FilledButton(
                 onPressed: () async {
-                  await HapticFeedback.heavyImpact();
+                  await HapticFeedback.mediumImpact();
 
                   // Filter out null values for saving.
                   final List<String> imagesToSave = _imageFilenames
