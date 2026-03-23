@@ -85,6 +85,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             )
             .toString() ??
         '0';
+    final String stretchCals =
+        currentWorkout
+            ?.calculateTotalStretchCalories(
+              userWeight: userWeight,
+              userAge: userAge,
+              userSex: userSex,
+            )
+            .toString() ??
+        '0';
 
     // Fetch PRs for the current workout.
     final List<Map<String, dynamic>> workoutPRs = currentWorkout != null
@@ -275,18 +284,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               label: 'Stretch Count',
                               value: currentWorkout.stretchExerciseCount
                                   .toString(),
-                              icon: LucideIcons.arrowUp10,
-                            ),
-                            StatTile(
-                              label: 'Stretch',
-                              value: currentWorkout.totalStretchTime.format(),
                               icon: LucideIcons.personStanding,
                             ),
                             StatTile(
+                              label: 'Calories',
+                              value: '${stretchCals}kcal',
+                              icon: LucideIcons.flame,
+                            ),
+                            StatTile(
                               label: 'Duration',
-                              value: currentWorkout.totalCardioDuration
-                                  .format(),
-                              icon: LucideIcons.timer,
+                              value: currentWorkout.totalStretchTime.format(),
+                              icon: LucideIcons.clock,
                             ),
                           ],
                         ),

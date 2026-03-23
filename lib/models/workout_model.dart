@@ -123,7 +123,7 @@ class Workout {
     return reps == 0 ? 0 : totalStrengthVolume / reps;
   }
 
-  // --- Cardio Summaries ---
+  // --- Cardio & Stretch Summaries ---
 
   // Total distance covered across all cardio exercises (in km).
   double get totalCardioDistance {
@@ -159,6 +159,35 @@ class Workout {
     return exercises.whereType<CardioExercise>().fold(
       0,
       (int sum, CardioExercise ex) {
+        return sum + ex.totalCalories;
+      },
+    );
+  }
+
+  // Calculates total calories for all stretching exercises in this workout.
+  int calculateTotalStretchCalories({
+    required double userWeight,
+    required int userAge,
+    required int userSex,
+  }) {
+    return exercises.whereType<StretchExercise>().fold(0, (
+      int sum,
+      StretchExercise ex,
+    ) {
+      return sum +
+          ex.calculateTotalCalories(
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          );
+    });
+  }
+
+  // Total calories burned across all stretching exercises (Legacy).
+  int get totalStretchCalories {
+    return exercises.whereType<StretchExercise>().fold(
+      0,
+      (int sum, StretchExercise ex) {
         return sum + ex.totalCalories;
       },
     );

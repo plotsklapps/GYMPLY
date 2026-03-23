@@ -23,14 +23,15 @@ class StretchExerciseAdapter extends TypeAdapter<StretchExercise> {
       sets: (fields[3] as List).cast<StretchSet>(),
       stretchDurationInput: fields[4] as Duration?,
       restDurationInput: fields[5] as Duration?,
-      intensityInput: (fields[6] as num?)?.toInt(),
+      caloriesInput: (fields[6] as num?)?.toInt(),
+      intensityInput: (fields[7] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, StretchExercise obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,6 +45,8 @@ class StretchExerciseAdapter extends TypeAdapter<StretchExercise> {
       ..writeByte(5)
       ..write(obj.restDurationInput)
       ..writeByte(6)
+      ..write(obj.caloriesInput)
+      ..writeByte(7)
       ..write(obj.intensityInput);
   }
 
@@ -72,14 +75,15 @@ class StretchSetAdapter extends TypeAdapter<StretchSet> {
       stretchDuration: fields[0] as Duration,
       restDuration: fields[1] as Duration,
       totalDuration: fields[2] as Duration,
-      intensity: (fields[3] as num?)?.toInt(),
+      calories: (fields[3] as num?)?.toInt(),
+      intensity: (fields[4] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, StretchSet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.stretchDuration)
       ..writeByte(1)
@@ -87,6 +91,8 @@ class StretchSetAdapter extends TypeAdapter<StretchSet> {
       ..writeByte(2)
       ..write(obj.totalDuration)
       ..writeByte(3)
+      ..write(obj.calories)
+      ..writeByte(4)
       ..write(obj.intensity);
   }
 

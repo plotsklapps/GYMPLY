@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/personal_record_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -50,11 +51,11 @@ class ExerciseStatsModal extends StatelessWidget {
         ),
         Divider(height: 32, color: theme.colorScheme.outlineVariant),
         Builder(
-          builder: (context) {
-            final pr = workoutService.getPersonalRecords(ex.id);
+          builder: (BuildContext context) {
+            final PersonalRecord pr = workoutService.getPersonalRecords(ex.id);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text(
                   '1RM Estimates',
                   style: theme.textTheme.titleMedium?.copyWith(
