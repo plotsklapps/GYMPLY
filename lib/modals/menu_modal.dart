@@ -7,6 +7,7 @@ import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
+import 'package:gymply/signals/backup_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,9 +30,9 @@ class MenuModal extends StatelessWidget {
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
 
     // Watch backup/restore Signals.
-    final bool isBackingUp = backupService.sIsBackingUp.watch(context);
-    final bool isRestoring = backupService.sIsRestoring.watch(context);
-    final double backupProgress = backupService.sProgress.watch(context);
+    final bool isBackingUp = sIsBackingUp.watch(context);
+    final bool isRestoring = sIsRestoring.watch(context);
+    final double backupProgress = sProgress.watch(context);
 
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
