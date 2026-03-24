@@ -117,7 +117,7 @@ class IntervalTimer {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sIntervalTimerRunning.value) return;
 
-    // Ensure Audio engine is primed while we are in tap callback.
+    // Ensure Audio engine is primed while in tap callback.
     unawaited(AudioService().initialize());
 
     // Set Signals.
@@ -128,7 +128,7 @@ class IntervalTimer {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
-    // Calculate when interval should end based on current elapsed milliseconds.
+    // Calculate when interval should end.
     _endTime = DateTime.now().add(
       Duration(milliseconds: sElapsedIntervalTime.value),
     );
@@ -152,7 +152,6 @@ class IntervalTimer {
         _timer = null;
         _endTime = null;
         sIntervalTimerRunning.value = false;
-
         sElapsedIntervalTime.value = 0;
 
         // Play interval-completed sound.

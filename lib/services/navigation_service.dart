@@ -15,8 +15,7 @@ final Computed<bool> cShowFeed = Computed<bool>(
 // Int Signal to track current physical tab index. Default to 1 (Statistics).
 final Signal<int> sCurrentTab = Signal<int>(1, debugLabel: 'sCurrentTab');
 
-// Helper to switch tabs using AppTab enum. Needed forconditionally showing
-// Feed tab.
+// Helper to switch tabs using AppTab enum. Feed tab is conditionally showing.
 void navigateToTab(AppTab tab) {
   final bool showFeed = cShowFeed.value;
 

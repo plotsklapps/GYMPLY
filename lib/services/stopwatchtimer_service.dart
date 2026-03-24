@@ -5,7 +5,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StopwatchTimer {
-  // Create a singleton instance of StopwatchTimer.
+  // Singleton pattern.
   factory StopwatchTimer() {
     return _instance;
   }
@@ -13,21 +13,22 @@ class StopwatchTimer {
   StopwatchTimer._internal();
   static final StopwatchTimer _instance = StopwatchTimer._internal();
 
-  // Signals.
+  // Int Signal to track elapsed stopwatch time.
   static final Signal<int> sElapsedStopwatchTime = Signal<int>(
     0,
     debugLabel: 'sElapsedStopwatchTime',
   );
 
-  // Computed signal for the formatted time.
-  // Using CC (centiseconds) provides that fast-moving, smooth stopwatch feel.
+  // Computed Signal for formatted time.
   static final Computed<String> cFormattedStopwatchTime = Computed<String>(
     () {
+      // Using centiseconds to provide stopwatch 'feel'.
       return sElapsedStopwatchTime.value.formatHMMSSCC();
     },
     debugLabel: 'sFormattedStopwatchTime',
   );
 
+  // Bool Signal to track if stopwatch is running.
   static final Signal<bool> sStopwatchTimerRunning = Signal<bool>(
     false,
     debugLabel: 'sStopwatchTimerRunning',
@@ -49,8 +50,7 @@ class StopwatchTimer {
     sStopwatchTimerRunning.value = true;
     _stopwatch.start();
 
-    // Tick every 10ms to perfectly capture every centisecond.
-    // This is the frequency needed to see every digit move without jumping.
+    // 10ms ticks to capture every centisecond.
     _timer = Timer.periodic(const Duration(milliseconds: 10), (Timer timer) {
       sElapsedStopwatchTime.value = _baseTime + _stopwatch.elapsedMilliseconds;
     });
@@ -60,6 +60,7 @@ class StopwatchTimer {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
+    // Cancel timer and reset Signals.
     _stopwatch.stop();
     _baseTime += _stopwatch.elapsedMilliseconds;
     _stopwatch.reset();
@@ -76,6 +77,7 @@ class StopwatchTimer {
     // Give a bigger bzzz.
     await HapticFeedback.mediumImpact();
 
+    // Cancel timer and reset Signals.
     _timer?.cancel();
     _timer = null;
 

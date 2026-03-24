@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:signals/signals_flutter.dart';
 
 class TotalTimer {
-  // Create a singleton instance of TotalTimer.
+  // Singleton pattern.
   factory TotalTimer() {
     return _instance;
   }
@@ -12,17 +12,19 @@ class TotalTimer {
   TotalTimer._internal();
   static final TotalTimer _instance = TotalTimer._internal();
 
-  // Signals.
+  // Int Signal to track initial total time.
   static final Signal<int> sInitialTotalTime = Signal<int>(
     0,
     debugLabel: 'sInitialTotalTime',
   );
 
+  // Int Signal to track elapsed total time.
   static final Signal<int> sElapsedTotalTime = Signal<int>(
     0,
     debugLabel: 'sElapsedTotalTime',
   );
 
+  // Bool Signal to track if total timer is running.
   static final Signal<bool> sTotalTimerRunning = Signal<bool>(
     false,
     debugLabel: 'sTotalTimerRunning',
@@ -61,6 +63,7 @@ class TotalTimer {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
+    // Cancel timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     sTotalTimerRunning.value = false;
@@ -71,6 +74,7 @@ class TotalTimer {
     // Give a bigger bzzz.
     await HapticFeedback.mediumImpact();
 
+    // Cancel timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     _startTime = null;

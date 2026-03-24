@@ -2,7 +2,7 @@
 import 'package:intl/intl.dart';
 
 extension TimeFormatter on int {
-  /// Formats as HH:MM
+  // Format as HH:MM
   String formatHHMM() {
     final int hours = this ~/ 3600;
     final int minutes = (this % 3600) ~/ 60;
@@ -13,7 +13,7 @@ extension TimeFormatter on int {
     return '$hoursStr:$minutesStr';
   }
 
-  /// Formats as H:MM:SS
+  // Format as H:MM:SS
   String formatHMMSS() {
     final int hours = this ~/ 3600;
     final int minutes = (this % 3600) ~/ 60;
@@ -26,7 +26,7 @@ extension TimeFormatter on int {
     return '$hoursStr:$minutesStr:$secondsStr';
   }
 
-  /// Formats as M:SS.
+  // Formats as M:SS.
   String formatMSS() {
     final int minutes = this ~/ 60;
     final int remainingSeconds = this % 60;
@@ -37,7 +37,7 @@ extension TimeFormatter on int {
     return '$minutesStr:$secondsStr';
   }
 
-  /// Formats as H:MM:SS:CC (from milliseconds)
+  // Formats as H:MM:SS:CC (from milliseconds)
   String formatHMMSSCC() {
     final int hours = this ~/ 3600000;
     final int minutes = (this % 3600000) ~/ 60000;
@@ -52,7 +52,7 @@ extension TimeFormatter on int {
     return '$hoursStr:$minutesStr:$secondsStr:$centiStr';
   }
 
-  /// Formats as H:MM:SS:T (from milliseconds, T is tenths of a second)
+  // Formats as H:MM:SS:T (from milliseconds, T is tenths of a second)
   String formatHMMSSD() {
     final int hours = this ~/ 3600000;
     final int minutes = (this % 3600000) ~/ 60000;
@@ -67,7 +67,7 @@ extension TimeFormatter on int {
     return '$hoursStr:$minutesStr:$secondsStr:$tenthsStr';
   }
 
-  /// Formats a Unix timestamp (seconds) as "yyyy, MMMM dd"
+  // Format Unix timestamp (seconds) as "yyyy, MMMM dd"
   String formatWorkoutDate() {
     final DateTime date = DateTime.fromMillisecondsSinceEpoch(this * 1000);
     return DateFormat('yyyy, MMMM dd').format(date);
@@ -75,7 +75,7 @@ extension TimeFormatter on int {
 }
 
 extension DurationFormatter on Duration {
-  /// Formats Duration as H:MM:SS (if hours > 0) or MM:SS
+  // Format Duration as H:MM:SS (if hours > 0) or MM:SS
   String format() {
     final String minutes = inMinutes.remainder(60).toString().padLeft(2, '0');
     final String seconds = inSeconds.remainder(60).toString().padLeft(2, '0');
@@ -87,13 +87,12 @@ extension DurationFormatter on Duration {
 }
 
 extension DateTimeFormatter on DateTime {
-  /// Returns date formatted as yyyyMMdd (e.g. 20231027)
+  // Return date as yyyyMMdd: 19830727.
   String get yyyyMMdd {
     return DateFormat('yyyyMMdd').format(this);
   }
 
-  /// Returns a descriptive default workout title.
-  /// Example: "Saturday Morning Workout"
+  // Return descriptive default workout title: "Saturday Morning Workout"
   String get defaultWorkoutTitle {
     final String dayStr = DateFormat('EEEE').format(this);
 

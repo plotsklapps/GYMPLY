@@ -10,8 +10,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareService {
+  // Singleton pattern.
+  factory ShareService() {
+    return _instance;
+  }
+
+  ShareService._internal();
+  static final ShareService _instance = ShareService._internal();
+
   final Logger _logger = Logger();
-  // Captures a widget (via GlobalKey) and converts it to PNG bytes for Nostr.
+
+  // Capture widget (via GlobalKey) -> convert to PNG bytes for Nostr.
   Future<Uint8List?> captureImage(GlobalKey boundaryKey) async {
     try {
       final RenderRepaintBoundary? boundary =
@@ -21,7 +30,7 @@ class ShareService {
       if (boundary == null) return null;
 
       // Convert boundary to an image (high pixel ratio for quality).
-      final ui.Image image = await boundary.toImage(pixelRatio: 3);
+      final ui.Image image = await boundary.toImage(pixelRatio: 2);
       final ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
       );
@@ -43,8 +52,7 @@ class ShareService {
     }
   }
 
-  // Captures a widget (via GlobalKey) and converts it to a PNG file,
-  // then shares it via OS.
+  // Capture widget (via GlobalKey) -> convert to PNG -> share via OS.
   Future<void> captureAndShare(
     GlobalKey boundaryKey, {
     required String workoutTitle,
@@ -61,7 +69,7 @@ class ShareService {
       final File imageFile = File(imagePath);
       await imageFile.writeAsBytes(pngBytes);
 
-      // Share the file using the modern SharePlus API.
+      // Share file using share_plus package.
       await SharePlus.instance.share(
         ShareParams(
           files: <XFile>[XFile(imagePath)],

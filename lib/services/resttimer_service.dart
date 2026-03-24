@@ -12,22 +12,25 @@ class RestTimer {
   RestTimer._internal();
   static final RestTimer _instance = RestTimer._internal();
 
-  // Signals.
+  // Int Signal to track initial rest time.
   static final Signal<int> sInitialRestTime = Signal<int>(
     60,
     debugLabel: 'sInitialRestTime',
   );
 
+  // Int Signal to track elapsed rest time.
   static final Signal<int> sElapsedRestTime = Signal<int>(
     60,
     debugLabel: 'sElapsedRestTime',
   );
 
+  // Bool Signal to track if resttimer has completed.
   static final Signal<bool> sRestTimerCompleted = Signal<bool>(
     false,
     debugLabel: 'sRestTimerCompleted',
   );
 
+  // Bool Signal to track if resttimer is running.
   static final Signal<bool> sRestTimerRunning = Signal<bool>(
     false,
     debugLabel: 'sRestTimerRunning',
@@ -37,20 +40,20 @@ class RestTimer {
   DateTime? _endTime;
 
   Future<void> startTimer() async {
-    // Immediate guard to prevent concurrent timers during async gaps.
+    // Synchronous check to prevent multiple timers.
     if (_timer != null || sRestTimerRunning.value) return;
 
-    // Critical: Ensure Audio context is primed while we are in the
-    // tap callback.
+    // Ensure Audio engine is primed while in the tap callback.
     unawaited(AudioService().initialize());
 
+    // Set Signals.
     sRestTimerRunning.value = true;
     sRestTimerCompleted.value = false;
 
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
-    // Calculate when the timer should end.
+    // Calculate when resttimer should end.
     _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
@@ -65,18 +68,20 @@ class RestTimer {
       } else {
         // Stop timer immediately.
         _timer?.cancel();
+
+        // Reset Signals.
         _timer = null;
         _endTime = null;
         sRestTimerRunning.value = false;
-
         sElapsedRestTime.value = 0;
 
-        // Play rest-completed sound (Non-blocking).
+        // Play rest-completed sound.
         AudioService().playRestSound();
 
-        // Wait to finish before clean up or allow re-start.
-        await Future<void>.delayed(const Duration(milliseconds: 500));
+        // Short pause to allow sound to start before state transition.
+        await Future<void>.delayed(const Duration(milliseconds: 400));
 
+        // Reset Signals.
         sRestTimerCompleted.value = true;
         sElapsedRestTime.value = sInitialRestTime.value;
       }
@@ -87,6 +92,7 @@ class RestTimer {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
+    // Cancel timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     _endTime = null;
@@ -98,10 +104,12 @@ class RestTimer {
     // Give a bigger bzzz.
     await HapticFeedback.mediumImpact();
 
+    // Reset timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     _endTime = null;
 
+    // Reset to initial seconds.
     sElapsedRestTime.value = sInitialRestTime.value;
     sRestTimerRunning.value = false;
     sRestTimerCompleted.value = false;

@@ -16,7 +16,6 @@ class NostrService {
     return _instance;
   }
 
-  // Constructor.
   NostrService._internal();
 
   static final NostrService _instance = NostrService._internal();
@@ -26,7 +25,8 @@ class NostrService {
   final Logger _logger = Logger();
   late Ndk _ndk;
 
-  // Custom Kind for GYMPLY workout posts.
+  // Custom Kind for GYMPLY workout posts. This number was chosen randomly,
+  // now GYMPLY sticks with it.
   static const int kGymplyWorkoutKind = 6742;
 
   // Static list of 7 reliable Nostr relays.
@@ -51,11 +51,12 @@ class NostrService {
 
   // --- SIGNALS ---
 
-  // Track keys.
+  // String Signal not track npub.
   final Signal<String?> sNpub = Signal<String?>(null, debugLabel: 'sNpub');
+  // ONLY track if nsec is available, this is a SECRET, DO NOT TRACK.
   final Signal<bool> sNsec = Signal<bool>(false, debugLabel: 'sNsec');
 
-  // Signal for own profile metadata.
+  // Metadata Signal for own profile metadata.
   final Signal<Metadata?> sMetadata = Signal<Metadata?>(
     null,
     debugLabel: 'sMetadata',
@@ -81,7 +82,7 @@ class NostrService {
         debugLabel: 'sFeedReactions',
       );
 
-  // Signal for loading state.
+  // Bool Signal to track feed loading state.
   final Signal<bool> sLoadingFeed = Signal<bool>(
     false,
     debugLabel: 'sLoadingFeed',
@@ -107,6 +108,8 @@ class NostrService {
     // Set npub/nsec Signals from FlutterSecureStorage.
     final String? npub = await _storage.read(key: 'nostr_npub');
     final String? nsec = await _storage.read(key: 'nostr_nsec');
+
+    // Set Signals, keep nsec SECRET.
     sNpub.value = npub;
     sNsec.value = nsec != null;
 
@@ -127,7 +130,7 @@ class NostrService {
     final String pubkeyHex = Nip19.decode(npub);
 
     // If npub already exists in NDK, remove it first.
-    // Fixes 'npub already present,
+    // Fixes 'npub already present'.
     if (_ndk.accounts.hasAccount(pubkeyHex)) {
       _ndk.accounts.removeAccount(pubkey: pubkeyHex);
     }
@@ -153,6 +156,13 @@ class NostrService {
     } on Object catch (e) {
       // Log error.
       _logger.w('Failed to load metadata for $pubkey: $e');
+
+      // Show toast to user.
+      ToastService.showError(
+        title: 'Error Loading Metadata',
+        subtitle: '$e',
+      );
+
       return null;
     }
   }
@@ -168,42 +178,55 @@ class NostrService {
       sMetadata.value = meta;
 
       // Log success.
-      _logger.i('Metadata fetched successfully');
+      _logger.i('Metadata fetched successfully: $meta');
     }
   }
 
-  // Publish workout image.
+  // Publish WorkoutNote using Waterfall Strategy (polite to Nostr servers).
   Future<void> publishWorkoutNote({required Uint8List imageBytes}) async {
     if (!sNsec.value) throw Exception('No Private Key found.');
 
-    // Upload image to 5 Blossom servers simultaneously.
-    final List<BlobUploadResult> uploadResults = await _ndk.blossom.uploadBlob(
-      data: imageBytes,
-      serverUrls: _defaultBlossomServers,
-      contentType: 'image/png',
-    );
+    // Prepare Waterfall List: blossom.primal.net first, then others shuffled.
+    final List<String> fallbacks = List<String>.from(_defaultBlossomServers)
+      ..remove('https://blossom.primal.net')
+      ..shuffle();
+    final List<String> waterfallServers = <String>[
+      'https://blossom.primal.net',
+      ...fallbacks,
+    ];
 
-    // Find the first successful upload => descriptor is returned (URL).
-    final BlobUploadResult? success = uploadResults
-        .cast<BlobUploadResult?>()
-        .firstWhere(
-          (BlobUploadResult? r) {
-            return r != null && r.success && r.descriptor != null;
-          },
-          orElse: () {
-            return null;
-          },
+    BlobUploadResult? success;
+
+    // Iterate through servers one by one until one succeeds.
+    for (final String serverUrl in waterfallServers) {
+      try {
+        final List<BlobUploadResult> results = await _ndk.blossom.uploadBlob(
+          data: imageBytes,
+          serverUrls: <String>[serverUrl],
+          contentType: 'image/png',
         );
+
+        if (results.isNotEmpty &&
+            results.first.success &&
+            results.first.descriptor != null) {
+          success = results.first;
+          break;
+        }
+      } on Object catch (e) {
+        // Log warning (this is NOT an error!).
+        _logger.w('Upload failed for $serverUrl: $e');
+      }
+    }
 
     // If none of servers returns success, operation fails.
     if (success == null) {
-      // Log error.
-      _logger.e('Image upload failed.');
+      // Log error (NOW it's an error).
+      _logger.e('Image upload failed across all servers.');
 
       // Show toast to user.
       ToastService.showError(
         title: 'Image Upload Failed',
-        subtitle: 'None of the servers returned success.',
+        subtitle: 'None of the Nostr Blossom servers accepted the upload.',
       );
 
       // Throw.
@@ -253,7 +276,7 @@ class NostrService {
     sFeedEvents.value = newList;
   }
 
-  /// Sends 'Like' (Kind 7) with Biceps emoji.
+  // Sends 'Like' (Kind 7) to WorkoutNote.
   Future<void> sendBicepsReaction(String eventId) async {
     if (!sNsec.value) return;
 
@@ -377,17 +400,20 @@ class NostrService {
         .stream
         .listen((Nip01Event event) async {
           // Duplicate Check: Process only unique IDs.
-          if (!sFeedEvents.value.any((Nip01Event e) => e.id == event.id)) {
+          if (!sFeedEvents.value.any((Nip01Event e) {
+            return e.id == event.id;
+          })) {
             // Update Feed List (newest first).
             final List<Nip01Event> newList =
                 <Nip01Event>[event, ...sFeedEvents.value]..sort(
-                  (Nip01Event a, Nip01Event b) =>
-                      b.createdAt.compareTo(a.createdAt),
+                  (Nip01Event a, Nip01Event b) {
+                    return b.createdAt.compareTo(a.createdAt);
+                  },
                 );
             // Set Signal.
             sFeedEvents.value = newList;
 
-            // Fetch user's name/avatar and refresh our reaction listeners.
+            // Fetch user's name/avatar and refresh listeners.
             await _resolveMetadata(event.pubKey);
             _updateReactionSubscription();
           }
@@ -454,7 +480,7 @@ class NostrService {
         });
   }
 
-  // Fetche Nostr profile data for a specific user and caches it.
+  // Fetch Nostr profile data for a specific user and cache it.
   Future<void> _resolveMetadata(String pubkey) async {
     // User's metadata already present, skip fetch.
     if (sFeedMetadata.value.containsKey(pubkey)) return;
@@ -630,7 +656,7 @@ class NostrService {
     }
   }
 
-  // Delete keys from device.
+  // Delete keys from device (removes Feed tab).
   Future<void> logout() async {
     // Delete keys from FlutterSecureStorage.
     await _storage.delete(key: 'nostr_npub');
