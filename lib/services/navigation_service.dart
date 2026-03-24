@@ -4,22 +4,19 @@ import 'package:signals/signals_flutter.dart';
 // Logical Enum for all tabs.
 enum AppTab { feed, stats, workout, exercise, search }
 
-// Computed value for Feed visibility.
+// Computed Signal for Feed visibility (depending on pubkey availability).
 final Computed<bool> cShowFeed = Computed<bool>(
-  () => nostrService.sNpub.value != null,
+  () {
+    return nostrService.sNpub.value != null;
+  },
   debugLabel: 'cShowFeed',
 );
 
-// Signal<int> to track current PHYSICAL tab index.
-// Defaulting to the index of Statistics (which is 1 if feed is shown,
-// 0 if not).
-final Signal<int> sCurrentTab = Signal<int>(
-  nostrService.sNpub.value != null ? 1 : 0,
-  debugLabel: 'sCurrentTab',
-);
+// Int Signal to track current physical tab index. Default to 1 (Statistics).
+final Signal<int> sCurrentTab = Signal<int>(1, debugLabel: 'sCurrentTab');
 
-/// Helper to switch tabs using the logical [AppTab] enum.
-/// This handles the index shift automatically if the Feed is visible.
+// Helper to switch tabs using AppTab enum. Needed forconditionally showing
+// Feed tab.
 void navigateToTab(AppTab tab) {
   final bool showFeed = cShowFeed.value;
 
@@ -32,17 +29,4 @@ void navigateToTab(AppTab tab) {
   };
 
   sCurrentTab.value = targetIndex;
-}
-
-/// Legacy helper for cases where we still need a direct index jump.
-void navigateToPhysicalIndex(int index) {
-  sCurrentTab.value = index;
-}
-
-/// Deprecated: Use the [AppTab] enum with [navigateToTab] instead.
-class AppTabs {
-  static const int stats = 0;
-  static const int workout = 1;
-  static const int exercise = 2;
-  static const int search = 3;
 }

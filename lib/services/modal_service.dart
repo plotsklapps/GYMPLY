@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Service to show consistent modal sheets that return a bool.
+// Service to show consistent modal sheets that return a bool (when needed).
 class ModalService {
   static Future<bool> showModal({
     required BuildContext context,

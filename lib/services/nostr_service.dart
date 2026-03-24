@@ -11,6 +11,16 @@ import 'package:ndk/shared/nips/nip01/key_pair.dart';
 import 'package:signals/signals_flutter.dart';
 
 class NostrService {
+  // Singleton pattern.
+  factory NostrService() {
+    return _instance;
+  }
+
+  // Constructor.
+  NostrService._internal();
+
+  static final NostrService _instance = NostrService._internal();
+
   // Initialize FlutterSecureStorage for npub/nsec.
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final Logger _logger = Logger();

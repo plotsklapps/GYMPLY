@@ -88,3 +88,6 @@ class StopwatchTimer {
     sStopwatchTimerRunning.value = false;
   }
 }
+
+// Globalize StopwatchTimer.
+final StopwatchTimer stopwatchTimer = StopwatchTimer();

@@ -78,3 +78,6 @@ class TotalTimer {
     sTotalTimerRunning.value = false;
   }
 }
+
+// Globalize TotalTimer.
+final TotalTimer totalTimer = TotalTimer();

@@ -12,13 +12,14 @@ import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
 class IntervalTimer {
-  // Create a singleton instance of IntervalTimer.
+  // Singleton pattern.
   factory IntervalTimer() {
     return _instance;
   }
 
+  // Constructor.
   IntervalTimer._internal() {
-    // This effect handles the transition from Rest back to Interval.
+    // Effect to handle transition from Rest to Interval.
     effect(() async {
       final bool isRestDone = RestTimer.sRestTimerCompleted.value;
 
@@ -28,6 +29,7 @@ class IntervalTimer {
 
         final WorkoutExercise? exercise = sSelectedExercise.value;
 
+        // Add CardioSet to CardioExercise.
         if (exercise is CardioExercise) {
           workoutService.addCardioSet(
             exercise,
@@ -40,7 +42,9 @@ class IntervalTimer {
             ),
             intensity: exercise.intensityInput ?? 1,
           );
-        } else if (exercise is StretchExercise) {
+        }
+        // Add StretchSet to StretchExercise.
+        else if (exercise is StretchExercise) {
           workoutService.addStretchSet(
             exercise,
             stretchDuration: Duration(milliseconds: sInitialIntervalTime.value),
@@ -54,7 +58,7 @@ class IntervalTimer {
           );
         }
 
-        // Reset the signal.
+        // Reset Signal.
         RestTimer.sRestTimerCompleted.value = false;
 
         // Auto-restart if enabled.
@@ -65,39 +69,43 @@ class IntervalTimer {
     });
   }
 
-  bool _isIntervalSequenceActive = false;
-
   static final IntervalTimer _instance = IntervalTimer._internal();
 
-  // Signals.
-  // Initial time in MILLISECONDS.
+  Timer? _timer;
+  DateTime? _endTime;
+  bool _isIntervalSequenceActive = false;
+
+  // Int Signal to track initial interval time (in milliseconds).
   static final Signal<int> sInitialIntervalTime = Signal<int>(
     60000,
     debugLabel: 'sInitialIntervalTime',
   );
 
-  // Elapsed time in MILLISECONDS.
+  // Int Signal to track elapsed interval time (in milliseconds).
   static final Signal<int> sElapsedIntervalTime = Signal<int>(
     60000,
     debugLabel: 'sElapsedIntervalTime',
   );
 
+  // Bool Signal to track if interval timer has completed.
   static final Signal<bool> sIntervalTimerCompleted = Signal<bool>(
     false,
     debugLabel: 'sIntervalTimerCompleted',
   );
 
+  // Bool Signal to track if interval timer is running.
   static final Signal<bool> sIntervalTimerRunning = Signal<bool>(
     false,
     debugLabel: 'sIntervalTimerRunning',
   );
 
+  // Bool Signal to track if auto-interval is enabled.
   static final Signal<bool> sAutoIntervalOn = Signal<bool>(
     false,
     debugLabel: 'sAutoIntervalOn',
   );
 
-  // Computed signal for the formatted time.
+  // Computed Signal for formatted time (watches sElapsedIntervalTime Signal).
   static final Computed<String> cFormattedIntervalTime = Computed<String>(
     () {
       return sElapsedIntervalTime.value.formatHMMSSCC();
@@ -105,24 +113,22 @@ class IntervalTimer {
     debugLabel: 'cFormattedIntervalTime',
   );
 
-  Timer? _timer;
-  DateTime? _endTime;
-
   Future<void> startTimer() async {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sIntervalTimerRunning.value) return;
 
-    // Critical: Ensure Audio context is primed while we are in the
-    // tap callback.
+    // Ensure Audio engine is primed while we are in tap callback.
     unawaited(AudioService().initialize());
 
+    // Set Signals.
     _isIntervalSequenceActive = true;
     sIntervalTimerRunning.value = true;
     sIntervalTimerCompleted.value = false;
 
+    // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
-    // Calculate when the interval should end based on current elapsed ms.
+    // Calculate when interval should end based on current elapsed milliseconds.
     _endTime = DateTime.now().add(
       Duration(milliseconds: sElapsedIntervalTime.value),
     );
@@ -139,23 +145,24 @@ class IntervalTimer {
       if (remainingMs > 0) {
         sElapsedIntervalTime.value = remainingMs;
       } else {
-        // Stop this timer immediately.
+        // Stop timer immediately.
         _timer?.cancel();
+
+        // Reset Signals.
         _timer = null;
         _endTime = null;
         sIntervalTimerRunning.value = false;
 
         sElapsedIntervalTime.value = 0;
 
-        // Play interval-completed sound (Non-blocking).
+        // Play interval-completed sound.
         AudioService().playStartSound();
 
         // Short pause to allow sound to start before state transition.
-        await Future<void>.delayed(const Duration(milliseconds: 500));
+        await Future<void>.delayed(const Duration(milliseconds: 400));
 
+        // Reset Signals.
         sIntervalTimerCompleted.value = true;
-
-        // Reset to initial milliseconds.
         sElapsedIntervalTime.value = sInitialIntervalTime.value;
 
         // Start the rest period.
@@ -168,6 +175,7 @@ class IntervalTimer {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();
 
+    // Cancel timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     _endTime = null;
@@ -180,6 +188,7 @@ class IntervalTimer {
     // Give a bigger bzzz.
     await HapticFeedback.mediumImpact();
 
+    // Reset timer and reset Signals.
     _timer?.cancel();
     _timer = null;
     _endTime = null;
@@ -190,3 +199,6 @@ class IntervalTimer {
     sIntervalTimerCompleted.value = false;
   }
 }
+
+// Globalize IntervalTimer.
+final IntervalTimer intervalTimer = IntervalTimer();

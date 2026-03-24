@@ -107,3 +107,6 @@ class RestTimer {
     sRestTimerCompleted.value = false;
   }
 }
+
+// Globalize RestTimer.
+final RestTimer restTimer = RestTimer();
