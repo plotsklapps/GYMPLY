@@ -85,7 +85,7 @@ class StrengthExercise extends WorkoutExercise {
 
     for (final StrengthSet set in sets) {
       if (set.reps > 0) {
-        final double current1RM = set.weight / (1.0278 - (0.0278 * set.reps));
+        final double current1RM = set.oneRepMaxBrzycki;
         if (current1RM > max1RM) max1RM = current1RM;
       }
     }
@@ -99,7 +99,7 @@ class StrengthExercise extends WorkoutExercise {
 
     for (final StrengthSet set in sets) {
       if (set.reps > 0) {
-        final double current1RM = set.weight * (1 + (set.reps / 30));
+        final double current1RM = set.oneRepMaxEpley;
         if (current1RM > max1RM) max1RM = current1RM;
       }
     }
@@ -113,7 +113,7 @@ class StrengthExercise extends WorkoutExercise {
 
     for (final StrengthSet set in sets) {
       if (set.reps > 0) {
-        final double current1RM = set.weight * math.pow(set.reps, 0.1);
+        final double current1RM = set.oneRepMaxLombardi;
         if (current1RM > max1RM) max1RM = current1RM;
       }
     }
@@ -129,4 +129,21 @@ class StrengthSet {
   final double weight;
   @HiveField(1)
   final int reps;
+
+  // --- 1RM Formulas ---
+
+  double get oneRepMaxBrzycki {
+    if (reps == 0) return 0;
+    return weight / (1.0278 - (0.0278 * reps));
+  }
+
+  double get oneRepMaxEpley {
+    if (reps == 0) return 0;
+    return weight * (1 + (reps / 30));
+  }
+
+  double get oneRepMaxLombardi {
+    if (reps == 0) return 0;
+    return weight * math.pow(reps, 0.1);
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
-import 'package:gymply/models/personal_record_model.dart';
+import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -49,58 +49,6 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Avg Weight/Set',
           value: '${ex.avgWeightPerSet.toStringAsFixed(1)} kg',
         ),
-        Divider(height: 32, color: theme.colorScheme.outlineVariant),
-        Builder(
-          builder: (BuildContext context) {
-            final PersonalRecord pr = workoutService.getPersonalRecords(ex.id);
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '1RM Estimates',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _StatRow(
-                  label: 'Lombardi (rep range 1-5)',
-                  value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
-                ),
-                _StatRow(
-                  label: 'Brzycki (rep range 5-10)',
-                  value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
-                ),
-                _StatRow(
-                  label: 'Epley (rep range 1-10)',
-                  value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
-                ),
-                Divider(height: 32, color: theme.colorScheme.outlineVariant),
-                Text(
-                  'Personal Records',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _StatRow(
-                  label: 'Max Weight',
-                  value: '${pr.maxWeight.toStringAsFixed(1)} kg',
-                ),
-                _StatRow(
-                  label: 'Max Set Volume',
-                  value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
-                ),
-                _StatRow(
-                  label: 'Max Exercise Volume',
-                  value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
-                ),
-              ],
-            );
-          },
-        ),
       ]);
     } else if (exercise is CardioExercise) {
       final CardioExercise ex = exercise as CardioExercise;
@@ -128,10 +76,10 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-                userWeight: userWeight,
-                userAge: userAge,
-                userSex: userSex,
-              )} kcal',
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          )} kcal',
         ),
       ]);
     } else if (exercise is StretchExercise) {
@@ -152,13 +100,106 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-                userWeight: userWeight,
-                userAge: userAge,
-                userSex: userSex,
-              )} kcal',
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          )} kcal',
         ),
       ]);
     }
+
+    // --- Personal Records Section ---
+    detailRows.add(Divider(height: 32, color: theme.colorScheme.outlineVariant));
+    detailRows.add(
+      Builder(
+        builder: (BuildContext context) {
+          final PersonalRecord pr = workoutService.getPersonalRecords(
+            exercise.id,
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // 1RM Estimates (Strength only).
+              if (exercise is StrengthExercise && pr.oneRepMaxLombardi > 0) ...<
+                  Widget>[
+                Text(
+                  '1RM Estimates',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _StatRow(
+                  label: 'Lombardi (rep range 1-5)',
+                  value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Brzycki (rep range 5-10)',
+                  value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Epley (rep range 1-10)',
+                  value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
+                ),
+                Divider(height: 32, color: theme.colorScheme.outlineVariant),
+              ],
+
+              Text(
+                'Personal Records',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              if (exercise is StrengthExercise) ...<Widget>[
+                _StatRow(
+                  label: 'Max Weight',
+                  value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Max Set Volume',
+                  value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+                ),
+                _StatRow(
+                  label: 'Max Exercise Volume',
+                  value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+                ),
+              ] else if (exercise is CardioExercise) ...<Widget>[
+                _StatRow(
+                  label: 'Max Time',
+                  value: pr.maxSetDuration.format(),
+                ),
+                _StatRow(
+                  label: 'Max Distance',
+                  value: '${pr.maxDistance.toStringAsFixed(2)} km',
+                ),
+                _StatRow(
+                  label: 'Session PR',
+                  value: pr.maxTotalDuration.format(),
+                ),
+              ] else if (exercise is StretchExercise) ...<Widget>[
+                _StatRow(
+                  label: 'Max Hold',
+                  value: pr.maxSetDuration.format(),
+                ),
+                _StatRow(
+                  label: 'Stretches PR',
+                  value: '${pr.maxExerciseStretches} stretches',
+                ),
+                _StatRow(
+                  label: 'Session PR',
+                  value: pr.maxTotalDuration.format(),
+                ),
+              ],
+            ],
+          );
+        },
+      ),
+    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,

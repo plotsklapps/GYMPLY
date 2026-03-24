@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/modals/exercisedetail_sheet.dart';
+import 'package:gymply/modals/exercisedetail_modal.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';

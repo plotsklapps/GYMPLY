@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
-import 'package:gymply/models/personal_record_model.dart';
+import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
+import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
@@ -115,81 +118,176 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
             },
           ),
 
-          if (widget.exercise is StrengthExercise) ...<Widget>[
+          if (relevantWorkouts.isNotEmpty) ...<Widget>[
             const SizedBox(height: 24),
             const Divider(),
             Builder(
               builder: (BuildContext context) {
-                // Create PersonalRecord Object for this exercise.
                 final PersonalRecord pr = workoutService.getPersonalRecords(
                   widget.exercise.id,
                 );
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'PERSONAL RECORDS',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        _PersonalRecordItem(
-                          label: 'REP PR',
-                          value: '${pr.maxWeight.toStringAsFixed(1)} kg',
-                        ),
-                        _PersonalRecordItem(
-                          label: 'SET PR',
-                          value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
-                        ),
-                        _PersonalRecordItem(
-                          label: 'SESSION PR',
-                          value:
-                              '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Text(
-                      '1RM ESTIMATES',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        _OneRepMaxItem(
-                          label: 'LOMBARDI',
-                          repRange: '1-5 reps',
-                          value:
-                              '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
-                        ),
-                        _OneRepMaxItem(
-                          label: 'BRZYCKI',
-                          repRange: '5-10 reps',
-                          value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
-                        ),
-                        _OneRepMaxItem(
-                          label: 'EPLEY',
-                          repRange: '1-10 reps',
-                          value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
-                        ),
-                      ],
-                    ),
-                  ],
-                );
+                if (widget.exercise is StrengthExercise) {
+                  return _StrengthPRs(pr: pr);
+                } else if (widget.exercise is CardioExercise) {
+                  return _CardioPRs(pr: pr);
+                } else if (widget.exercise is StretchExercise) {
+                  return _StretchPRs(pr: pr);
+                }
+                return const SizedBox.shrink();
               },
             ),
           ],
         ],
+      ],
+    );
+  }
+}
+
+class _StrengthPRs extends StatelessWidget {
+  const _StrengthPRs({required this.pr});
+  final PersonalRecord pr;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'PERSONAL RECORDS',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _PersonalRecordItem(
+              label: 'REP PR',
+              value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+            ),
+            _PersonalRecordItem(
+              label: 'SET PR',
+              value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+            ),
+            _PersonalRecordItem(
+              label: 'SESSION PR',
+              value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+            ),
+          ],
+        ),
+        const Divider(),
+        Text(
+          '1RM ESTIMATES',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _OneRepMaxItem(
+              label: 'LOMBARDI',
+              repRange: '1-5 reps',
+              value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+            ),
+            _OneRepMaxItem(
+              label: 'BRZYCKI',
+              repRange: '5-10 reps',
+              value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+            ),
+            _OneRepMaxItem(
+              label: 'EPLEY',
+              repRange: '1-10 reps',
+              value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CardioPRs extends StatelessWidget {
+  const _CardioPRs({required this.pr});
+  final PersonalRecord pr;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'PERSONAL RECORDS',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _PersonalRecordItem(
+              label: 'MAX TIME',
+              value: pr.maxSetDuration.format(),
+            ),
+            _PersonalRecordItem(
+              label: 'MAX DISTANCE',
+              value: '${pr.maxDistance.toStringAsFixed(2)} km',
+            ),
+            _PersonalRecordItem(
+              label: 'SESSION PR',
+              value: pr.maxTotalDuration.format(),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _StretchPRs extends StatelessWidget {
+  const _StretchPRs({required this.pr});
+  final PersonalRecord pr;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'PERSONAL RECORDS',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _PersonalRecordItem(
+              label: 'MAX HOLD',
+              value: pr.maxSetDuration.format(),
+            ),
+            _PersonalRecordItem(
+              label: 'STRETCHES PR',
+              value: '${pr.maxExerciseStretches} stretches',
+            ),
+            _PersonalRecordItem(
+              label: 'SESSION PR',
+              value: pr.maxTotalDuration.format(),
+            ),
+          ],
+        ),
       ],
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/models/personal_record_model.dart';
+import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

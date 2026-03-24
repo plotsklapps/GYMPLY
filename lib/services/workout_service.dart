@@ -1,7 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:gymply/models/cardio_model.dart';
-import 'package:gymply/models/personal_record_model.dart';
+import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -738,7 +736,7 @@ class WorkoutService {
     }
   }
 
-  /// Calculates Personal Records for a specific Strength Exercise ID.
+  /// Calculates Personal Records for a specific Exercise ID.
   /// If [includeActive] is false, it only considers historical workouts.
   PersonalRecord getPersonalRecords(
     int exerciseId, {
@@ -751,61 +749,110 @@ class WorkoutService {
     double maxBrzycki = 0;
     double maxEpley = 0;
 
-    void processExercise(StrengthExercise exercise) {
-      if (exercise.totalWeight > maxExerciseVolume) {
-        maxExerciseVolume = exercise.totalWeight;
-      }
+    // Cardio PRs.
+    Duration maxSetDurationCardio = Duration.zero;
+    double maxDistance = 0;
+    Duration maxTotalDurationCardio = Duration.zero;
 
-      for (final StrengthSet set in exercise.sets) {
-        if (set.weight > maxWeight) {
-          maxWeight = set.weight;
+    // Stretch PRs.
+    Duration maxSetDurationStretch = Duration.zero;
+    int maxExerciseStretches = 0;
+    Duration maxTotalDurationStretch = Duration.zero;
+
+    void processExercise(WorkoutExercise exercise) {
+      if (exercise is StrengthExercise) {
+        if (exercise.totalWeight > maxExerciseVolume) {
+          maxExerciseVolume = exercise.totalWeight;
         }
-        final double setVolume = set.weight * set.reps;
-        if (setVolume > maxSetVolume) {
-          maxSetVolume = setVolume;
+
+        for (final StrengthSet set in exercise.sets) {
+          if (set.weight > maxWeight) {
+            maxWeight = set.weight;
+          }
+          final double setVolume = set.weight * set.reps;
+          if (setVolume > maxSetVolume) {
+            maxSetVolume = setVolume;
+          }
+
+          if (set.reps > 0) {
+            if (set.oneRepMaxLombardi > maxLombardi) {
+              maxLombardi = set.oneRepMaxLombardi;
+            }
+            if (set.oneRepMaxBrzycki > maxBrzycki) {
+              maxBrzycki = set.oneRepMaxBrzycki;
+            }
+            if (set.oneRepMaxEpley > maxEpley) {
+              maxEpley = set.oneRepMaxEpley;
+            }
+          }
+        }
+      } else if (exercise is CardioExercise) {
+        if (exercise.totalDuration > maxTotalDurationCardio) {
+          maxTotalDurationCardio = exercise.totalDuration;
         }
 
-        if (set.reps > 0) {
-          final double lombardi = set.weight * math.pow(set.reps, 0.1);
-          final double brzycki = set.weight / (1.0278 - (0.0278 * set.reps));
-          final double epley = set.weight * (1 + (set.reps / 30));
+        for (final CardioSet set in exercise.sets) {
+          if (set.cardioDuration > maxSetDurationCardio) {
+            maxSetDurationCardio = set.cardioDuration;
+          }
+          if ((set.distance ?? 0) > maxDistance) {
+            maxDistance = set.distance!;
+          }
+        }
+      } else if (exercise is StretchExercise) {
+        if (exercise.totalDuration > maxTotalDurationStretch) {
+          maxTotalDurationStretch = exercise.totalDuration;
+        }
+        if (exercise.sets.length > maxExerciseStretches) {
+          maxExerciseStretches = exercise.sets.length;
+        }
 
-          if (lombardi > maxLombardi) maxLombardi = lombardi;
-          if (brzycki > maxBrzycki) maxBrzycki = brzycki;
-          if (epley > maxEpley) maxEpley = epley;
+        for (final StretchSet set in exercise.sets) {
+          if (set.stretchDuration > maxSetDurationStretch) {
+            maxSetDurationStretch = set.stretchDuration;
+          }
         }
       }
     }
 
     // Iterate through all workouts in history.
     for (final Workout workout in sWorkoutHistory.value) {
-      // Strictly exclude the current active session if includeActive is false.
       if (!includeActive && workout.id == sActiveWorkout.value.id) continue;
 
       for (final WorkoutExercise exercise in workout.exercises) {
-        if (exercise is StrengthExercise && exercise.id == exerciseId) {
+        if (exercise.id == exerciseId) {
           processExercise(exercise);
         }
       }
     }
 
     if (includeActive) {
-      // Check current active workout if it's not empty and contains exercise.
       final Workout active = sActiveWorkout.value;
       for (final WorkoutExercise exercise in active.exercises) {
-        if (exercise is StrengthExercise && exercise.id == exerciseId) {
+        if (exercise.id == exerciseId) {
           processExercise(exercise);
         }
       }
     }
 
     return PersonalRecord(
+      // Strength
       maxWeight: maxWeight,
       maxSetVolume: maxSetVolume,
       maxExerciseVolume: maxExerciseVolume,
       oneRepMaxLombardi: maxLombardi,
       oneRepMaxBrzycki: maxBrzycki,
       oneRepMaxEpley: maxEpley,
+      // Cardio
+      maxSetDuration: maxSetDurationCardio.inSeconds > 0
+          ? maxSetDurationCardio
+          : maxSetDurationStretch,
+      maxDistance: maxDistance,
+      maxTotalDuration: maxTotalDurationCardio.inSeconds > 0
+          ? maxTotalDurationCardio
+          : maxTotalDurationStretch,
+      // Stretch
+      maxExerciseStretches: maxExerciseStretches,
     );
   }
 
@@ -813,12 +860,12 @@ class WorkoutService {
   List<Map<String, dynamic>> getWorkoutPRs(Workout workout) {
     final List<Map<String, dynamic>> prs = <Map<String, dynamic>>[];
     for (final WorkoutExercise exercise in workout.exercises) {
-      if (exercise is StrengthExercise) {
-        final PersonalRecord historicalPR = getPersonalRecords(
-          exercise.id,
-          includeActive: false,
-        );
+      final PersonalRecord historicalPR = getPersonalRecords(
+        exercise.id,
+        includeActive: false,
+      );
 
+      if (exercise is StrengthExercise) {
         double maxWeightInSession = 0;
         double maxSetVolInSession = 0;
 
@@ -832,7 +879,6 @@ class WorkoutService {
           }
         }
 
-        // Check for Rep PR.
         if (maxWeightInSession > historicalPR.maxWeight) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -842,7 +888,6 @@ class WorkoutService {
           });
         }
 
-        // Check for Set Volume PR.
         if (maxSetVolInSession > historicalPR.maxSetVolume) {
           final StrengthSet volSet = exercise.sets.firstWhere(
             (StrengthSet s) {
@@ -859,13 +904,80 @@ class WorkoutService {
           });
         }
 
-        // Check for Total Exercise Volume PR (Session PR).
         if (exercise.totalWeight > historicalPR.maxExerciseVolume) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
             'exerciseName': exercise.exerciseName,
             'type': 'TOTAL',
             'value': exercise.totalWeight,
+          });
+        }
+      } else if (exercise is CardioExercise) {
+        Duration maxSetDur = Duration.zero;
+        double maxDist = 0;
+
+        for (final CardioSet set in exercise.sets) {
+          if (set.cardioDuration > maxSetDur) maxSetDur = set.cardioDuration;
+          if ((set.distance ?? 0) > maxDist) maxDist = set.distance!;
+        }
+
+        if (maxSetDur > historicalPR.maxSetDuration) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'TIME',
+            'value': maxSetDur,
+          });
+        }
+
+        if (maxDist > historicalPR.maxDistance && maxDist > 0) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'DIST',
+            'value': maxDist,
+          });
+        }
+
+        if (exercise.totalDuration > historicalPR.maxTotalDuration) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'TOTAL',
+            'value': exercise.totalDuration,
+          });
+        }
+      } else if (exercise is StretchExercise) {
+        Duration maxSetDur = Duration.zero;
+
+        for (final StretchSet set in exercise.sets) {
+          if (set.stretchDuration > maxSetDur) maxSetDur = set.stretchDuration;
+        }
+
+        if (maxSetDur > historicalPR.maxSetDuration) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'HOLD',
+            'value': maxSetDur,
+          });
+        }
+
+        if (exercise.sets.length > historicalPR.maxExerciseStretches) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'SETS',
+            'value': exercise.sets.length,
+          });
+        }
+
+        if (exercise.totalDuration > historicalPR.maxTotalDuration) {
+          prs.add(<String, dynamic>{
+            'exercise': exercise,
+            'exerciseName': exercise.exerciseName,
+            'type': 'TOTAL',
+            'value': exercise.totalDuration,
           });
         }
       }

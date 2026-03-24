@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -64,12 +66,23 @@ class PRCard extends StatelessWidget {
               String detail = '';
 
               if (type == 'REP') {
-                detail = '${pr['value'].toStringAsFixed(0)} kg';
+                detail = '${(pr['value'] as double).toStringAsFixed(1)} kg';
               } else if (type == 'SET') {
                 detail =
-                    '${pr['weight'].toStringAsFixed(0)} kg x ${pr['reps']} reps';
+                    '${(pr['weight'] as double).toStringAsFixed(1)} kg x ${pr['reps']} reps';
               } else if (type == 'TOTAL') {
-                detail = '${pr['value'].toStringAsFixed(1)} kg Volume';
+                if (exercise is StrengthExercise) {
+                  detail =
+                      '${(pr['value'] as double).toStringAsFixed(1)} kg Volume';
+                } else {
+                  detail = (pr['value'] as Duration).format();
+                }
+              } else if (type == 'TIME' || type == 'HOLD') {
+                detail = (pr['value'] as Duration).format();
+              } else if (type == 'DIST') {
+                detail = '${(pr['value'] as double).toStringAsFixed(2)} km';
+              } else if (type == 'SETS') {
+                detail = '${pr['value']} stretches';
               }
 
               return ListTile(
