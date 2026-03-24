@@ -643,7 +643,7 @@ class NostrService {
 
   // Get nsec from secure storage.
   Future<String?> getNsec() async {
-    return await _storage.read(key: 'nostr_nsec');
+    return _storage.read(key: 'nostr_nsec');
   }
 }
 

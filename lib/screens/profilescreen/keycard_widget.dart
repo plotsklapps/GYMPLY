@@ -6,10 +6,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class KeyCard extends StatefulWidget {
   const KeyCard({
     required this.label,
-    this.keyValue,
+    required this.icon, required this.isSensitive, this.keyValue,
     this.onFetchValue,
-    required this.icon,
-    required this.isSensitive,
     super.key,
   });
 
