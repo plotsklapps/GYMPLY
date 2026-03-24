@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisedetail_modal.dart';
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
@@ -9,6 +10,10 @@ import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/signals/search_signal.dart';
+import 'package:gymply/signals/searchquery_signal.dart';
+import 'package:gymply/signals/selectedequipment_signal.dart';
+import 'package:gymply/signals/selectedmusclegroup_signal.dart';
+import 'package:gymply/signals/selectedworkouttype_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 

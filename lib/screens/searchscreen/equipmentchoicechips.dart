@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/services/filter_service.dart';
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
+import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class EquipmentChoiceChips extends StatelessWidget {

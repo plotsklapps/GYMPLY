@@ -1,10 +1,10 @@
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
-import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';

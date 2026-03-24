@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
-import 'package:gymply/services/filter_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';

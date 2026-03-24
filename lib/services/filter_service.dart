@@ -1,129 +1,97 @@
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/signals/allexercisespaths_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
+import 'package:gymply/signals/searchquery_signal.dart';
+import 'package:gymply/signals/selectedequipment_signal.dart';
+import 'package:gymply/signals/selectedmusclegroup_signal.dart';
+import 'package:gymply/signals/selectedworkouttype_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
-// RE-EXPORT the models so the UI can find WorkoutType, MuscleGroup, etc.
-// This maintains compatibility while keeping the logic split.
-export 'package:gymply/models/exercise_model.dart';
-
-/// -- FILTERING & SEARCH LOGIC SERVICE --
-///
-/// Responsibility: Business Logic and UI State Management.
-/// This service takes the "Raw Data" from the ExerciseService and the
-/// "User Input" (Search query, ChoiceChips) to calculate the final
-/// filtered list.
-///
-/// RELATIONS:
-/// - Watches ExerciseService.sAllExercisePaths for the raw list.
-/// - Watches WorkoutService.sFavoriteExercises for sorting favorites.
-/// - Provides a final Computed signal: cFilteredExercises for the UI
-///   to consume.
+// Takes raw data from ExerciseService and user input to calculate final
+// filtered list. Watches sAllExercisePaths for raw list, sFavoriteExercises
+// for sorting favorites and creates cFilteredExercises for UI to consume.
 
 class FilterService {
-  // Singleton pattern for globally shared logic state.
-  factory FilterService() => _instance;
+  // Singleton pattern.
+  factory FilterService() {
+    return _instance;
+  }
+
   FilterService._internal();
   static final FilterService _instance = FilterService._internal();
 
-  /// -- UI INPUT SIGNALS --
-  /// These track the user's current selections and search string.
-
-  final Signal<WorkoutType?> sSelectedWorkoutType = Signal<WorkoutType?>(
-    null,
-    debugLabel: 'sSelectedWorkoutType',
-  );
-
-  final Signal<MuscleGroup?> sSelectedMuscleGroup = Signal<MuscleGroup?>(
-    null,
-    debugLabel: 'sSelectedMuscleGroup',
-  );
-
-  final Signal<Equipment?> sSelectedEquipment = Signal<Equipment?>(
-    null,
-    debugLabel: 'sSelectedEquipment',
-  );
-
-  final Signal<String> sSearchQuery = Signal<String>(
-    '',
-    debugLabel: 'sSearchQuery',
-  );
-
-  /// -- CORE FILTERING ENGINE --
-  /// This 'Computed' signal is the "Single Source of Truth" for the UI list.
-  /// It automatically re-calculates whenever any of the watched signals change.
+  // Computed Signal recalculates whenever ANY of the watched Signals change.
   late final Computed<List<ExercisePath>> cFilteredExercises = computed(() {
-    // 1. GATHER ALL RELEVANT STATE
-    final WorkoutType? type = sSelectedWorkoutType.value;
-    final MuscleGroup? muscle = sSelectedMuscleGroup.value;
-    final Equipment? equip = sSelectedEquipment.value;
-    final String query = sSearchQuery.value.trim().toLowerCase();
+    // Gather all relevant state.
+    final WorkoutType? workoutType = sSelectedWorkoutType.value;
+    final MuscleGroup? musclegroup = sSelectedMuscleGroup.value;
+    final Equipment? equipment = sSelectedEquipment.value;
+    final String searchQuery = sSearchQuery.value.trim().toLowerCase();
+    final List<ExercisePath> allExercisesPaths = sAllExercisePaths.value;
+    final List<int> favoriteExercises = sFavoriteExercises.value;
 
-    // Fetch raw database from ExerciseService and user favorites
-    // from WorkoutService
-    final List<ExercisePath> all = sAllExercisePaths.value;
-    final List<int> favorites = sFavoriteExercises.value;
+    // INITIAL FILTER: Nothing selected, show empty list.
+    if (workoutType == null && searchQuery.isEmpty) return <ExercisePath>[];
 
-    // 2. INITIAL FILTER (Safety net)
-    // If no category is selected and no search typed, show an empty list.
-    if (type == null && query.isEmpty) return <ExercisePath>[];
-
-    // 3. APPLY FILTERING CRITERIA (AND Logic)
+    // Apply filtering criteria.
     final List<ExercisePath> filtered =
-        all.where((ExercisePath ex) {
-            // A. Tokenized Search Logic (Fuzzy search)
-            // Allows for queries like "bench chest" to find
-            // "Chest - Bench Press"
-            if (query.isNotEmpty) {
-              final List<String> tokens = query
-                  .split(' ')
-                  .where((String t) => t.isNotEmpty)
-                  .toList();
+        allExercisesPaths.where((ExercisePath ex) {
+            // Allow fuzzy search: 'bench chest' retrieves 'Chest-Bench Press'.
+            if (searchQuery.isNotEmpty) {
+              final List<String> tokens = searchQuery.split(' ').where((
+                String t,
+              ) {
+                return t.isNotEmpty;
+              }).toList();
               final String searchBlob =
                   '${ex.exerciseName} ${ex.id} '
                           '${ex.muscleSegment} ${ex.equipmentSegment}'
                       .toLowerCase();
 
-              // Match ONLY if EVERY token typed by the user exists somewhere
-              // in the exercise data.
+              // Match ONLY if EVERY token typed by user exists in data.
               if (!tokens.every(searchBlob.contains)) return false;
             }
 
-            // B. WorkoutType (Strength / Cardio / Stretch) logic.
-            if (type != null) {
-              if (type == WorkoutType.strength) {
+            // WorkoutType (Strength / Cardio / Stretch) logic.
+            if (workoutType != null) {
+              if (workoutType == WorkoutType.strength) {
                 if (ex.muscleSegment == 'Cardio' ||
                     ex.equipmentSegment == 'Stretch') {
                   return false;
                 }
-              } else if (type == WorkoutType.cardio) {
+              } else if (workoutType == WorkoutType.cardio) {
                 if (ex.muscleSegment != 'Cardio') return false;
-              } else if (type == WorkoutType.stretch) {
+              } else if (workoutType == WorkoutType.stretch) {
                 if (ex.equipmentSegment != 'Stretch') return false;
               }
             }
 
-            // C. Muscle Group Chip logic.
-            if (muscle != null && type != WorkoutType.cardio) {
-              if (ex.muscleSegment.toLowerCase() != muscle.name.toLowerCase()) {
+            // Musclegroup ChoiceChip logic.
+            if (musclegroup != null && workoutType != WorkoutType.cardio) {
+              if (ex.muscleSegment.toLowerCase() !=
+                  musclegroup.name.toLowerCase()) {
                 return false;
               }
             }
 
-            // D. Equipment Chip logic.
-            if (equip != null && type != WorkoutType.stretch) {
+            // Equipment ChoiceChip logic.
+            if (equipment != null && workoutType != WorkoutType.stretch) {
               if (ex.equipmentSegment.toLowerCase() !=
-                  equip.name.toLowerCase()) {
+                  equipment.name.toLowerCase()) {
                 return false;
               }
             }
 
             return true;
           }).toList()
-          // 4. APPLY SORTING (Favorites first, then Alphabetical)
+          // Apply sorting: Favorites first, then alphabetical.
           ..sort((ExercisePath a, ExercisePath b) {
-            final bool isAFavorite = favorites.contains(int.parse(a.id));
-            final bool isBFavorite = favorites.contains(int.parse(b.id));
+            final bool isAFavorite = favoriteExercises.contains(
+              int.parse(a.id),
+            );
+            final bool isBFavorite = favoriteExercises.contains(
+              int.parse(b.id),
+            );
 
             if (isAFavorite && !isBFavorite) return -1;
             if (!isAFavorite && isBFavorite) return 1;
@@ -133,10 +101,7 @@ class FilterService {
     return filtered;
   }, debugLabel: 'cFilteredExercises');
 
-  /// -- UI HELPER SIGNALS --
-  /// These signals decide which UI elements (like Muscle Chips) should
-  /// be visible.
-
+  // Helper Signals to help UI decide which ChoiceChips to show.
   late final Computed<bool> sShowMuscleGroups = computed(() {
     final WorkoutType? type = sSelectedWorkoutType.value;
     return type == WorkoutType.strength || type == WorkoutType.stretch;
@@ -148,15 +113,5 @@ class FilterService {
   }, debugLabel: 'sShowEquipment');
 }
 
-// THE "BRAIN" - Global instance of the service logic.
+// Globalize FilterService.
 final FilterService filterService = FilterService();
-
-/// COMPATIBILITY REDIRECTS
-/// These ensure your existing UI files (which watch these signals)
-/// do not break.
-Signal<WorkoutType?> get sSelectedWorkoutType =>
-    filterService.sSelectedWorkoutType;
-Signal<MuscleGroup?> get sSelectedMuscleGroup =>
-    filterService.sSelectedMuscleGroup;
-Signal<Equipment?> get sSelectedEquipment => filterService.sSelectedEquipment;
-Signal<String> get sSearchQuery => filterService.sSearchQuery;
