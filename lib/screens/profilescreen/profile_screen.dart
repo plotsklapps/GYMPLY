@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Watch Nostr keys and metadata from service.
     final String? npub = nostrService.sNpub.watch(context);
-    final String? nsec = nostrService.sNsec.watch(context);
+    final bool hasNsec = nostrService.sNsec.watch(context);
     final Metadata? metadata = nostrService.sMetadata.watch(context);
 
     return Scaffold(
@@ -36,7 +36,11 @@ class ProfileScreen extends StatelessWidget {
                 if (npub == null)
                   const NostrOnboarding()
                 else
-                  _ProfileWidget(npub: npub, nsec: nsec, metadata: metadata),
+                  _ProfileWidget(
+                    npub: npub,
+                    hasNsec: hasNsec,
+                    metadata: metadata,
+                  ),
               ],
             ),
           ],
@@ -49,12 +53,12 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileWidget extends StatelessWidget {
   const _ProfileWidget({
     required this.npub,
-    required this.nsec,
+    required this.hasNsec,
     required this.metadata,
   });
 
   final String npub;
-  final String? nsec;
+  final bool hasNsec;
   final Metadata? metadata;
 
   @override
@@ -74,7 +78,7 @@ class _ProfileWidget extends StatelessWidget {
           const Divider(),
 
           // If only npub is set, show Card.
-          if (nsec == null)
+          if (!hasNsec)
             Card(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -122,7 +126,7 @@ class _ProfileWidget extends StatelessWidget {
             ),
 
           // If nsec is set, show MetaDataForm.
-          MetaDataForm(metadata: metadata, canSign: nsec != null),
+          MetaDataForm(metadata: metadata, canSign: hasNsec),
           const SizedBox(height: 24),
           Text(
             'NOSTR KEYS',
@@ -141,10 +145,10 @@ class _ProfileWidget extends StatelessWidget {
           const SizedBox(height: 8),
 
           // nsec card.
-          if (nsec != null)
+          if (hasNsec)
             KeyCard(
               label: 'PRIVATE KEY (nsec)',
-              keyValue: nsec!,
+              onFetchValue: nostrService.getNsec,
               icon: LucideIcons.lock,
               isSensitive: true,
             ),

@@ -6,14 +6,16 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class KeyCard extends StatefulWidget {
   const KeyCard({
     required this.label,
-    required this.keyValue,
+    this.keyValue,
+    this.onFetchValue,
     required this.icon,
     required this.isSensitive,
     super.key,
   });
 
   final String label;
-  final String keyValue;
+  final String? keyValue;
+  final Future<String?> Function()? onFetchValue;
   final IconData icon;
   final bool isSensitive;
 
@@ -25,10 +27,14 @@ class KeyCard extends StatefulWidget {
 
 class _KeyCardState extends State<KeyCard> {
   bool _isHidden = true;
+  String? _fetchedValue;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final String displayValue = widget.isSensitive
+        ? (_fetchedValue ?? widget.keyValue ?? '')
+        : (widget.keyValue ?? '');
 
     return Card(
       child: Padding(
@@ -53,14 +59,24 @@ class _KeyCardState extends State<KeyCard> {
                   child: Text(
                     widget.isSensitive && _isHidden
                         ? '*************************************************'
-                        : widget.keyValue,
+                        : displayValue,
                     style: theme.textTheme.bodySmall,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (widget.isSensitive)
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      if (_isHidden &&
+                          _fetchedValue == null &&
+                          widget.onFetchValue != null) {
+                        final String? val = await widget.onFetchValue!();
+                        if (mounted) {
+                          setState(() {
+                            _fetchedValue = val;
+                          });
+                        }
+                      }
                       setState(() {
                         _isHidden = !_isHidden;
                       });
@@ -72,14 +88,24 @@ class _KeyCardState extends State<KeyCard> {
                   ),
                 IconButton(
                   onPressed: () async {
-                    await Clipboard.setData(
-                      ClipboardData(text: widget.keyValue),
-                    );
-                    // Show toast to user.
-                    ToastService.showSuccess(
-                      title: 'Copied to Clipboard',
-                      subtitle: 'Use the key at your own discretion',
-                    );
+                    String? textToCopy = displayValue;
+
+                    if (widget.isSensitive &&
+                        _fetchedValue == null &&
+                        widget.onFetchValue != null) {
+                      textToCopy = await widget.onFetchValue!();
+                    }
+
+                    if (textToCopy != null) {
+                      await Clipboard.setData(
+                        ClipboardData(text: textToCopy),
+                      );
+                      // Show toast to user.
+                      ToastService.showSuccess(
+                        title: 'Copied to Clipboard',
+                        subtitle: 'Use the key at your own discretion',
+                      );
+                    }
                   },
                   icon: const Icon(LucideIcons.copy),
                 ),

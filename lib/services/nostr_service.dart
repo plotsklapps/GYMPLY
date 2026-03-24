@@ -43,7 +43,7 @@ class NostrService {
 
   // Track keys.
   final Signal<String?> sNpub = Signal<String?>(null, debugLabel: 'sNpub');
-  final Signal<String?> sNsec = Signal<String?>(null, debugLabel: 'sNsec');
+  final Signal<bool> sNsec = Signal<bool>(false, debugLabel: 'sNsec');
 
   // Signal for own profile metadata.
   final Signal<Metadata?> sMetadata = Signal<Metadata?>(
@@ -98,7 +98,7 @@ class NostrService {
     final String? npub = await _storage.read(key: 'nostr_npub');
     final String? nsec = await _storage.read(key: 'nostr_nsec');
     sNpub.value = npub;
-    sNsec.value = nsec;
+    sNsec.value = nsec != null;
 
     if (npub != null) {
       // Login to Nostr.
@@ -164,7 +164,7 @@ class NostrService {
 
   // Publish workout image.
   Future<void> publishWorkoutNote({required Uint8List imageBytes}) async {
-    if (sNsec.value == null) throw Exception('No Private Key found.');
+    if (!sNsec.value) throw Exception('No Private Key found.');
 
     // Upload image to 5 Blossom servers simultaneously.
     final List<BlobUploadResult> uploadResults = await _ndk.blossom.uploadBlob(
@@ -245,7 +245,7 @@ class NostrService {
 
   /// Sends 'Like' (Kind 7) with Biceps emoji.
   Future<void> sendBicepsReaction(String eventId) async {
-    if (sNsec.value == null) return;
+    if (!sNsec.value) return;
 
     final String myPubkey = Nip19.decode(sNpub.value!);
 
@@ -299,7 +299,7 @@ class NostrService {
   // Delete WorkoutNote by sending Kind 5 (Event Deletion) event.
   Future<void> deleteWorkoutNote(String eventId) async {
     // Only users with a private key (nsec) can delete their own events.
-    if (sNsec.value == null) return;
+    if (!sNsec.value) return;
 
     // Optimistic UI update: Remove from sFeedEvents signal immediately.
     final List<Nip01Event> events = List<Nip01Event>.from(sFeedEvents.value)
@@ -526,10 +526,10 @@ class NostrService {
 
       // Set Signals.
       sNpub.value = keyPair.publicKeyBech32;
-      sNsec.value = keyPair.privateKeyBech32;
+      sNsec.value = true;
 
       // Login to NDK with new keys.
-      await _loginToNdk(sNpub.value!, sNsec.value);
+      await _loginToNdk(sNpub.value!, keyPair.privateKeyBech32);
 
       // Fetch OWN metadata.
       await fetchMetadata();
@@ -575,7 +575,7 @@ class NostrService {
 
         // Set Signals.
         sNpub.value = npub;
-        sNsec.value = cleanInput;
+        sNsec.value = true;
       }
       // User input is npub.
       else if (Nip19.isPubkey(cleanInput)) {
@@ -585,13 +585,13 @@ class NostrService {
 
         // Set Signals.
         sNpub.value = cleanInput;
-        sNsec.value = null;
+        sNsec.value = false;
       } else {
         return false;
       }
 
       // Login to NDK.
-      await _loginToNdk(sNpub.value!, sNsec.value);
+      await _loginToNdk(sNpub.value!, sNsec.value ? cleanInput : null);
 
       // Fetch OWN metadata.
       await fetchMetadata();
@@ -631,7 +631,7 @@ class NostrService {
 
     // Set Signals.
     sNpub.value = null;
-    sNsec.value = null;
+    sNsec.value = false;
     sMetadata.value = null;
     sFeedEvents.value = <Nip01Event>[];
     sFeedMetadata.value = <String, Metadata>{};
@@ -639,6 +639,11 @@ class NostrService {
 
     // Kill subscriptions.
     await stopFeedSubscriptions();
+  }
+
+  // Get nsec from secure storage.
+  Future<String?> getNsec() async {
+    return await _storage.read(key: 'nostr_nsec');
   }
 }
 

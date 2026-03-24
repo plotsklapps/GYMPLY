@@ -119,8 +119,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch if the user has a private key to enable Nostr sharing.
-    final String? nsec = nostrService.sNsec.watch(context);
-    final bool canPostToNostr = nsec != null;
+    final bool canPostToNostr = nostrService.sNsec.watch(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
