@@ -1,52 +1,42 @@
 import 'package:flutter/services.dart';
 import 'package:gymply/models/exercise_model.dart';
-import 'package:gymply/signals/loading_signal.dart';
+import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/signals/allexercisespaths_signal.dart';
 import 'package:logger/logger.dart';
-import 'package:signals/signals_flutter.dart';
 
-/// -- EXERCISE DATA SERVICE --
-///
-/// Responsibility: Data Fetching and Raw Data Management.
-/// This service is the "Source of Truth" for the raw database of exercises.
-/// It reads the asset manifest, parses the file paths, and populates
-/// the sAllExercisePaths signal.
+// Source of truth for raw database of exercises. Reads asset manifest,
+// parses file paths and populates sAllExercisePaths Signal.
 
 class ExerciseService {
-  // Singleton pattern for globally shared data.
-  factory ExerciseService() => _instance;
+  // Singleton pattern.
+  factory ExerciseService() {
+    return _instance;
+  }
+
   ExerciseService._internal();
   static final ExerciseService _instance = ExerciseService._internal();
 
   final Logger _logger = Logger();
 
-  /// RAW DATA SIGNAL
-  /// This holds the complete, unfiltered list of all exercises found in assets.
-  final Signal<List<ExercisePath>> sAllExercisePaths =
-      Signal<List<ExercisePath>>(<ExercisePath>[]);
-
-  /// INITIALIZATION
-  /// Call this when the app starts to load the database from assets.
+  // INITIALIZATION: Load database from assets.
   Future<void> init() async {
-    sLoading.value = true;
-
     try {
-      // 1. Access the AssetManifest to get a list of all exercise images.
+      // Access AssetManifest to get list of all exercise images.
       final AssetManifest manifest = await AssetManifest.loadFromAssetBundle(
         rootBundle,
       );
-      final List<String> allAssets = manifest.listAssets();
 
+      final List<String> allAssets = manifest.listAssets();
       final List<ExercisePath> parsedExercisePaths = <ExercisePath>[];
 
-      // 2. Parse file paths into structured ExercisePath objects.
-      // Expected format: .../00011101-Abs-Bodyweight-3-Quarter-Sit-Up.png
+      // Parse file paths into structured ExercisePath Objects.
       for (final String path in allAssets) {
         if (path.contains('images/exercises/') &&
             (path.endsWith('.webp') || path.endsWith('.png'))) {
           final String fileName = path.split('/').last.split('.').first;
           final List<String> segments = fileName.split('-');
 
-          // Segments 0: ID, 1: Muscle, 2: Equipment, 3+: Name words
+          // Segments 0: ID, 1: Muscle group, 2: Equipment, 3+: Exercise name.
           if (segments.length >= 4) {
             parsedExercisePaths.add(
               ExercisePath(
@@ -61,19 +51,25 @@ class ExerciseService {
         }
       }
 
-      // 3. Update the signal to notify any watchers (like FilterService).
+      // Update Signal to notify all watchers.
       sAllExercisePaths.value = parsedExercisePaths;
+
+      // Log success.
       _logger.i(
         'Loaded ${parsedExercisePaths.length} exercises into ExerciseService.',
       );
     } on Object catch (e) {
+      // Log error.
       _logger.e('Failed to load exercises: $e');
+
+      // Show toast to user.
+      ToastService.showError(title: 'Failed to load exercises', subtitle: '$e');
+
+      // Reset Signal.
       sAllExercisePaths.value = <ExercisePath>[];
-    } finally {
-      sLoading.value = false;
     }
   }
 }
 
-// Global instance of the service.
+// Globalize ExerciseService.
 final ExerciseService exerciseService = ExerciseService();

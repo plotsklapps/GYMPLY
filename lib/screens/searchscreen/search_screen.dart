@@ -8,7 +8,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
-import 'package:gymply/signals/loading_signal.dart';
+import 'package:gymply/signals/search_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -51,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final List<ExercisePath> filteredExercises = filterService
         .cFilteredExercises
         .watch(context);
-    final bool isLoading = sLoading.watch(context);
+    final bool isLoading = sSearchLoading.watch(context);
     final List<int> favorites = sFavoriteExercises.watch(
       context,
     );

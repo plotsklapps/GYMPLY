@@ -1,5 +1,5 @@
 import 'package:gymply/models/exercise_model.dart';
-import 'package:gymply/services/exercise_service.dart';
+import 'package:gymply/signals/allexercisespaths_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -61,7 +61,7 @@ class FilterService {
 
     // Fetch raw database from ExerciseService and user favorites
     // from WorkoutService
-    final List<ExercisePath> all = exerciseService.sAllExercisePaths.value;
+    final List<ExercisePath> all = sAllExercisePaths.value;
     final List<int> favorites = sFavoriteExercises.value;
 
     // 2. INITIAL FILTER (Safety net)
