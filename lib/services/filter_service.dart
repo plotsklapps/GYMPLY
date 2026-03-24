@@ -1,6 +1,6 @@
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/exercise_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
 // RE-EXPORT the models so the UI can find WorkoutType, MuscleGroup, etc.
@@ -62,7 +62,7 @@ class FilterService {
     // Fetch raw database from ExerciseService and user favorites
     // from WorkoutService
     final List<ExercisePath> all = exerciseService.sAllExercisePaths.value;
-    final List<int> favorites = workoutService.sFavoriteExercises.value;
+    final List<int> favorites = sFavoriteExercises.value;
 
     // 2. INITIAL FILTER (Safety net)
     // If no category is selected and no search typed, show an empty list.

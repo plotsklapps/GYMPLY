@@ -8,6 +8,7 @@ import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
 class IntervalTimer {
@@ -25,8 +26,7 @@ class IntervalTimer {
         // Immediately prevent re-entry.
         _isIntervalSequenceActive = false;
 
-        final WorkoutExercise? exercise =
-            workoutService.sSelectedExercise.value;
+        final WorkoutExercise? exercise = sSelectedExercise.value;
 
         if (exercise is CardioExercise) {
           workoutService.addCardioSet(

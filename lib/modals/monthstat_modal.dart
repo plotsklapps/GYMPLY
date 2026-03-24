@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/workoutsummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/monthchart_widget.dart';
 import 'package:intl/intl.dart';
@@ -34,8 +35,8 @@ class _MonthStatModalState extends State<MonthStatModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals to ensure the modal rebuilds on deletion or changes.
-    final List<Workout> history = workoutService.sWorkoutHistory.watch(context);
-    final Workout active = workoutService.sActiveWorkout.watch(context);
+    final List<Workout> history = sWorkoutHistory.watch(context);
+    final Workout active = sActiveWorkout.watch(context);
 
     // Calculate workout keys dynamically.
     final Set<String> workoutDateKeys = history.map((Workout w) {

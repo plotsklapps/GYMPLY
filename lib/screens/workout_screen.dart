@@ -6,6 +6,8 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
+import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -26,7 +28,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final Workout workout = workoutService.sActiveWorkout.watch(context);
+    final Workout workout = sActiveWorkout.watch(context);
 
     if (workout.isEmpty) {
       return const Center(
@@ -139,7 +141,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ? null
                 : () {
                     // Set selected exercise and navigate.
-                    workoutService.sSelectedExercise.value = exercise;
+                    sSelectedExercise.value = exercise;
                     navigateToTab(AppTab.exercise);
                   },
           ),

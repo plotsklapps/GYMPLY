@@ -8,6 +8,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -37,7 +38,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
   void initState() {
     super.initState();
     // Load existing data from the active workout.
-    final Workout workout = workoutService.sActiveWorkout.value;
+    final Workout workout = sActiveWorkout.value;
     _titleController.text = workout.title;
     _notesController.text = workout.notes;
     for (int i = 0; i < workout.imagePaths.length && i < 2; i++) {
@@ -297,7 +298,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                     await ModalService.showModal(
                       context: context,
                       child: ShareToSocialsModal(
-                        workout: workoutService.sActiveWorkout.value,
+                        workout: sActiveWorkout.value,
                       ),
                     );
                   }

@@ -8,6 +8,8 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -45,8 +47,8 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch history signals.
-    final List<Workout> history = workoutService.sWorkoutHistory.watch(context);
-    final Workout active = workoutService.sActiveWorkout.watch(context);
+    final List<Workout> history = sWorkoutHistory.watch(context);
+    final Workout active = sActiveWorkout.watch(context);
 
     // Combine history and active workout to get all occurrences.
     final List<Workout> allWorkouts = <Workout>[...history];

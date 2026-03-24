@@ -9,7 +9,11 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/signals/favoriteexercises_signal.dart';
+import 'package:gymply/signals/selectedexercise_signal.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:intl/intl.dart';
@@ -38,35 +42,6 @@ class WorkoutService {
   // Box names (prevents typos).
   static const String _workoutBoxName = 'workouts';
   static const String _settingsBoxName = 'settings';
-
-  // Signal for ALL workout history.
-  final Signal<List<Workout>> sWorkoutHistory = Signal<List<Workout>>(
-    <Workout>[],
-    debugLabel: 'sWorkoutHistory',
-  );
-
-  // Signal to track current active workout (defaults to today).
-  final Signal<Workout> sActiveWorkout = Signal<Workout>(
-    Workout(
-      id: const Uuid().v4(),
-      title: DateTime.now().defaultWorkoutTitle,
-      dateTime: DateTime.now(),
-      totalDuration: 0,
-    ),
-    debugLabel: 'sActiveWorkout',
-  );
-
-  // Signal to track active exercise in ExerciseScreen.
-  final Signal<WorkoutExercise?> sSelectedExercise = Signal<WorkoutExercise?>(
-    null,
-    debugLabel: 'sSelectedExercise',
-  );
-
-  // Signal to track favorite exercises (by id).
-  final Signal<List<int>> sFavoriteExercises = Signal<List<int>>(
-    <int>[],
-    debugLabel: 'sFavoriteExercises',
-  );
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {

@@ -7,7 +7,9 @@ import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -47,10 +49,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final ThemeData theme = Theme.of(context);
 
     // Watch sWorkoutHistory for past workouts (heatmap dots).
-    final List<Workout> history = workoutService.sWorkoutHistory.watch(context);
+    final List<Workout> history = sWorkoutHistory.watch(context);
 
     // Watch sActiveWorkout for live statistics of current workout.
-    final Workout activeWorkout = workoutService.sActiveWorkout.watch(context);
+    final Workout activeWorkout = sActiveWorkout.watch(context);
 
     // Watch personal stats for calorie calculation.
     final double userWeight = sWeight.watch(context);

@@ -3,7 +3,7 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class PRCard extends StatelessWidget {
@@ -87,7 +87,7 @@ class PRCard extends StatelessWidget {
 
               return ListTile(
                 onTap: () {
-                  workoutService.sSelectedExercise.value = exercise;
+                  sSelectedExercise.value = exercise;
                   navigateToTab(AppTab.exercise);
                 },
                 contentPadding: EdgeInsets.zero,
