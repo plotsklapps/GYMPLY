@@ -23,16 +23,14 @@ import 'package:uuid/uuid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class WorkoutService {
-  // Create a singleton instance of WorkoutService.
+  // Singleton pattern.
   factory WorkoutService() {
     return _instance;
   }
 
   WorkoutService._internal();
-
   static final WorkoutService _instance = WorkoutService._internal();
 
-  // Initialize Logger.
   final Logger _logger = Logger();
 
   // Hive boxes.
@@ -45,8 +43,10 @@ class WorkoutService {
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
+    // Log status.
     _logger.i('WorkoutService: Initializing Hive boxes and loading state');
 
+    // Open or create Hive boxes.
     _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
     _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
 
@@ -64,7 +64,7 @@ class WorkoutService {
       sWakelock.value = settings.isWakelock;
       // Set FlexScheme.
       sFlexScheme.value = settings.flexScheme;
-      // Set Personal Stats.
+      // Set BodyMetrics.
       sAge.value = settings.age;
       sHeight.value = settings.height;
       sWeight.value = settings.weight;
@@ -139,7 +139,7 @@ class WorkoutService {
         // Store to Hive.
         await _workoutBox.put(workout.dateKey, workout);
 
-        // Update the history signal so Statistics reflects the changes.
+        // Update history Signal so Statistics reflects changes.
         sWorkoutHistory.value = _workoutBox.values.toList();
 
         // Log success.
@@ -180,14 +180,16 @@ class WorkoutService {
       await _settingsBox.put('settings', settings);
 
       // Log save.
-      _logger.d('WorkoutService: Auto-saved settings');
+      _logger.i('WorkoutService: Auto-saved settings');
     });
 
     // Handle Wakelock state changes.
     effect(() async {
       final bool enabled = sWakelock.value;
       await WakelockPlus.toggle(enable: enabled);
-      _logger.d('WorkoutService: Wakelock toggled to $enabled');
+
+      // Log toggle.
+      _logger.i('WorkoutService: Wakelock toggled to $enabled');
     });
   }
 
@@ -226,16 +228,16 @@ class WorkoutService {
     // Update the active workout signal so state is preserved.
     sActiveWorkout.value = finalWorkout;
 
-    // Explicitly save the final state to Hive.
+    // Explicitly save FINAL state to Hive.
     await _workoutBox.put(finalWorkout.dateKey, finalWorkout);
 
-    // Update history Signal so UI reflects the final duration/state.
+    // Update history Signal so UI reflects FINAL duration/state.
     sWorkoutHistory.value = _workoutBox.values.toList();
 
-    // Pause the timer.
+    // Pause timer.
     await TotalTimer().pauseTimer();
 
-    // Log the save.
+    // Log success.
     _logger.i('WorkoutService: Workout saved ${sWorkoutHistory.value.length}');
 
     // Show toast to user.
@@ -245,15 +247,15 @@ class WorkoutService {
     );
   }
 
-  // Deletes a workout by its dateKey.
+  // Delete workout by dateKey.
   Future<void> deleteWorkout(String dateKey) async {
-    // 1. Remove from Hive.
+    // Remove from Hive.
     await _workoutBox.delete(dateKey);
 
-    // 2. Update history Signal.
+    // Update history Signal.
     sWorkoutHistory.value = _workoutBox.values.toList();
 
-    // 3. If it was the active workout, reset it.
+    // If it was in active workout, reset it.
     if (sActiveWorkout.value.dateKey == dateKey) {
       sActiveWorkout.value = Workout(
         id: const Uuid().v4(),
@@ -261,13 +263,14 @@ class WorkoutService {
         dateTime: DateTime.now(),
         totalDuration: 0,
       );
-      // Also reset timer.
+      // Reset total timer.
       TotalTimer.sElapsedTotalTime.value = 0;
     }
 
+    // Log success.
     _logger.i('WorkoutService: Workout $dateKey deleted.');
 
-    // Show toast.
+    // Show toast to user.
     ToastService.showSuccess(
       title: 'Workout deleted',
       subtitle: 'The workout has been removed from your history.',
@@ -281,9 +284,9 @@ class WorkoutService {
       sActiveWorkout.value.exercises,
     );
 
-    // Determine type to create correct Object.
     WorkoutExercise newExercise;
 
+    // Determine type to create correct Object.
     final bool isCardio = path.muscleSegment == 'Cardio';
     final bool isStretch = path.equipmentSegment == 'Stretch';
 
@@ -327,37 +330,37 @@ class WorkoutService {
     // Add Object to currentExercises List.
     currentExercises.add(newExercise);
 
-    // Update sActiveWorkout Signal with a new copy and snapshot current
-    // timer.
+    // Update sActiveWorkout Signal with new copy and snapshot current timer.
     sActiveWorkout.value = sActiveWorkout.value.copyWith(
       exercises: currentExercises,
       totalDuration: TotalTimer.sElapsedTotalTime.value,
     );
   }
 
-  // Deletes an entire exercise from the active workout.
+  // Delete exercise from the active workout.
   void deleteExercise(WorkoutExercise exercise) {
     final List<WorkoutExercise> currentExercises = List<WorkoutExercise>.from(
       sActiveWorkout.value.exercises,
     );
 
     if (currentExercises.remove(exercise)) {
-      // Update sActiveWorkout Signal with the new list.
+      // Update sActiveWorkout Signal with new list.
       sActiveWorkout.value = sActiveWorkout.value.copyWith(
         exercises: currentExercises,
         totalDuration: TotalTimer.sElapsedTotalTime.value,
       );
 
-      // If the deleted exercise was selected, clear the selection.
+      // If the deleted exercise was selected, clear selection.
       if (sSelectedExercise.value == exercise) {
         sSelectedExercise.value = null;
       }
 
+      // Log success.
       _logger.i('WorkoutService: Deleted exercise: ${exercise.exerciseName}');
     }
   }
 
-  // Reorder exercise within the active workout.
+  // Reorder exercise within active workout.
   void moveExercise(int oldIndex, int newIndex) {
     int adjustedNewIndex = newIndex;
     final List<WorkoutExercise> currentExercises = List<WorkoutExercise>.from(
@@ -377,6 +380,7 @@ class WorkoutService {
       totalDuration: TotalTimer.sElapsedTotalTime.value,
     );
 
+    // Log success.
     _logger.i(
       'WorkoutService: Moved exercise from $oldIndex to $adjustedNewIndex',
     );
@@ -394,10 +398,10 @@ class WorkoutService {
       repsInput: reps,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
-    // Log the input.
+    // Log input.
     _logger.i(
       'WorkoutService: Strength Input Updated -> '
       'Weight: ${updatedExercise.weightInput}, '
@@ -405,7 +409,7 @@ class WorkoutService {
     );
   }
 
-  // Updates input state for CardioExercise.
+  // Update input state for CardioExercise.
   void updateCardioInput(
     CardioExercise exercise, {
     Duration? cardioDuration,
@@ -423,10 +427,10 @@ class WorkoutService {
       intensityInput: intensity,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
-    // Log the input.
+    // Log input.
     _logger.i(
       'WorkoutService: Cardio Input Updated -> '
       'Duration: ${updatedExercise.cardioDurationInput}, '
@@ -453,10 +457,10 @@ class WorkoutService {
       intensityInput: intensity,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
-    // Log the input.
+    // Log input.
     _logger.i(
       'WorkoutService: Stretch Input Updated -> '
       'Hold: ${updatedExercise.stretchDurationInput}, '
@@ -475,7 +479,7 @@ class WorkoutService {
       sets: <StrengthSet>[...exercise.sets, newSet],
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log addition.
@@ -493,10 +497,10 @@ class WorkoutService {
       sets: updatedSets,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
-    // Log the deletion.
+    // Log deletion.
     _logger.i('WorkoutService: Deleting Strength set');
   }
 
@@ -525,7 +529,7 @@ class WorkoutService {
       sets: <CardioSet>[...exercise.sets, newSet],
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log addition.
@@ -546,7 +550,7 @@ class WorkoutService {
       sets: updatedSets,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log deletion.
@@ -564,9 +568,11 @@ class WorkoutService {
     int? calories,
     int? intensity,
   }) {
+    // Find index of set to update.
     final int index = exercise.sets.indexOf(oldSet);
     if (index == -1) return;
 
+    // Create new CardioSet Object with updated values.
     final CardioSet newSet = CardioSet(
       cardioDuration: cardioDuration ?? oldSet.cardioDuration,
       restDuration: restDuration ?? oldSet.restDuration,
@@ -576,15 +582,19 @@ class WorkoutService {
       intensity: intensity ?? oldSet.intensity,
     );
 
+    // Create updated List<CardioSet> and replace Object.
     final List<CardioSet> updatedSets = List<CardioSet>.from(exercise.sets);
     updatedSets[index] = newSet;
 
+    // Create updated CardioExercise Object.
     final CardioExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
     );
 
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
+    // Log update.
     _logger.i('WorkoutService: Updated Cardio set');
   }
 
@@ -611,7 +621,7 @@ class WorkoutService {
       sets: <StretchSet>[...exercise.sets, newSet],
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log addition.
@@ -631,9 +641,11 @@ class WorkoutService {
     int? calories,
     int? intensity,
   }) {
+    // Find index of set to update.
     final int index = exercise.sets.indexOf(oldSet);
     if (index == -1) return;
 
+    // Create new StretchSet Object with updated values.
     final StretchSet newSet = StretchSet(
       stretchDuration: stretchDuration ?? oldSet.stretchDuration,
       restDuration: restDuration ?? oldSet.restDuration,
@@ -642,15 +654,19 @@ class WorkoutService {
       intensity: intensity ?? oldSet.intensity,
     );
 
+    // Create updated List<StretchSet> and replace Object.
     final List<StretchSet> updatedSets = List<StretchSet>.from(exercise.sets);
     updatedSets[index] = newSet;
 
+    // Create updated StretchExercise Object.
     final StretchExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
     );
 
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
+    // Log update.
     _logger.i('WorkoutService: Updated Stretch set');
   }
 
@@ -665,7 +681,7 @@ class WorkoutService {
       sets: updatedSets,
     );
 
-    // Helper method to replace the Object inside the active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log deletion.
@@ -682,7 +698,7 @@ class WorkoutService {
     final int index = exercises.indexOf(oldEx);
     if (index != -1) {
       // Log replacement.
-      _logger.d(
+      _logger.i(
         'WorkoutService: Replacing exercise instance: ${oldEx.exerciseName}',
       );
 
@@ -698,17 +714,18 @@ class WorkoutService {
       // Sync selection to new Object.
       sSelectedExercise.value = newEx;
     } else {
-      // Log failure.
+      // Log warning.
       _logger.w('WorkoutService: Could not find exercise to replace');
     }
   }
 
-  /// Calculates Personal Records for a specific Exercise ID.
-  /// If [includeActive] is false, it only considers historical workouts.
+  // Calculates Personal Records for a specific Exercise ID.
+  // If [includeActive] is false, it only considers historical workouts.
   PersonalRecord getPersonalRecords(
     int exerciseId, {
     bool includeActive = true,
   }) {
+    // Strength PRs.
     double maxWeight = 0;
     double maxSetVolume = 0;
     double maxExerciseVolume = 0;
@@ -726,12 +743,15 @@ class WorkoutService {
     int maxExerciseStretches = 0;
     Duration maxTotalDurationStretch = Duration.zero;
 
+    // Helper to update PR values from a single exercise instance.
     void processExercise(WorkoutExercise exercise) {
       if (exercise is StrengthExercise) {
+        // Track max exercise volume.
         if (exercise.totalWeight > maxExerciseVolume) {
           maxExerciseVolume = exercise.totalWeight;
         }
 
+        // Track max weight, set volume, and calculated 1RMs.
         for (final StrengthSet set in exercise.sets) {
           if (set.weight > maxWeight) {
             maxWeight = set.weight;
@@ -754,10 +774,12 @@ class WorkoutService {
           }
         }
       } else if (exercise is CardioExercise) {
+        // Track max total duration.
         if (exercise.totalDuration > maxTotalDurationCardio) {
           maxTotalDurationCardio = exercise.totalDuration;
         }
 
+        // Track max set duration and distance.
         for (final CardioSet set in exercise.sets) {
           if (set.cardioDuration > maxSetDurationCardio) {
             maxSetDurationCardio = set.cardioDuration;
@@ -767,6 +789,7 @@ class WorkoutService {
           }
         }
       } else if (exercise is StretchExercise) {
+        // Track max total duration and max stretches per session.
         if (exercise.totalDuration > maxTotalDurationStretch) {
           maxTotalDurationStretch = exercise.totalDuration;
         }
@@ -774,6 +797,7 @@ class WorkoutService {
           maxExerciseStretches = exercise.sets.length;
         }
 
+        // Track max set (hold) duration.
         for (final StretchSet set in exercise.sets) {
           if (set.stretchDuration > maxSetDurationStretch) {
             maxSetDurationStretch = set.stretchDuration;
@@ -784,6 +808,7 @@ class WorkoutService {
 
     // Iterate through all workouts in history.
     for (final Workout workout in sWorkoutHistory.value) {
+      // Skip active workout if requested.
       if (!includeActive && workout.id == sActiveWorkout.value.id) continue;
 
       for (final WorkoutExercise exercise in workout.exercises) {
@@ -793,6 +818,7 @@ class WorkoutService {
       }
     }
 
+    // Manually process active workout if requested and not yet in history.
     if (includeActive) {
       final Workout active = sActiveWorkout.value;
       for (final WorkoutExercise exercise in active.exercises) {
@@ -803,14 +829,14 @@ class WorkoutService {
     }
 
     return PersonalRecord(
-      // Strength
+      // Strength.
       maxWeight: maxWeight,
       maxSetVolume: maxSetVolume,
       maxExerciseVolume: maxExerciseVolume,
       oneRepMaxLombardi: maxLombardi,
       oneRepMaxBrzycki: maxBrzycki,
       oneRepMaxEpley: maxEpley,
-      // Cardio
+      // Cardio.
       maxSetDuration: maxSetDurationCardio.inSeconds > 0
           ? maxSetDurationCardio
           : maxSetDurationStretch,
@@ -818,15 +844,16 @@ class WorkoutService {
       maxTotalDuration: maxTotalDurationCardio.inSeconds > 0
           ? maxTotalDurationCardio
           : maxTotalDurationStretch,
-      // Stretch
+      // Stretch.
       maxExerciseStretches: maxExerciseStretches,
     );
   }
 
-  /// Returns a list of PRs achieved in the given workout.
+  // Return list of PRs achieved in given workout.
   List<Map<String, dynamic>> getWorkoutPRs(Workout workout) {
     final List<Map<String, dynamic>> prs = <Map<String, dynamic>>[];
     for (final WorkoutExercise exercise in workout.exercises) {
+      // Fetch best values achieved PRIOR to this workout.
       final PersonalRecord historicalPR = getPersonalRecords(
         exercise.id,
         includeActive: false,
@@ -836,6 +863,7 @@ class WorkoutService {
         double maxWeightInSession = 0;
         double maxSetVolInSession = 0;
 
+        // Calculate session peaks.
         for (final StrengthSet set in exercise.sets) {
           if (set.weight > maxWeightInSession) {
             maxWeightInSession = set.weight;
@@ -846,6 +874,7 @@ class WorkoutService {
           }
         }
 
+        // Check for max weight PR.
         if (maxWeightInSession > historicalPR.maxWeight) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -855,6 +884,7 @@ class WorkoutService {
           });
         }
 
+        // Check for set volume PR.
         if (maxSetVolInSession > historicalPR.maxSetVolume) {
           final StrengthSet volSet = exercise.sets.firstWhere(
             (StrengthSet s) {
@@ -871,6 +901,7 @@ class WorkoutService {
           });
         }
 
+        // Check for total exercise volume PR.
         if (exercise.totalWeight > historicalPR.maxExerciseVolume) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -883,11 +914,13 @@ class WorkoutService {
         Duration maxSetDur = Duration.zero;
         double maxDist = 0;
 
+        // Calculate session peaks.
         for (final CardioSet set in exercise.sets) {
           if (set.cardioDuration > maxSetDur) maxSetDur = set.cardioDuration;
           if ((set.distance ?? 0) > maxDist) maxDist = set.distance!;
         }
 
+        // Check for set duration PR.
         if (maxSetDur > historicalPR.maxSetDuration) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -897,6 +930,7 @@ class WorkoutService {
           });
         }
 
+        // Check for distance PR.
         if (maxDist > historicalPR.maxDistance && maxDist > 0) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -906,6 +940,7 @@ class WorkoutService {
           });
         }
 
+        // Check for total duration PR.
         if (exercise.totalDuration > historicalPR.maxTotalDuration) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -917,10 +952,12 @@ class WorkoutService {
       } else if (exercise is StretchExercise) {
         Duration maxSetDur = Duration.zero;
 
+        // Calculate session peaks.
         for (final StretchSet set in exercise.sets) {
           if (set.stretchDuration > maxSetDur) maxSetDur = set.stretchDuration;
         }
 
+        // Check for set duration (hold) PR.
         if (maxSetDur > historicalPR.maxSetDuration) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -930,6 +967,7 @@ class WorkoutService {
           });
         }
 
+        // Check for set count PR.
         if (exercise.sets.length > historicalPR.maxExerciseStretches) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -939,6 +977,7 @@ class WorkoutService {
           });
         }
 
+        // Check for total duration PR.
         if (exercise.totalDuration > historicalPR.maxTotalDuration) {
           prs.add(<String, dynamic>{
             'exercise': exercise,
@@ -953,7 +992,7 @@ class WorkoutService {
   }
 }
 
-/// Custom Hive Adapter for Duration since it's not supported natively.
+// Custom Hive Adapter for Duration since it's not supported natively.
 class DurationAdapter extends TypeAdapter<Duration> {
   @override
   final int typeId = 10;
