@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/toast_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class BodyMetricsModal extends StatefulWidget {

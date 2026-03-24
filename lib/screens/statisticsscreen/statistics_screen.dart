@@ -7,6 +7,7 @@ import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 

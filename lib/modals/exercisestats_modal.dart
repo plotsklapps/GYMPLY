@@ -7,6 +7,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -76,10 +77,10 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-            userWeight: userWeight,
-            userAge: userAge,
-            userSex: userSex,
-          )} kcal',
+                userWeight: userWeight,
+                userAge: userAge,
+                userSex: userSex,
+              )} kcal',
         ),
       ]);
     } else if (exercise is StretchExercise) {
@@ -100,16 +101,18 @@ class ExerciseStatsModal extends StatelessWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-            userWeight: userWeight,
-            userAge: userAge,
-            userSex: userSex,
-          )} kcal',
+                userWeight: userWeight,
+                userAge: userAge,
+                userSex: userSex,
+              )} kcal',
         ),
       ]);
     }
 
     // --- Personal Records Section ---
-    detailRows.add(Divider(height: 32, color: theme.colorScheme.outlineVariant));
+    detailRows.add(
+      Divider(height: 32, color: theme.colorScheme.outlineVariant),
+    );
     detailRows.add(
       Builder(
         builder: (BuildContext context) {
@@ -121,8 +124,8 @@ class ExerciseStatsModal extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               // 1RM Estimates (Strength only).
-              if (exercise is StrengthExercise && pr.oneRepMaxLombardi > 0) ...<
-                  Widget>[
+              if (exercise is StrengthExercise &&
+                  pr.oneRepMaxLombardi > 0) ...<Widget>[
                 Text(
                   '1RM Estimates',
                   style: theme.textTheme.titleMedium?.copyWith(

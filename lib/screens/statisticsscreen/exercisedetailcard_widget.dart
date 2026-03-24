@@ -5,7 +5,7 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailCard extends StatelessWidget {

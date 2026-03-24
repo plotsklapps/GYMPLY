@@ -9,6 +9,7 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:intl/intl.dart';
@@ -16,15 +17,6 @@ import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-
-// Signals for personal stats.
-final Signal<int> sAge = Signal<int>(0, debugLabel: 'sAge');
-final Signal<double> sHeight = Signal<double>(0, debugLabel: 'sHeight');
-final Signal<double> sWeight = Signal<double>(0, debugLabel: 'sWeight');
-final Signal<int> sSex = Signal<int>(
-  0,
-  debugLabel: 'sSex',
-); // 0 = male, 1 = female
 
 class WorkoutService {
   // Create a singleton instance of WorkoutService.
