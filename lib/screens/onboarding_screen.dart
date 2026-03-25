@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<OnboardingScreen> createState() {
+    return _OnboardingScreenState();
+  }
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
@@ -23,8 +25,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Flag onboarding as completed.
     sOnboardingCompleted.value = true;
 
-    // If the widget is within a navigator that can pop (like from menu_modal), pop it.
-    // Otherwise, since main.dart watches sOnboardingCompleted, it will automatically switch to HomeScreen.
+    // If onboarding started from anywhere else (like MenuModal), pop that first.
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -51,8 +52,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 children: <Widget>[
                   // SLIDE 1: Welcome
-                  _buildOnboardingSlide(
-                    context: context,
+                  OnboardingSlide(
                     iconWidget: Image.asset(
                       'assets/icons/gymplyIcon.png',
                       height: 128,
@@ -60,95 +60,96 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     title: 'GYMPLY.',
                     subtitle:
-                        'The Simple, Private, Local Workout Tracker. Your workout data is yours alone.',
+                        'The Simple, Private, Local Workout Tracker.\n\n'
+                        'GYMPLY will NEVER share ANYTHING outside YOUR DEVICE.',
                   ),
                   // SLIDE 2: Core Values
-                  _buildOnboardingSlide(
-                    context: context,
+                  OnboardingSlide(
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(
                           LucideIcons.shieldCheck,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
                         Icon(
-                          LucideIcons.hardDrive,
+                          LucideIcons.bookKey,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
                         Icon(
-                          LucideIcons.minimize,
+                          LucideIcons.globeLock,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                       ],
                     ),
                     title: 'YOUR DATA. YOUR RULES.',
                     subtitle:
-                        'GYMPLY runs entirely offline. No tracking, no ads, 100% local storage.',
+                        '100% offline and 100% free\n\n'
+                        '0% tracking and 0% ads.',
                   ),
                   // SLIDE 3: Features
-                  _buildOnboardingSlide(
-                    context: context,
+                  OnboardingSlide(
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(
                           LucideIcons.dumbbell,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
                         Icon(
                           LucideIcons.timer,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
                         Icon(
                           LucideIcons.trendingUp,
                           size: 64,
-                          color: colorScheme.primary,
+                          color: colorScheme.secondary,
                         ),
                       ],
                     ),
                     title: 'LIFT. LOG. LOAD.',
                     subtitle:
-                        'Easily log your sets, track PRs, use cardio timers, and visualize your progress over time.',
+                        'Log your sets, track PRs, and use timers.\n\n'
+                        'Visualize your progress over time.',
                   ),
                   // SLIDE 4: Nostr
-                  _buildOnboardingSlide(
-                    context: context,
-                    iconWidget: Icon(
-                      LucideIcons.key,
-                      size: 96,
-                      color: colorScheme.primary,
+                  OnboardingSlide(
+                    iconWidget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          LucideIcons.fingerprintPattern,
+                          size: 64,
+                          color: colorScheme.secondary,
+                        ),
+                        const SizedBox(width: 16),
+                        Icon(
+                          LucideIcons.hatGlasses,
+                          size: 64,
+                          color: colorScheme.secondary,
+                        ),
+                        const SizedBox(width: 16),
+                        Icon(
+                          LucideIcons.keyRound,
+                          size: 64,
+                          color: colorScheme.secondary,
+                        ),
+                      ],
                     ),
                     title: 'OWN YOUR IDENTITY',
                     subtitle:
-                        'GYMPLY supports Nostr to share your workouts securely. Want to generate keys to get started, or skip for now?',
-                    actions: <Widget>[
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: _onSkipOrDone,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 56),
-                        ),
-                        child: const Text('Generate Keys (Soon)'),
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: _onSkipOrDone,
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 56),
-                        ),
-                        child: const Text('Skip / No Thanks'),
-                      ),
-                    ],
+                        'GYMPLY supports Nostr to share your workouts '
+                        'with other GYMPLY users securely.\n\n'
+                        'This is entirely optional and found in settings.',
                   ),
                 ],
               ),
@@ -217,24 +218,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
+}
 
-  Widget _buildOnboardingSlide({
-    required BuildContext context,
-    required Widget iconWidget,
-    required String title,
-    required String subtitle,
-    List<Widget>? actions,
-  }) {
+class OnboardingSlide extends StatelessWidget {
+  const OnboardingSlide({
+    required this.iconWidget,
+    required this.title,
+    required this.subtitle,
+    super.key,
+    this.actions,
+  });
+
+  final Widget iconWidget;
+  final String title;
+  final String subtitle;
+  final List<Widget>? actions;
+
+  @override
+  Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: const EdgeInsets.all(32.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          const Spacer(flex: 2),
-          iconWidget,
+          // Using a fixed percentage height instead of a Spacer ensures
+          // that the icons are perfectly "level" across all slides.
+          SizedBox(height: screenHeight * 0.15),
+          SizedBox(
+            height: 128,
+            child: Center(child: iconWidget),
+          ),
           const SizedBox(height: 48),
           Text(
             title,
@@ -252,8 +269,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          if (actions != null) ...actions,
-          const Spacer(flex: 3),
+          if (actions != null) ...actions!,
+          const Spacer(),
         ],
       ),
     );
