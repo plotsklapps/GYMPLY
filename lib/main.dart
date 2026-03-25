@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/settings_model.dart';
@@ -44,6 +45,7 @@ void main() async {
     ..registerAdapter(EquipmentAdapter())
     ..registerAdapter(WorkoutTypeAdapter())
     ..registerAdapter(DurationAdapter())
+    ..registerAdapter(BodyMetricAdapter())
     ..registerAdapter(SettingsAdapter());
 
   // ExerciseService loads raw image assets.

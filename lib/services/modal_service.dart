@@ -12,7 +12,7 @@ class ModalService {
       isScrollControlled: true,
       useSafeArea: true,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.8,
+        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
       ),
       context: context,
       builder: (BuildContext context) {

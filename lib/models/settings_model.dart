@@ -15,6 +15,7 @@ class Settings {
     this.height = 0,
     this.weight = 0,
     this.sex = 0,
+    this.somatotypeIndex = 1,
     this.onboardingCompleted = false,
   });
 
@@ -45,6 +46,9 @@ class Settings {
   @HiveField(8, defaultValue: 0)
   final int sex;
 
+  @HiveField(10, defaultValue: 1)
+  final int somatotypeIndex;
+
   @HiveField(9, defaultValue: false)
   final bool onboardingCompleted;
 
@@ -63,6 +67,7 @@ class Settings {
     double? height,
     double? weight,
     int? sex,
+    int? somatotypeIndex,
     bool? onboardingCompleted,
   }) {
     return Settings(
@@ -75,6 +80,7 @@ class Settings {
       height: height ?? this.height,
       weight: weight ?? this.weight,
       sex: sex ?? this.sex,
+      somatotypeIndex: somatotypeIndex ?? this.somatotypeIndex,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     );
   }

@@ -1,3 +1,4 @@
+import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
@@ -37,10 +38,12 @@ class WorkoutService {
   // Hive boxes.
   late Box<Workout> _workoutBox;
   late Box<Settings> _settingsBox;
+  late Box<BodyMetric> _bodyMetricsBox;
 
   // Box names (prevents typos).
   static const String _workoutBoxName = 'workouts';
   static const String _settingsBoxName = 'settings';
+  static const String _bodyMetricsBoxName = 'bodymetrics';
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
@@ -50,6 +53,10 @@ class WorkoutService {
     // Open or create Hive boxes.
     _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
     _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
+    _bodyMetricsBox = await Hive.openBox<BodyMetric>(_bodyMetricsBoxName);
+
+    // Load body metrics history.
+    sBodyMetricsHistory.value = _bodyMetricsBox.values.toList();
 
     // Load settings.
     final Settings? settings = _settingsBox.get('settings');
@@ -70,7 +77,7 @@ class WorkoutService {
       sHeight.value = settings.height;
       sWeight.value = settings.weight;
       sSex.value = settings.sex;
-      // Set Onboarding.
+      sSomatotype.value = settings.somatotypeIndex;
       sOnboardingCompleted.value = settings.onboardingCompleted;
 
       // Log settings.
@@ -85,6 +92,7 @@ class WorkoutService {
         'Height: ${settings.height}, '
         'Weight: ${settings.weight}, '
         'Sex: ${settings.sex == 0 ? "Male" : "Female"}, '
+        'Somatotype: ${settings.somatotypeIndex}, '
         'OnboardingCompleted: ${settings.onboardingCompleted}',
       );
     }
@@ -166,6 +174,7 @@ class WorkoutService {
       final double height = sHeight.value;
       final double weight = sWeight.value;
       final int sex = sSex.value;
+      final int somatotype = sSomatotype.value;
       final bool onboardingCompleted = sOnboardingCompleted.value;
 
       // Create Settings Object.
@@ -179,6 +188,7 @@ class WorkoutService {
         height: height,
         weight: weight,
         sex: sex,
+        somatotypeIndex: somatotype,
         onboardingCompleted: onboardingCompleted,
       );
 
@@ -197,6 +207,39 @@ class WorkoutService {
       // Log toggle.
       _logger.i('WorkoutService: Wakelock toggled to $enabled');
     });
+  }
+
+  // Save new BodyMetric and update history.
+  Future<void> saveBodyMetric({
+    required int age,
+    required double height,
+    required double weight,
+    required int sex,
+    required int somatotype,
+  }) async {
+    final BodyMetric newMetric = BodyMetric(
+      date: DateTime.now(),
+      age: age,
+      height: height,
+      weight: weight,
+      sex: sex,
+      somatotype: somatotype,
+    );
+
+    // Save to Hive.
+    await _bodyMetricsBox.add(newMetric);
+
+    // Update Signal.
+    sBodyMetricsHistory.value = _bodyMetricsBox.values.toList();
+
+    // Update basic stats.
+    sAge.value = age;
+    sHeight.value = height;
+    sWeight.value = weight;
+    sSex.value = sex;
+    sSomatotype.value = somatotype;
+
+    _logger.i('WorkoutService: Body metrics saved to history');
   }
 
   // Toggle favorite exercise by id.

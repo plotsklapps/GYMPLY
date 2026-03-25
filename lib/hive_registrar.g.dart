@@ -3,6 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
+import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/settings_model.dart';
@@ -12,6 +13,7 @@ import 'package:gymply/models/workout_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(BodyMetricAdapter());
     registerAdapter(CardioExerciseAdapter());
     registerAdapter(CardioSetAdapter());
     registerAdapter(EquipmentAdapter());
@@ -28,6 +30,7 @@ extension HiveRegistrar on HiveInterface {
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
+    registerAdapter(BodyMetricAdapter());
     registerAdapter(CardioExerciseAdapter());
     registerAdapter(CardioSetAdapter());
     registerAdapter(EquipmentAdapter());
