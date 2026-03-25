@@ -7,9 +7,11 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
+import 'package:gymply/screens/onboarding_screen.dart';
 import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:signals/signals_flutter.dart';
@@ -67,7 +69,9 @@ class MainEntry extends StatelessWidget {
       child: MaterialApp(
         title: 'GYMPLY.',
         theme: cThemeData.watch(context),
-        home: const HomeScreen(),
+        home: sOnboardingCompleted.watch(context)
+            ? const HomeScreen()
+            : const OnboardingScreen(),
       ),
     );
   }

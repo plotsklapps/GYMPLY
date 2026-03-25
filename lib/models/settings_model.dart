@@ -15,6 +15,7 @@ class Settings {
     this.height = 0,
     this.weight = 0,
     this.sex = 0,
+    this.onboardingCompleted = false,
   });
 
   @HiveField(0, defaultValue: true)
@@ -44,6 +45,9 @@ class Settings {
   @HiveField(8, defaultValue: 0)
   final int sex;
 
+  @HiveField(9, defaultValue: false)
+  final bool onboardingCompleted;
+
   // Custom enum mapping.
   FlexSchemes get flexScheme {
     return FlexSchemes.values[flexSchemeIndex];
@@ -59,6 +63,7 @@ class Settings {
     double? height,
     double? weight,
     int? sex,
+    bool? onboardingCompleted,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
@@ -70,6 +75,7 @@ class Settings {
       height: height ?? this.height,
       weight: weight ?? this.weight,
       sex: sex ?? this.sex,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     );
   }
 }

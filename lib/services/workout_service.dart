@@ -12,6 +12,7 @@ import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
+import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
@@ -69,6 +70,8 @@ class WorkoutService {
       sHeight.value = settings.height;
       sWeight.value = settings.weight;
       sSex.value = settings.sex;
+      // Set Onboarding.
+      sOnboardingCompleted.value = settings.onboardingCompleted;
 
       // Log settings.
       _logger.i(
@@ -81,7 +84,8 @@ class WorkoutService {
         'Age: ${settings.age}, '
         'Height: ${settings.height}, '
         'Weight: ${settings.weight}, '
-        'Sex: ${settings.sex == 0 ? "Male" : "Female"}',
+        'Sex: ${settings.sex == 0 ? "Male" : "Female"}, '
+        'OnboardingCompleted: ${settings.onboardingCompleted}',
       );
     }
 
@@ -162,6 +166,7 @@ class WorkoutService {
       final double height = sHeight.value;
       final double weight = sWeight.value;
       final int sex = sSex.value;
+      final bool onboardingCompleted = sOnboardingCompleted.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -174,6 +179,7 @@ class WorkoutService {
         height: height,
         weight: weight,
         sex: sex,
+        onboardingCompleted: onboardingCompleted,
       );
 
       // Store to Hive.

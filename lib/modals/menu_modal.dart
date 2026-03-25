@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
+import 'package:gymply/screens/onboarding_screen.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -105,6 +106,27 @@ class MenuModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.personStanding),
                   title: const Text('Body Metrics'),
                   subtitle: const Text('Age, height, weight and more'),
+                  trailing: const Icon(LucideIcons.chevronRight),
+                ),
+
+                // Onboarding ListTile.
+                ListTile(
+                  onTap: () async {
+                    // Pop the modal first.
+                    Navigator.pop(context);
+                    // Push the OnboardingScreen.
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return const OnboardingScreen();
+                        },
+                      ),
+                    );
+                  },
+                  leading: const Icon(LucideIcons.monitorPlay),
+                  title: const Text('Replay Onboarding'),
+                  subtitle: const Text('Watch the introductory slides again'),
                   trailing: const Icon(LucideIcons.chevronRight),
                 ),
 
