@@ -26,7 +26,12 @@ class StrengthExerciseScreen extends StatelessWidget {
         exercise.repsInput ?? exercise.sets.lastOrNull?.reps;
 
     void updateInput(StrengthExercise exercise, {double? weight, int? reps}) {
-      workoutService.updateStrengthInput(exercise, weight: weight, reps: reps);
+      workoutService.updateStrengthInput(
+        exercise,
+        // Do not allow negative input on weight/reps.
+        weight: weight != null ? (weight < 0 ? 0 : weight) : null,
+        reps: reps != null ? (reps < 0 ? 0 : reps) : null,
+      );
     }
 
     return Scaffold(

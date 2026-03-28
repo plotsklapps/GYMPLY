@@ -69,6 +69,7 @@ class MainEntry extends StatelessWidget {
     // Wrapper for context-free toasts.
     return ToastificationWrapper(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'GYMPLY.',
         theme: cThemeData.watch(context),
         home: sOnboardingCompleted.watch(context)

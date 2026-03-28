@@ -281,7 +281,7 @@ class MenuModal extends StatelessWidget {
                       Uri.parse('https://github.com/plotsklapps/gymply'),
                     );
                   },
-                  leading: const Icon(LucideIcons.github),
+                  leading: const Icon(LucideIcons.code),
                   title: const Text('Github Repository'),
                   subtitle: const Text('Source code, file issues'),
                   trailing: const Icon(LucideIcons.chevronRight),

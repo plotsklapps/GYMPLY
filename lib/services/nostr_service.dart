@@ -35,9 +35,9 @@ class NostrService {
     'wss://relay.damus.io',
     'wss://nos.lol',
     'wss://relay.snort.social',
-    'wss://offchain.pub',
+    'wss://purplepag.es',
+    'wss://relay.nostr.band',
     'wss://nostr.mom',
-    'wss://nostr.bitcoiner.social',
   ];
 
   // Static list of 5 Blossom servers for image hosting.
@@ -75,11 +75,25 @@ class NostrService {
         debugLabel: 'sFeedMetadata',
       );
 
+  // Signal for Comments of the currently opened WorkoutNote.
+  final Signal<List<Nip01Event>> sActiveWorkoutComments =
+      Signal<List<Nip01Event>>(
+        <Nip01Event>[],
+        debugLabel: 'sActiveWorkoutComments',
+      );
+
   // Signal to keep track of reactions to every WorkoutNote on screen.
   final Signal<Map<String, Set<String>>> sFeedReactions =
       Signal<Map<String, Set<String>>>(
         <String, Set<String>>{},
         debugLabel: 'sFeedReactions',
+      );
+
+  // Signal to keep track of comments to every WorkoutNote on screen.
+  final Signal<Map<String, Set<String>>> sFeedComments =
+      Signal<Map<String, Set<String>>>(
+        <String, Set<String>>{},
+        debugLabel: 'sFeedComments',
       );
 
   // Bool Signal to track feed loading state.
@@ -92,6 +106,7 @@ class NostrService {
 
   StreamSubscription<Nip01Event>? _feedSubscription;
   StreamSubscription<Nip01Event>? _reactionSubscription;
+  StreamSubscription<Nip01Event>? _commentSubscription;
 
   // --- METHODS ---
 
@@ -276,18 +291,136 @@ class NostrService {
     sFeedEvents.value = newList;
   }
 
-  // Sends 'Like' (Kind 7) to WorkoutNote.
-  Future<void> sendBicepsReaction(String eventId) async {
+  // Publish a Comment (Kind 1).
+  Future<void> sendComment({
+    required String content,
+    required String rootId,
+    required String rootAuthorPubKey,
+    String? replyToId,
+    String? replyToPubKey,
+  }) async {
+    if (!sNsec.value) throw Exception('No Private Key found.');
+
+    final Nip01Event event = Nip01Event(
+      pubKey: Nip19.decode(sNpub.value!),
+      kind: 1,
+      content: content,
+      createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      tags: <List<String>>[
+        <String>['e', rootId, '', 'root'],
+        <String>['p', rootAuthorPubKey],
+        if (replyToId != null) <String>['e', replyToId, '', 'reply'],
+        if (replyToPubKey != null) <String>['p', replyToPubKey],
+        <String>['t', 'gymply'],
+      ],
+    );
+
+    // --- OPTIMISTIC UI UPDATES ---
+
+    // 1. Update Active Modal List.
+    if (!sActiveWorkoutComments.value.any((Nip01Event e) => e.id == event.id)) {
+      final List<Nip01Event> newList =
+          <Nip01Event>[...sActiveWorkoutComments.value, event]..sort(
+            (Nip01Event a, Nip01Event b) => a.createdAt.compareTo(b.createdAt),
+          );
+      sActiveWorkoutComments.value = newList;
+    }
+
+    // 2. Update Feed Counter.
+    final Map<String, Set<String>> currentComments = sFeedComments.value;
+    final Set<String> eventComments = Set<String>.from(
+      currentComments[rootId] ?? <String>{},
+    );
+
+    if (eventComments.add(event.id)) {
+      final Map<String, Set<String>> newMap = Map<String, Set<String>>.from(
+        currentComments,
+      );
+      newMap[rootId] = eventComments;
+      sFeedComments.value = newMap;
+    }
+
+    // --- BROADCAST ---
+
+    try {
+      await _ndk.broadcast.broadcast(nostrEvent: event).broadcastDoneFuture;
+
+      // Fetch metadata for the commenter (me).
+      await _resolveMetadata(event.pubKey);
+
+      _logger.i('Comment broadcasted successfully');
+    } on Object catch (e) {
+      _logger.e('Failed to send comment: $e');
+      ToastService.showError(title: 'Comment Failed', subtitle: '$e');
+    }
+  }
+
+  // Delete a Comment.
+  Future<void> deleteComment(String commentId, String workoutId) async {
+    if (!sNsec.value) return;
+
+    // --- OPTIMISTIC UI UPDATES ---
+
+    // 1. Remove from Modal List.
+    final List<Nip01Event> modalComments = List<Nip01Event>.from(
+      sActiveWorkoutComments.value,
+    )..removeWhere((Nip01Event e) => e.id == commentId);
+    sActiveWorkoutComments.value = modalComments;
+
+    // 2. Decrement Feed Counter.
+    final Map<String, Set<String>> currentComments = sFeedComments.value;
+    if (currentComments.containsKey(workoutId)) {
+      final Set<String> eventComments = Set<String>.from(
+        currentComments[workoutId]!,
+      );
+      if (eventComments.remove(commentId)) {
+        final Map<String, Set<String>> newMap = Map<String, Set<String>>.from(
+          currentComments,
+        );
+        if (eventComments.isEmpty) {
+          newMap.remove(workoutId);
+        } else {
+          newMap[workoutId] = eventComments;
+        }
+        sFeedComments.value = newMap;
+      }
+    }
+
+    // --- BROADCAST DELETION (Kind 5) ---
+
+    final Nip01Event deletionEvent = Nip01Event(
+      pubKey: Nip19.decode(sNpub.value!),
+      kind: 5,
+      content: 'Comment deleted in GYMPLY.',
+      createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      tags: <List<String>>[
+        <String>['e', commentId],
+      ],
+    );
+
+    try {
+      await _ndk.broadcast
+          .broadcast(nostrEvent: deletionEvent)
+          .broadcastDoneFuture;
+      _logger.i('Comment deletion broadcasted');
+    } on Object catch (e) {
+      _logger.e('Failed to delete comment: $e');
+    }
+  }
+
+  // Sends 'Like' (Kind 7) to WorkoutNote or Comment.
+  Future<void> sendBicepsReaction(String eventId, {String? rootId}) async {
     if (!sNsec.value) return;
 
     final String myPubkey = Nip19.decode(sNpub.value!);
 
     // Optimistic UI update: Add 'like' immediately.
-    // ignore: always_specify_types
-    final Map<String, Set<String>> reactions = Map.from(sFeedReactions.value);
-    //
-    // ignore: always_specify_types
-    final Set<String> eventLikes = Set.from(reactions[eventId] ?? <String>{});
+    final Map<String, Set<String>> reactions = Map<String, Set<String>>.from(
+      sFeedReactions.value,
+    );
+    final Set<String> eventLikes = Set<String>.from(
+      reactions[eventId] ?? <String>{},
+    );
 
     // Return if already liked.
     if (eventLikes.contains(myPubkey)) return;
@@ -304,10 +437,9 @@ class NostrService {
       createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       tags: <List<String>>[
         <String>['e', eventId],
-        <String>[
-          'p',
-          Nip19.decode(sNpub.value!),
-        ],
+        <String>['p', myPubkey],
+        if (rootId != null && rootId != eventId)
+          <String>['e', rootId, '', 'root'],
       ],
     );
 
@@ -342,7 +474,7 @@ class NostrService {
     sFeedEvents.value = events;
 
     // Refresh reaction subscription to exclude the deleted event.
-    _updateReactionSubscription();
+    _updateEngagementSubscription();
 
     // Create Kind 5 deletion event.
     final Nip01Event deletionEvent = Nip01Event(
@@ -415,7 +547,7 @@ class NostrService {
 
             // Fetch user's name/avatar and refresh listeners.
             await _resolveMetadata(event.pubKey);
-            _updateReactionSubscription();
+            _updateEngagementSubscription();
           }
 
           // Loading State Cleanup.
@@ -432,8 +564,8 @@ class NostrService {
     });
   }
 
-  // Update subscription for reactions to match currently visible posts.
-  void _updateReactionSubscription() {
+  // Update subscription for reactions and comments to match currently visible posts.
+  void _updateEngagementSubscription() {
     // Cancel previous subscription to prevent duplicate listeners.
     unawaited(_reactionSubscription?.cancel());
 
@@ -445,39 +577,109 @@ class NostrService {
     // No posts, no subscription.
     if (eventIds.isEmpty) return;
 
-    // Request subscription for Kind 7 (Reactions) filtered by event IDs.
+    // Request subscription for Kind 7 (Reactions) and Kind 1 (Comments) filtered by event IDs.
     _reactionSubscription = _ndk.requests
         .subscription(
-          name: 'gymply-reactions',
-          filter: Filter(kinds: <int>[7], eTags: eventIds),
+          name: 'gymply-engagement',
+          filter: Filter(kinds: <int>[1, 7], eTags: eventIds),
         )
         .stream
-        .listen((Nip01Event reaction) {
-          // Find 'e' tag to id which WorkoutNote this reaction belongs to.
-          final List<String> eTag = reaction.tags.firstWhere(
-            (List<String> t) {
-              return t.length >= 2 && t[0] == 'e';
-            },
-            orElse: () {
-              return <String>[];
-            },
+        .listen((Nip01Event event) {
+          // Find 'e' tag to id which WorkoutNote this event belongs to.
+          final List<String> eTag = event.tags.firstWhere(
+            (List<String> t) => t.length >= 2 && t[0] == 'e',
+            orElse: () => <String>[],
           );
 
-          // Only track biceps emoji for this feed.
-          if (eTag.isNotEmpty && reaction.content == '💪') {
-            final String targetEventId = eTag[1];
+          if (eTag.isEmpty) return;
+          final String targetEventId = eTag[1];
 
-            // Set Signal using Set to ensure unique likers per WorkoutNote.
+          // Handle Reactions (Kind 7).
+          if (event.kind == 7 && event.content == '💪') {
             final Map<String, Set<String>> reactions =
                 Map<String, Set<String>>.from(sFeedReactions.value);
             final Set<String> eventLikes = Set<String>.from(
               reactions[targetEventId] ?? <String>{},
-            )..add(reaction.pubKey);
+            )..add(event.pubKey);
 
             reactions[targetEventId] = eventLikes;
             sFeedReactions.value = reactions;
+
+            // Fetch metadata for the person who liked.
+            unawaited(_resolveMetadata(event.pubKey));
+          }
+          // Handle Comments (Kind 1).
+          else if (event.kind == 1) {
+            final Map<String, Set<String>> currentComments =
+                sFeedComments.value;
+            final Set<String> eventComments = Set<String>.from(
+              currentComments[targetEventId] ?? <String>{},
+            );
+
+            if (eventComments.add(event.id)) {
+              final Map<String, Set<String>> newMap =
+                  Map<String, Set<String>>.from(currentComments);
+              newMap[targetEventId] = eventComments;
+              sFeedComments.value = newMap;
+            }
           }
         });
+  }
+
+  // Subscribe to comments for a specific post.
+  void startCommentSubscription(String eventId) {
+    unawaited(_commentSubscription?.cancel());
+    sActiveWorkoutComments.value = <Nip01Event>[];
+
+    _commentSubscription = _ndk.requests
+        .subscription(
+          name: 'gymply-comments-$eventId',
+          filter: Filter(kinds: <int>[1, 7], eTags: <String>[eventId]),
+        )
+        .stream
+        .listen((Nip01Event event) async {
+          // Handle Comments (Kind 1).
+          if (event.kind == 1) {
+            if (!sActiveWorkoutComments.value.any(
+              (Nip01Event e) => e.id == event.id,
+            )) {
+              final List<Nip01Event> newList =
+                  <Nip01Event>[...sActiveWorkoutComments.value, event]..sort(
+                    (Nip01Event a, Nip01Event b) =>
+                        a.createdAt.compareTo(b.createdAt),
+                  );
+              sActiveWorkoutComments.value = newList;
+              await _resolveMetadata(event.pubKey);
+            }
+          }
+          // Handle Reactions (Kind 7) to comments.
+          else if (event.kind == 7 && event.content == '💪') {
+            final List<String> eTag = event.tags.firstWhere(
+              (List<String> t) => t.length >= 2 && t[0] == 'e',
+              orElse: () => <String>[],
+            );
+
+            if (eTag.isNotEmpty) {
+              final String targetId = eTag[1];
+              final Map<String, Set<String>> reactions =
+                  Map<String, Set<String>>.from(sFeedReactions.value);
+              final Set<String> eventLikes = Set<String>.from(
+                reactions[targetId] ?? <String>{},
+              )..add(event.pubKey);
+
+              if (reactions[targetId]?.length != eventLikes.length) {
+                reactions[targetId] = eventLikes;
+                sFeedReactions.value = reactions;
+              }
+            }
+          }
+        });
+  }
+
+  void stopCommentSubscription() {
+    unawaited(_commentSubscription?.cancel());
+    _commentSubscription = null;
+    sActiveWorkoutComments.value = <Nip01Event>[];
   }
 
   // Fetch Nostr profile data for a specific user and cache it.
@@ -524,11 +726,50 @@ class NostrService {
   Future<void> refreshFeed() async {
     sFeedEvents.value = <Nip01Event>[];
     sFeedReactions.value = <String, Set<String>>{};
+    sFeedComments.value = <String, Set<String>>{};
     await stopFeedSubscriptions();
     startFeedSubscriptions();
   }
 
   // --- OTHERS ---
+
+  /// Publishes the NIP-65 Relay List (Kind 10002).
+  /// This tells other Nostr clients where to find your posts and where to
+  /// send you messages (replies/likes).
+  Future<void> publishRelayList() async {
+    // Only users with an nsec (private key) can sign and publish their relay list.
+    if (!sNsec.value) return;
+
+    final String myPubkey = Nip19.decode(sNpub.value!);
+
+    // Construct the NIP-65 tags.
+    // Standard format: ['r', 'wss://relay.url', 'read'|'write' (optional)].
+    // By omitting the 3rd parameter, we signal that these relays are for BOTH.
+    final List<List<String>> tags = _defaultRelays
+        .map((String url) => <String>['r', url])
+        .toList();
+
+    final Nip01Event relayListEvent = Nip01Event(
+      pubKey: myPubkey,
+      kind: 10002,
+      content: '',
+      createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      tags: tags,
+    );
+
+    try {
+      // Use NDK broadcast. This is polite to the network as it handles
+      // relay-specific failures in the background.
+      await _ndk.broadcast
+          .broadcast(nostrEvent: relayListEvent)
+          .broadcastDoneFuture;
+      _logger.i('NIP-65 Relay list successfully published to the network.');
+    } on Object catch (e) {
+      // We log this as a warning but don't interrupt the user, as the app
+      // will still function using bootstrap defaults.
+      _logger.w('Relay list publication deferred: $e');
+    }
+  }
 
   Future<void> updateMetadata(Metadata metadata) async {
     // Illegal action.
@@ -536,6 +777,10 @@ class NostrService {
 
     // Broadcast metadata update.
     final Metadata updated = await _ndk.metadata.broadcastMetadata(metadata);
+
+    // Best Practice: Also broadcast relay list (NIP-65) whenever profile is
+    // updated to ensure global discoverability.
+    unawaited(publishRelayList());
 
     // Set Signal.
     sMetadata.value = updated;
@@ -569,6 +814,9 @@ class NostrService {
 
       // Fetch OWN metadata.
       await fetchMetadata();
+
+      // One-time relay list publication for new users.
+      unawaited(publishRelayList());
 
       // Log success.
       _logger.i('Keys generated successfully');
@@ -632,6 +880,9 @@ class NostrService {
       // Fetch OWN metadata.
       await fetchMetadata();
 
+      // One-time relay list publication for new users.
+      unawaited(publishRelayList());
+
       // Log success.
       _logger.i('Keys imported successfully');
 
@@ -672,6 +923,7 @@ class NostrService {
     sFeedEvents.value = <Nip01Event>[];
     sFeedMetadata.value = <String, Metadata>{};
     sFeedReactions.value = <String, Set<String>>{};
+    sFeedComments.value = <String, Set<String>>{};
 
     // Kill subscriptions.
     await stopFeedSubscriptions();

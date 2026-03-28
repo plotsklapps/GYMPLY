@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/comment_modal.dart';
+import 'package:gymply/modals/userdetail_modal.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:gymply/services/toast_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
+import 'package:signals/signals_flutter.dart';
 
 class WorkoutNote extends StatelessWidget {
   const WorkoutNote({
@@ -22,6 +25,15 @@ class WorkoutNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.watch(
+      context,
+    );
+
+    // List of people who liked this post.
+    final List<(String, Metadata?)> likers = likes.map((String pk) {
+      return (pk, metadataMap[pk]);
+    }).toList();
 
     // Parse content.
     Map<String, dynamic> content = <String, dynamic>{};
@@ -50,6 +62,10 @@ class WorkoutNote extends StatelessWidget {
     final bool isMine = event.pubKey == myPubkey;
     final bool hasLiked = likes.contains(myPubkey);
 
+    final Map<String, Set<String>> commentsMap = nostrService.sFeedComments
+        .watch(context);
+    final Set<String> commentIds = commentsMap[event.id] ?? <String>{};
+
     return Card(
       margin: const EdgeInsets.only(bottom: 24),
       clipBehavior: Clip.antiAlias,
@@ -57,57 +73,68 @@ class WorkoutNote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // Header (author info).
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              backgroundImage: avatar != null
-                  ? NetworkImage(avatar)
-                  : const AssetImage('assets/icons/gymplyIcon.png'),
-            ),
-            title: Text(
-              name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              event.createdAt.formatWorkoutDate(),
-              style: theme.textTheme.labelSmall,
-            ),
-            trailing: isMine
-                ? PopupMenuButton<String>(
-                    icon: const Icon(LucideIcons.ellipsisVertical),
-                    onSelected: (String value) async {
-                      if (value == 'delete') {
-                        await nostrService.deleteWorkoutNote(event.id);
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                          PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                const Text(
-                                  'Delete',
-                                ),
-                                const SizedBox(width: 4),
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Center(
-                                    child: Icon(
-                                      LucideIcons.trash,
-                                      color: theme.colorScheme.error,
-                                      size: 20,
+          InkWell(
+            onTap: () async {
+              await ModalService.showModal(
+                context: context,
+                child: UserDetailModal(
+                  likers: <(String, Metadata?)>[(event.pubKey, metadata)],
+                ),
+              );
+            },
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                backgroundImage: avatar != null
+                    ? NetworkImage(avatar)
+                    : const AssetImage('assets/icons/gymplyIcon.png'),
+              ),
+              title: Text(
+                name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                event.createdAt.formatWorkoutDate(),
+                style: theme.textTheme.labelSmall,
+              ),
+              trailing: isMine
+                  ? PopupMenuButton<String>(
+                      icon: const Icon(LucideIcons.ellipsisVertical),
+                      onSelected: (String value) async {
+                        if (value == 'delete') {
+                          await nostrService.deleteWorkoutNote(event.id);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              value: 'delete',
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Text(
+                                    'Delete',
+                                  ),
+                                  const SizedBox(width: 4),
+                                  SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: Center(
+                                      child: Icon(
+                                        LucideIcons.trash,
+                                        color: theme.colorScheme.error,
+                                        size: 20,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                  )
-                : null,
+                          ],
+                    )
+                  : null,
+            ),
           ),
 
           // BODY (The Workout Image)
@@ -137,12 +164,37 @@ class WorkoutNote extends StatelessWidget {
                     ),
           ),
 
-          // FOOTER (Actions)
+          // FOOTER (Actions).
           Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
               children: <Widget>[
-                // BICEPS FLEX (Like)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                      icon: const Icon(LucideIcons.messageSquare),
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          scrollable: false,
+                          child: CommentModal(
+                            event: event,
+                            imageUrl: imageUrl,
+                            authorMetadata: metadata,
+                          ),
+                        );
+                      },
+                    ),
+                    if (commentIds.isNotEmpty)
+                      Text(
+                        '${commentIds.length}',
+                        style: theme.textTheme.labelLarge,
+                      ),
+                  ],
+                ),
+                const Spacer(),
+                // BICEPS FLEX (Like).
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -155,7 +207,7 @@ class WorkoutNote extends StatelessWidget {
                         await nostrService.sendBicepsReaction(event.id);
                       },
                     ),
-                    if (likes.isNotEmpty)
+                    if (likes.isNotEmpty) ...<Widget>[
                       Text(
                         '${likes.length}',
                         style: theme.textTheme.labelLarge?.copyWith(
@@ -165,33 +217,64 @@ class WorkoutNote extends StatelessWidget {
                               : FontWeight.normal,
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: InkWell(
+                          onTap: () async {
+                            // Show 'likers' modal.
+                            await ModalService.showModal(
+                              context: context,
+                              child: UserDetailModal(likers: likers),
+                            );
+                          },
+                          child: SizedBox(
+                            height: 24,
+                            width:
+                                24 +
+                                (likers.length > 1
+                                        ? (likers.length > 5
+                                              ? 4
+                                              : likers.length - 1)
+                                        : 0) *
+                                    14.0,
+                            child: Stack(
+                              children: List<Widget>.generate(
+                                likers.length > 5 ? 5 : likers.length,
+                                (int i) {
+                                  final String? avatarUrl =
+                                      likers[i].$2?.picture;
+                                  return Positioned(
+                                    left: i * 14.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: theme.cardColor,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 11,
+                                        backgroundColor: theme
+                                            .colorScheme
+                                            .surfaceContainerHighest,
+                                        backgroundImage: avatarUrl != null
+                                            ? NetworkImage(avatarUrl)
+                                            : const AssetImage(
+                                                    'assets/icons/gymplyIcon.png',
+                                                  )
+                                                  as ImageProvider,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-                ),
-                IconButton(
-                  icon: const Icon(LucideIcons.messageSquare),
-                  onPressed: () {
-                    ToastService.showWarning(
-                      title: 'Feature Coming!',
-                      subtitle: 'Come back soon to comment on workouts',
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(LucideIcons.zap),
-                  color: Colors.amber,
-                  onPressed: () {
-                    ToastService.showWarning(
-                      title: 'Feature Coming!',
-                      subtitle: 'Come back soon to zap workouts',
-                    );
-                  },
-                ),
-                const Spacer(),
-                const Icon(LucideIcons.dumbbell, size: 16, color: Colors.grey),
-                const SizedBox(width: 4),
-                const Text(
-                  'GYMPLY.',
-                  style: TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],
             ),
