@@ -217,8 +217,10 @@ class WorkoutService {
     required int sex,
     required int somatotype,
   }) async {
+    final DateTime now = DateTime.now();
+
     final BodyMetric newMetric = BodyMetric(
-      date: DateTime.now(),
+      date: now,
       age: age,
       height: height,
       weight: weight,
@@ -226,8 +228,29 @@ class WorkoutService {
       somatotype: somatotype,
     );
 
-    // Save to Hive.
-    await _bodyMetricsBox.add(newMetric);
+    // Check if an entry for today already exists.
+    final int existingIndex = _bodyMetricsBox.values.toList().indexWhere(
+      (BodyMetric m) {
+        return m.date.year == now.year &&
+            m.date.month == now.month &&
+            m.date.day == now.day;
+      },
+    );
+
+    if (existingIndex != -1) {
+      // Update existing entry for today.
+      final dynamic key = _bodyMetricsBox.keyAt(existingIndex);
+      await _bodyMetricsBox.put(key, newMetric);
+
+      // Log update.
+      _logger.i('WorkoutService: Body metrics updated for today');
+    } else {
+      // Save new entry to Hive.
+      await _bodyMetricsBox.add(newMetric);
+
+      // Log new entry.
+      _logger.i('WorkoutService: New body metrics saved to history');
+    }
 
     // Update Signal.
     sBodyMetricsHistory.value = _bodyMetricsBox.values.toList();
@@ -238,8 +261,6 @@ class WorkoutService {
     sWeight.value = weight;
     sSex.value = sex;
     sSomatotype.value = somatotype;
-
-    _logger.i('WorkoutService: Body metrics saved to history');
   }
 
   // Toggle favorite exercise by id.
