@@ -43,7 +43,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     return ReorderableListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: reversedExercises.length,
-      // Use custom handle.
+      // Use custom handle (LucideIcons.gripVertical).
       buildDefaultDragHandles: false,
       onReorder: (int oldIndex, int newIndex) {
         // Map reversed indices back to original indices for WorkoutService.
@@ -82,7 +82,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     index: index,
                     child: const Padding(
                       padding: EdgeInsets.all(16),
-                      child: Icon(LucideIcons.gripHorizontal),
+                      child: Icon(LucideIcons.gripVertical),
                     ),
                   )
                 : PopupMenuButton<String>(

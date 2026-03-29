@@ -192,11 +192,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                   // Next / Done Button
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_currentPageIndex == 3) {
                         _onSkipOrDone();
                       } else {
-                        _pageController.nextPage(
+                        await _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
