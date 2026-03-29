@@ -29,6 +29,7 @@ class _CommentModalState extends State<CommentModal> {
   String? _replyToId;
   String? _replyToName;
   String? _replyToPubKey;
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -45,23 +46,35 @@ class _CommentModalState extends State<CommentModal> {
   }
 
   Future<void> _sendComment() async {
-    if (_controller.text.trim().isEmpty) return;
+    if (_controller.text.trim().isEmpty || _isSending) return;
 
-    await nostrService.sendComment(
-      content: _controller.text.trim(),
-      rootId: widget.event.id,
-      rootAuthorPubKey: widget.event.pubKey,
-      replyToId: _replyToId,
-      replyToPubKey: _replyToPubKey,
-    );
-
-    _controller.clear();
     setState(() {
-      _replyToId = null;
-      _replyToName = null;
-      _replyToPubKey = null;
+      _isSending = true;
     });
-    _focusNode.unfocus();
+
+    try {
+      await nostrService.sendComment(
+        content: _controller.text.trim(),
+        rootId: widget.event.id,
+        rootAuthorPubKey: widget.event.pubKey,
+        replyToId: _replyToId,
+        replyToPubKey: _replyToPubKey,
+      );
+
+      _controller.clear();
+      setState(() {
+        _replyToId = null;
+        _replyToName = null;
+        _replyToPubKey = null;
+      });
+      _focusNode.unfocus();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSending = false;
+        });
+      }
+    }
   }
 
   @override
@@ -359,11 +372,13 @@ class _CommentModalState extends State<CommentModal> {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () => setState(() {
-                    _replyToId = null;
-                    _replyToName = null;
-                    _replyToPubKey = null;
-                  }),
+                  onTap: () {
+                    setState(() {
+                      _replyToId = null;
+                      _replyToName = null;
+                      _replyToPubKey = null;
+                    });
+                  },
                   child: const Icon(LucideIcons.x, size: 14),
                 ),
               ],
@@ -380,7 +395,8 @@ class _CommentModalState extends State<CommentModal> {
                 decoration: const InputDecoration(
                   hintText: 'Flex your thoughts...',
                   border: InputBorder.none,
-                  counterText: '', // We use our own counter below
+                  // Custom counter.
+                  counterText: '',
                 ),
                 onChanged: (String value) => setState(() {}),
               ),
@@ -396,15 +412,22 @@ class _CommentModalState extends State<CommentModal> {
                   ),
                 ),
                 IconButton(
-                  onPressed: _controller.text.trim().isEmpty
+                  onPressed: _controller.text.trim().isEmpty || _isSending
                       ? null
                       : _sendComment,
-                  icon: Icon(
-                    LucideIcons.sendHorizontal,
-                    color: _controller.text.trim().isEmpty
-                        ? Colors.grey
-                        : theme.colorScheme.primary,
-                  ),
+                  icon: // Prevent spamming send button.
+                  _isSending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Icon(
+                          LucideIcons.sendHorizontal,
+                          color: _controller.text.trim().isEmpty
+                              ? Colors.grey
+                              : theme.colorScheme.primary,
+                        ),
                 ),
               ],
             ),
