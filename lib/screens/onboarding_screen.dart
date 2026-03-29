@@ -25,7 +25,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Flag onboarding as completed.
     sOnboardingCompleted.value = true;
 
-    // If onboarding started from anywhere else (like MenuModal), pop that first.
+    // If onboarding started from anywhere else, pop that first.
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -41,7 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            // The sliding pages
+            // Sliding pages.
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -51,7 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   });
                 },
                 children: <Widget>[
-                  // SLIDE 1: Welcome
+                  // SLIDE 1: Welcome.
                   OnboardingSlide(
                     iconWidget: Image.asset(
                       'assets/icons/gymplyIcon.png',
@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         'The Simple, Private, Local Workout Tracker.\n\n'
                         'GYMPLY will NEVER share ANYTHING outside YOUR DEVICE.',
                   ),
-                  // SLIDE 2: Core Values
+                  // SLIDE 2: Core Values.
                   OnboardingSlide(
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         '100% offline and 100% free\n\n'
                         '0% tracking and 0% ads.',
                   ),
-                  // SLIDE 3: Features
+                  // SLIDE 3: Features.
                   OnboardingSlide(
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         'Log your sets, track PRs, and use timers.\n\n'
                         'Visualize your progress over time.',
                   ),
-                  // SLIDE 4: Nostr
+                  // SLIDE 4: Nostr.
                   OnboardingSlide(
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +155,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Bottom Navigation and Indicator
+            // Bottom Navigation + Indicator.
             Padding(
               padding: const EdgeInsets.all(24),
               child: Row(
@@ -172,7 +172,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
 
-                  // Page Indicators
+                  // Page Indicator.
                   Row(
                     children: List<Widget>.generate(4, (int index) {
                       return AnimatedContainer(
@@ -190,7 +190,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     }),
                   ),
 
-                  // Next / Done Button
+                  // Next/Done Button.
                   TextButton(
                     onPressed: () async {
                       if (_currentPageIndex == 3) {
@@ -244,8 +244,7 @@ class OnboardingSlide extends StatelessWidget {
       padding: const EdgeInsets.all(32),
       child: Column(
         children: <Widget>[
-          // Using a fixed percentage height instead of a Spacer ensures
-          // that the icons are perfectly "level" across all slides.
+          // Using a fixed percentage height instead of a Spacer.
           SizedBox(height: screenHeight * 0.15),
           SizedBox(
             height: 128,
