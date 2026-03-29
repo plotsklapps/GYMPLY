@@ -395,6 +395,7 @@ class NostrService {
       createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       tags: <List<String>>[
         <String>['e', commentId],
+        <String>['k', '1'],
       ],
     );
 
@@ -484,6 +485,7 @@ class NostrService {
       createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       tags: <List<String>>[
         <String>['e', eventId],
+        <String>['k', '$kGymplyWorkoutKind'],
       ],
     );
 

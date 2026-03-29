@@ -157,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Bottom Navigation and Indicator
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -241,9 +241,8 @@ class OnboardingSlide extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           // Using a fixed percentage height instead of a Spacer ensures
           // that the icons are perfectly "level" across all slides.
