@@ -3,7 +3,7 @@ description: "GYMPLY. The SIMPLE gym tracker."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.0.4+41
+version: 0.0.4+42
 
 environment:
   sdk: ^3.11.0
