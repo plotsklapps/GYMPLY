@@ -222,11 +222,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               // Give a little bzzz.
               await HapticFeedback.lightImpact();
 
-              // If sTotalTimer is not running, start it.
-              if (!TotalTimer.sTotalTimerRunning.value) {
-                await TotalTimer().startTimer();
-              }
-
               // Navigate to SearchScreen.
               navigateToTab(AppTab.search);
             },
