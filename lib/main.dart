@@ -22,6 +22,9 @@ void main() async {
   // Mandatory Flutter framework binding.
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Set edge-to-edge UI.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   // Lock orientation to portrait.
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
