@@ -87,3 +87,9 @@ flutter:
     - family: LeagueGothic
       fonts:
         - asset: assets/fonts/leaguegothic.ttf
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/lato.ttf
+    - family: FjallaOne
+      fonts:
+        - asset: assets/fonts/fjallaone.ttf
