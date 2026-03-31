@@ -31,9 +31,11 @@ class MuscleGroupChoiceChips extends StatelessWidget {
                 child: ChoiceChip(
                   showCheckmark: false,
                   avatar: isSelected
-                      ? const Icon(
+                      ? Icon(
                           LucideIcons.circleCheck,
-                        )
+                    color: theme.colorScheme.onSecondary,
+
+                  )
                       : Image.asset(
                           'assets/images/musclegroups/$assetName.png',
                         ),

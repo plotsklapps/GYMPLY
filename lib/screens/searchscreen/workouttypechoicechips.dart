@@ -31,8 +31,9 @@ class WorkoutTypeChoiceChips extends StatelessWidget {
             child: ChoiceChip(
               showCheckmark: false,
               avatar: isSelected
-                  ? const Icon(
+                  ? Icon(
                       LucideIcons.circleCheck,
+                      color: theme.colorScheme.onSecondary,
                     )
                   : null,
               label: Text(

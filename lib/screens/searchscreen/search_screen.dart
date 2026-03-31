@@ -201,16 +201,31 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           // Exercise Name.
                           Positioned(
-                            bottom: 8,
-                            right: 8,
-                            left: 8,
-                            child: Text(
-                              exercise.exerciseName,
-                              textAlign: TextAlign.right,
-                              softWrap: false,
-                              style: theme.textTheme.titleLarge,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            bottom: 0,
+                            right: 0,
+                            left: 0,
+                            child: Container(
+                              decoration: theme.brightness == Brightness.dark
+                                  ? BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: <Color>[
+                                          Colors.transparent,
+                                          Colors.black.withAlpha(200),
+                                        ],
+                                      ),
+                                    )
+                                  : null,
+                              padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
+                              child: Text(
+                                exercise.exerciseName,
+                                textAlign: TextAlign.right,
+                                softWrap: false,
+                                style: theme.textTheme.titleLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
