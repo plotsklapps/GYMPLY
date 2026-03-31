@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
+import 'package:gymply/modals/themesettings_modal.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
-import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signals/signals_flutter.dart';
@@ -20,11 +20,6 @@ class MenuModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
-    // Watch settings Signals.
-    final bool isDarkMode = sDarkMode.watch(context);
-    final bool isWakelock = sWakelock.watch(context);
-    final FlexSchemes flexScheme = sFlexScheme.watch(context);
 
     // Watch update Signals.
     final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
@@ -94,7 +89,7 @@ class MenuModal extends StatelessWidget {
                   trailing: const Icon(LucideIcons.chevronRight),
                 ),
 
-                // Personal Info ListTile.
+                // BodyMetrics ListTile.
                 ListTile(
                   onTap: () async {
                     await ModalService.showModal(
@@ -108,80 +103,20 @@ class MenuModal extends StatelessWidget {
                   trailing: const Icon(LucideIcons.chevronRight),
                 ),
 
-                // Wakelock ListTile.
-                SwitchListTile(
-                  title: isWakelock
-                      ? const Text('Keep screen on')
-                      : const Text('Use screensaver'),
-                  subtitle: isWakelock
-                      ? const Text('Prevent screen from turning off')
-                      : const Text('Screen will automatically turn off'),
-                  secondary: Icon(
-                    isWakelock
-                        ? LucideIcons.smartphoneCharging
-                        : LucideIcons.smartphone,
-                  ),
-                  value: isWakelock,
-                  onChanged: (bool value) {
-                    sWakelock.value = value;
+                // Theme settings ListTile.
+                ListTile(
+                  onTap: () async {
+                    await ModalService.showModal(
+                      context: context,
+                      child: const ThemeSettingsModal(),
+                    );
                   },
+                  leading: const Icon(LucideIcons.paintbrush),
+                  title: const Text('Theme Settings'),
+                  subtitle: const Text('Set up your GYMPLY experience'),
+                  trailing: const Icon(LucideIcons.chevronRight),
                 ),
 
-                // ThemeMode ListTile.
-                SwitchListTile(
-                  title: isDarkMode
-                      ? const Text('Use dark mode')
-                      : const Text('Use light mode'),
-                  subtitle: isDarkMode
-                      ? const Text('Dark theme for all screens')
-                      : const Text('Light theme for all screens'),
-                  secondary: Icon(
-                    isDarkMode ? LucideIcons.moon : LucideIcons.sun,
-                  ),
-                  value: isDarkMode,
-                  onChanged: (bool value) {
-                    sDarkMode.value = value;
-                  },
-                ),
-
-                // Colors ListTile.
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: SegmentedButton<FlexSchemes>(
-                          segments: const <ButtonSegment<FlexSchemes>>[
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.shark,
-                              label: Text('Orange'),
-                              icon: Icon(LucideIcons.citrus),
-                            ),
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.greyLaw,
-                              label: Text('Purple'),
-                              icon: Icon(LucideIcons.brush),
-                            ),
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.sanJuanBlue,
-                              label: Text('Pink'),
-                              icon: Icon(LucideIcons.wine),
-                            ),
-                          ],
-                          selected: <FlexSchemes>{flexScheme},
-                          onSelectionChanged: (Set<FlexSchemes> newSelection) {
-                            sFlexScheme.value = newSelection.first;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 const Divider(),
 
                 // ProgressIndicator (Conditional).

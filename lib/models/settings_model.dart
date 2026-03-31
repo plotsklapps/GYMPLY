@@ -17,6 +17,7 @@ class Settings {
     this.sex = 0,
     this.somatotypeIndex = 1,
     this.onboardingCompleted = false,
+    this.fontFamily = 'LeagueGothic',
   });
 
   @HiveField(0, defaultValue: true)
@@ -52,6 +53,9 @@ class Settings {
   @HiveField(9, defaultValue: false)
   final bool onboardingCompleted;
 
+  @HiveField(11, defaultValue: 'LeagueGothic')
+  final String fontFamily;
+
   // Custom enum mapping.
   FlexSchemes get flexScheme {
     return FlexSchemes.values[flexSchemeIndex];
@@ -69,6 +73,7 @@ class Settings {
     int? sex,
     int? somatotypeIndex,
     bool? onboardingCompleted,
+    String? fontFamily,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
@@ -82,6 +87,7 @@ class Settings {
       sex: sex ?? this.sex,
       somatotypeIndex: somatotypeIndex ?? this.somatotypeIndex,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      fontFamily: fontFamily ?? this.fontFamily,
     );
   }
 }

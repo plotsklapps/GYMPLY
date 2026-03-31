@@ -79,6 +79,7 @@ class WorkoutService {
       sSex.value = settings.sex;
       sSomatotype.value = settings.somatotypeIndex;
       sOnboardingCompleted.value = settings.onboardingCompleted;
+      sFont.value = settings.fontFamily;
 
       // Log settings.
       _logger.i(
@@ -176,6 +177,7 @@ class WorkoutService {
       final int sex = sSex.value;
       final int somatotype = sSomatotype.value;
       final bool onboardingCompleted = sOnboardingCompleted.value;
+      final String fontFamily = sFont.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -190,6 +192,7 @@ class WorkoutService {
         sex: sex,
         somatotypeIndex: somatotype,
         onboardingCompleted: onboardingCompleted,
+        fontFamily: fontFamily,
       );
 
       // Store to Hive.

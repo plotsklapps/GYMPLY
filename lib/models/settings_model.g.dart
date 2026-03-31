@@ -30,13 +30,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       sex: fields[8] == null ? 0 : (fields[8] as num).toInt(),
       somatotypeIndex: fields[10] == null ? 1 : (fields[10] as num).toInt(),
       onboardingCompleted: fields[9] == null ? false : fields[9] as bool,
+      fontFamily: fields[11] == null ? 'LeagueGothic' : fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -58,7 +59,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(9)
       ..write(obj.onboardingCompleted)
       ..writeByte(10)
-      ..write(obj.somatotypeIndex);
+      ..write(obj.somatotypeIndex)
+      ..writeByte(11)
+      ..write(obj.fontFamily);
   }
 
   @override

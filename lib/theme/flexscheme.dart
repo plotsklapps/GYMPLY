@@ -27,6 +27,11 @@ final Signal<bool> sDarkMode = Signal<bool>(true, debugLabel: 'sDarkMode');
 
 final Signal<bool> sWakelock = Signal<bool>(true, debugLabel: 'sWakelock');
 
+final Signal<String> sFont = Signal<String>(
+  'LeagueGothic',
+  debugLabel: 'sFont',
+);
+
 // Override textTheme for the XL fonts.
 const TextTheme _textThemeOverrides = TextTheme(
   displayLarge: TextStyle(fontFamily: 'BebasNeue'),
@@ -210,7 +215,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: 'LeagueGothic',
+      fontFamily: sFont.value,
       textTheme: _textThemeOverrides,
     );
   } else {
@@ -379,7 +384,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: 'LeagueGothic',
+      fontFamily: sFont.value,
       textTheme: _textThemeOverrides,
     );
   }
