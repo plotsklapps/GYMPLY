@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
@@ -31,6 +32,10 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   late int _sex;
   late int _somatotype;
 
+  // Controllers for Manual Overrides.
+  late TextEditingController _bmiController;
+  late TextEditingController _bodyFatController;
+
   // Default metric.
   BodyMetricType _selectedType = BodyMetricType.weight;
   // Default range.
@@ -39,21 +44,50 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   @override
   void initState() {
     super.initState();
-    // Initialize from Signals.
+    // Initialize values from Signals.
     _age = sAge.value == 0 ? 25 : sAge.value;
     _height = sHeight.value == 0 ? 170 : sHeight.value;
     _weight = sWeight.value == 0 ? 70 : sWeight.value;
     _sex = sSex.value;
     _somatotype = sSomatotype.value;
+
+    // Initialize Controllers.
+    // Check if we have manual values in the latest history.
+    final List<BodyMetric> history = sBodyMetricsHistory.value;
+    final BodyMetric? latest = history.isNotEmpty ? history.last : null;
+
+    _bmiController = TextEditingController(
+      text: latest?.manualBmi != null && latest!.manualBmi! > 0
+          ? latest.manualBmi!.toStringAsFixed(1)
+          : '',
+    );
+    _bodyFatController = TextEditingController(
+      text: latest?.manualBodyFat != null && latest!.manualBodyFat! > 0
+          ? latest.manualBodyFat!.toStringAsFixed(1)
+          : '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _bmiController.dispose();
+    _bodyFatController.dispose();
+    super.dispose();
   }
 
   Future<void> _saveBodyMetrics() async {
+    // Attempt to parse manual values.
+    final double? manualBmi = double.tryParse(_bmiController.text);
+    final double? manualBodyFat = double.tryParse(_bodyFatController.text);
+
     await workoutService.saveBodyMetric(
       age: _age,
       height: _height,
       weight: _weight,
       sex: _sex,
       somatotype: _somatotype,
+      manualBmi: manualBmi,
+      manualBodyFat: manualBodyFat,
     );
 
     // Show toast to user.
@@ -61,10 +95,6 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
       title: 'Body Metrics Saved',
       subtitle: 'Calculations are now done with new values',
     );
-
-    if (mounted) {
-      Navigator.pop(context, true);
-    }
   }
 
   String _getUnit(BodyMetricType type) {
@@ -75,17 +105,6 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
         return '';
       case BodyMetricType.bodyFat:
         return '%';
-    }
-  }
-
-  Color _getColor(ThemeData theme, BodyMetricType type) {
-    switch (type) {
-      case BodyMetricType.weight:
-        return theme.colorScheme.secondary;
-      case BodyMetricType.bmi:
-        return theme.colorScheme.tertiary;
-      case BodyMetricType.bodyFat:
-        return theme.colorScheme.primary;
     }
   }
 
@@ -113,6 +132,32 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
     }
   }
 
+  // Helper to calculate current BMI for hintText.
+  double _calculateCurrentBmi() {
+    if (_height == 0) return 0;
+    final double heightInMeters = _height / 100;
+    return _weight / (heightInMeters * heightInMeters);
+  }
+
+  // Helper to calculate current Body Fat for hintText.
+  double _calculateCurrentBodyFat() {
+    final double bmiValue = _calculateCurrentBmi();
+    if (bmiValue == 0) return 0;
+
+    // Convert our sex (0=Male, 1=Female) to formula sex (1=Male, 0=Female)
+    final int formulaSex = _sex == 0 ? 1 : 0;
+
+    // Gallagher formula.
+    double bf = (1.46 * bmiValue) + (0.14 * _age) - (11.6 * formulaSex) - 10.0;
+
+    // GYMPLY Somatotype Adjustment for Active Individuals.
+    if (_somatotype == 0) bf -= 2.0;
+    if (_somatotype == 1) bf -= 5.0;
+    if (_somatotype == 2) bf += 1.0;
+
+    return bf;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -121,6 +166,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Fixed Header.
         Row(
           children: <Widget>[
             // SizedBox to balance close button.
@@ -164,7 +210,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                       '(${_getValue(history.last).toStringAsFixed(1)}'
                       '${_getUnit(_selectedType)})',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: _getColor(theme, _selectedType),
+                        color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -228,126 +274,221 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
         ),
         const Divider(height: 32),
 
+        // Scrollable body.
         // Sex Selection.
-        SizedBox(
-          width: double.infinity,
-          child: SegmentedButton<int>(
-            segments: const <ButtonSegment<int>>[
-              ButtonSegment<int>(
-                value: 0,
-                label: Text('Male'),
-                icon: Icon(LucideIcons.mars),
-              ),
-              ButtonSegment<int>(
-                value: 1,
-                label: Text('Female'),
-                icon: Icon(LucideIcons.venus),
-              ),
-            ],
-            selected: <int>{_sex},
-            onSelectionChanged: (Set<int> newSelection) {
-              setState(() {
-                _sex = newSelection.first;
-              });
-            },
-          ),
-        ),
-        const SizedBox(height: 8),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<int>(
+                    segments: const <ButtonSegment<int>>[
+                      ButtonSegment<int>(
+                        value: 0,
+                        label: Text('Male'),
+                        icon: Icon(LucideIcons.mars),
+                      ),
+                      ButtonSegment<int>(
+                        value: 1,
+                        label: Text('Female'),
+                        icon: Icon(LucideIcons.venus),
+                      ),
+                    ],
+                    selected: <int>{_sex},
+                    onSelectionChanged: (Set<int> newSelection) {
+                      setState(() {
+                        _sex = newSelection.first;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
 
-        // Somatotype Selection.
-        SizedBox(
-          width: double.infinity,
-          child: SegmentedButton<int>(
-            segments: const <ButtonSegment<int>>[
-              ButtonSegment<int>(
-                value: 0,
-                label: Text('Ectomorph'),
-              ),
-              ButtonSegment<int>(
-                value: 1,
-                label: Text('Mesomorph'),
-              ),
-              ButtonSegment<int>(
-                value: 2,
-                label: Text('Endomorph'),
-              ),
-            ],
-            selected: <int>{_somatotype},
-            onSelectionChanged: (Set<int> newSelection) {
-              setState(() {
-                _somatotype = newSelection.first;
-              });
-            },
-          ),
-        ),
-        const SizedBox(height: 24),
-        // Scroll Columns for Age, Height, Weight.
-        SizedBox(
-          height: 200,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              // AGE Picker.
-              _ScrollColumn(
-                label: 'AGE',
-                min: 1,
-                max: 120,
-                value: _age.toDouble(),
-                onChanged: (double val) {
-                  setState(() {
-                    _age = val.toInt();
-                  });
-                },
-                suffix: 'yrs',
-              ),
-              // HEIGHT Picker.
-              _ScrollColumn(
-                label: 'HEIGHT',
-                min: 50,
-                max: 250,
-                value: _height,
-                onChanged: (double val) {
-                  setState(() {
-                    _height = val;
-                  });
-                },
-                suffix: 'cm',
-              ),
-              // WEIGHT Picker.
-              _ScrollColumn(
-                label: 'WEIGHT',
-                min: 20,
-                max: 300,
-                value: _weight,
-                onChanged: (double val) {
-                  setState(() {
-                    _weight = val;
-                  });
-                },
-                suffix: 'kg',
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: const Text('CANCEL'),
-              ),
+                // Somatotype Selection.
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: SegmentedButton<int>(
+                          segments: const <ButtonSegment<int>>[
+                            ButtonSegment<int>(
+                              value: 0,
+                              label: Text('Ecto'),
+                            ),
+                            ButtonSegment<int>(
+                              value: 1,
+                              label: Text('Meso'),
+                            ),
+                            ButtonSegment<int>(
+                              value: 2,
+                              label: Text('Endo'),
+                            ),
+                          ],
+                          selected: <int>{_somatotype},
+                          onSelectionChanged: (Set<int> newSelection) {
+                            setState(() {
+                              _somatotype = newSelection.first;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  // SizedBox to balance close button.
+                                  const SizedBox(width: 48),
+                                  Expanded(
+                                    child: Text(
+                                      'SOMATOTYPE',
+                                      style: theme.textTheme.titleLarge,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      // Pop and return false.
+                                      Navigator.pop(context, false);
+                                    },
+                                    icon: const Icon(LucideIcons.circleX),
+                                  ),
+                                ],
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(LucideIcons.info),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Scroll Columns for Age, Height, Weight.
+                SizedBox(
+                  height: 200,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      // AGE Picker.
+                      _ScrollColumn(
+                        label: 'AGE',
+                        min: 1,
+                        max: 120,
+                        value: _age.toDouble(),
+                        onChanged: (double val) {
+                          setState(() {
+                            _age = val.toInt();
+                          });
+                        },
+                        suffix: 'yrs',
+                      ),
+                      // HEIGHT Picker.
+                      _ScrollColumn(
+                        label: 'HEIGHT',
+                        min: 50,
+                        max: 250,
+                        value: _height,
+                        onChanged: (double val) {
+                          setState(() {
+                            _height = val;
+                          });
+                        },
+                        suffix: 'cm',
+                      ),
+                      // WEIGHT Picker.
+                      _ScrollColumn(
+                        label: 'WEIGHT',
+                        min: 20,
+                        max: 300,
+                        value: _weight,
+                        onChanged: (double val) {
+                          setState(() {
+                            _weight = val;
+                          });
+                        },
+                        suffix: 'kg',
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Manual Overrides for BMI and BF%.
+                Row(
+                  children: <Widget>[
+                    // BMI TextField.
+                    Expanded(
+                      child: TextField(
+                        controller: _bmiController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'BMI',
+                          hintText: _calculateCurrentBmi().toStringAsFixed(1),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Body Fat % TextField.
+                    Expanded(
+                      child: TextField(
+                        controller: _bodyFatController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'BF%',
+                          hintText: _calculateCurrentBodyFat().toStringAsFixed(
+                            1,
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                        ),
+
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: _saveBodyMetrics,
+                        child: const Text('SAVE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: _saveBodyMetrics,
-                child: const Text('SAVE'),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

@@ -219,6 +219,8 @@ class WorkoutService {
     required double weight,
     required int sex,
     required int somatotype,
+    double? manualBmi,
+    double? manualBodyFat,
   }) async {
     final DateTime now = DateTime.now();
 
@@ -229,6 +231,8 @@ class WorkoutService {
       weight: weight,
       sex: sex,
       somatotype: somatotype,
+      manualBmi: manualBmi,
+      manualBodyFat: manualBodyFat,
     );
 
     // Check if an entry for today already exists.

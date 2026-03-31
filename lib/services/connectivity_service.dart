@@ -4,7 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
-// Global bool Signal to track online status.
+// Bool Signal to track online status.
 final Signal<bool> sIsOnline = Signal<bool>(true, debugLabel: 'sIsOnline');
 
 class ConnectivityService {
@@ -22,7 +22,7 @@ class ConnectivityService {
 
   // Initialize monitoring.
   Future<void> init() async {
-    // Check initial state.
+    // Check initial state (connectivity_plus package).
     final List<ConnectivityResult> initial = await Connectivity()
         .checkConnectivity();
     _updateStatus(initial);
@@ -30,25 +30,30 @@ class ConnectivityService {
     // Listen for changes.
     _subscription = Connectivity().onConnectivityChanged.listen(_updateStatus);
 
+    // Log status.
     _logger.i('ConnectivityService: Initialized (Online: ${sIsOnline.value})');
   }
 
   void _updateStatus(List<ConnectivityResult> results) {
-    // connectivity_plus 6.x returns a List.
-    // We are online if any result is NOT .none.
+    // Online if any result is NOT .none.
     final bool isConnected =
         results.isNotEmpty && !results.contains(ConnectivityResult.none);
 
     if (sIsOnline.value != isConnected) {
+      // Set Signal.
       sIsOnline.value = isConnected;
+
+      // Log success.
       _logger.i(
-        'ConnectivityService: Status changed to ${isConnected ? "ONLINE" : "OFFLINE"}',
+        'ConnectivityService: Status changed to '
+        '${isConnected ? "ONLINE" : "OFFLINE"}',
       );
     }
   }
 
+  // Kill subscription.
   void dispose() {
-    _subscription.cancel();
+    unawaited(_subscription.cancel());
   }
 }
 

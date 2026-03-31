@@ -23,13 +23,15 @@ class BodyMetricAdapter extends TypeAdapter<BodyMetric> {
       height: (fields[3] as num).toDouble(),
       sex: (fields[4] as num).toInt(),
       somatotype: fields[5] == null ? 1 : (fields[5] as num).toInt(),
+      manualBmi: (fields[6] as num?)?.toDouble(),
+      manualBodyFat: (fields[7] as num?)?.toDouble(),
     );
   }
 
   @override
   void write(BinaryWriter writer, BodyMetric obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.date)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class BodyMetricAdapter extends TypeAdapter<BodyMetric> {
       ..writeByte(4)
       ..write(obj.sex)
       ..writeByte(5)
-      ..write(obj.somatotype);
+      ..write(obj.somatotype)
+      ..writeByte(6)
+      ..write(obj.manualBmi)
+      ..writeByte(7)
+      ..write(obj.manualBodyFat);
   }
 
   @override

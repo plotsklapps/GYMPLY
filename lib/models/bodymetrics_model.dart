@@ -11,6 +11,8 @@ class BodyMetric {
     required this.height,
     required this.sex,
     required this.somatotype,
+    this.manualBmi,
+    this.manualBodyFat,
   });
 
   @HiveField(0)
@@ -32,8 +34,15 @@ class BodyMetric {
   // Ecto, Meso, Endo.
   final int somatotype;
 
+  @HiveField(6)
+  final double? manualBmi;
+
+  @HiveField(7)
+  final double? manualBodyFat;
+
   // Calculate BMI: weight (kg) / height (m)^2.
   double get bmi {
+    if (manualBmi != null && manualBmi! > 0) return manualBmi!;
     if (height == 0) return 0;
     final double heightInMeters = height / 100;
     return weight / (heightInMeters * heightInMeters);
@@ -41,6 +50,7 @@ class BodyMetric {
 
   // Calculate BF% using BMI method with somatotype adjustment.
   double get bodyFat {
+    if (manualBodyFat != null && manualBodyFat! > 0) return manualBodyFat!;
     final double bmiValue = bmi;
     if (bmiValue == 0) return 0;
 
