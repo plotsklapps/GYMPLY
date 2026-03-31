@@ -53,7 +53,7 @@ class NostrService {
 
   // --- SIGNALS ---
 
-  // String Signal not track npub.
+  // String Signal to track npub.
   final Signal<String?> sNpub = Signal<String?>(null, debugLabel: 'sNpub');
   // ONLY track if nsec is available, this is a SECRET, DO NOT TRACK.
   final Signal<bool> sNsec = Signal<bool>(false, debugLabel: 'sNsec');
@@ -582,9 +582,10 @@ class NostrService {
 
             // Debounce the engagement subscription update.
             _engagementDebounce?.cancel();
-            _engagementDebounce = Timer(const Duration(seconds: 2), () {
-              _updateEngagementSubscription();
-            });
+            _engagementDebounce = Timer(
+              const Duration(seconds: 2),
+              _updateEngagementSubscription,
+            );
           }
 
           // Loading State Cleanup.
@@ -601,7 +602,8 @@ class NostrService {
     });
   }
 
-  // Update subscription for reactions and comments to match currently visible posts.
+  // Update subscription for reactions and comments to match currently
+  // visible posts.
   void _updateEngagementSubscription() {
     // Cancel previous subscription to prevent duplicate listeners.
     unawaited(_reactionSubscription?.cancel());
@@ -614,7 +616,8 @@ class NostrService {
     // No posts, no subscription.
     if (eventIds.isEmpty) return;
 
-    // Request subscription for Kind 7 (Reactions) and Kind 1 (Comments) filtered by event IDs.
+    // Request subscription for Kind 7 (Reactions) and Kind 1 (Comments)
+    // filtered by event IDs.
     _reactionSubscription = _ndk.requests
         .subscription(
           name: 'gymply-engagement',
@@ -624,8 +627,12 @@ class NostrService {
         .listen((Nip01Event event) {
           // Find 'e' tag to id which WorkoutNote this event belongs to.
           final List<String> eTag = event.tags.firstWhere(
-            (List<String> t) => t.length >= 2 && t[0] == 'e',
-            orElse: () => <String>[],
+            (List<String> t) {
+              return t.length >= 2 && t[0] == 'e';
+            },
+            orElse: () {
+              return <String>[];
+            },
           );
 
           if (eTag.isEmpty) return;
@@ -772,11 +779,12 @@ class NostrService {
 
   // --- OTHERS ---
 
-  /// Publishes the NIP-65 Relay List (Kind 10002).
-  /// This tells other Nostr clients where to find your posts and where to
-  /// send you messages (replies/likes).
+  // Publishe NIP-65 Relay List (Kind 10002).
+  // This tells other Nostr clients where to find GYMPLY posts and where to
+  // send messages (replies/likes).
   Future<void> publishRelayList() async {
-    // Only users with an nsec (private key) can sign and publish their relay list.
+    // Only users with an nsec (private key) can sign and publish their
+    // relay list.
     if (!sNsec.value) return;
 
     final String myPubkey = Nip19.decode(sNpub.value!);
@@ -784,9 +792,9 @@ class NostrService {
     // Construct the NIP-65 tags.
     // Standard format: ['r', 'wss://relay.url', 'read'|'write' (optional)].
     // By omitting the 3rd parameter, we signal that these relays are for BOTH.
-    final List<List<String>> tags = _defaultRelays
-        .map((String url) => <String>['r', url])
-        .toList();
+    final List<List<String>> tags = _defaultRelays.map((String url) {
+      return <String>['r', url];
+    }).toList();
 
     final Nip01Event relayListEvent = Nip01Event(
       pubKey: myPubkey,
