@@ -8,16 +8,16 @@ class EquipmentChoiceChips extends StatelessWidget {
   const EquipmentChoiceChips({
     required this.workoutType,
     required this.selectedEquipment,
-    required this.theme,
     super.key,
   });
 
   final WorkoutType? workoutType;
   final Equipment? selectedEquipment;
-  final ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
@@ -69,8 +69,9 @@ class EquipmentChoiceChips extends StatelessWidget {
                   child: ChoiceChip(
                     showCheckmark: false,
                     avatar: isSelected
-                        ? const Icon(
+                        ? Icon(
                             LucideIcons.circleCheck,
+                            color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset(
                             'assets/images/equipment/$assetName.png',

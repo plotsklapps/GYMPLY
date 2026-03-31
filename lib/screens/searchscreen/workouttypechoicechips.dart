@@ -9,12 +9,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class WorkoutTypeChoiceChips extends StatelessWidget {
   const WorkoutTypeChoiceChips({
     required this.workoutType,
-    required this.theme,
     super.key,
   });
 
   final WorkoutType? workoutType;
-  final ThemeData theme;
 
   @override
   Widget build(BuildContext context) {

@@ -7,15 +7,15 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 class MuscleGroupChoiceChips extends StatelessWidget {
   const MuscleGroupChoiceChips({
     required this.selectedMuscleGroup,
-    required this.theme,
     super.key,
   });
 
   final MuscleGroup? selectedMuscleGroup;
-  final ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
@@ -33,9 +33,8 @@ class MuscleGroupChoiceChips extends StatelessWidget {
                   avatar: isSelected
                       ? Icon(
                           LucideIcons.circleCheck,
-                    color: theme.colorScheme.onSecondary,
-
-                  )
+                          color: theme.colorScheme.onSecondary,
+                        )
                       : Image.asset(
                           'assets/images/musclegroups/$assetName.png',
                         ),

@@ -30,15 +30,16 @@ class NostrService {
   // now GYMPLY sticks with it.
   static const int kGymplyWorkoutKind = 6742;
 
-  // Static list of 7 reliable Nostr relays.
+  // Static list of 8 reliable Nostr relays.
   final List<String> _defaultRelays = <String>[
     'wss://relay.primal.net',
     'wss://relay.damus.io',
     'wss://nos.lol',
     'wss://relay.snort.social',
-    'wss://purplepag.es',
     'wss://relay.nostr.band',
+    'wss://relay.nostr.wine',
     'wss://nostr.mom',
+    'wss://atlas.nostr.land',
   ];
 
   // Static list of 5 Blossom servers for image hosting.
@@ -108,6 +109,7 @@ class NostrService {
   StreamSubscription<Nip01Event>? _feedSubscription;
   StreamSubscription<Nip01Event>? _reactionSubscription;
   StreamSubscription<Nip01Event>? _commentSubscription;
+  Timer? _engagementDebounce;
 
   // --- METHODS ---
 
@@ -118,6 +120,8 @@ class NostrService {
         bootstrapRelays: _defaultRelays,
         cache: MemCacheManager(),
         eventVerifier: Bip340EventVerifier(),
+        // Reduce default query timeout to avoid long hangs on slow relays.
+        defaultQueryTimeout: const Duration(seconds: 5),
       ),
     );
 
@@ -575,7 +579,12 @@ class NostrService {
 
             // Fetch user's name/avatar and refresh listeners.
             await _resolveMetadata(event.pubKey);
-            _updateEngagementSubscription();
+
+            // Debounce the engagement subscription update.
+            _engagementDebounce?.cancel();
+            _engagementDebounce = Timer(const Duration(seconds: 2), () {
+              _updateEngagementSubscription();
+            });
           }
 
           // Loading State Cleanup.
@@ -745,6 +754,7 @@ class NostrService {
 
   // Kill subscriptions.
   Future<void> stopFeedSubscriptions() async {
+    _engagementDebounce?.cancel();
     await _feedSubscription?.cancel();
     await _reactionSubscription?.cancel();
     _feedSubscription = null;

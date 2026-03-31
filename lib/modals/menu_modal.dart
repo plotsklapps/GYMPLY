@@ -83,9 +83,9 @@ class MenuModal extends StatelessWidget {
                       ),
                     );
                   },
-                  leading: const Icon(LucideIcons.user),
-                  title: const Text('Account'),
-                  subtitle: const Text('Manage your account settings'),
+                  leading: const Icon(LucideIcons.hatGlasses),
+                  title: const Text('Nostr Profile'),
+                  subtitle: const Text('Manage your Nostr settings'),
                   trailing: const Icon(LucideIcons.chevronRight),
                 ),
 

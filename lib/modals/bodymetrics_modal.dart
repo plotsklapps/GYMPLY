@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/somatotype_modal.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/toast_service.dart';
@@ -32,9 +33,9 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   late int _sex;
   late int _somatotype;
 
-  // Controllers for Manual Overrides.
+  // Controllers for BMI and BF TextFields.
   late TextEditingController _bmiController;
-  late TextEditingController _bodyFatController;
+  late TextEditingController _bfController;
 
   // Default metric.
   BodyMetricType _selectedType = BodyMetricType.weight;
@@ -52,7 +53,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
     _somatotype = sSomatotype.value;
 
     // Initialize Controllers.
-    // Check if we have manual values in the latest history.
+    // Check manual values in latest history.
     final List<BodyMetric> history = sBodyMetricsHistory.value;
     final BodyMetric? latest = history.isNotEmpty ? history.last : null;
 
@@ -61,7 +62,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
           ? latest.manualBmi!.toStringAsFixed(1)
           : '',
     );
-    _bodyFatController = TextEditingController(
+    _bfController = TextEditingController(
       text: latest?.manualBodyFat != null && latest!.manualBodyFat! > 0
           ? latest.manualBodyFat!.toStringAsFixed(1)
           : '',
@@ -71,14 +72,14 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   @override
   void dispose() {
     _bmiController.dispose();
-    _bodyFatController.dispose();
+    _bfController.dispose();
     super.dispose();
   }
 
   Future<void> _saveBodyMetrics() async {
     // Attempt to parse manual values.
     final double? manualBmi = double.tryParse(_bmiController.text);
-    final double? manualBodyFat = double.tryParse(_bodyFatController.text);
+    final double? manualBodyFat = double.tryParse(_bfController.text);
 
     await workoutService.saveBodyMetric(
       age: _age,
@@ -95,6 +96,11 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
       title: 'Body Metrics Saved',
       subtitle: 'Calculations are now done with new values',
     );
+
+    // Pop the sheet.
+    if (mounted) {
+      Navigator.pop(context, true);
+    }
   }
 
   String _getUnit(BodyMetricType type) {
@@ -342,32 +348,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  // SizedBox to balance close button.
-                                  const SizedBox(width: 48),
-                                  Expanded(
-                                    child: Text(
-                                      'SOMATOTYPE',
-                                      style: theme.textTheme.titleLarge,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      // Pop and return false.
-                                      Navigator.pop(context, false);
-                                    },
-                                    icon: const Icon(LucideIcons.circleX),
-                                  ),
-                                ],
-                              ),
-                              const Divider(),
-                            ],
-                          ),
+                          child: const SomatotypeModal(),
                         );
                       },
                       icon: const Icon(LucideIcons.info),
@@ -449,7 +430,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                     // Body Fat % TextField.
                     Expanded(
                       child: TextField(
-                        controller: _bodyFatController,
+                        controller: _bfController,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
