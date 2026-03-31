@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:ndk/ndk.dart' hide Logger; // Hide conflicting Logger from NDK
@@ -128,16 +129,29 @@ class NostrService {
     sNpub.value = npub;
     sNsec.value = nsec != null;
 
-    if (npub != null) {
-      // Login to Nostr.
-      await _loginToNdk(npub, nsec);
+    // Reactive effect to handle login/metadata when online.
+    effect(() async {
+      final bool online = sIsOnline.value;
+      final String? currentNpub = sNpub.value;
 
-      // Fetch MetaData.
-      await fetchMetadata();
+      if (online && currentNpub != null) {
+        final String pubkeyHex = Nip19.decode(currentNpub);
 
-      // Log success.
-      _logger.i('Nostr service initialized successfully for $npub');
-    }
+        // Only login if NDK doesn't have the account yet.
+        if (!_ndk.accounts.hasAccount(pubkeyHex)) {
+          final String? currentNsec = await getNsec();
+          await _loginToNdk(currentNpub, currentNsec);
+          _logger.i('NostrService: Logged in reactively (Online: $online)');
+        }
+
+        // Fetch metadata silently in background.
+        if (sMetadata.value == null) {
+          await fetchMetadata(silent: true);
+        }
+      }
+    });
+
+    _logger.i('NostrService: Engine initialized (Keys: ${npub != null})');
   }
 
   // Login to Nostr with npub/nsec.
@@ -161,33 +175,42 @@ class NostrService {
   }
 
   // Load profile for a specific pubkey (hex or npub).
-  Future<Metadata?> getMetadataForPubkey(String pubkey) async {
+  Future<Metadata?> getMetadataForPubkey(
+    String pubkey, {
+    bool silent = false,
+  }) async {
     final String hex = pubkey.startsWith('npub')
         ? Nip19.decode(pubkey)
         : pubkey;
     try {
-      // Load metadata from NDK.
-      return await _ndk.metadata.loadMetadata(hex);
+      // Load metadata from NDK with a timeout to prevent hanging.
+      return await _ndk.metadata
+          .loadMetadata(hex)
+          .timeout(
+            const Duration(seconds: 5),
+          );
     } on Object catch (e) {
       // Log error.
       _logger.w('Failed to load metadata for $pubkey: $e');
 
-      // Show toast to user.
-      ToastService.showError(
-        title: 'Error Loading Metadata',
-        subtitle: '$e',
-      );
+      // Show toast to user if not silent.
+      if (!silent) {
+        ToastService.showError(title: 'Error Loading Metadata', subtitle: '$e');
+      }
 
       return null;
     }
   }
 
   // Load OWN metadata.
-  Future<void> fetchMetadata() async {
+  Future<void> fetchMetadata({bool silent = false}) async {
     if (sNpub.value == null) return;
 
     // Use npub to load metadata.
-    final Metadata? meta = await getMetadataForPubkey(sNpub.value!);
+    final Metadata? meta = await getMetadataForPubkey(
+      sNpub.value!,
+      silent: silent,
+    );
     if (meta != null) {
       // Set Signal with fetched metadata.
       sMetadata.value = meta;
@@ -522,6 +545,9 @@ class NostrService {
     // Prevent multiple simultaneous subscriptions.
     if (_feedSubscription != null) return;
 
+    // Don't start if offline.
+    if (!sIsOnline.value) return;
+
     // Set Signal.
     sLoadingFeed.value = true;
 
@@ -691,7 +717,8 @@ class NostrService {
 
     try {
       // Load profile (Name, Avatar, etc.) from NDK.
-      final Metadata? meta = await getMetadataForPubkey(pubkey);
+      // Resolve SILENTLY as this is background activity.
+      final Metadata? meta = await getMetadataForPubkey(pubkey, silent: true);
 
       if (meta != null) {
         // Set Signal from new Map to trigger UI change.

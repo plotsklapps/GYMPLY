@@ -1,13 +1,15 @@
+import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Logical Enum for all tabs.
 enum AppTab { feed, stats, workout, exercise, search }
 
-// Computed Signal for Feed visibility (depending on pubkey availability).
+// Computed Signal for Feed visibility.
+// Shows only if user has a pubkey AND is online.
 final Computed<bool> cShowFeed = Computed<bool>(
   () {
-    return nostrService.sNpub.value != null;
+    return nostrService.sNpub.value != null && sIsOnline.value;
   },
   debugLabel: 'cShowFeed',
 );

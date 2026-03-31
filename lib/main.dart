@@ -9,6 +9,7 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/screens/onboarding_screen.dart';
+import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -56,6 +57,9 @@ void main() async {
 
   // WorkoutService loads favorites, settings and history.
   await workoutService.init();
+
+  // ConnectivityService monitors internet status.
+  await connectivityService.init();
 
   // NostrService loads keys from secure storage.
   await nostrService.init();
