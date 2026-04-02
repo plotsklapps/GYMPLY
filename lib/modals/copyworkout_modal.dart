@@ -80,6 +80,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
 
         // Overwrite vs Merge Toggle.
         SwitchListTile(
+          contentPadding: EdgeInsets.zero,
           title: Text(
             _overwrite
                 ? "Overwrite Today's Workout"
@@ -105,6 +106,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
 
         // Empty vs Values Toggle.
         SwitchListTile(
+          contentPadding: EdgeInsets.zero,
           title: Text(
             _emptyExercises ? 'Copy as Empty Template' : 'Copy All Values',
             style: theme.textTheme.titleMedium?.copyWith(
@@ -129,6 +131,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
 
         // Timer Toggle.
         SwitchListTile(
+          contentPadding: EdgeInsets.zero,
           title: Text(
             _overwriteTimer
                 ? 'Overwrite Training Time'
