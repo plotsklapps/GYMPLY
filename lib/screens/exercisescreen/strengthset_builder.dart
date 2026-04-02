@@ -103,7 +103,8 @@ class StrengthSetBuilder extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        '${set.weight.toStringAsFixed(0)} kg x ${set.reps} reps',
+                        '${set.weight.toStringAsFixed(0)} kg x '
+                        '${set.reps} reps',
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: isNewPR ? theme.colorScheme.onSecondary : null,
                         ),

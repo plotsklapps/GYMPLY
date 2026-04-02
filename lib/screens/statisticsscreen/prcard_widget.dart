@@ -45,7 +45,8 @@ class PRCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'You broke ${workoutPRs.length} Personal Records today!',
+                        'You broke ${workoutPRs.length} '
+                        'Personal Records today!',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -69,7 +70,8 @@ class PRCard extends StatelessWidget {
                 detail = '${(pr['value'] as double).toStringAsFixed(1)} kg';
               } else if (type == 'SET') {
                 detail =
-                    '${(pr['weight'] as double).toStringAsFixed(1)} kg x ${pr['reps']} reps';
+                    '${(pr['weight'] as double).toStringAsFixed(1)} kg x '
+                    '${pr['reps']} reps';
               } else if (type == 'TOTAL') {
                 if (exercise is StrengthExercise) {
                   detail =

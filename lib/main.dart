@@ -79,6 +79,7 @@ class MainEntry extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'GYMPLY.',
         theme: cThemeData.watch(context),
+        // First time users get an onboarding.
         home: sOnboardingCompleted.watch(context)
             ? const HomeScreen()
             : const OnboardingScreen(),
