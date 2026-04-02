@@ -796,6 +796,74 @@ class WorkoutService {
     }
   }
 
+  // Copy a workout to today's active session.
+  void copyWorkoutToToday(
+    Workout workoutToCopy, {
+    required bool merge,
+    required bool keepValues,
+    required bool addTime,
+  }) {
+    final List<WorkoutExercise> exercisesToAdd = <WorkoutExercise>[];
+
+    for (final WorkoutExercise ex in workoutToCopy.exercises) {
+      if (keepValues) {
+        exercisesToAdd.add(ex.copyWith());
+      } else {
+        if (ex is StrengthExercise) {
+          exercisesToAdd.add(
+            ex.copyWith(
+              sets: <StrengthSet>[],
+            ),
+          );
+        } else if (ex is CardioExercise) {
+          exercisesToAdd.add(
+            ex.copyWith(
+              sets: <CardioSet>[],
+            ),
+          );
+        } else if (ex is StretchExercise) {
+          exercisesToAdd.add(
+            ex.copyWith(
+              sets: <StretchSet>[],
+            ),
+          );
+        } else {
+          exercisesToAdd.add(ex.copyWith());
+        }
+      }
+    }
+
+    final List<WorkoutExercise> newExercises = <WorkoutExercise>[];
+    if (merge) {
+      newExercises
+        ..addAll(sActiveWorkout.value.exercises)
+        ..addAll(exercisesToAdd);
+    } else {
+      newExercises.addAll(exercisesToAdd);
+    }
+
+    final int newTotalDuration = addTime
+        ? TotalTimer.sElapsedTotalTime.value + workoutToCopy.totalDuration
+        : workoutToCopy.totalDuration;
+
+    sActiveWorkout.value = sActiveWorkout.value.copyWith(
+      exercises: newExercises,
+      totalDuration: newTotalDuration,
+    );
+
+    TotalTimer.sElapsedTotalTime.value = newTotalDuration;
+
+    ToastService.showSuccess(
+      title: 'Workout Copied',
+      subtitle: 'Successfully copied to today.',
+    );
+
+    // Log success.
+    _logger.i(
+      'WorkoutService: Workout copied. Merge: $merge, KeepValues: $keepValues, AddTime: $addTime',
+    );
+  }
+
   // Calculates Personal Records for a specific Exercise ID.
   // If [includeActive] is false, it only considers historical workouts.
   PersonalRecord getPersonalRecords(

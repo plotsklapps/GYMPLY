@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
@@ -108,10 +109,38 @@ class WorkoutSummaryModal extends StatelessWidget {
                     // Perform actual deletion.
                     await workoutService.deleteWorkout(workout.dateKey);
                   }
+                } else if (value == 'copy') {
+                  final bool copied = await ModalService.showModal(
+                    context: context,
+                    child: CopyWorkoutModal(workout: workout),
+                  );
+
+                  if (copied) {
+                    if (context.mounted) Navigator.pop(context);
+                  }
                 }
               },
               itemBuilder: (BuildContext context) {
                 return <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'copy',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text('Copy'),
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Center(
+                            child: Icon(
+                              LucideIcons.copy,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem<String>(
                     value: 'delete',
                     child: Row(
