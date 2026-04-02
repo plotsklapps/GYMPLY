@@ -18,13 +18,10 @@ class CopyWorkoutModal extends StatefulWidget {
 class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
   // Overwrite vs Merge.
   bool _overwrite = true;
-
   // Empty vs Copy Values.
   bool _emptyExercises = true;
-
   // Overwrite Timer vs Add.
   bool _overwriteTimer = true;
-
   bool _isLoading = false;
 
   Future<void> _performCopy() async {
@@ -32,7 +29,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
       _isLoading = true;
     });
 
-    // Small delay to show the spinner.
+    // Small delay to show spinner.
     await Future<void>.delayed(const Duration(milliseconds: 400));
 
     // Perform copy Logic.
@@ -60,24 +57,27 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        // --- FIXED HEADER ---
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
-              'Copy Workout',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+            const SizedBox(width: 48),
+            Expanded(
+              child: Text(
+                'COPY WORKOUT',
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
               ),
             ),
             IconButton(
-              icon: const Icon(LucideIcons.circleX),
               onPressed: () {
-                Navigator.pop(context, false);
+                Navigator.pop(context);
               },
+              icon: const Icon(LucideIcons.circleX),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const Divider(),
+
         // Overwrite vs Merge Toggle.
         SwitchListTile(
           title: Text(
@@ -91,7 +91,8 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
           subtitle: Text(
             _overwrite
                 ? 'Current active workout exercises will be replaced.'
-                : "Copied exercises will be appended to today's active workout.",
+                : "Copied exercises will be appended to today's "
+                      'active workout.',
             style: theme.textTheme.bodyMedium,
           ),
           value: _overwrite,
@@ -100,9 +101,8 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               _overwrite = value;
             });
           },
-          activeTrackColor: theme.colorScheme.primaryContainer,
-          activeThumbColor: theme.colorScheme.primary,
         ),
+
         // Empty vs Values Toggle.
         SwitchListTile(
           title: Text(
@@ -113,8 +113,10 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
           ),
           subtitle: Text(
             _emptyExercises
-                ? 'Only exercise selections will be copied. Sets, reps, and durations will be empty.'
-                : 'All sets, reps, weight, and durations will be copied exactly.',
+                ? 'Only exercise selections will be copied. '
+                      'Sets, reps, and durations will be empty.'
+                : 'All sets, reps, weight, and durations will be '
+                      'copied exactly.',
             style: theme.textTheme.bodyMedium,
           ),
           value: _emptyExercises,
@@ -123,9 +125,8 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               _emptyExercises = value;
             });
           },
-          activeTrackColor: theme.colorScheme.primaryContainer,
-          activeThumbColor: theme.colorScheme.primary,
         ),
+
         // Timer Toggle.
         SwitchListTile(
           title: Text(
@@ -138,8 +139,10 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
           ),
           subtitle: Text(
             _overwriteTimer
-                ? "Today's total training time will be replaced with the copied workout's time."
-                : "The copied workout's total time will be added to today's current training time.",
+                ? "Today's total training time will be replaced "
+                      "with the copied workout's time."
+                : "The copied workout's total time will be added "
+                      "to today's current training time.",
             style: theme.textTheme.bodyMedium,
           ),
           value: _overwriteTimer,
@@ -148,10 +151,10 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               _overwriteTimer = value;
             });
           },
-          activeTrackColor: theme.colorScheme.primaryContainer,
-          activeThumbColor: theme.colorScheme.primary,
         ),
         const SizedBox(height: 24),
+
+        // Buttons Row.
         Row(
           children: <Widget>[
             Expanded(
@@ -159,6 +162,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
                 onPressed: _isLoading
                     ? null
                     : () {
+                        // Close CopyWorkoutModal, return false.
                         Navigator.pop(context, false);
                       },
                 child: const Text('CANCEL'),
@@ -169,13 +173,10 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               child: FilledButton(
                 onPressed: _isLoading ? null : _performCopy,
                 child: _isLoading
-                    ? SizedBox(
+                    ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: theme.colorScheme.onPrimary,
-                        ),
+                        child: CircularProgressIndicator(),
                       )
                     : const Text('COPY'),
               ),

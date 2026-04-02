@@ -59,6 +59,16 @@ class TotalTimer {
     });
   }
 
+  /// Safely updates the timer's duration.
+  /// If the timer is running, it adjusts the internal start time to
+  /// prevent the background loop from overwriting the change.
+  void syncTotalTime(int seconds) {
+    sElapsedTotalTime.value = seconds;
+    if (_startTime != null) {
+      _startTime = DateTime.now().subtract(Duration(seconds: seconds));
+    }
+  }
+
   Future<void> pauseTimer() async {
     // Give a little bzzz.
     await HapticFeedback.lightImpact();

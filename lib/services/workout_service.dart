@@ -116,7 +116,7 @@ class WorkoutService {
       sActiveWorkout.value = todayWorkout;
 
       // Set the total timer to the workout's total duration.
-      TotalTimer.sElapsedTotalTime.value = todayWorkout.totalDuration;
+      TotalTimer().syncTotalTime(todayWorkout.totalDuration);
 
       // Log workout for today.
       _logger.i(
@@ -139,7 +139,7 @@ class WorkoutService {
       );
 
       // Set TotalTimer to 0.
-      TotalTimer.sElapsedTotalTime.value = 0;
+      TotalTimer().syncTotalTime(0);
     }
 
     // Auto-save active workout whenever it changes.
@@ -341,7 +341,7 @@ class WorkoutService {
         totalDuration: 0,
       );
       // Reset total timer.
-      TotalTimer.sElapsedTotalTime.value = 0;
+      TotalTimer().syncTotalTime(0);
     }
 
     // Log success.
@@ -842,8 +842,12 @@ class WorkoutService {
       newExercises.addAll(exercisesToAdd);
     }
 
+    // Prevent doubling duration if we are copying today's workout to itself.
+    final bool isSameWorkout = workoutToCopy.id == sActiveWorkout.value.id;
+    final int durationToAdd = isSameWorkout ? 0 : workoutToCopy.totalDuration;
+
     final int newTotalDuration = addTime
-        ? TotalTimer.sElapsedTotalTime.value + workoutToCopy.totalDuration
+        ? TotalTimer.sElapsedTotalTime.value + durationToAdd
         : workoutToCopy.totalDuration;
 
     sActiveWorkout.value = sActiveWorkout.value.copyWith(
@@ -851,7 +855,8 @@ class WorkoutService {
       totalDuration: newTotalDuration,
     );
 
-    TotalTimer.sElapsedTotalTime.value = newTotalDuration;
+    // Update TotalTimer correctly (handling running state).
+    TotalTimer().syncTotalTime(newTotalDuration);
 
     ToastService.showSuccess(
       title: 'Workout Copied',
