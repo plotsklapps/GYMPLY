@@ -10,19 +10,24 @@ class ModalService {
     final bool? result = await showModalBottomSheet<bool>(
       showDragHandle: true,
       isScrollControlled: true,
+      // Keeps top modal below status bar.
       useSafeArea: true,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.9,
       ),
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 48,
+        // Keeps bottom modal above OS navigation (gesture or buttons).
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            ),
+            child: scrollable ? SingleChildScrollView(child: child) : child,
           ),
-          child: scrollable ? SingleChildScrollView(child: child) : child,
         );
       },
     );
