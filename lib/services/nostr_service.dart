@@ -24,7 +24,23 @@ class NostrService {
   // Initialize FlutterSecureStorage for npub/nsec.
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final Logger _logger = Logger();
-  late Ndk _ndk;
+  Ndk? _ndkInstance;
+
+  // Getter for Ndk with lazy initialization.
+  Ndk get _ndk {
+    if (_ndkInstance == null) {
+      _ndkInstance = Ndk(
+        NdkConfig(
+          bootstrapRelays: _defaultRelays,
+          cache: MemCacheManager(),
+          eventVerifier: Bip340EventVerifier(),
+          // Reduce default query timeout to avoid long hangs on slow relays.
+          defaultQueryTimeout: const Duration(seconds: 5),
+        ),
+      );
+    }
+    return _ndkInstance!;
+  }
 
   // Custom Kind for GYMPLY workout posts. This number was chosen randomly,
   // now GYMPLY sticks with it.
@@ -115,16 +131,6 @@ class NostrService {
 
   // Initialize Nostr service (ndk package).
   Future<void> init() async {
-    _ndk = Ndk(
-      NdkConfig(
-        bootstrapRelays: _defaultRelays,
-        cache: MemCacheManager(),
-        eventVerifier: Bip340EventVerifier(),
-        // Reduce default query timeout to avoid long hangs on slow relays.
-        defaultQueryTimeout: const Duration(seconds: 5),
-      ),
-    );
-
     // Set npub/nsec Signals from FlutterSecureStorage.
     final String? npub = await _storage.read(key: 'nostr_npub');
     final String? nsec = await _storage.read(key: 'nostr_nsec');
@@ -138,11 +144,12 @@ class NostrService {
       final bool online = sIsOnline.value;
       final String? currentNpub = sNpub.value;
 
+      // Only initialize NDK if we have an account and are online.
       if (online && currentNpub != null) {
         final String pubkeyHex = Nip19.decode(currentNpub);
 
         // Only login if NDK doesn't have the account yet.
-        if (!_ndk.accounts.hasAccount(pubkeyHex)) {
+        if (_ndkInstance == null || !_ndk.accounts.hasAccount(pubkeyHex)) {
           final String? currentNsec = await getNsec();
           await _loginToNdk(currentNpub, currentNsec);
           _logger.i('NostrService: Logged in reactively (Online: $online)');
@@ -155,7 +162,7 @@ class NostrService {
       }
     });
 
-    _logger.i('NostrService: Engine initialized (Keys: ${npub != null})');
+    _logger.i('NostrService: Initialized (Keys: ${npub != null})');
   }
 
   // Login to Nostr with npub/nsec.

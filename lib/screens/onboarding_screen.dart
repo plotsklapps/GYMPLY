@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -249,22 +250,24 @@ class OnboardingSlide extends StatelessWidget {
           SizedBox(
             height: 128,
             child: Center(child: iconWidget),
+          ).animate(
+            effects: <Effect<dynamic>>[
+              const FadeEffect(
+                duration: Duration(milliseconds: 800),
+                curve: Curves.easeInOut,
+              ),
+            ],
           ),
           const SizedBox(height: 48),
           Text(
             title,
-            style: textTheme.displayMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
+            style: textTheme.displayMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             subtitle,
-            style: textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              height: 1.5,
-            ),
+            style: textTheme.bodyLarge?.copyWith(),
             textAlign: TextAlign.center,
           ),
           if (actions != null) ...actions!,
