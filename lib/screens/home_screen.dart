@@ -125,24 +125,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             tabs: <Widget>[
               if (showFeed)
                 const Tab(
-                  icon: Icon(LucideIcons.rss, size: 18),
-                  height: 32,
+                  icon: Icon(LucideIcons.rss),
                 ),
               const Tab(
-                icon: Icon(LucideIcons.trendingUp, size: 18),
-                height: 32,
+                icon: Icon(LucideIcons.trendingUp),
               ),
               const Tab(
-                icon: Icon(LucideIcons.dumbbell, size: 18),
-                height: 32,
+                icon: Icon(LucideIcons.dumbbell),
               ),
               const Tab(
-                icon: Icon(LucideIcons.notebookPen, size: 18),
-                height: 32,
+                icon: Icon(LucideIcons.notebookPen),
               ),
               const Tab(
-                icon: Icon(LucideIcons.search, size: 18),
-                height: 32,
+                icon: Icon(LucideIcons.search),
               ),
             ],
           ),

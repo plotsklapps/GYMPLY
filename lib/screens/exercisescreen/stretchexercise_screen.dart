@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
+import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/screens/exercisescreen/stretchset_builder.dart';
 import 'package:gymply/screens/exercisescreen/stretchtimer_text.dart';
@@ -158,7 +159,12 @@ class StretchExerciseScreen extends StatelessWidget {
                 // Timer.
                 TextButton(
                   onPressed: () async {
-                    if (mode != StretchMode.stopwatch) {
+                    if (mode == StretchMode.stopwatch) {
+                      await ModalService.showModal(
+                        context: context,
+                        child: const StopwatchTimerModal(),
+                      );
+                    } else {
                       await ModalService.showModal(
                         context: context,
                         child: const IntervalTimerModal(),
