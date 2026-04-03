@@ -73,6 +73,14 @@ class StopwatchTimer {
     sElapsedStopwatchTime.value = _baseTime;
   }
 
+  // Update baseTime to allow for manual setting.
+  void setManualTime(int milliseconds) {
+    _baseTime = milliseconds;
+    _stopwatch
+        .reset(); // Make sure to reset the stopwatch when setting manual base
+    sElapsedStopwatchTime.value = milliseconds;
+  }
+
   Future<void> resetTimer() async {
     // Give a bigger bzzz.
     await HapticFeedback.mediumImpact();

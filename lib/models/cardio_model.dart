@@ -148,7 +148,7 @@ class CardioSet {
       case 0:
         met = 3.5; // Brisk walk / Light cardio
       case 2:
-        met = 12.0; // Sprint / Hard cardio
+        met = 11.0; // Sprint / Hard cardio
       case 1:
       default:
         met = 7.0; // Jog / Moderate cardio

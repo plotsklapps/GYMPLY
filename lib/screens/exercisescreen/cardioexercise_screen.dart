@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
+import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/screens/exercisescreen/cardioset_builder.dart';
 import 'package:gymply/screens/exercisescreen/cardiotimer_text.dart';
@@ -158,10 +159,15 @@ class CardioExerciseScreen extends StatelessWidget {
                 // Timer.
                 TextButton(
                   onPressed: () async {
-                    if (mode != CardioMode.stopwatch) {
+                    if (mode == CardioMode.stopwatch) {
                       await ModalService.showModal(
                         context: context,
-                        child: const IntervalTimerSheet(),
+                        child: const StopwatchTimerModal(),
+                      );
+                    } else {
+                      await ModalService.showModal(
+                        context: context,
+                        child: const IntervalTimerModal(),
                       );
                     }
                   },

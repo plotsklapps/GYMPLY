@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/services/intervaltimer_service.dart';
+import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:signals/signals_flutter.dart';
 
-class IntervalTimerModal extends StatelessWidget {
-  const IntervalTimerModal({super.key});
+class StopwatchTimerModal extends StatelessWidget {
+  const StopwatchTimerModal({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
-    // Watch Signals.
-    final int initialMilliSeconds = IntervalTimer.sInitialIntervalTime.watch(
-      context,
-    );
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -24,7 +18,7 @@ class IntervalTimerModal extends StatelessWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'SET INTERVAL TIMER',
+                'SET DURATION',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
@@ -40,18 +34,13 @@ class IntervalTimerModal extends StatelessWidget {
         ),
         const Divider(),
         const SizedBox(height: 16),
-        // H:M:S Picker.
-        IntervalDurationPicker(
-          initialMilliSeconds: initialMilliSeconds,
-          onChanged: (int newMilliSeconds) {
-            // Update the initial duration.
-            IntervalTimer.sInitialIntervalTime.value = newMilliSeconds;
-
-            // Sync the elapsed duration if the timer is not currently running.
-            // This is handled manually to keep the service logic simple.
-            if (!IntervalTimer.sIntervalTimerRunning.value) {
-              IntervalTimer.sElapsedIntervalTime.value = newMilliSeconds;
-            }
+        // M:S Picker.
+        StopwatchDurationPicker(
+          initialSeconds: (StopwatchTimer.sElapsedStopwatchTime.value / 1000)
+              .round(),
+          onChanged: (int newSeconds) {
+            // Update the temporary value for display/confirmation.
+            _tempSeconds = newSeconds;
           },
         ),
         const SizedBox(height: 24),
@@ -62,21 +51,25 @@ class IntervalTimerModal extends StatelessWidget {
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
-                  // Reset to default.
-                  IntervalTimer.sInitialIntervalTime.value = 60000;
-                  IntervalTimer.sElapsedIntervalTime.value = 60000;
+                  // Reset to zero.
+                  StopwatchTimer().resetTimer();
 
                   // Pop and return false.
                   Navigator.pop(context, false);
                 },
-                child: const Text('DEFAULT'),
+                child: const Text('RESET'),
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () {
-                  // Pop and return true;
+                  // Set to confirmed value.
+                  // We do NOT call resetTimer() here, because it sets
+                  // sElapsedStopwatchTime to 0.
+                  StopwatchTimer().setManualTime(_tempSeconds * 1000);
+
+                  // Pop and return true.
                   Navigator.pop(context, true);
                 },
                 child: const Text('CONFIRM'),
@@ -89,23 +82,26 @@ class IntervalTimerModal extends StatelessWidget {
   }
 }
 
-class IntervalDurationPicker extends StatefulWidget {
-  const IntervalDurationPicker({
-    required this.initialMilliSeconds,
+// Global variable for temporary value tracking
+int _tempSeconds = 0;
+
+class StopwatchDurationPicker extends StatefulWidget {
+  const StopwatchDurationPicker({
+    required this.initialSeconds,
     required this.onChanged,
     super.key,
   });
 
-  final int initialMilliSeconds;
+  final int initialSeconds;
   final ValueChanged<int> onChanged;
 
   @override
-  State<IntervalDurationPicker> createState() {
-    return _IntervalDurationPickerState();
+  State<StopwatchDurationPicker> createState() {
+    return _StopwatchDurationPickerState();
   }
 }
 
-class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
+class _StopwatchDurationPickerState extends State<StopwatchDurationPicker> {
   late int _hours;
   late int _minutes;
   late int _seconds;
@@ -113,18 +109,17 @@ class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
   @override
   void initState() {
     super.initState();
-    final Duration duration = Duration(
-      milliseconds: widget.initialMilliSeconds,
-    );
-    _hours = duration.inHours;
-    _minutes = duration.inMinutes % 60;
-    _seconds = duration.inSeconds % 60;
+    int remaining = widget.initialSeconds;
+    _hours = remaining ~/ 3600;
+    remaining %= 3600;
+    _minutes = remaining ~/ 60;
+    _seconds = remaining % 60;
+    _tempSeconds = widget.initialSeconds;
   }
 
   void _updateDuration() {
-    final int totalMilliSeconds =
-        ((_hours * 3600) + (_minutes * 60) + _seconds) * 1000;
-    widget.onChanged(totalMilliSeconds);
+    final int totalSeconds = (_hours * 3600) + (_minutes * 60) + _seconds;
+    widget.onChanged(totalSeconds);
   }
 
   @override
@@ -148,13 +143,8 @@ class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              ':',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(50),
-              ),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(':', style: theme.textTheme.headlineMedium),
           ),
           _ScrollColumn(
             label: 'MIN',
@@ -168,13 +158,8 @@ class _IntervalDurationPickerState extends State<IntervalDurationPicker> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              ':',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(50),
-              ),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(':', style: theme.textTheme.headlineMedium),
           ),
           _ScrollColumn(
             label: 'SEC',
@@ -216,6 +201,7 @@ class _ScrollColumn extends StatelessWidget {
           label,
           style: theme.textTheme.labelMedium,
         ),
+
         Expanded(
           child: SizedBox(
             width: 100,

@@ -195,91 +195,6 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
         ),
         const Divider(),
 
-        // Range Selector Toggle and Title.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    _selectedType.name.toUpperCase(),
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.outline,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  if (history.isNotEmpty) ...<Widget>[
-                    const SizedBox(width: 8),
-                    Text(
-                      '(${_getValue(history.last).toStringAsFixed(1)}'
-                      '${_getUnit(_selectedType)})',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () {
-                setState(() {
-                  _selectedRange =
-                      BodyMetricRange.values[(_selectedRange.index + 1) %
-                          BodyMetricRange.values.length];
-                });
-              },
-              icon: const Icon(LucideIcons.calendarDays, size: 18),
-              label: Text(_getRangeLabel(_selectedRange)),
-            ),
-          ],
-        ),
-
-        // Body Metrics Chart.
-        _BodyMetricsChart(
-          history: history,
-          selectedType: _selectedType,
-          selectedRange: _selectedRange,
-        ),
-        const SizedBox(height: 8),
-
-        // Choice Chips for Chart Selection.
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: SegmentedButton<BodyMetricType>(
-                segments: const <ButtonSegment<BodyMetricType>>[
-                  ButtonSegment<BodyMetricType>(
-                    value: BodyMetricType.weight,
-                    label: Text('Weight'),
-                    icon: Icon(LucideIcons.weight),
-                  ),
-                  ButtonSegment<BodyMetricType>(
-                    value: BodyMetricType.bmi,
-                    label: Text('BMI'),
-                    icon: Icon(LucideIcons.activity),
-                  ),
-                  ButtonSegment<BodyMetricType>(
-                    value: BodyMetricType.bodyFat,
-                    label: Text('Fat %'),
-                    icon: Icon(LucideIcons.flame),
-                  ),
-                ],
-                selected: <BodyMetricType>{_selectedType},
-                onSelectionChanged: (Set<BodyMetricType> newSelection) {
-                  setState(() {
-                    _selectedType = newSelection.first;
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        const Divider(height: 32),
-
         // Scrollable body.
         // Sex Selection.
         Flexible(
@@ -287,6 +202,91 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // Range Selector Toggle and Title.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            _selectedType.name.toUpperCase(),
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.outline,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          if (history.isNotEmpty) ...<Widget>[
+                            const SizedBox(width: 8),
+                            Text(
+                              '(${_getValue(history.last).toStringAsFixed(1)}'
+                              '${_getUnit(_selectedType)})',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _selectedRange =
+                              BodyMetricRange.values[(_selectedRange.index +
+                                      1) %
+                                  BodyMetricRange.values.length];
+                        });
+                      },
+                      icon: const Icon(LucideIcons.calendarDays, size: 18),
+                      label: Text(_getRangeLabel(_selectedRange)),
+                    ),
+                  ],
+                ),
+
+                // Body Metrics Chart.
+                _BodyMetricsChart(
+                  history: history,
+                  selectedType: _selectedType,
+                  selectedRange: _selectedRange,
+                ),
+                const SizedBox(height: 8),
+
+                // Choice Chips for Chart Selection.
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SegmentedButton<BodyMetricType>(
+                        segments: const <ButtonSegment<BodyMetricType>>[
+                          ButtonSegment<BodyMetricType>(
+                            value: BodyMetricType.weight,
+                            label: Text('Weight'),
+                            icon: Icon(LucideIcons.weight),
+                          ),
+                          ButtonSegment<BodyMetricType>(
+                            value: BodyMetricType.bmi,
+                            label: Text('BMI'),
+                            icon: Icon(LucideIcons.activity),
+                          ),
+                          ButtonSegment<BodyMetricType>(
+                            value: BodyMetricType.bodyFat,
+                            label: Text('Fat %'),
+                            icon: Icon(LucideIcons.flame),
+                          ),
+                        ],
+                        selected: <BodyMetricType>{_selectedType},
+                        onSelectionChanged: (Set<BodyMetricType> newSelection) {
+                          setState(() {
+                            _selectedType = newSelection.first;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(),
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<int>(

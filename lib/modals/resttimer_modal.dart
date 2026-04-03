@@ -22,7 +22,7 @@ class RestTimerModal extends StatelessWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'SET INTERVAL TIMER',
+                'SET REST TIMER',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),

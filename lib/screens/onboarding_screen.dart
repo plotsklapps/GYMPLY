@@ -148,9 +148,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     title: 'OWN YOUR IDENTITY',
                     subtitle:
-                        'GYMPLY supports Nostr to share your workouts '
-                        'with other GYMPLY users securely.\n\n'
-                        'This is entirely optional and found in settings.',
+                        'GYMPLY supports the Nostr protocol to share '
+                        'your workouts with other GYMPLY users '
+                        'securely.\n\n'
+                        'This is entirely optional.',
                   ),
                 ],
               ),

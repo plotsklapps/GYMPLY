@@ -161,7 +161,7 @@ class StretchExerciseScreen extends StatelessWidget {
                     if (mode != StretchMode.stopwatch) {
                       await ModalService.showModal(
                         context: context,
-                        child: const IntervalTimerSheet(),
+                        child: const IntervalTimerModal(),
                       );
                     }
                   },
