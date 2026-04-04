@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
@@ -14,6 +15,7 @@ class ThemeSettingsModal extends StatelessWidget {
     final bool isDarkMode = sDarkMode.watch(context);
     final bool isWakelock = sWakelock.watch(context);
     final FlexSchemes flexScheme = sFlexScheme.watch(context);
+    final String font = sFont.watch(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -61,8 +63,8 @@ class ThemeSettingsModal extends StatelessWidget {
                         : LucideIcons.smartphone,
                   ),
                   value: isWakelock,
-                  onChanged: (bool value) {
-                    sWakelock.value = value;
+                  onChanged: (bool value) async {
+                    await settingsService.toggleWakelock(value: value);
                   },
                 ),
 
@@ -78,8 +80,8 @@ class ThemeSettingsModal extends StatelessWidget {
                     isDarkMode ? LucideIcons.moon : LucideIcons.sun,
                   ),
                   value: isDarkMode,
-                  onChanged: (bool value) {
-                    sDarkMode.value = value;
+                  onChanged: (bool value) async {
+                    await settingsService.toggleThemeMode(value: value);
                   },
                 ),
 
@@ -113,9 +115,12 @@ class ThemeSettingsModal extends StatelessWidget {
                             ),
                           ],
                           selected: <FlexSchemes>{flexScheme},
-                          onSelectionChanged: (Set<FlexSchemes> newSelection) {
-                            sFlexScheme.value = newSelection.first;
-                          },
+                          onSelectionChanged:
+                              (Set<FlexSchemes> newSelection) async {
+                                await settingsService.updateFlexScheme(
+                                  newSelection.first,
+                                );
+                              },
                         ),
                       ),
                     ],
@@ -151,9 +156,11 @@ class ThemeSettingsModal extends StatelessWidget {
                               icon: Icon(LucideIcons.squareLibrary),
                             ),
                           ],
-                          selected: <String>{sFont.watch(context)},
-                          onSelectionChanged: (Set<String> newSelection) {
-                            sFont.value = newSelection.first;
+                          selected: <String>{font},
+                          onSelectionChanged: (Set<String> newSelection) async {
+                            await settingsService.updateFont(
+                              newSelection.first,
+                            );
                           },
                         ),
                       ),

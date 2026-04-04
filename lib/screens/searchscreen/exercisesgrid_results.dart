@@ -7,16 +7,16 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ExercisesGridResults extends StatelessWidget {
-  final List<ExercisePath> exercises;
-  final List<int> favorites;
-  final FocusNode searchFocusNode;
-
   const ExercisesGridResults({
-    super.key,
     required this.exercises,
     required this.favorites,
     required this.searchFocusNode,
+    super.key,
   });
+
+  final List<ExercisePath> exercises;
+  final List<int> favorites;
+  final FocusNode searchFocusNode;
 
   @override
   Widget build(BuildContext context) {

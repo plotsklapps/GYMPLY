@@ -6,8 +6,8 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/textformat_service.dart';
-import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
@@ -133,8 +133,8 @@ class ExerciseDetailSheet extends StatelessWidget {
                 // Favorite button.
                 IconButton(
                   visualDensity: VisualDensity.compact,
-                  onPressed: () {
-                    workoutService.toggleFavorite(exerciseId);
+                  onPressed: () async {
+                    await settingsService.toggleFavorite(exerciseId);
                   },
                   icon: Icon(
                     isFavorite ? LucideIcons.star : LucideIcons.starHalf,

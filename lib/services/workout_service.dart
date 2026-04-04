@@ -1,29 +1,27 @@
-import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
-import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
-import 'package:gymply/services/resttimer_service.dart';
+import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
-import 'package:gymply/signals/bodymetrics_signal.dart';
-import 'package:gymply/signals/exercisesgridmode_signal.dart';
-import 'package:gymply/signals/favoriteexercises_signal.dart';
-import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
-import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+
+// Central provider managing state and logic of active and completed
+// workouts. It knows how to train.
+//
+// init(): Set up the active session (resume today's workout or create
+//         fresh one) and sync timer.
 
 class WorkoutService {
   // Singleton pattern.
@@ -38,70 +36,14 @@ class WorkoutService {
 
   // Hive boxes.
   late Box<Workout> _workoutBox;
-  late Box<Settings> _settingsBox;
-  late Box<BodyMetric> _bodyMetricsBox;
-
-  // Getters for boxes.
-  Box<Settings> get settingsBox => _settingsBox;
-
-  // Box names (prevents typos).
-  static const String _workoutBoxName = 'workouts';
-  static const String _settingsBoxName = 'settings';
-  static const String _bodyMetricsBoxName = 'bodymetrics';
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
     // Log status.
     _logger.i('WorkoutService: Initializing Hive boxes and loading state');
 
-    // Open or create Hive boxes.
-    _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
-    _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
-    _bodyMetricsBox = await Hive.openBox<BodyMetric>(_bodyMetricsBoxName);
-
-    // Load body metrics history.
-    sBodyMetricsHistory.value = _bodyMetricsBox.values.toList();
-
-    // Load settings.
-    final Settings? settings = _settingsBox.get('settings');
-    if (settings != null) {
-      // Set ThemeMode.
-      sDarkMode.value = settings.darkMode;
-      // Set RestTimer.
-      RestTimer.sInitialRestTime.value = settings.initialRestTime;
-      RestTimer.sElapsedRestTime.value = settings.initialRestTime;
-      // Set Favorites.
-      sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
-      // Set Wakelock.
-      sWakelock.value = settings.isWakelock;
-      // Set FlexScheme.
-      sFlexScheme.value = settings.flexScheme;
-      // Set BodyMetrics.
-      sAge.value = settings.age;
-      sHeight.value = settings.height;
-      sWeight.value = settings.weight;
-      sSex.value = settings.sex;
-      sSomatotype.value = settings.somatotypeIndex;
-      sOnboardingCompleted.value = settings.onboardingCompleted;
-      sFont.value = settings.fontFamily;
-      sExercisesGridMode.value = settings.isExercisesGridMode;
-
-      // Log settings.
-      _logger.i(
-        'WorkoutService: Loaded settings - '
-        'DarkMode: ${settings.darkMode}, '
-        'RestTime: ${settings.initialRestTime}, '
-        'Favorites: ${sFavoriteExercises.value.length}, '
-        'Wakelock: ${settings.isWakelock}, '
-        'FlexScheme: ${settings.flexScheme.name}, '
-        'Age: ${settings.age}, '
-        'Height: ${settings.height}, '
-        'Weight: ${settings.weight}, '
-        'Sex: ${settings.sex == 0 ? "Male" : "Female"}, '
-        'Somatotype: ${settings.somatotypeIndex}, '
-        'OnboardingCompleted: ${settings.onboardingCompleted}',
-      );
-    }
+    // Retrieve Hive boxes from HiveService.
+    _workoutBox = hiveService.workoutBox;
 
     // Load all workouts into sWorkoutHistory Signal.
     sWorkoutHistory.value = _workoutBox.values.toList();
@@ -167,140 +109,6 @@ class WorkoutService {
         _logger.w('WorkoutService: Skipping auto-save for empty template.');
       }
     });
-
-    // Auto-save settings whenever they change.
-    effect(() async {
-      // Fetch Signal values.
-      final bool darkMode = sDarkMode.value;
-      final int restTime = RestTimer.sInitialRestTime.value;
-      final List<int> favorites = sFavoriteExercises.value;
-      final bool isWakelock = sWakelock.value;
-      final FlexSchemes flexScheme = sFlexScheme.value;
-      final int age = sAge.value;
-      final double height = sHeight.value;
-      final double weight = sWeight.value;
-      final int sex = sSex.value;
-      final int somatotype = sSomatotype.value;
-      final bool onboardingCompleted = sOnboardingCompleted.value;
-      final String fontFamily = sFont.value;
-      final bool isExercisesGridMode = sExercisesGridMode.value;
-
-      // Create Settings Object.
-      final Settings settings = Settings(
-        darkMode: darkMode,
-        initialRestTime: restTime,
-        favoriteExercises: favorites,
-        isWakelock: isWakelock,
-        flexSchemeIndex: flexScheme.index,
-        age: age,
-        height: height,
-        weight: weight,
-        sex: sex,
-        somatotypeIndex: somatotype,
-        onboardingCompleted: onboardingCompleted,
-        fontFamily: fontFamily,
-        isExercisesGridMode: isExercisesGridMode,
-      );
-
-      // Store to Hive.
-      await _settingsBox.put('settings', settings);
-
-      // Log save.
-      _logger.i('WorkoutService: Auto-saved settings');
-    });
-
-    // Handle Wakelock state changes.
-    effect(() async {
-      final bool enabled = sWakelock.value;
-      await WakelockPlus.toggle(enable: enabled);
-
-      // Log toggle.
-      _logger.i('WorkoutService: Wakelock toggled to $enabled');
-    });
-  }
-
-  // Save new BodyMetric and update history.
-  Future<void> saveBodyMetric({
-    required int age,
-    required double height,
-    required double weight,
-    required int sex,
-    required int somatotype,
-    double? manualBmi,
-    double? manualBodyFat,
-  }) async {
-    final DateTime now = DateTime.now();
-
-    final BodyMetric newMetric = BodyMetric(
-      date: now,
-      age: age,
-      height: height,
-      weight: weight,
-      sex: sex,
-      somatotype: somatotype,
-      manualBmi: manualBmi,
-      manualBodyFat: manualBodyFat,
-    );
-
-    // Check if an entry for today already exists.
-    final int existingIndex = _bodyMetricsBox.values.toList().indexWhere(
-      (BodyMetric m) {
-        return m.date.year == now.year &&
-            m.date.month == now.month &&
-            m.date.day == now.day;
-      },
-    );
-
-    if (existingIndex != -1) {
-      // Update existing entry for today.
-      final dynamic key = _bodyMetricsBox.keyAt(existingIndex);
-      await _bodyMetricsBox.put(key, newMetric);
-
-      // Log update.
-      _logger.i('WorkoutService: Body metrics updated for today');
-    } else {
-      // Save new entry to Hive.
-      await _bodyMetricsBox.add(newMetric);
-
-      // Log new entry.
-      _logger.i('WorkoutService: New body metrics saved to history');
-    }
-
-    // Update Signal.
-    sBodyMetricsHistory.value = _bodyMetricsBox.values.toList();
-
-    // Update basic stats.
-    sAge.value = age;
-    sHeight.value = height;
-    sWeight.value = weight;
-    sSex.value = sex;
-    sSomatotype.value = somatotype;
-  }
-
-  // Toggle favorite exercise by id.
-  void toggleFavorite(int exerciseId) {
-    final List<int> currentFavorites = List<int>.from(sFavoriteExercises.value);
-    if (currentFavorites.contains(exerciseId)) {
-      // Remove from favorites.
-      currentFavorites.remove(exerciseId);
-      // Log removal.
-      _logger.i('WorkoutService: Removed $exerciseId from favorites');
-    } else {
-      // Add to favorites.
-      currentFavorites.add(exerciseId);
-      // Log add.
-      _logger.i('WorkoutService: Added $exerciseId from favorites');
-    }
-    // Set sFavoriteExercises Signal.
-    sFavoriteExercises.value = currentFavorites;
-  }
-
-  // Toggle ExerciseGridMode.
-  void toggleExerciseGridMode() {
-    sExercisesGridMode.value = !sExercisesGridMode.value;
-    _logger.i(
-      'WorkoutService: ExerciseGridMode toggled to ${sExercisesGridMode.value}',
-    );
   }
 
   // Finish current workout.
@@ -309,64 +117,90 @@ class WorkoutService {
     String? notes,
     List<String>? imagePaths,
   }) async {
-    // Create Workout Object.
-    final Workout finalWorkout = sActiveWorkout.value.copyWith(
-      title: title,
-      totalDuration: TotalTimer.sElapsedTotalTime.value,
-      notes: notes,
-      imagePaths: imagePaths,
-    );
+    try {
+      // Create Workout Object.
+      final Workout finalWorkout = sActiveWorkout.value.copyWith(
+        title: title,
+        totalDuration: TotalTimer.sElapsedTotalTime.value,
+        notes: notes,
+        imagePaths: imagePaths,
+      );
 
-    // Update the active workout signal so state is preserved.
-    sActiveWorkout.value = finalWorkout;
+      // Update the active workout signal so state is preserved.
+      sActiveWorkout.value = finalWorkout;
 
-    // Explicitly save FINAL state to Hive.
-    await _workoutBox.put(finalWorkout.dateKey, finalWorkout);
+      // Explicitly save FINAL state to Hive.
+      await _workoutBox.put(finalWorkout.dateKey, finalWorkout);
 
-    // Update history Signal so UI reflects FINAL duration/state.
-    sWorkoutHistory.value = _workoutBox.values.toList();
+      // Update history Signal so UI reflects FINAL duration/state.
+      sWorkoutHistory.value = _workoutBox.values.toList();
 
-    // Pause timer.
-    await TotalTimer().pauseTimer();
+      // Pause timer.
+      await TotalTimer().pauseTimer();
 
-    // Log success.
-    _logger.i('WorkoutService: Workout saved ${sWorkoutHistory.value.length}');
+      // Log success.
+      _logger.i(
+        'WorkoutService: Workout saved ${sWorkoutHistory.value.length}',
+      );
 
-    // Show toast to user.
-    ToastService.showSuccess(
-      title: 'Workout saved',
-      subtitle: 'Your workout data has been securely stored to your device.',
-    );
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Workout saved',
+        subtitle: 'Your workout data has been securely stored to your device.',
+      );
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'WorkoutService: Failed to finish workout',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Workout Error',
+        subtitle: 'Failed to save workout.',
+      );
+    }
   }
 
   // Delete workout by dateKey.
   Future<void> deleteWorkout(String dateKey) async {
-    // Remove from Hive.
-    await _workoutBox.delete(dateKey);
+    try {
+      // Remove from Hive.
+      await _workoutBox.delete(dateKey);
 
-    // Update history Signal.
-    sWorkoutHistory.value = _workoutBox.values.toList();
+      // Update history Signal.
+      sWorkoutHistory.value = _workoutBox.values.toList();
 
-    // If it was in active workout, reset it.
-    if (sActiveWorkout.value.dateKey == dateKey) {
-      sActiveWorkout.value = Workout(
-        id: const Uuid().v4(),
-        title: DateTime.now().defaultWorkoutTitle,
-        dateTime: DateTime.now(),
-        totalDuration: 0,
+      // If it was in active workout, reset it.
+      if (sActiveWorkout.value.dateKey == dateKey) {
+        sActiveWorkout.value = Workout(
+          id: const Uuid().v4(),
+          title: DateTime.now().defaultWorkoutTitle,
+          dateTime: DateTime.now(),
+          totalDuration: 0,
+        );
+        // Reset total timer.
+        TotalTimer().syncTotalTime(0);
+      }
+
+      // Log success.
+      _logger.i('WorkoutService: Workout $dateKey deleted.');
+
+      // Show toast to user.
+      ToastService.showSuccess(
+        title: 'Workout deleted',
+        subtitle: 'The workout has been removed from your history.',
       );
-      // Reset total timer.
-      TotalTimer().syncTotalTime(0);
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'WorkoutService: Failed to delete workout',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Workout Error',
+        subtitle: 'Failed to delete workout.',
+      );
     }
-
-    // Log success.
-    _logger.i('WorkoutService: Workout $dateKey deleted.');
-
-    // Show toast to user.
-    ToastService.showSuccess(
-      title: 'Workout deleted',
-      subtitle: 'The workout has been removed from your history.',
-    );
   }
 
   // Add exercise to sActiveWorkout Signal.

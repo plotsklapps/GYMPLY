@@ -9,9 +9,12 @@ import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/screens/onboarding_screen.dart';
+import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/exercise_service.dart';
+import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
@@ -52,10 +55,19 @@ void main() async {
     ..registerAdapter(BodyMetricAdapter())
     ..registerAdapter(SettingsAdapter());
 
+  // Initialize Hive service.
+  await hiveService.init();
+
+  // SettingsService loads all personal settings.
+  settingsService.init();
+
+  //  BodyMetricsService loads all body metric data.
+  bodyMetricsService.init();
+
   // ExerciseService loads raw image assets.
   await exerciseService.init();
 
-  // WorkoutService loads favorites, settings and history.
+  // WorkoutService loads active workout session and history.
   await workoutService.init();
 
   // ConnectivityService monitors internet status.

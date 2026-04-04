@@ -6,7 +6,7 @@ import 'package:gymply/screens/searchscreen/exerciseslist_results.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
 import 'package:gymply/services/filter_service.dart';
-import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/signals/search_signal.dart';
@@ -135,9 +135,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
-                    onPressed: () {
-                      workoutService.toggleExerciseGridMode();
-                    },
+                    onPressed: settingsService.toggleExerciseViewMode,
                     icon: Icon(
                       isGridMode
                           ? LucideIcons.layoutList
