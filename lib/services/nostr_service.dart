@@ -28,8 +28,7 @@ class NostrService {
 
   // Getter for Ndk with lazy initialization.
   Ndk get _ndk {
-    if (_ndkInstance == null) {
-      _ndkInstance = Ndk(
+    _ndkInstance ??= Ndk(
         NdkConfig(
           bootstrapRelays: _defaultRelays,
           cache: MemCacheManager(),
@@ -38,7 +37,6 @@ class NostrService {
           defaultQueryTimeout: const Duration(seconds: 5),
         ),
       );
-    }
     return _ndkInstance!;
   }
 
