@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gymply/models/bodymetrics_model.dart';
-import 'package:gymply/models/cardio_model.dart';
-import 'package:gymply/models/exercise_model.dart';
-import 'package:gymply/models/settings_model.dart';
-import 'package:gymply/models/strength_model.dart';
-import 'package:gymply/models/stretch_model.dart';
-import 'package:gymply/models/workout_model.dart';
+import 'package:gymply/hive_registrar.g.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/screens/onboarding_screen.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
@@ -40,20 +34,7 @@ void main() async {
 
   // Register Hive Adapters, when altered, run:
   // $ dart run build_runner build --delete-conflicting-outputs
-  Hive
-    ..registerAdapter(WorkoutAdapter())
-    ..registerAdapter(StrengthExerciseAdapter())
-    ..registerAdapter(CardioExerciseAdapter())
-    ..registerAdapter(StretchExerciseAdapter())
-    ..registerAdapter(StrengthSetAdapter())
-    ..registerAdapter(CardioSetAdapter())
-    ..registerAdapter(StretchSetAdapter())
-    ..registerAdapter(MuscleGroupAdapter())
-    ..registerAdapter(EquipmentAdapter())
-    ..registerAdapter(WorkoutTypeAdapter())
-    ..registerAdapter(DurationAdapter())
-    ..registerAdapter(BodyMetricAdapter())
-    ..registerAdapter(SettingsAdapter());
+  Hive.registerAdapters();
 
   // Initialize Hive service.
   await hiveService.init();

@@ -73,7 +73,10 @@ class ExercisesListResults extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               if (isFavorite)
-                                const Icon(LucideIcons.star, size: 20),
+                                Icon(
+                                  LucideIcons.star,
+                                  color: theme.colorScheme.secondary,
+                                ),
                               const SizedBox(width: 8),
                               const Icon(LucideIcons.circleChevronRight),
                             ],
