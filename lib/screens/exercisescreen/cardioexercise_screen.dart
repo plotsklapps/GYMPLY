@@ -4,7 +4,7 @@ import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
-import 'package:gymply/screens/exercisescreen/cardioset_builder.dart';
+import 'package:gymply/screens/exercisescreen/cardioset_card.dart';
 import 'package:gymply/screens/exercisescreen/cardiotimer_text.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -275,7 +275,7 @@ class CardioExerciseScreen extends StatelessWidget {
           const Divider(),
 
           // SCROLLABLE SET LIST SECTION.
-          CardioSetBuilder(
+          CardioSetCard(
             exercise: exercise,
             userWeight: userWeight,
             userAge: userAge,

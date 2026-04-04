@@ -7,8 +7,8 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:logger/logger.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class CardioSetBuilder extends StatelessWidget {
-  const CardioSetBuilder({
+class CardioSetCard extends StatelessWidget {
+  const CardioSetCard({
     required this.exercise,
     required this.userWeight,
     required this.userAge,
@@ -49,6 +49,9 @@ class CardioSetBuilder extends StatelessWidget {
                   userSex: userSex,
                 )} kcal'
               : '';
+          final String repsLabel = (set.reps != null && set.reps! > 0)
+              ? ' • ${set.reps} reps'
+              : '';
 
           return Card(
             margin: const EdgeInsets.only(bottom: 8),
@@ -64,7 +67,7 @@ class CardioSetBuilder extends StatelessWidget {
               ),
               subtitle: Row(
                 children: <Widget>[
-                  Text('$modeLabel$distanceLabel$caloriesLabel'),
+                  Text('$modeLabel$distanceLabel$caloriesLabel$repsLabel'),
                   const SizedBox(width: 8),
                   // Flame icons for intensity.
                   ...List<Widget>.generate(
@@ -85,30 +88,38 @@ class CardioSetBuilder extends StatelessWidget {
                   if (value == 'deleteSet') {
                     workoutService.deleteCardioSet(exercise, set);
                   } else if (value == 'addStats') {
+                    // Logic to retrieve sticky values from exercise
+                    // or fallback to defaults.
+                    final double stickyDistance =
+                        (set.distance != null && set.distance! > 0)
+                        ? set.distance!
+                        : (exercise.distanceInput ?? 0.0);
+
+                    final int stickyIntensity =
+                        (set.intensity != null && set.intensity! > 0)
+                        ? set.intensity!
+                        : (exercise.intensityInput ?? 1);
+
+                    final int stickyReps = (set.reps != null && set.reps! > 0)
+                        ? set.reps!
+                        : (exercise.repsInput ?? 1);
+
                     await ModalService.showModal(
                       context: context,
                       child: CardioSetStatsModal(
-                        initialDistance: set.distance ?? 0.0,
-                        initialIntensity: set.intensity ?? 1,
-                        initialReps: set.reps ?? 1,
+                        initialDistance: stickyDistance,
+                        initialIntensity: stickyIntensity,
+                        initialReps: stickyReps,
                         onConfirm: (double distance, int intensity, int reps) {
                           Logger().i('Reps captured from modal: $reps');
-                          // Update current set.
-                          workoutService
-                            ..updateCardioSet(
-                              exercise,
-                              set,
-                              intensity: intensity,
-                              distance: distance,
-                              reps: reps,
-                            )
-                            // Stickily update exercise input.
-                            ..updateCardioInput(
-                              exercise,
-                              intensity: intensity,
-                              distance: distance,
-                              reps: reps,
-                            );
+                          // Update current set and sticky input.
+                          workoutService.updateCardioSet(
+                            exercise,
+                            set,
+                            intensity: intensity,
+                            distance: distance,
+                            reps: reps,
+                          );
                         },
                       ),
                     );

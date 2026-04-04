@@ -485,7 +485,7 @@ class WorkoutService {
     _logger.i('WorkoutService: Deleting Cardio set');
   }
 
-  // Update set in CardioExercise.
+  // Update set and input state in CardioExercise.
   void updateCardioSet(
     CardioExercise exercise,
     CardioSet oldSet, {
@@ -497,11 +497,10 @@ class WorkoutService {
     int? intensity,
     int? reps,
   }) {
-    // Find index of set to update.
-    final int index = exercise.sets.indexOf(oldSet);
-    if (index == -1) return;
+    // 1. Update the set.
+    final int setIndex = exercise.sets.indexOf(oldSet);
+    if (setIndex == -1) return;
 
-    // Create new CardioSet Object with updated values.
     final CardioSet newSet = CardioSet(
       cardioDuration: cardioDuration ?? oldSet.cardioDuration,
       restDuration: restDuration ?? oldSet.restDuration,
@@ -512,21 +511,25 @@ class WorkoutService {
       reps: reps ?? oldSet.reps,
     );
 
-    // Create updated List<CardioSet> and replace Object.
     final List<CardioSet> updatedSets = List<CardioSet>.from(exercise.sets);
-    updatedSets[index] = newSet;
+    updatedSets[setIndex] = newSet;
 
-    // Create updated CardioExercise Object.
+    // 2. Update the Exercise input (sticky values).
     final CardioExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
+      cardioDurationInput: cardioDuration,
+      restDurationInput: restDuration,
+      distanceInput: distance,
+      caloriesInput: calories,
+      intensityInput: intensity,
       repsInput: reps,
     );
 
-    // Helper method to replace Object inside active workout.
+    // 3. Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log update.
-    _logger.i('WorkoutService: Updated Cardio set');
+    _logger.i('WorkoutService: Updated Cardio set and sticky inputs');
   }
 
   // Add set to StretchExercise.
