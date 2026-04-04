@@ -12,6 +12,7 @@ import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
@@ -39,6 +40,9 @@ class WorkoutService {
   late Box<Workout> _workoutBox;
   late Box<Settings> _settingsBox;
   late Box<BodyMetric> _bodyMetricsBox;
+
+  // Getters for boxes.
+  Box<Settings> get settingsBox => _settingsBox;
 
   // Box names (prevents typos).
   static const String _workoutBoxName = 'workouts';
@@ -80,6 +84,7 @@ class WorkoutService {
       sSomatotype.value = settings.somatotypeIndex;
       sOnboardingCompleted.value = settings.onboardingCompleted;
       sFont.value = settings.fontFamily;
+      sExercisesGridMode.value = settings.isExercisesGridMode;
 
       // Log settings.
       _logger.i(
@@ -178,6 +183,7 @@ class WorkoutService {
       final int somatotype = sSomatotype.value;
       final bool onboardingCompleted = sOnboardingCompleted.value;
       final String fontFamily = sFont.value;
+      final bool isExercisesGridMode = sExercisesGridMode.value;
 
       // Create Settings Object.
       final Settings settings = Settings(
@@ -193,6 +199,7 @@ class WorkoutService {
         somatotypeIndex: somatotype,
         onboardingCompleted: onboardingCompleted,
         fontFamily: fontFamily,
+        isExercisesGridMode: isExercisesGridMode,
       );
 
       // Store to Hive.
@@ -286,6 +293,14 @@ class WorkoutService {
     }
     // Set sFavoriteExercises Signal.
     sFavoriteExercises.value = currentFavorites;
+  }
+
+  // Toggle ExerciseGridMode.
+  void toggleExerciseGridMode() {
+    sExercisesGridMode.value = !sExercisesGridMode.value;
+    _logger.i(
+      'WorkoutService: ExerciseGridMode toggled to ${sExercisesGridMode.value}',
+    );
   }
 
   // Finish current workout.
@@ -865,7 +880,8 @@ class WorkoutService {
 
     // Log success.
     _logger.i(
-      'WorkoutService: Workout copied. Merge: $merge, KeepValues: $keepValues, AddTime: $addTime',
+      'WorkoutService: Workout copied. '
+      'Merge: $merge, KeepValues: $keepValues, AddTime: $addTime',
     );
   }
 

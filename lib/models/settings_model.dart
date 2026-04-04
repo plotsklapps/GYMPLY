@@ -18,6 +18,7 @@ class Settings {
     this.somatotypeIndex = 1,
     this.onboardingCompleted = false,
     this.fontFamily = 'LeagueGothic',
+    this.isExercisesGridMode = true,
   });
 
   @HiveField(0, defaultValue: true)
@@ -56,6 +57,9 @@ class Settings {
   @HiveField(11, defaultValue: 'LeagueGothic')
   final String fontFamily;
 
+  @HiveField(12, defaultValue: true)
+  final bool isExercisesGridMode;
+
   // Custom enum mapping.
   FlexSchemes get flexScheme {
     return FlexSchemes.values[flexSchemeIndex];
@@ -74,6 +78,7 @@ class Settings {
     int? somatotypeIndex,
     bool? onboardingCompleted,
     String? fontFamily,
+    bool? isExercisesGridMode,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
@@ -88,6 +93,7 @@ class Settings {
       somatotypeIndex: somatotypeIndex ?? this.somatotypeIndex,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
       fontFamily: fontFamily ?? this.fontFamily,
+      isExercisesGridMode: isExercisesGridMode ?? this.isExercisesGridMode,
     );
   }
 }

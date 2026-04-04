@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:gymply/modals/exercisedetail_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/screens/searchscreen/equipmentchoicechips.dart';
+import 'package:gymply/screens/searchscreen/exercisesgrid_results.dart';
+import 'package:gymply/screens/searchscreen/exerciseslist_results.dart';
 import 'package:gymply/screens/searchscreen/musclegroupchoicechips.dart';
 import 'package:gymply/screens/searchscreen/workouttypechoicechips.dart';
 import 'package:gymply/services/filter_service.dart';
-import 'package:gymply/services/modal_service.dart';
-import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/signals/search_signal.dart';
 import 'package:gymply/signals/searchquery_signal.dart';
@@ -75,9 +75,8 @@ class _SearchScreenState extends State<SearchScreen> {
         .cFilteredExercises
         .watch(context);
     final bool isLoading = sSearchLoading.watch(context);
-    final List<int> favorites = sFavoriteExercises.watch(
-      context,
-    );
+    final List<int> favorites = sFavoriteExercises.watch(context);
+    final bool isGridMode = sExercisesGridMode.watch(context);
 
     // Calculate dynamic height for floating chips header.
     double chipsHeight = 52;
@@ -129,6 +128,20 @@ class _SearchScreenState extends State<SearchScreen> {
                       onChanged: (String value) {
                         sSearchQuery.value = value;
                       },
+                    ),
+                  ),
+                ),
+                // TOGGLE VIEW MODE BUTTON.
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    onPressed: () {
+                      workoutService.toggleExerciseGridMode();
+                    },
+                    icon: Icon(
+                      isGridMode
+                          ? LucideIcons.layoutList
+                          : LucideIcons.layoutGrid,
                     ),
                   ),
                 ),
@@ -202,94 +215,17 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Text('No exercises found matching these filters.'),
               ),
             )
+          else if (isGridMode)
+            ExercisesGridResults(
+              exercises: filteredExercises,
+              favorites: favorites,
+              searchFocusNode: searchFocusNode,
+            )
           else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                  childAspectRatio: 1.3,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final ExercisePath exercise = filteredExercises[index];
-                    final bool isFavorite = favorites.contains(
-                      int.parse(exercise.id),
-                    );
-
-                    return InkWell(
-                      onTap: () async {
-                        // Close keyboard (if open).
-                        searchFocusNode.unfocus();
-
-                        // Show Exercise Detail Modal and wait for confirmation.
-                        final bool confirm = await ModalService.showModal(
-                          context: context,
-                          child: ExerciseDetailSheet(exercise: exercise),
-                        );
-
-                        // Add exercise to workout and navigate to workout tab.
-                        if (confirm) {
-                          workoutService.addExercise(exercise);
-                          navigateToTab(AppTab.workout);
-                        }
-                      },
-                      child: Card(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: <Widget>[
-                            Image.asset(
-                              exercise.fullPath,
-                              fit: BoxFit.contain,
-                            ),
-                            if (isFavorite)
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: Icon(
-                                  LucideIcons.star,
-                                  color: theme.colorScheme.secondary,
-                                ),
-                              ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              left: 0,
-                              // Dark gradient to help contrast in darkmode.
-                              child: Container(
-                                decoration: theme.brightness == Brightness.dark
-                                    ? BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: <Color>[
-                                            Colors.transparent,
-                                            Colors.black.withAlpha(200),
-                                          ],
-                                        ),
-                                      )
-                                    : null,
-                                padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                                child: Text(
-                                  exercise.exerciseName,
-                                  textAlign: TextAlign.right,
-                                  softWrap: false,
-                                  style: theme.textTheme.titleLarge,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: filteredExercises.length,
-                ),
-              ),
+            ExercisesListResults(
+              exercises: filteredExercises,
+              favorites: favorites,
+              searchFocusNode: searchFocusNode,
             ),
         ],
       ),

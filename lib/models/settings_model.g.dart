@@ -31,13 +31,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       somatotypeIndex: fields[10] == null ? 1 : (fields[10] as num).toInt(),
       onboardingCompleted: fields[9] == null ? false : fields[9] as bool,
       fontFamily: fields[11] == null ? 'LeagueGothic' : fields[11] as String,
+      isExercisesGridMode: fields[12] == null ? true : fields[12] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -61,7 +62,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(10)
       ..write(obj.somatotypeIndex)
       ..writeByte(11)
-      ..write(obj.fontFamily);
+      ..write(obj.fontFamily)
+      ..writeByte(12)
+      ..write(obj.isExercisesGridMode);
   }
 
   @override
