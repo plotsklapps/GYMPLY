@@ -27,13 +27,14 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       distanceInput: (fields[7] as num?)?.toDouble(),
       caloriesInput: (fields[8] as num?)?.toInt(),
       intensityInput: (fields[9] as num?)?.toInt(),
+      repsInput: (fields[10] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CardioExercise obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       ..writeByte(8)
       ..write(obj.caloriesInput)
       ..writeByte(9)
-      ..write(obj.intensityInput);
+      ..write(obj.intensityInput)
+      ..writeByte(10)
+      ..write(obj.repsInput);
   }
 
   @override
@@ -84,13 +87,14 @@ class CardioSetAdapter extends TypeAdapter<CardioSet> {
       distance: (fields[3] as num?)?.toDouble(),
       calories: (fields[4] as num?)?.toInt(),
       intensity: (fields[5] as num?)?.toInt(),
+      reps: (fields[6] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CardioSet obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.cardioDuration)
       ..writeByte(1)
@@ -102,7 +106,9 @@ class CardioSetAdapter extends TypeAdapter<CardioSet> {
       ..writeByte(4)
       ..write(obj.calories)
       ..writeByte(5)
-      ..write(obj.intensity);
+      ..write(obj.intensity)
+      ..writeByte(6)
+      ..write(obj.reps);
   }
 
   @override

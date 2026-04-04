@@ -18,6 +18,7 @@ class CardioExercise extends WorkoutExercise {
     this.distanceInput,
     this.caloriesInput,
     this.intensityInput,
+    this.repsInput,
   });
 
   @HiveField(3)
@@ -36,6 +37,8 @@ class CardioExercise extends WorkoutExercise {
   final int? caloriesInput;
   @HiveField(9)
   final int? intensityInput;
+  @HiveField(10)
+  final int? repsInput;
 
   @override
   CardioExercise copyWith({
@@ -45,6 +48,7 @@ class CardioExercise extends WorkoutExercise {
     double? distanceInput,
     int? caloriesInput,
     int? intensityInput,
+    int? repsInput,
   }) {
     return CardioExercise(
       id: id,
@@ -57,6 +61,7 @@ class CardioExercise extends WorkoutExercise {
       distanceInput: distanceInput ?? this.distanceInput,
       caloriesInput: caloriesInput ?? this.caloriesInput,
       intensityInput: intensityInput ?? this.intensityInput,
+      repsInput: repsInput ?? this.repsInput,
     );
   }
 
@@ -115,6 +120,7 @@ class CardioSet {
     this.distance,
     this.calories,
     this.intensity,
+    this.reps,
   });
 
   @HiveField(0)
@@ -129,6 +135,8 @@ class CardioSet {
   final int? calories;
   @HiveField(5)
   final int? intensity;
+  @HiveField(6)
+  final int? reps;
 
   /// Calculates estimated calories burned based on MET values.
   /// If [userWeight] or [userAge] are 0, returns the stored [calories] or 0.

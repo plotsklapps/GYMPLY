@@ -343,6 +343,7 @@ class WorkoutService {
     double? distance,
     int? calories,
     int? intensity,
+    int? reps,
   }) {
     // Create CardioExercise Object.
     final CardioExercise updatedExercise = exercise.copyWith(
@@ -351,6 +352,7 @@ class WorkoutService {
       distanceInput: distance,
       caloriesInput: calories,
       intensityInput: intensity,
+      repsInput: reps,
     );
 
     // Helper method to replace Object inside active workout.
@@ -493,6 +495,7 @@ class WorkoutService {
     double? distance,
     int? calories,
     int? intensity,
+    int? reps,
   }) {
     // Find index of set to update.
     final int index = exercise.sets.indexOf(oldSet);
@@ -506,6 +509,7 @@ class WorkoutService {
       distance: distance ?? oldSet.distance,
       calories: calories ?? oldSet.calories,
       intensity: intensity ?? oldSet.intensity,
+      reps: reps ?? oldSet.reps,
     );
 
     // Create updated List<CardioSet> and replace Object.
@@ -515,6 +519,7 @@ class WorkoutService {
     // Create updated CardioExercise Object.
     final CardioExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
+      repsInput: reps,
     );
 
     // Helper method to replace Object inside active workout.

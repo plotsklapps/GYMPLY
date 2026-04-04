@@ -4,6 +4,7 @@ import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:logger/logger.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class CardioSetBuilder extends StatelessWidget {
@@ -89,19 +90,24 @@ class CardioSetBuilder extends StatelessWidget {
                       child: CardioSetStatsModal(
                         initialDistance: set.distance ?? 0.0,
                         initialIntensity: set.intensity ?? 1,
-                        onConfirm: (double distance, int intensity) {
+                        initialReps: set.reps ?? 1,
+                        onConfirm: (double distance, int intensity, int reps) {
+                          Logger().i('Reps captured from modal: $reps');
                           // Update current set.
                           workoutService
                             ..updateCardioSet(
                               exercise,
                               set,
-                              distance: distance,
                               intensity: intensity,
+                              distance: distance,
+                              reps: reps,
                             )
                             // Stickily update exercise input.
                             ..updateCardioInput(
                               exercise,
                               intensity: intensity,
+                              distance: distance,
+                              reps: reps,
                             );
                         },
                       ),

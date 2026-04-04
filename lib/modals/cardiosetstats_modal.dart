@@ -5,13 +5,15 @@ class CardioSetStatsModal extends StatefulWidget {
   const CardioSetStatsModal({
     required this.initialDistance,
     required this.initialIntensity,
+    required this.initialReps,
     required this.onConfirm,
     super.key,
   });
 
   final double initialDistance;
   final int initialIntensity;
-  final void Function(double distance, int intensity) onConfirm;
+  final int initialReps;
+  final void Function(double distance, int intensity, int reps) onConfirm;
 
   @override
   State<CardioSetStatsModal> createState() => _CardioSetStatsModalState();
@@ -20,12 +22,14 @@ class CardioSetStatsModal extends StatefulWidget {
 class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
   late double _currentDistance;
   late int _currentIntensity;
+  late int _currentReps;
 
   @override
   void initState() {
     super.initState();
     _currentDistance = widget.initialDistance;
     _currentIntensity = widget.initialIntensity;
+    _currentReps = widget.initialReps;
   }
 
   @override
@@ -72,8 +76,16 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                 icon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                    Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
+                    Icon(
+                      LucideIcons.flame,
+                      size: 16,
+                      color: theme.colorScheme.secondary,
+                    ),
+                    Icon(
+                      LucideIcons.flame,
+                      size: 16,
+                      color: theme.colorScheme.secondary,
+                    ),
                   ],
                 ),
               ),
@@ -83,9 +95,21 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                 icon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                    Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                    Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
+                    Icon(
+                      LucideIcons.flame,
+                      size: 16,
+                      color: theme.colorScheme.secondary,
+                    ),
+                    Icon(
+                      LucideIcons.flame,
+                      size: 16,
+                      color: theme.colorScheme.secondary,
+                    ),
+                    Icon(
+                      LucideIcons.flame,
+                      size: 16,
+                      color: theme.colorScheme.secondary,
+                    ),
                   ],
                 ),
               ),
@@ -97,12 +121,12 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
           ),
         ),
         const SizedBox(height: 16),
-        // Distance Picker underneath
-        DistancePicker(
+        // Combined Picker underneath
+        MetricPicker(
           initialDistance: _currentDistance,
-          onChanged: (double val) {
-            _currentDistance = val;
-          },
+          initialReps: _currentReps,
+          onDistanceChanged: (double val) => _currentDistance = val,
+          onRepsChanged: (int val) => _currentReps = val,
         ),
         const SizedBox(height: 24),
         Row(
@@ -118,7 +142,11 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () {
-                  widget.onConfirm(_currentDistance, _currentIntensity);
+                  widget.onConfirm(
+                    _currentDistance,
+                    _currentIntensity,
+                    _currentReps,
+                  );
                   Navigator.pop(context, true);
                 },
                 child: const Text('CONFIRM'),
@@ -131,36 +159,41 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
   }
 }
 
-class DistancePicker extends StatefulWidget {
-  const DistancePicker({
+class MetricPicker extends StatefulWidget {
+  const MetricPicker({
     required this.initialDistance,
-    required this.onChanged,
+    required this.initialReps,
+    required this.onDistanceChanged,
+    required this.onRepsChanged,
     super.key,
   });
 
   final double initialDistance;
-  final ValueChanged<double> onChanged;
+  final int initialReps;
+  final ValueChanged<double> onDistanceChanged;
+  final ValueChanged<int> onRepsChanged;
 
   @override
-  State<DistancePicker> createState() => _DistancePickerState();
+  State<MetricPicker> createState() => _MetricPickerState();
 }
 
-class _DistancePickerState extends State<DistancePicker> {
+class _MetricPickerState extends State<MetricPicker> {
   late int _km;
-  late int _m; // This will store the index (0-19) for the 50m steps
+  late int _m;
+  late int _reps;
 
   @override
   void initState() {
     super.initState();
     _km = widget.initialDistance.floor();
-    // Calculate the index for 50m steps (0 to 19)
     final double metersPart = (widget.initialDistance - _km) * 1000;
     _m = (metersPart / 50.0).round().clamp(0, 19);
+    _reps = widget.initialReps;
   }
 
   void _updateDistance() {
     final double totalDistance = _km + ((_m * 50) / 1000.0);
-    widget.onChanged(totalDistance);
+    widget.onDistanceChanged(totalDistance);
   }
 
   @override
@@ -168,7 +201,7 @@ class _DistancePickerState extends State<DistancePicker> {
     final ThemeData theme = Theme.of(context);
 
     return SizedBox(
-      height: 200, // Reduced height for combined modal
+      height: 200,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -182,7 +215,7 @@ class _DistancePickerState extends State<DistancePicker> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               '.',
               style: theme.textTheme.displayLarge?.copyWith(
@@ -192,13 +225,31 @@ class _DistancePickerState extends State<DistancePicker> {
           ),
           _ScrollColumn(
             label: 'M',
-            max: 19, // 20 steps of 50m (0, 50, ..., 950)
+            max: 19,
             value: _m,
             step: 50,
             padLeft: 3,
             onChanged: (int val) {
               setState(() => _m = val);
               _updateDistance();
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '|',
+              style: theme.textTheme.displayLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(50),
+              ),
+            ),
+          ),
+          _ScrollColumn(
+            label: 'REPS',
+            max: 99,
+            value: _reps,
+            onChanged: (int val) {
+              setState(() => _reps = val);
+              widget.onRepsChanged(val);
             },
           ),
         ],
@@ -238,9 +289,9 @@ class _ScrollColumn extends StatelessWidget {
         ),
         Expanded(
           child: SizedBox(
-            width: 80, // Slightly narrower
+            width: 70,
             child: ListWheelScrollView.useDelegate(
-              itemExtent: 60, // Slightly shorter
+              itemExtent: 60,
               perspective: 0.005,
               diameterRatio: 1.2,
               physics: const FixedExtentScrollPhysics(),
