@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:gymply/modals/permission_modal.dart';
@@ -39,8 +37,8 @@ class NotificationService {
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
+          android: initializationSettingsAndroid,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
@@ -61,56 +59,57 @@ class NotificationService {
   }) async {
     if (!_isInitialized) return;
 
-    final DateTime endTime =
-        DateTime.now().add(Duration(seconds: durationSeconds));
+    final DateTime endTime = DateTime.now().add(
+      Duration(seconds: durationSeconds),
+    );
 
     // 1. Show the Chronometer Notification (Silently counts down).
     final AndroidNotificationDetails chronometerAndroidDetails =
         AndroidNotificationDetails(
-      'timer_chronometer_channel',
-      'Active Timer',
-      channelDescription:
-          'Shows the active ticking timer for your workout',
-      // Low importance so it stays in the tray cleanly without vibrating.
-      importance: Importance.low,
-      priority: Priority.low,
-      color: const Color(0xFFFCB075), // GYMPLY primary accent color.
-      usesChronometer: true,
-      chronometerCountDown: true,
-      when: endTime.millisecondsSinceEpoch,
-      ongoing: true, // Prevents easy swiping while active.
-      playSound: false,
-    );
+          'timer_chronometer_channel',
+          'Active Timer',
+          channelDescription: 'Shows the active ticking timer for your workout',
+          // Low importance so it stays in the tray cleanly without vibrating.
+          importance: Importance.low,
+          priority: Priority.low,
+          color: const Color(0xFFFCB075), // GYMPLY primary accent color.
+          usesChronometer: true,
+          chronometerCountDown: true,
+          when: endTime.millisecondsSinceEpoch,
+          ongoing: true, // Prevents easy swiping while active.
+          playSound: false,
+        );
 
     await flutterLocalNotificationsPlugin.show(
       id: chronometerId,
       title: title,
       body: 'Counting down...',
-      notificationDetails: NotificationDetails(android: chronometerAndroidDetails),
+      notificationDetails: NotificationDetails(
+        android: chronometerAndroidDetails,
+      ),
     );
 
-    // 2. Schedule the Exact Alarm Notification (Loud popup precisely at the end).
+    // 2. Schedule the Exact Alarm Notification.
     const AndroidNotificationDetails alarmAndroidDetails =
         AndroidNotificationDetails(
-      'timer_alarm_channel',
-      'Timer Complete Alerts',
-      channelDescription:
-          'Plays the alert sound when a timer finishes',
-      importance: Importance.max,
-      priority: Priority.max,
-      color: Color(0xFFFCB075),
-      // Assign custom MP3 from android raw directory.
-      sound: RawResourceAndroidNotificationSound('timerbell'),
-      playSound: true,
-      enableVibration: true,
-    );
+          'timer_alarm_channel',
+          'Timer Complete Alerts',
+          channelDescription: 'Plays the alert sound when a timer finishes',
+          importance: Importance.max,
+          priority: Priority.max,
+          color: Color(0xFFFCB075),
+          // Assign custom MP3 from android raw directory.
+          sound: RawResourceAndroidNotificationSound('timerbell'),
+        );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: alarmId,
       title: title,
       body: body,
       scheduledDate: tz.TZDateTime.from(endTime, tz.local),
-      notificationDetails: const NotificationDetails(android: alarmAndroidDetails),
+      notificationDetails: const NotificationDetails(
+        android: alarmAndroidDetails,
+      ),
       // Critical for precise alarms in Android >= 12.
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );

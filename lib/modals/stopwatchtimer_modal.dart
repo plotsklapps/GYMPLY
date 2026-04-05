@@ -50,12 +50,12 @@ class StopwatchTimerModal extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: OutlinedButton(
-                onPressed: () {
+                onPressed: () async {
                   // Reset to zero.
-                  StopwatchTimer().resetTimer();
+                  await StopwatchTimer().resetTimer();
 
                   // Pop and return false.
-                  Navigator.pop(context, false);
+                  if (context.mounted) Navigator.pop(context, false);
                 },
                 child: const Text('RESET'),
               ),

@@ -173,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: <Widget>[
                   // Skip Button
                   TextButton(
-                    onPressed: () async => await _onSkipOrDone(),
+                    onPressed: _onSkipOrDone,
                     child: Text(
                       'SKIP',
                       style: textTheme.bodyLarge?.copyWith(
