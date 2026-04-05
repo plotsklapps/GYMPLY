@@ -39,23 +39,59 @@ class SettingsService {
 
   // Load settings from Hive into signals.
   void loadSettings() {
-    final Settings? settings = _settingsBox.get('settings');
-    if (settings != null) {
-      sDarkMode.value = settings.darkMode;
-      RestTimer.sInitialRestTime.value = settings.initialRestTime;
-      RestTimer.sElapsedRestTime.value = settings.initialRestTime;
-      sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
-      sWakelock.value = settings.isWakelock;
-      sFlexScheme.value = settings.flexScheme;
-      sFont.value = settings.fontFamily;
-      sAge.value = settings.age;
-      sHeight.value = settings.height;
-      sWeight.value = settings.weight;
-      sSex.value = settings.sex;
-      sSomatotype.value = settings.somatotypeIndex;
-      sOnboardingCompleted.value = settings.onboardingCompleted;
-      sExercisesGridMode.value = settings.isExercisesGridMode;
-      _logger.i('SettingsService: Settings loaded');
+    Settings? settings = _settingsBox.get('settings');
+
+    // Make sure we have a default for new users.
+    if (settings == null) {
+      settings = Settings();
+      _settingsBox.put('settings', settings);
+      _logger.i('SettingsService: Created default settings');
+    }
+
+    // Auto-complete onboarding for existing users upgrading to this version.
+    if (!settings.onboardingCompleted && hiveService.workoutBox.isNotEmpty) {
+      settings = settings.copyWith(onboardingCompleted: true);
+      _settingsBox.put('settings', settings);
+      _logger.i('SettingsService: Auto-completed onboarding for existing user');
+    }
+
+    sDarkMode.value = settings.darkMode;
+    RestTimer.sInitialRestTime.value = settings.initialRestTime;
+    RestTimer.sElapsedRestTime.value = settings.initialRestTime;
+    sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
+    sWakelock.value = settings.isWakelock;
+    sFlexScheme.value = settings.flexScheme;
+    sFont.value = settings.fontFamily;
+    sAge.value = settings.age;
+    sHeight.value = settings.height;
+    sWeight.value = settings.weight;
+    sSex.value = settings.sex;
+    sSomatotype.value = settings.somatotypeIndex;
+    sOnboardingCompleted.value = settings.onboardingCompleted;
+    sExercisesGridMode.value = settings.isExercisesGridMode;
+    _logger.i('SettingsService: Settings loaded');
+  }
+
+  // Mark onboarding as completed.
+  Future<void> completeOnboarding() async {
+    try {
+      sOnboardingCompleted.value = true;
+
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(onboardingCompleted: true),
+        );
+      }
+
+      _logger.i('SettingsService: Onboarding completed');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to complete onboarding',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

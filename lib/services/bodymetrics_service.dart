@@ -27,7 +27,28 @@ class BodyMetricsService {
   // Initialize BodyMetricsService.
   void init() {
     _bodyMetricsBox = hiveService.bodyMetricsBox;
+    loadBodyMetrics();
     _logger.i('BodyMetricsService: Initialized');
+  }
+
+  // Load body metrics history into signal.
+  void loadBodyMetrics() {
+    final List<BodyMetric> history = _bodyMetricsBox.values.toList();
+    sBodyMetricsHistory.value = history;
+
+    // Extrapolate latest stats from history.
+    if (history.isNotEmpty) {
+      history.sort((BodyMetric a, BodyMetric b) => a.date.compareTo(b.date));
+      final BodyMetric latest = history.last;
+
+      sAge.value = latest.age;
+      sHeight.value = latest.height;
+      sWeight.value = latest.weight;
+      sSex.value = latest.sex;
+      sSomatotype.value = latest.somatotype;
+    }
+
+    _logger.i('BodyMetricsService: History loaded');
   }
 
   // Save new BodyMetric and update history.

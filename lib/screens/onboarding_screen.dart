@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:gymply/signals/onboarding_signal.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -22,12 +22,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _onSkipOrDone() {
+  Future<void> _onSkipOrDone() async {
     // Flag onboarding as completed.
-    sOnboardingCompleted.value = true;
+    await settingsService.completeOnboarding();
 
     // If onboarding started from anywhere else, pop that first.
-    if (Navigator.canPop(context)) {
+    if (mounted && Navigator.canPop(context)) {
       Navigator.pop(context);
     }
   }
