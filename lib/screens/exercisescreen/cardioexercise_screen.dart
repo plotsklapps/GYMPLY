@@ -8,6 +8,7 @@ import 'package:gymply/screens/exercisescreen/cardioset_card.dart';
 import 'package:gymply/screens/exercisescreen/cardiotimer_text.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
@@ -211,6 +212,8 @@ class CardioExerciseScreen extends StatelessWidget {
                           } else if (isIntervalRunning) {
                             await IntervalTimer().pauseTimer();
                           } else {
+                            await notificationService
+                                .requestPermissionWithDialog(context);
                             await IntervalTimer().startTimer();
                           }
                         }

@@ -8,6 +8,7 @@ import 'package:gymply/screens/exercisescreen/stretchset_builder.dart';
 import 'package:gymply/screens/exercisescreen/stretchtimer_text.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
@@ -210,6 +211,8 @@ class StretchExerciseScreen extends StatelessWidget {
                           } else if (isIntervalRunning) {
                             await IntervalTimer().pauseTimer();
                           } else {
+                            await notificationService
+                                .requestPermissionWithDialog(context);
                             await IntervalTimer().startTimer();
                           }
                         }

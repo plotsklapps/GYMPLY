@@ -1,7 +1,11 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:gymply/modals/permission_modal.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -123,6 +127,25 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.cancel(id: chronometerId);
     await flutterLocalNotificationsPlugin.cancel(id: alarmId);
     _logger.i('NotificationService: Timer notifications cancelled');
+  }
+
+  // Safe UI helper to organically request permissions from existing users
+  // exactly when they press 'Play' on a respective timer widget.
+  Future<void> requestPermissionWithDialog(BuildContext context) async {
+    // If the user already granted permission, completely bypass everything.
+    if (await Permission.notification.isGranted) {
+      return;
+    }
+
+    // Wait until widget is ready since we might be called synchronously
+    // from a button tap without an immediate context update.
+    if (!context.mounted) return;
+
+    // Show the modal to explain the permission before asking the OS.
+    await ModalService.showModal(
+      context: context,
+      child: const PermissionModal(),
+    );
   }
 }
 

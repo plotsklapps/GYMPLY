@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/resttimer_modal.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -62,6 +63,9 @@ class RestTimerWidget extends StatelessWidget {
                   if (isRestTimerRunning) {
                     await restTimer.pauseTimer();
                   } else {
+                    await notificationService.requestPermissionWithDialog(
+                      context,
+                    );
                     await restTimer.startTimer();
                   }
                 },
