@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimer {
@@ -56,6 +57,15 @@ class RestTimer {
     // Calculate when resttimer should end.
     _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
+    // Schedule background chronometer and alarm.
+    unawaited(
+      notificationService.startTimerNotification(
+        title: 'Rest Timer',
+        body: 'Rest complete! Time to lift.',
+        durationSeconds: sElapsedRestTime.value,
+      ),
+    );
+
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
       if (_endTime == null) return;
 
@@ -74,6 +84,9 @@ class RestTimer {
         _endTime = null;
         sRestTimerRunning.value = false;
         sElapsedRestTime.value = 0;
+
+        // Clear active background notifications.
+        unawaited(notificationService.cancelTimerNotifications());
 
         // Play rest-completed sound.
         AudioService().playRestSound();
@@ -97,6 +110,7 @@ class RestTimer {
     _timer = null;
     _endTime = null;
     sRestTimerRunning.value = false;
+    unawaited(notificationService.cancelTimerNotifications());
   }
 
   // Resets Timer state.
@@ -108,6 +122,8 @@ class RestTimer {
     _timer?.cancel();
     _timer = null;
     _endTime = null;
+
+    unawaited(notificationService.cancelTimerNotifications());
 
     // Reset to initial seconds.
     sElapsedRestTime.value = sInitialRestTime.value;

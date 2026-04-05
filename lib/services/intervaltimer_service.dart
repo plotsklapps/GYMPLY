@@ -5,6 +5,7 @@ import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -133,6 +134,15 @@ class IntervalTimer {
       Duration(milliseconds: sElapsedIntervalTime.value),
     );
 
+    // Schedule background chronometer and alarm.
+    unawaited(
+      notificationService.startTimerNotification(
+        title: 'Interval Timer',
+        body: 'Interval complete! Transitioning...',
+        durationSeconds: (sElapsedIntervalTime.value / 1000).ceil(),
+      ),
+    );
+
     // Set a high-frequency timer (10ms) to support centisecond updates.
     _timer = Timer.periodic(const Duration(milliseconds: 10), (
       Timer timer,
@@ -153,6 +163,9 @@ class IntervalTimer {
         _endTime = null;
         sIntervalTimerRunning.value = false;
         sElapsedIntervalTime.value = 0;
+
+        // Clear active background notifications.
+        unawaited(notificationService.cancelTimerNotifications());
 
         // Play interval-completed sound.
         AudioService().playStartSound();
@@ -179,6 +192,7 @@ class IntervalTimer {
     _timer = null;
     _endTime = null;
     sIntervalTimerRunning.value = false;
+    unawaited(notificationService.cancelTimerNotifications());
   }
 
   Future<void> resetTimer() async {
@@ -191,6 +205,8 @@ class IntervalTimer {
     _timer?.cancel();
     _timer = null;
     _endTime = null;
+
+    unawaited(notificationService.cancelTimerNotifications());
 
     // Reset to initial milliseconds.
     sElapsedIntervalTime.value = sInitialIntervalTime.value;

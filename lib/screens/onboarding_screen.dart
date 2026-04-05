@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -23,13 +24,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _onSkipOrDone() async {
-    // Flag onboarding as completed.
-    await settingsService.completeOnboarding();
+    // Show notification permission dialog before closing onboarding.
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Background Timers'),
+          content: const Text(
+            'GYMPLY. uses local notifications so your '
+            'timers can reliably play their custom alarm sounds even '
+            'while the app is running in the background.\n\n'
+            'This operates 100% offline, securely on your device, and '
+            'never tracks or transmits any personal data anywhere.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await Permission.notification.request();
 
-    // If onboarding started from anywhere else, pop that first.
-    if (mounted && Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
+                // Flag onboarding as completed.
+                await settingsService.completeOnboarding();
+
+                // If onboarding started from anywhere else, pop that first.
+                if (mounted && Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('UNDERSTOOD'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -165,7 +193,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: <Widget>[
                   // Skip Button
                   TextButton(
-                    onPressed: _onSkipOrDone,
+                    onPressed: () async => await _onSkipOrDone(),
                     child: Text(
                       'SKIP',
                       style: textTheme.bodyLarge?.copyWith(
@@ -196,7 +224,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   TextButton(
                     onPressed: () async {
                       if (_currentPageIndex == 3) {
-                        _onSkipOrDone();
+                        await _onSkipOrDone();
                       } else {
                         await _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),

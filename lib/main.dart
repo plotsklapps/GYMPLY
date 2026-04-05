@@ -8,6 +8,7 @@ import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
@@ -56,6 +57,9 @@ void main() async {
 
   // NostrService loads keys from secure storage.
   await nostrService.init();
+
+  // NotificationService initializes local alert channels.
+  await notificationService.init();
 
   // Run the app.
   runApp(const MainEntry());

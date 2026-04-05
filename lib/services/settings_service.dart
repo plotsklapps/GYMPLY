@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
@@ -44,14 +46,14 @@ class SettingsService {
     // Make sure we have a default for new users.
     if (settings == null) {
       settings = Settings();
-      _settingsBox.put('settings', settings);
+      unawaited(_settingsBox.put('settings', settings));
       _logger.i('SettingsService: Created default settings');
     }
 
     // Auto-complete onboarding for existing users upgrading to this version.
     if (!settings.onboardingCompleted && hiveService.workoutBox.isNotEmpty) {
       settings = settings.copyWith(onboardingCompleted: true);
-      _settingsBox.put('settings', settings);
+      unawaited(_settingsBox.put('settings', settings));
       _logger.i('SettingsService: Auto-completed onboarding for existing user');
     }
 
