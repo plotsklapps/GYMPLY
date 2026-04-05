@@ -153,7 +153,7 @@ class BackupService {
 
     try {
       // Restrict picking ONLY ZIP files.
-      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+      final FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: <String>['zip'],
         withData: true,
