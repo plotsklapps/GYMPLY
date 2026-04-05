@@ -52,7 +52,9 @@ class AudioService {
   }
 
   // Play sound from assets.
-  Future<void> _playSound(String assetPath) async {
+  Future<void> playTimerBell() async {
+    const String assetPath = 'sounds/timerbell.wav';
+
     try {
       // Always ensure initialization is complete before playing.
       await initialize();
@@ -68,16 +70,6 @@ class AudioService {
       // Log error.
       _logger.e('AudioService: Error playing sound: $e');
     }
-  }
-
-  // Play interval-completed sound.
-  void playStartSound() {
-    unawaited(_playSound('sounds/startsound.mp3'));
-  }
-
-  // Play rest-completed sound.
-  void playRestSound() {
-    unawaited(_playSound('sounds/timerbell.mp3'));
   }
 
   // Clean up and kill.

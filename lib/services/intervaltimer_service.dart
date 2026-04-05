@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -134,14 +135,17 @@ class IntervalTimer {
       Duration(milliseconds: sElapsedIntervalTime.value),
     );
 
-    // Schedule background chronometer and alarm.
-    unawaited(
-      notificationService.startTimerNotification(
-        title: 'Interval Timer',
-        body: 'Interval complete! Transitioning...',
-        durationSeconds: (sElapsedIntervalTime.value / 1000).ceil(),
-      ),
-    );
+    // Schedule background chronometer and alarm only if app is in background.
+    final AppLifecycleState? state = WidgetsBinding.instance.lifecycleState;
+    if (state != AppLifecycleState.resumed) {
+      unawaited(
+        notificationService.startTimerNotification(
+          title: 'Interval Timer',
+          body: 'Interval complete! Transitioning...',
+          durationSeconds: (sElapsedIntervalTime.value / 1000).ceil(),
+        ),
+      );
+    }
 
     // Set a high-frequency timer (10ms) to support centisecond updates.
     _timer = Timer.periodic(const Duration(milliseconds: 10), (
@@ -165,13 +169,15 @@ class IntervalTimer {
         sElapsedIntervalTime.value = 0;
 
         // Clear active background notifications.
-        unawaited(notificationService.cancelTimerNotifications());
+        // We only cancel the chronometer here so the scheduled
+        // alarm chime can still play.
+        unawaited(notificationService.cancelChronometerOnly());
 
         // Play interval-completed sound.
-        AudioService().playStartSound();
+        unawaited(AudioService().playTimerBell());
 
         // Short pause to allow sound to start before state transition.
-        await Future<void>.delayed(const Duration(milliseconds: 400));
+        await Future<void>.delayed(const Duration(milliseconds: 800));
 
         // Reset Signals.
         sIntervalTimerCompleted.value = true;
@@ -192,7 +198,7 @@ class IntervalTimer {
     _timer = null;
     _endTime = null;
     sIntervalTimerRunning.value = false;
-    unawaited(notificationService.cancelTimerNotifications());
+    unawaited(notificationService.cancelAllTimers());
   }
 
   Future<void> resetTimer() async {
@@ -206,7 +212,7 @@ class IntervalTimer {
     _timer = null;
     _endTime = null;
 
-    unawaited(notificationService.cancelTimerNotifications());
+    unawaited(notificationService.cancelAllTimers());
 
     // Reset to initial milliseconds.
     sElapsedIntervalTime.value = sInitialIntervalTime.value;

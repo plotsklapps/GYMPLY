@@ -22,15 +22,25 @@ class NotificationService {
 
   bool _isInitialized = false;
 
-  // Constants for our specific notification IDs.
+  // Constants for specific notification IDs.
   static const int chronometerId = 1;
-  static const int alarmId = 2;
+  static const String alarmChannelId = 'timer_alarm_channel';
+  static const String chronometerChannelId = 'timer_chronometer_channel';
 
   Future<void> init() async {
     if (_isInitialized) return;
 
     // Required initialization for zonedSchedule (exact alarms).
     tz.initializeTimeZones();
+
+    // Define the channel for GYMPLY. alarm.
+    const AndroidNotificationChannel alarmChannel = AndroidNotificationChannel(
+      alarmChannelId,
+      'Timer Complete Alerts',
+      description: 'Plays the alert sound when a timer finishes',
+      importance: Importance.max,
+      sound: RawResourceAndroidNotificationSound('timerbell'),
+    );
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -43,11 +53,21 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse details) {
+        // Log tap.
         _logger.i('NotificationService: Notification tapped.');
       },
     );
 
+    // Create the channel explicitly.
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(alarmChannel);
+
     _isInitialized = true;
+
+    // Log success.
     _logger.i('NotificationService: Initialized');
   }
 
@@ -59,6 +79,8 @@ class NotificationService {
   }) async {
     if (!_isInitialized) return;
 
+    final int uniqueAlarmId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
     final DateTime endTime = DateTime.now().add(
       Duration(seconds: durationSeconds),
     );
@@ -66,12 +88,11 @@ class NotificationService {
     // 1. Show the Chronometer Notification (Silently counts down).
     final AndroidNotificationDetails chronometerAndroidDetails =
         AndroidNotificationDetails(
-          'timer_chronometer_channel',
+          chronometerChannelId,
           'Active Timer',
           channelDescription: 'Shows the active ticking timer for your workout',
-          // Low importance so it stays in the tray cleanly without vibrating.
-          importance: Importance.low,
-          priority: Priority.low,
+          importance: Importance.max,
+          priority: Priority.max,
           color: const Color(0xFFFCB075), // GYMPLY primary accent color.
           usesChronometer: true,
           chronometerCountDown: true,
@@ -92,18 +113,20 @@ class NotificationService {
     // 2. Schedule the Exact Alarm Notification.
     const AndroidNotificationDetails alarmAndroidDetails =
         AndroidNotificationDetails(
-          'timer_alarm_channel',
+          alarmChannelId,
           'Timer Complete Alerts',
           channelDescription: 'Plays the alert sound when a timer finishes',
           importance: Importance.max,
           priority: Priority.max,
+          fullScreenIntent: true,
+          category: AndroidNotificationCategory.alarm,
           color: Color(0xFFFCB075),
           // Assign custom MP3 from android raw directory.
           sound: RawResourceAndroidNotificationSound('timerbell'),
         );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id: alarmId,
+      id: uniqueAlarmId,
       title: title,
       body: body,
       scheduledDate: tz.TZDateTime.from(endTime, tz.local),
@@ -120,12 +143,18 @@ class NotificationService {
     );
   }
 
-  // Clear any active or scheduled notifications.
-  Future<void> cancelTimerNotifications() async {
+  // Cancels only the ongoing ticker (Chronometer).
+  Future<void> cancelChronometerOnly() async {
     if (!_isInitialized) return;
     await flutterLocalNotificationsPlugin.cancel(id: chronometerId);
-    await flutterLocalNotificationsPlugin.cancel(id: alarmId);
-    _logger.i('NotificationService: Timer notifications cancelled');
+    _logger.i('NotificationService: Chronometer cancelled.');
+  }
+
+  // Full wipe for manual pause/reset/cleanup.
+  Future<void> cancelAllTimers() async {
+    if (!_isInitialized) return;
+    await flutterLocalNotificationsPlugin.cancelAll();
+    _logger.i('NotificationService: All notifications and alarms cancelled.');
   }
 
   // Safe UI helper to organically request permissions from existing users
