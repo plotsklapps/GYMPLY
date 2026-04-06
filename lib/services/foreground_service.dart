@@ -146,8 +146,6 @@ class ForegroundService {
           // This allows our custom app sounds to play without OS interference.
           channelImportance: NotificationChannelImportance.LOW,
           priority: NotificationPriority.LOW,
-          // Gymply Accent Color: #FCB075
-          color: const Color(0xFFFCB075),
           showWhen: false,
         ),
         iosNotificationOptions: const IOSNotificationOptions(
