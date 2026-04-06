@@ -8,6 +8,9 @@ import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:logger/logger.dart';
 
+// Unique service ID for GYMPLY's foreground service.
+const int kGymplyServiceId = 901;
+
 // Top-level entry point for the foreground service isolate.
 @pragma('vm:entry-point')
 void gymplyTaskCallback() {
@@ -47,8 +50,6 @@ class ForegroundService {
   ForegroundService._internal();
   static final ForegroundService _instance = ForegroundService._internal();
 
-  static const int kGymplyServiceId = 901;
-
   final Logger _logger = Logger();
   bool _isInitialized = false;
 
@@ -78,7 +79,11 @@ class ForegroundService {
       _isInitialized = true;
       _logger.i('ForegroundService: Initialized successfully.');
     } on Object catch (e, stack) {
-      _logger.e('ForegroundService: Failed to initialize', error: e, stackTrace: stack);
+      _logger.e(
+        'ForegroundService: Failed to initialize',
+        error: e,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -90,8 +95,8 @@ class ForegroundService {
     try {
       final String? segmentDisplay =
           (segmentLabel != null && segmentTime != null)
-              ? '$segmentLabel: $segmentTime'
-              : null;
+          ? '$segmentLabel: $segmentTime'
+          : null;
 
       if (await FlutterForegroundTask.isRunningService) {
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
@@ -100,7 +105,11 @@ class ForegroundService {
         });
       }
     } on Object catch (e, stack) {
-      _logger.e('ForegroundService: Failed to update', error: e, stackTrace: stack);
+      _logger.e(
+        'ForegroundService: Failed to update',
+        error: e,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -110,14 +119,20 @@ class ForegroundService {
 
       await FlutterForegroundTask.startService(
         serviceId: kGymplyServiceId,
-        serviceTypes: const <ForegroundServiceTypes>[ForegroundServiceTypes.health],
+        serviceTypes: const <ForegroundServiceTypes>[
+          ForegroundServiceTypes.health,
+        ],
         notificationTitle: 'GYMPLY.',
         notificationText: 'Total: 00:00:00 | Ready',
         callback: gymplyTaskCallback,
       );
       _logger.i('ForegroundService: Started.');
     } on Object catch (e, stack) {
-      _logger.e('ForegroundService: Failed to start', error: e, stackTrace: stack);
+      _logger.e(
+        'ForegroundService: Failed to start',
+        error: e,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -126,7 +141,11 @@ class ForegroundService {
       await FlutterForegroundTask.stopService();
       _logger.i('ForegroundService: Service stopped.');
     } on Object catch (e, stack) {
-      _logger.e('ForegroundService: Failed to stop', error: e, stackTrace: stack);
+      _logger.e(
+        'ForegroundService: Failed to stop',
+        error: e,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -140,11 +159,15 @@ class ForegroundService {
       }
 
       const FlutterSecureStorage secureStorage = FlutterSecureStorage();
-      final String? hasShown =
-          await secureStorage.read(key: 'hasShownTimerPermissionModal');
+      final String? hasShown = await secureStorage.read(
+        key: 'hasShownTimerPermissionModal',
+      );
       if (hasShown == 'true') return;
 
-      await secureStorage.write(key: 'hasShownTimerPermissionModal', value: 'true');
+      await secureStorage.write(
+        key: 'hasShownTimerPermissionModal',
+        value: 'true',
+      );
 
       if (!context.mounted) return;
       await ModalService.showModal(
@@ -152,7 +175,11 @@ class ForegroundService {
         child: const PermissionModal(),
       );
     } on Object catch (e, stack) {
-      _logger.e('ForegroundService: Permission request failed', error: e, stackTrace: stack);
+      _logger.e(
+        'ForegroundService: Permission request failed',
+        error: e,
+        stackTrace: stack,
+      );
     }
   }
 

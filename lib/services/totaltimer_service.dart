@@ -67,8 +67,8 @@ class TotalTimer {
           unawaited(
             foregroundService.updateWorkoutDisplay(
               totalTime: sElapsedTotalTime.value.formatHMMSS(),
-              segmentLabel: 'Workout',
-              segmentTime: sElapsedTotalTime.value.formatHMMSS(),
+              segmentLabel: null,
+              segmentTime: null,
             ),
           );
         }
@@ -88,8 +88,8 @@ class TotalTimer {
       unawaited(
         foregroundService.updateWorkoutDisplay(
           totalTime: sElapsedTotalTime.value.formatHMMSS(),
-          segmentLabel: 'Workout',
-          segmentTime: sElapsedTotalTime.value.formatHMMSS(),
+          segmentLabel: null,
+          segmentTime: null,
         ),
       );
     }
