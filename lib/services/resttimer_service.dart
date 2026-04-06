@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/notification_service.dart';
+import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
+import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimer {
@@ -13,6 +14,8 @@ class RestTimer {
   }
   RestTimer._internal();
   static final RestTimer _instance = RestTimer._internal();
+
+  final Logger _logger = Logger();
 
   // Int Signal to track initial rest time.
   static final Signal<int> sInitialRestTime = Signal<int>(
@@ -45,95 +48,120 @@ class RestTimer {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sRestTimerRunning.value) return;
 
-    // Ensure Audio engine is primed while in the tap callback.
-    unawaited(AudioService().initialize());
+    try {
+      // Ensure Audio engine is primed while in the tap callback.
+      unawaited(AudioService().initialize());
 
-    // Set Signals.
-    sRestTimerRunning.value = true;
-    sRestTimerCompleted.value = false;
+      // Set Signals.
+      sRestTimerRunning.value = true;
+      sRestTimerCompleted.value = false;
 
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
-    // Calculate when resttimer should end.
-    _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
+      // Calculate when resttimer should end.
+      _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
-    // Schedule background chronometer and alarm only if app is in background.
-    final AppLifecycleState? state = WidgetsBinding.instance.lifecycleState;
-    if (state != AppLifecycleState.resumed) {
+      // Always start the foreground service — it keeps the process alive and
+      // shows a live countdown regardless of foreground/background state.
       unawaited(
-        notificationService.startTimerNotification(
-          title: 'Rest Timer',
-          body: 'Rest complete! Time to lift.',
-          durationSeconds: sElapsedRestTime.value,
+        foregroundService.startCountdownService(
+          timerType: kTimerTypeRest,
+          endTimeMs: _endTime!.millisecondsSinceEpoch,
         ),
       );
+
+      _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+        if (_endTime == null) return;
+
+        final Duration remaining = _endTime!.difference(DateTime.now());
+        // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
+        final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
+
+        if (remainingSeconds > 0) {
+          sElapsedRestTime.value = remainingSeconds;
+        } else {
+          // Stop timer immediately.
+          _timer?.cancel();
+
+          // Reset Signals.
+          _timer = null;
+          _endTime = null;
+          sRestTimerRunning.value = false;
+          sElapsedRestTime.value = 0;
+
+          // Revert back or stop service entirely. 
+          // If auto-interval is active, IntervalTimer will immediately override this.
+          if (TotalTimer.sTotalTimerRunning.value) {
+            await totalTimer.startTimer();
+          } else {
+            unawaited(foregroundService.stopService());
+          }
+
+          // Play rest-completed sound.
+          unawaited(AudioService().playTimerBell());
+
+          // Short pause to allow sound to start before state transition.
+          await Future<void>.delayed(const Duration(milliseconds: 800));
+
+          // Reset Signals.
+          sRestTimerCompleted.value = true;
+          sElapsedRestTime.value = sInitialRestTime.value;
+        }
+      });
+      _logger.i('RestTimer: Started.');
+    } catch (e, stack) {
+      _logger.e('RestTimer: Failed to start', error: e, stackTrace: stack);
     }
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-      if (_endTime == null) return;
-
-      final Duration remaining = _endTime!.difference(DateTime.now());
-      // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
-      final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
-
-      if (remainingSeconds > 0) {
-        sElapsedRestTime.value = remainingSeconds;
-      } else {
-        // Stop timer immediately.
-        _timer?.cancel();
-
-        // Reset Signals.
-        _timer = null;
-        _endTime = null;
-        sRestTimerRunning.value = false;
-        sElapsedRestTime.value = 0;
-
-        // Clear active background notifications.
-        // We only cancel the chronometer here so the scheduled alarm chime can still play.
-        unawaited(notificationService.cancelChronometerOnly());
-
-        // Play rest-completed sound.
-        unawaited(AudioService().playTimerBell());
-
-        // Short pause to allow sound to start before state transition.
-        await Future<void>.delayed(const Duration(milliseconds: 800));
-
-        // Reset Signals.
-        sRestTimerCompleted.value = true;
-        sElapsedRestTime.value = sInitialRestTime.value;
-      }
-    });
   }
 
   Future<void> pauseTimer() async {
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
+    try {
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
-    // Cancel timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    _endTime = null;
-    sRestTimerRunning.value = false;
-    unawaited(notificationService.cancelAllTimers());
+      // Cancel timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
+      sRestTimerRunning.value = false;
+
+      if (TotalTimer.sTotalTimerRunning.value) {
+        await totalTimer.startTimer();
+      } else {
+        unawaited(foregroundService.stopService());
+      }
+      _logger.i('RestTimer: Paused.');
+    } catch (e, stack) {
+      _logger.e('RestTimer: Failed to pause', error: e, stackTrace: stack);
+    }
   }
 
   // Resets Timer state.
   Future<void> resetTimer() async {
-    // Give a bigger bzzz.
-    await HapticFeedback.mediumImpact();
+    try {
+      // Give a bigger bzzz.
+      await HapticFeedback.mediumImpact();
 
-    // Reset timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    _endTime = null;
+      // Reset timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
 
-    unawaited(notificationService.cancelAllTimers());
+      if (TotalTimer.sTotalTimerRunning.value) {
+        await totalTimer.startTimer();
+      } else {
+        unawaited(foregroundService.stopService());
+      }
 
-    // Reset to initial seconds.
-    sElapsedRestTime.value = sInitialRestTime.value;
-    sRestTimerRunning.value = false;
-    sRestTimerCompleted.value = false;
+      // Reset to initial seconds.
+      sElapsedRestTime.value = sInitialRestTime.value;
+      sRestTimerRunning.value = false;
+      sRestTimerCompleted.value = false;
+      _logger.i('RestTimer: Reset.');
+    } catch (e, stack) {
+      _logger.e('RestTimer: Failed to reset', error: e, stackTrace: stack);
+    }
   }
 }
 

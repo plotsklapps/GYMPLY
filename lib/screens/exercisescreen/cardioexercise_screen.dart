@@ -6,9 +6,9 @@ import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/screens/exercisescreen/cardioset_card.dart';
 import 'package:gymply/screens/exercisescreen/cardiotimer_text.dart';
+import 'package:gymply/services/foreground_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
-import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
@@ -203,16 +203,20 @@ class CardioExerciseScreen extends StatelessWidget {
                       onPressed: () async {
                         // Check WorkoutType before starting/pausing.
                         if (mode == CardioMode.stopwatch) {
-                          isStopwatchRunning
-                              ? await StopwatchTimer().pauseTimer()
-                              : await StopwatchTimer().startTimer();
+                          if (isStopwatchRunning) {
+                            await StopwatchTimer().pauseTimer();
+                          } else {
+                            await foregroundService
+                                .requestPermissionWithDialog(context);
+                            await StopwatchTimer().startTimer();
+                          }
                         } else {
                           if (isRestRunning) {
                             await RestTimer().pauseTimer();
                           } else if (isIntervalRunning) {
                             await IntervalTimer().pauseTimer();
                           } else {
-                            await notificationService
+                            await foregroundService
                                 .requestPermissionWithDialog(context);
                             await IntervalTimer().startTimer();
                           }

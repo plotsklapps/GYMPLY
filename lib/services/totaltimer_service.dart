@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:gymply/services/foreground_service.dart';
+import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
 class TotalTimer {
@@ -12,13 +14,15 @@ class TotalTimer {
   TotalTimer._internal();
   static final TotalTimer _instance = TotalTimer._internal();
 
+  final Logger _logger = Logger();
+
   // Int Signal to track initial total time.
   static final Signal<int> sInitialTotalTime = Signal<int>(
     0,
     debugLabel: 'sInitialTotalTime',
   );
 
-  // Int Signal to track elapsed total time.
+  // Int Signal to track elapsed total time (in seconds).
   static final Signal<int> sElapsedTotalTime = Signal<int>(
     0,
     debugLabel: 'sElapsedTotalTime',
@@ -35,61 +39,90 @@ class TotalTimer {
 
   Future<void> startTimer() async {
     // Prevent multiple timers from running at once.
-    if (_timer != null) {
-      return;
+    if (_timer != null) return;
+
+    try {
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
+
+      sTotalTimerRunning.value = true;
+
+      // Calculate start time based on current elapsed time to allow
+      // accurate resumption.
+      _startTime = DateTime.now().subtract(
+        Duration(seconds: sElapsedTotalTime.value),
+      );
+
+      // Start the foreground service for total workout duration.
+      unawaited(
+        foregroundService.startTotalTimerService(
+          virtualStartMs: _startTime!.millisecondsSinceEpoch,
+        ),
+      );
+
+      _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+        if (_startTime != null) {
+          sElapsedTotalTime.value =
+              DateTime.now().difference(_startTime!).inSeconds;
+        }
+      });
+      _logger.i('TotalTimer: Started.');
+    } catch (e, stack) {
+      _logger.e('TotalTimer: Failed to start', error: e, stackTrace: stack);
     }
-
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
-
-    sTotalTimerRunning.value = true;
-
-    // Calculate start time based on current elapsed time to allow
-    // accurate resumption.
-    _startTime = DateTime.now().subtract(
-      Duration(seconds: sElapsedTotalTime.value),
-    );
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (_startTime != null) {
-        sElapsedTotalTime.value = DateTime.now()
-            .difference(_startTime!)
-            .inSeconds;
-      }
-    });
   }
 
-  /// Safely updates the timer's duration.
-  /// If the timer is running, it adjusts the internal start time to
-  /// prevent the background loop from overwriting the change.
+  // Safely updates the timer's duration.
   void syncTotalTime(int seconds) {
     sElapsedTotalTime.value = seconds;
     if (_startTime != null) {
       _startTime = DateTime.now().subtract(Duration(seconds: seconds));
+      // Update foreground service if running.
+      unawaited(
+        foregroundService.startTotalTimerService(
+          virtualStartMs: _startTime!.millisecondsSinceEpoch,
+        ),
+      );
     }
   }
 
   Future<void> pauseTimer() async {
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
+    try {
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
-    // Cancel timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    sTotalTimerRunning.value = false;
-    _startTime = null;
+      // Cancel timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      sTotalTimerRunning.value = false;
+      _startTime = null;
+
+      // Stop the foreground service (will revert to total if another timer 
+      // isn't overriding, but here we stop it entirely if pause is called).
+      unawaited(foregroundService.stopService());
+      _logger.i('TotalTimer: Paused.');
+    } catch (e, stack) {
+      _logger.e('TotalTimer: Failed to pause', error: e, stackTrace: stack);
+    }
   }
 
   Future<void> resetTimer() async {
-    // Give a bigger bzzz.
-    await HapticFeedback.mediumImpact();
+    try {
+      // Give a bigger bzzz.
+      await HapticFeedback.mediumImpact();
 
-    // Cancel timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    _startTime = null;
-    sElapsedTotalTime.value = sInitialTotalTime.value;
-    sTotalTimerRunning.value = false;
+      // Cancel timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      _startTime = null;
+      sElapsedTotalTime.value = sInitialTotalTime.value;
+      sTotalTimerRunning.value = false;
+
+      unawaited(foregroundService.stopService());
+      _logger.i('TotalTimer: Reset.');
+    } catch (e, stack) {
+      _logger.e('TotalTimer: Failed to reset', error: e, stackTrace: stack);
+    }
   }
 }
 

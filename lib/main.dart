@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:gymply/hive_registrar.g.dart';
 import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/screens/onboarding_screen.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/exercise_service.dart';
+import 'package:gymply/services/foreground_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
-import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
@@ -58,8 +59,10 @@ void main() async {
   // NostrService loads keys from secure storage.
   await nostrService.init();
 
-  // NotificationService initializes local alert channels.
-  await notificationService.init();
+  // ForegroundService initializes the timer service channel and registers
+  // the task data callback for two-way service ↔ UI communication.
+  FlutterForegroundTask.initCommunicationPort();
+  await foregroundService.init();
 
   // Run the app.
   runApp(const MainEntry());

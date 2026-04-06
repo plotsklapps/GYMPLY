@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/notification_service.dart';
+import 'package:gymply/services/foreground_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
+import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
 class IntervalTimer {
@@ -49,7 +49,9 @@ class IntervalTimer {
         else if (exercise is StretchExercise) {
           workoutService.addStretchSet(
             exercise,
-            stretchDuration: Duration(milliseconds: sInitialIntervalTime.value),
+            stretchDuration: Duration(
+              milliseconds: sInitialIntervalTime.value,
+            ),
             restDuration: Duration(seconds: RestTimer.sInitialRestTime.value),
             totalDuration: Duration(
               milliseconds:
@@ -63,7 +65,7 @@ class IntervalTimer {
         // Reset Signal.
         RestTimer.sRestTimerCompleted.value = false;
 
-        // Auto-restart if enabled.
+        // Auto-restart or fallback.
         if (sAutoIntervalOn.value) {
           await startTimer();
         }
@@ -72,6 +74,8 @@ class IntervalTimer {
   }
 
   static final IntervalTimer _instance = IntervalTimer._internal();
+
+  final Logger _logger = Logger();
 
   Timer? _timer;
   DateTime? _endTime;
@@ -119,105 +123,112 @@ class IntervalTimer {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sIntervalTimerRunning.value) return;
 
-    // Ensure Audio engine is primed while in tap callback.
-    unawaited(AudioService().initialize());
+    try {
+      // Ensure Audio engine is primed while in tap callback.
+      unawaited(AudioService().initialize());
 
-    // Set Signals.
-    _isIntervalSequenceActive = true;
-    sIntervalTimerRunning.value = true;
-    sIntervalTimerCompleted.value = false;
+      // Set Signals.
+      _isIntervalSequenceActive = true;
+      sIntervalTimerRunning.value = true;
+      sIntervalTimerCompleted.value = false;
 
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
-    // Calculate when interval should end.
-    _endTime = DateTime.now().add(
-      Duration(milliseconds: sElapsedIntervalTime.value),
-    );
+      // Calculate when interval should end.
+      _endTime = DateTime.now().add(
+        Duration(milliseconds: sElapsedIntervalTime.value),
+      );
 
-    // Schedule background chronometer and alarm only if app is in background.
-    final AppLifecycleState? state = WidgetsBinding.instance.lifecycleState;
-    if (state != AppLifecycleState.resumed) {
+      // Always start the foreground service.
       unawaited(
-        notificationService.startTimerNotification(
-          title: 'Interval Timer',
-          body: 'Interval complete! Transitioning...',
-          durationSeconds: (sElapsedIntervalTime.value / 1000).ceil(),
+        foregroundService.startCountdownService(
+          timerType: kTimerTypeInterval,
+          endTimeMs: _endTime!.millisecondsSinceEpoch,
         ),
       );
+
+      // Set a high-frequency timer (10ms) to support centisecond updates.
+      _timer = Timer.periodic(const Duration(milliseconds: 10), (
+        Timer timer,
+      ) async {
+        if (_endTime == null) return;
+
+        final Duration remaining = _endTime!.difference(DateTime.now());
+        final int remainingMs = remaining.inMilliseconds;
+
+        if (remainingMs > 0) {
+          sElapsedIntervalTime.value = remainingMs;
+        } else {
+          // Stop timer immediately.
+          _timer?.cancel();
+
+          // Reset Signals.
+          _timer = null;
+          _endTime = null;
+          sIntervalTimerRunning.value = false;
+          sElapsedIntervalTime.value = 0;
+
+          // Play interval-completed sound.
+          unawaited(AudioService().playTimerBell());
+
+          // Short pause to allow sound to start before state transition.
+          await Future<void>.delayed(const Duration(milliseconds: 800));
+
+          // Reset Signals.
+          sIntervalTimerCompleted.value = true;
+          sElapsedIntervalTime.value = sInitialIntervalTime.value;
+
+          // Start the rest period. RestTimer will handle service updates.
+          await RestTimer().startTimer();
+        }
+      });
+      _logger.i('IntervalTimer: Started.');
+    } catch (e, stack) {
+      _logger.e('IntervalTimer: Failed to start', error: e, stackTrace: stack);
     }
-
-    // Set a high-frequency timer (10ms) to support centisecond updates.
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (
-      Timer timer,
-    ) async {
-      if (_endTime == null) return;
-
-      final Duration remaining = _endTime!.difference(DateTime.now());
-      final int remainingMs = remaining.inMilliseconds;
-
-      if (remainingMs > 0) {
-        sElapsedIntervalTime.value = remainingMs;
-      } else {
-        // Stop timer immediately.
-        _timer?.cancel();
-
-        // Reset Signals.
-        _timer = null;
-        _endTime = null;
-        sIntervalTimerRunning.value = false;
-        sElapsedIntervalTime.value = 0;
-
-        // Clear active background notifications.
-        // We only cancel the chronometer here so the scheduled
-        // alarm chime can still play.
-        unawaited(notificationService.cancelChronometerOnly());
-
-        // Play interval-completed sound.
-        unawaited(AudioService().playTimerBell());
-
-        // Short pause to allow sound to start before state transition.
-        await Future<void>.delayed(const Duration(milliseconds: 800));
-
-        // Reset Signals.
-        sIntervalTimerCompleted.value = true;
-        sElapsedIntervalTime.value = sInitialIntervalTime.value;
-
-        // Start the rest period.
-        await RestTimer().startTimer();
-      }
-    });
   }
 
   Future<void> pauseTimer() async {
-    // Give a little bzzz.
-    await HapticFeedback.lightImpact();
+    try {
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
-    // Cancel timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    _endTime = null;
-    sIntervalTimerRunning.value = false;
-    unawaited(notificationService.cancelAllTimers());
+      // Cancel timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
+      sIntervalTimerRunning.value = false;
+      
+      unawaited(foregroundService.stopService());
+      _logger.i('IntervalTimer: Paused.');
+    } catch (e, stack) {
+      _logger.e('IntervalTimer: Failed to pause', error: e, stackTrace: stack);
+    }
   }
 
   Future<void> resetTimer() async {
-    _isIntervalSequenceActive = false;
+    try {
+      _isIntervalSequenceActive = false;
 
-    // Give a bigger bzzz.
-    await HapticFeedback.mediumImpact();
+      // Give a bigger bzzz.
+      await HapticFeedback.mediumImpact();
 
-    // Reset timer and reset Signals.
-    _timer?.cancel();
-    _timer = null;
-    _endTime = null;
+      // Reset timer and reset Signals.
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
 
-    unawaited(notificationService.cancelAllTimers());
+      unawaited(foregroundService.stopService());
 
-    // Reset to initial milliseconds.
-    sElapsedIntervalTime.value = sInitialIntervalTime.value;
-    sIntervalTimerRunning.value = false;
-    sIntervalTimerCompleted.value = false;
+      // Reset to initial milliseconds.
+      sElapsedIntervalTime.value = sInitialIntervalTime.value;
+      sIntervalTimerRunning.value = false;
+      sIntervalTimerCompleted.value = false;
+      _logger.i('IntervalTimer: Reset.');
+    } catch (e, stack) {
+      _logger.e('IntervalTimer: Failed to reset', error: e, stackTrace: stack);
+    }
   }
 }
 
