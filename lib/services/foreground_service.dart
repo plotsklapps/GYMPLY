@@ -8,41 +8,27 @@ import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:logger/logger.dart';
 
-// ---------------------------------------------------------------------------
 // Top-level entry point for the foreground service isolate.
-// Must be a top-level function annotated with @pragma('vm:entry-point').
-// ---------------------------------------------------------------------------
 @pragma('vm:entry-point')
 void gymplyTaskCallback() {
-  FlutterForegroundTask.setTaskHandler(_GymplyTaskHandler());
+  FlutterForegroundTask.setTaskHandler(GymplyTaskHandler());
 }
 
-// ---------------------------------------------------------------------------
 // Private TaskHandler — runs in the foreground service isolate.
-// Ticks every second, reads timer state, and updates the notification text.
-// ---------------------------------------------------------------------------
-class _GymplyTaskHandler extends TaskHandler {
+class GymplyTaskHandler extends TaskHandler {
   String _totalText = '00:00:00';
-  String _segmentText = 'Idle';
+  String _segmentText = '';
 
   @override
-  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
-    // Initial state can be empty or loaded from data if needed.
-  }
+  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {}
 
   @override
   void onRepeatEvent(DateTime timestamp) {
-    // Just refresh with the latest variables we have stored.
-    // The main isolate pushes new strings to us via onReceiveData().
     final String body = _segmentText.isNotEmpty
         ? 'Total: $_totalText | $_segmentText'
         : 'Total: $_totalText';
 
-    unawaited(
-      FlutterForegroundTask.updateService(
-        notificationText: body,
-      ),
-    );
+    unawaited(FlutterForegroundTask.updateService(notificationText: body));
   }
 
   @override
@@ -56,43 +42,26 @@ class _GymplyTaskHandler extends TaskHandler {
   }
 }
 
-// ---------------------------------------------------------------------------
-// ForegroundService — central provider for the Android foreground service.
-// Manages service lifecycle, permission requests, and timer state handoff
-// to the service isolate.
-// ---------------------------------------------------------------------------
 class ForegroundService {
-  // Singleton pattern.
-  factory ForegroundService() {
-    return _instance;
-  }
-
+  factory ForegroundService() => _instance;
   ForegroundService._internal();
   static final ForegroundService _instance = ForegroundService._internal();
 
-  // Unique service ID for GYMPLY's foreground service.
   static const int kGymplyServiceId = 901;
 
   final Logger _logger = Logger();
   bool _isInitialized = false;
 
-  // Initializes the foreground service configuration and registers the
-  // data callback for messages sent from the task isolate.
   Future<void> init() async {
     if (_isInitialized) return;
 
     try {
-      // Register to receive data from the task isolate.
       FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
-
-      // Configure the foreground service channel and behaviour.
       FlutterForegroundTask.init(
         androidNotificationOptions: AndroidNotificationOptions(
           channelId: 'gymply_timer_channel',
           channelName: 'GYMPLY Timer',
-          channelDescription: 'Shows the live timer status in your status bar.',
-          // LOW importance = silent status bar notification, no sound or pop.
-          // This allows our custom app sounds to play without OS interference.
+          channelDescription: 'Shows the live timer status.',
           channelImportance: NotificationChannelImportance.LOW,
           priority: NotificationPriority.LOW,
           showWhen: false,
@@ -102,24 +71,17 @@ class ForegroundService {
           playSound: false,
         ),
         foregroundTaskOptions: ForegroundTaskOptions(
-          // Tick once per second to update the display.
           eventAction: ForegroundTaskEventAction.repeat(1000),
           allowWakeLock: true,
         ),
       );
-
       _isInitialized = true;
       _logger.i('ForegroundService: Initialized successfully.');
-    } catch (e, stack) {
-      _logger.e(
-        'ForegroundService: Failed to initialize',
-        error: e,
-        stackTrace: stack,
-      );
+    } on Object catch (e, stack) {
+      _logger.e('ForegroundService: Failed to initialize', error: e, stackTrace: stack);
     }
   }
 
-  // Updates the workout notification display.
   Future<void> updateWorkoutDisplay({
     required String totalTime,
     String? segmentLabel,
@@ -128,109 +90,74 @@ class ForegroundService {
     try {
       final String? segmentDisplay =
           (segmentLabel != null && segmentTime != null)
-          ? '$segmentLabel: $segmentTime'
-          : null;
+              ? '$segmentLabel: $segmentTime'
+              : null;
 
       if (await FlutterForegroundTask.isRunningService) {
-        // We push the components to the task; the handler logic in onRepeatEvent
-        // handles the conditional formatting to hide the separator if empty.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
           'segment': segmentDisplay ?? '',
         });
       }
-    } catch (e, stack) {
-      _logger.e(
-        'ForegroundService: Failed to update',
-        error: e,
-        stackTrace: stack,
-      );
+    } on Object catch (e, stack) {
+      _logger.e('ForegroundService: Failed to update', error: e, stackTrace: stack);
     }
   }
 
-  // Starts the service for the first time.
   Future<void> startService() async {
     try {
       if (await FlutterForegroundTask.isRunningService) return;
 
       await FlutterForegroundTask.startService(
-        serviceId: ForegroundService.kGymplyServiceId,
-        serviceTypes: const <ForegroundServiceTypes>[
-          ForegroundServiceTypes.health,
-        ],
+        serviceId: kGymplyServiceId,
+        serviceTypes: const <ForegroundServiceTypes>[ForegroundServiceTypes.health],
         notificationTitle: 'GYMPLY.',
         notificationText: 'Total: 00:00:00 | Ready',
         callback: gymplyTaskCallback,
       );
       _logger.i('ForegroundService: Started.');
-    } catch (e, stack) {
-      _logger.e(
-        'ForegroundService: Failed to start',
-        error: e,
-        stackTrace: stack,
-      );
+    } on Object catch (e, stack) {
+      _logger.e('ForegroundService: Failed to start', error: e, stackTrace: stack);
     }
   }
 
-  // Stops the foreground service entirely.
   Future<void> stopService() async {
     try {
       await FlutterForegroundTask.stopService();
       _logger.i('ForegroundService: Service stopped.');
-    } catch (e, stack) {
-      _logger.e(
-        'ForegroundService: Failed to stop service',
-        error: e,
-        stackTrace: stack,
-      );
+    } on Object catch (e, stack) {
+      _logger.e('ForegroundService: Failed to stop', error: e, stackTrace: stack);
     }
   }
 
-  // Permission handling.
   Future<void> requestPermissionWithDialog(BuildContext context) async {
     try {
       final NotificationPermission permission =
           await FlutterForegroundTask.checkNotificationPermission();
       if (permission == NotificationPermission.granted) {
-        if (Platform.isAndroid) {
-          await _requestBatteryOptimization();
-        }
+        if (Platform.isAndroid) await _requestBatteryOptimization();
         return;
       }
 
-      // Check if we already showed the permission modal.
       const FlutterSecureStorage secureStorage = FlutterSecureStorage();
-      final String? hasShown = await secureStorage.read(
-        key: 'hasShownTimerPermissionModal',
-      );
-      if (hasShown == 'true') {
-        return;
-      }
+      final String? hasShown =
+          await secureStorage.read(key: 'hasShownTimerPermissionModal');
+      if (hasShown == 'true') return;
+
+      await secureStorage.write(key: 'hasShownTimerPermissionModal', value: 'true');
 
       if (!context.mounted) return;
-
-      // Mark as shown.
-      await secureStorage.write(
-        key: 'hasShownTimerPermissionModal',
-        value: 'true',
-      );
-
       await ModalService.showModal(
         context: context,
         child: const PermissionModal(),
       );
-    } catch (e, stack) {
-      _logger.e(
-        'ForegroundService: Permission request failed',
-        error: e,
-        stackTrace: stack,
-      );
+    } on Object catch (e, stack) {
+      _logger.e('ForegroundService: Permission request failed', error: e, stackTrace: stack);
     }
   }
 
-  static Future<void> requestBatteryOptimization() async {
-    await _requestBatteryOptimization();
-  }
+  static Future<void> requestBatteryOptimization() async =>
+      _requestBatteryOptimization();
 
   static Future<void> _requestBatteryOptimization() async {
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
@@ -238,9 +165,7 @@ class ForegroundService {
     }
   }
 
-  void _onReceiveTaskData(Object data) {
-    // Port for extension if we need to receive signals from the service isolate.
-  }
+  void _onReceiveTaskData(Object data) {}
 }
 
 final ForegroundService foregroundService = ForegroundService();
