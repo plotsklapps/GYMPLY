@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:intl/intl.dart';
@@ -275,7 +276,22 @@ class ForegroundService {
         return;
       }
 
+      // Check if we already showed the permission modal.
+      const FlutterSecureStorage secureStorage = FlutterSecureStorage();
+      final String? hasShown = await secureStorage.read(
+        key: 'hasShownTimerPermissionModal',
+      );
+      if (hasShown == 'true') {
+        return;
+      }
+
       if (!context.mounted) return;
+
+      // Mark as shown.
+      await secureStorage.write(
+        key: 'hasShownTimerPermissionModal',
+        value: 'true',
+      );
 
       await ModalService.showModal(
         context: context,

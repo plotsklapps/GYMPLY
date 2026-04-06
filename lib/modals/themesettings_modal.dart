@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/permission_modal.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ThemeSettingsModal extends StatelessWidget {
@@ -67,6 +72,9 @@ class ThemeSettingsModal extends StatelessWidget {
                     await settingsService.toggleWakelock(value: value);
                   },
                 ),
+
+                // Notification ListTile.
+                const _NotificationSwitchTile(),
 
                 // ThemeMode ListTile.
                 SwitchListTile(
@@ -172,6 +180,88 @@ class ThemeSettingsModal extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _NotificationSwitchTile extends StatefulWidget {
+  const _NotificationSwitchTile();
+
+  @override
+  State<_NotificationSwitchTile> createState() =>
+      _NotificationSwitchTileState();
+}
+
+class _NotificationSwitchTileState extends State<_NotificationSwitchTile>
+    with WidgetsBindingObserver {
+  bool _isGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(_checkPermission());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await _checkPermission();
+    }
+  }
+
+  Future<void> _checkPermission() async {
+    final bool isGranted = await Permission.notification.isGranted;
+    if (mounted) {
+      setState(() {
+        _isGranted = isGranted;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      title: const Text('Allow notifications'),
+      subtitle: const Text('Required for background timer sounds'),
+      secondary: Icon(
+        _isGranted ? LucideIcons.bellRing : LucideIcons.bellOff,
+      ),
+      value: _isGranted,
+      onChanged: (bool value) async {
+        if (value) {
+          // Show custom permission modal first.
+          await ModalService.showModal(
+            context: context,
+            child: const PermissionModal(),
+          );
+
+          // The modal requests the permission when "UNDERSTOOD" is pressed.
+          // Check the final status after the modal closes.
+          final PermissionStatus status = await Permission.notification.status;
+
+          if (status.isGranted) {
+            await _checkPermission();
+          } else if (status.isPermanentlyDenied) {
+            // If the OS blocked the prompt completely, send them to settings.
+            await openAppSettings();
+          } else {
+            // If they just closed the modal or denied the prompt,
+            // revert switch.
+            await _checkPermission();
+          }
+        } else {
+          // Android doesn't let apps revoke their own permissions.
+          // Redirect to settings so they can disable it manually.
+          await openAppSettings();
+        }
+      },
     );
   }
 }

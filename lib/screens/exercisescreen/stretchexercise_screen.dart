@@ -15,6 +15,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
@@ -201,12 +202,23 @@ class StretchExerciseScreen extends StatelessWidget {
                       heroTag: 'stretchPlay',
                       elevation: 0,
                       onPressed: () async {
+                        // Permissie-wrapper voor een naadloze ervaring.
+                        Future<void> handlePermissions() async {
+                          final bool notificationsGranted =
+                              await Permission.notification.isGranted;
+
+                          if (!notificationsGranted && context.mounted) {
+                            await foregroundService.requestPermissionWithDialog(
+                              context,
+                            );
+                          }
+                        }
+
                         if (mode == StretchMode.stopwatch) {
                           if (isStopwatchRunning) {
                             await StopwatchTimer().pauseTimer();
                           } else {
-                            await foregroundService
-                                .requestPermissionWithDialog(context);
+                            await handlePermissions();
                             await StopwatchTimer().startTimer();
                           }
                         } else {
@@ -215,8 +227,7 @@ class StretchExerciseScreen extends StatelessWidget {
                           } else if (isIntervalRunning) {
                             await IntervalTimer().pauseTimer();
                           } else {
-                            await foregroundService
-                                .requestPermissionWithDialog(context);
+                            await handlePermissions();
                             await IntervalTimer().startTimer();
                           }
                         }
