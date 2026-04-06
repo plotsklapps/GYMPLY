@@ -34,9 +34,13 @@ class _GymplyTaskHandler extends TaskHandler {
   void onRepeatEvent(DateTime timestamp) {
     // Just refresh with the latest variables we have stored.
     // The main isolate pushes new strings to us via onReceiveData().
+    final String body = _segmentText.isNotEmpty
+        ? 'Total: $_totalText | $_segmentText'
+        : 'Total: $_totalText';
+
     unawaited(
       FlutterForegroundTask.updateService(
-        notificationText: 'Total: $_totalText | $_segmentText',
+        notificationText: body,
       ),
     );
   }
@@ -48,7 +52,7 @@ class _GymplyTaskHandler extends TaskHandler {
   void onReceiveData(Object data) {
     if (data is! Map<String, dynamic>) return;
     _totalText = data['total'] as String? ?? _totalText;
-    _segmentText = data['segment'] as String? ?? _segmentText;
+    _segmentText = data['segment'] as String? ?? '';
   }
 }
 
@@ -118,19 +122,21 @@ class ForegroundService {
   // Updates the workout notification display.
   Future<void> updateWorkoutDisplay({
     required String totalTime,
-    required String segmentLabel,
-    required String segmentTime,
+    String? segmentLabel,
+    String? segmentTime,
   }) async {
     try {
-      final String body = 'Total: $totalTime | $segmentLabel: $segmentTime';
+      final String? segmentDisplay =
+          (segmentLabel != null && segmentTime != null)
+          ? '$segmentLabel: $segmentTime'
+          : null;
 
       if (await FlutterForegroundTask.isRunningService) {
-        await FlutterForegroundTask.updateService(
-          notificationText: body,
-        );
+        // We push the components to the task; the handler logic in onRepeatEvent
+        // handles the conditional formatting to hide the separator if empty.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
-          'segment': '$segmentLabel: $segmentTime',
+          'segment': segmentDisplay ?? '',
         });
       }
     } catch (e, stack) {
