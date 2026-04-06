@@ -160,7 +160,7 @@ class IntervalTimer {
           foregroundService.updateWorkoutDisplay(
             totalTime: totalStr,
             segmentLabel: 'Interval',
-            segmentTime: (remainingMs > 0 ? remainingMs : 0).formatHMMSS(),
+            segmentTime: (remainingMs ~/ 1000).formatHMMSS(),
           ),
         );
 

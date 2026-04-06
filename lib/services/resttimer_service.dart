@@ -66,10 +66,20 @@ class RestTimer {
       // Always start the foreground service.
       await foregroundService.startService();
 
+      // Immediately signal the Rest segment to the notification.
+      unawaited(
+        foregroundService.updateWorkoutDisplay(
+          totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
+          segmentLabel: 'Rest',
+          segmentTime: sElapsedRestTime.value.formatMSS(),
+        ),
+      );
+
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         if (_endTime == null) return;
 
         final Duration remaining = _endTime!.difference(DateTime.now());
+        // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
         final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
 
         // Update notification

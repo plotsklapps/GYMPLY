@@ -27,6 +27,7 @@ class GymplyTaskHandler extends TaskHandler {
 
   @override
   void onRepeatEvent(DateTime timestamp) {
+    // Re-sync logic: If the main isolate hasn't sent data yet, it defaults to 'Total'.
     final String body = _segmentText.isNotEmpty
         ? 'Total: $_totalText | $_segmentText'
         : 'Total: $_totalText';
@@ -93,15 +94,17 @@ class ForegroundService {
     String? segmentTime,
   }) async {
     try {
-      final String? segmentDisplay =
+      final String segmentDisplay =
           (segmentLabel != null && segmentTime != null)
           ? '$segmentLabel: $segmentTime'
-          : null;
+          : '';
 
       if (await FlutterForegroundTask.isRunningService) {
+        // Send data to the background task isolate.
+        // The TaskHandler's onRepeatEvent() handles the actual notification update.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
-          'segment': segmentDisplay ?? '',
+          'segment': segmentDisplay,
         });
       }
     } on Object catch (e, stack) {
@@ -123,7 +126,7 @@ class ForegroundService {
           ForegroundServiceTypes.health,
         ],
         notificationTitle: 'GYMPLY.',
-        notificationText: 'Total: 00:00:00 | Ready',
+        notificationText: 'Total: 00:00:00',
         callback: gymplyTaskCallback,
       );
       _logger.i('ForegroundService: Started.');
