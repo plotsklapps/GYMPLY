@@ -54,21 +54,22 @@ class StopwatchTimer {
       sStopwatchTimerRunning.value = true;
       _stopwatch.start();
 
-      // virtualStartMs: the epoch ms representing "time zero" for this run.
-      // Accounts for any previously accumulated base time (resume scenario).
-      final int virtualStartMs =
-          DateTime.now().millisecondsSinceEpoch - _baseTime;
-
-      // Show a persistent foreground service notification that counts up.
-      unawaited(
-        foregroundService.startStopwatchService(
-          virtualStartMs: virtualStartMs,
-        ),
-      );
+      // Always start the foreground service.
+      await foregroundService.startService();
 
       // 10ms ticks to capture every centisecond.
-      _timer = Timer.periodic(const Duration(milliseconds: 10), (Timer timer) {
-        sElapsedStopwatchTime.value = _baseTime + _stopwatch.elapsedMilliseconds;
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
+        sElapsedStopwatchTime.value =
+            _baseTime + _stopwatch.elapsedMilliseconds;
+
+        // Update notification with live TotalTimer value.
+        unawaited(
+          foregroundService.updateWorkoutDisplay(
+            totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
+            segmentLabel: 'Stopwatch',
+            segmentTime: sElapsedStopwatchTime.value.formatHMMSSCC(),
+          ),
+        );
       });
       _logger.i('StopwatchTimer: Started.');
     } catch (e, stack) {

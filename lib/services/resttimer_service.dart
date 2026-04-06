@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
@@ -62,21 +63,26 @@ class RestTimer {
       // Calculate when resttimer should end.
       _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
-      // Always start the foreground service — it keeps the process alive and
-      // shows a live countdown regardless of foreground/background state.
-      unawaited(
-        foregroundService.startCountdownService(
-          timerType: kTimerTypeRest,
-          endTimeMs: _endTime!.millisecondsSinceEpoch,
-        ),
-      );
+      // Always start the foreground service.
+      await foregroundService.startService();
 
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         if (_endTime == null) return;
 
         final Duration remaining = _endTime!.difference(DateTime.now());
-        // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
         final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
+
+        // Update notification
+        final String totalStr = TotalTimer.sElapsedTotalTime.value
+            .formatHMMSS();
+        unawaited(
+          foregroundService.updateWorkoutDisplay(
+            totalTime: totalStr,
+            segmentLabel: 'Rest',
+            segmentTime: (remainingSeconds > 0 ? remainingSeconds : 0)
+                .formatMSS(),
+          ),
+        );
 
         if (remainingSeconds > 0) {
           sElapsedRestTime.value = remainingSeconds;
@@ -90,19 +96,8 @@ class RestTimer {
           sRestTimerRunning.value = false;
           sElapsedRestTime.value = 0;
 
-          // Revert back or stop service entirely. 
-          // If auto-interval is active, IntervalTimer will immediately override this.
-          if (TotalTimer.sTotalTimerRunning.value) {
-            await totalTimer.startTimer();
-          } else {
-            unawaited(foregroundService.stopService());
-          }
-
-          // Play rest-completed sound.
+          // Play rest-completed sound first.
           unawaited(AudioService().playTimerBell());
-
-          // Short pause to allow sound to start before state transition.
-          await Future<void>.delayed(const Duration(milliseconds: 800));
 
           // Reset Signals.
           sRestTimerCompleted.value = true;

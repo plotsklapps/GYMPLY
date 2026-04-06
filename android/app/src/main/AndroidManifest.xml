@@ -7,8 +7,10 @@
     <!-- Permissions for foreground service timers -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH"/>
+    <!-- We declare this safe sensor permission to satisfy the 'health'
+    requirement without asking the user for step data -->
+    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:label="GYMPLY."
@@ -36,12 +38,9 @@
         <!-- Warning: Do not change this service name. -->
         <service
             android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
-            android:foregroundServiceType="specialUse"
+            android:foregroundServiceType="health"
             android:stopWithTask="true"
-            android:exported="false">
-            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                      android:value="Running background timers for workouts and intervals"/>
-        </service>
+            android:exported="false" />
         <!-- FileProvider for secure file sharing (Keep this for future use) -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -54,16 +55,22 @@ class TotalTimer {
       );
 
       // Start the foreground service for total workout duration.
-      unawaited(
-        foregroundService.startTotalTimerService(
-          virtualStartMs: _startTime!.millisecondsSinceEpoch,
-        ),
-      );
+      await foregroundService.startService();
 
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         if (_startTime != null) {
-          sElapsedTotalTime.value =
-              DateTime.now().difference(_startTime!).inSeconds;
+          sElapsedTotalTime.value = DateTime.now()
+              .difference(_startTime!)
+              .inSeconds;
+
+          // Update notification
+          unawaited(
+            foregroundService.updateWorkoutDisplay(
+              totalTime: sElapsedTotalTime.value.formatHMMSS(),
+              segmentLabel: 'Workout',
+              segmentTime: sElapsedTotalTime.value.formatHMMSS(),
+            ),
+          );
         }
       });
       _logger.i('TotalTimer: Started.');
@@ -79,8 +86,10 @@ class TotalTimer {
       _startTime = DateTime.now().subtract(Duration(seconds: seconds));
       // Update foreground service if running.
       unawaited(
-        foregroundService.startTotalTimerService(
-          virtualStartMs: _startTime!.millisecondsSinceEpoch,
+        foregroundService.updateWorkoutDisplay(
+          totalTime: sElapsedTotalTime.value.formatHMMSS(),
+          segmentLabel: 'Workout',
+          segmentTime: sElapsedTotalTime.value.formatHMMSS(),
         ),
       );
     }
@@ -97,7 +106,7 @@ class TotalTimer {
       sTotalTimerRunning.value = false;
       _startTime = null;
 
-      // Stop the foreground service (will revert to total if another timer 
+      // Stop the foreground service (will revert to total if another timer
       // isn't overriding, but here we stop it entirely if pause is called).
       unawaited(foregroundService.stopService());
       _logger.i('TotalTimer: Paused.');

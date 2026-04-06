@@ -42,7 +42,7 @@ class PermissionModal extends StatelessWidget {
             'GYMPLY. uses a foreground service to keep your timers '
             'accurate and audible even when the app is minimised or '
             'your screen is off.\n\n'
-            'Android will ask for notification permission:\n\n'
+            'Android will ask for the following permission:\n\n'
             '• Notification access - to display the live timer in your '
             'status bar and keep the timer running.\n\n'
             'Allowing this does NOT change the fact that GYMPLY. is '

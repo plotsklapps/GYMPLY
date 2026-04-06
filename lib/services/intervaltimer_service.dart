@@ -8,6 +8,7 @@ import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/foreground_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:logger/logger.dart';
@@ -141,21 +142,27 @@ class IntervalTimer {
       );
 
       // Always start the foreground service.
-      unawaited(
-        foregroundService.startCountdownService(
-          timerType: kTimerTypeInterval,
-          endTimeMs: _endTime!.millisecondsSinceEpoch,
-        ),
-      );
+      await foregroundService.startService();
 
       // Set a high-frequency timer (10ms) to support centisecond updates.
-      _timer = Timer.periodic(const Duration(milliseconds: 10), (
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (
         Timer timer,
       ) async {
         if (_endTime == null) return;
 
         final Duration remaining = _endTime!.difference(DateTime.now());
         final int remainingMs = remaining.inMilliseconds;
+
+        // Update notification
+        final String totalStr = TotalTimer.sElapsedTotalTime.value
+            .formatHMMSS();
+        unawaited(
+          foregroundService.updateWorkoutDisplay(
+            totalTime: totalStr,
+            segmentLabel: 'Interval',
+            segmentTime: (remainingMs > 0 ? remainingMs : 0).formatHMMSS(),
+          ),
+        );
 
         if (remainingMs > 0) {
           sElapsedIntervalTime.value = remainingMs;
@@ -199,7 +206,7 @@ class IntervalTimer {
       _timer = null;
       _endTime = null;
       sIntervalTimerRunning.value = false;
-      
+
       unawaited(foregroundService.stopService());
       _logger.i('IntervalTimer: Paused.');
     } catch (e, stack) {

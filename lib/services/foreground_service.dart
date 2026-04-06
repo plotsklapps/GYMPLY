@@ -6,17 +6,7 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
-
-// Timer type string constants — shared between both isolates.
-const String kTimerTypeRest = 'rest';
-const String kTimerTypeInterval = 'interval';
-const String kTimerTypeStopwatch = 'stopwatch';
-const String kTimerTypeTotal = 'total';
-
-// Unique service ID for GYMPLY's foreground service.
-const int kGymplyServiceId = 901;
 
 // ---------------------------------------------------------------------------
 // Top-level entry point for the foreground service isolate.
@@ -32,82 +22,33 @@ void gymplyTaskCallback() {
 // Ticks every second, reads timer state, and updates the notification text.
 // ---------------------------------------------------------------------------
 class _GymplyTaskHandler extends TaskHandler {
-  String _timerType = kTimerTypeTotal;
-  int _endTimeMs = 0; // Epoch ms when countdown ends.
-  int _virtualStartMs = 0; // Epoch ms representing "time zero" for count-up.
+  String _totalText = '00:00:00';
+  String _segmentText = 'Idle';
 
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
-    // Read the timer state that ForegroundService wrote before starting.
-    _timerType =
-        await FlutterForegroundTask.getData<String>(key: 'timerType') ??
-        kTimerTypeTotal;
-    _endTimeMs =
-        await FlutterForegroundTask.getData<int>(key: 'endTimeMs') ?? 0;
-    _virtualStartMs =
-        await FlutterForegroundTask.getData<int>(key: 'virtualStartMs') ?? 0;
+    // Initial state can be empty or loaded from data if needed.
   }
 
   @override
   void onRepeatEvent(DateTime timestamp) {
-    // Rebuild the notification text on every tick.
+    // Just refresh with the latest variables we have stored.
+    // The main isolate pushes new strings to us via onReceiveData().
     unawaited(
       FlutterForegroundTask.updateService(
-        notificationText: _buildNotificationText(timestamp),
+        notificationText: 'Total: $_totalText | $_segmentText',
       ),
     );
   }
 
   @override
-  Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {
-    // Nothing to clean up in this handler.
-  }
+  Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
 
   @override
   void onReceiveData(Object data) {
-    // Main isolate sends a 'start' message when the timer type or end time
-    // changes (e.g. interval → rest transition during auto-interval).
     if (data is! Map<String, dynamic>) return;
-    if (data['action'] != 'start') return;
-
-    _timerType = data['timerType'] as String? ?? kTimerTypeTotal;
-    _endTimeMs = data['endTimeMs'] as int? ?? 0;
-    _virtualStartMs = data['virtualStartMs'] as int? ?? 0;
-  }
-
-  // Builds the notification body text based on active timer type.
-  String _buildNotificationText(DateTime now) {
-    if (_timerType == kTimerTypeStopwatch || _timerType == kTimerTypeTotal) {
-      final int elapsedMs = now.millisecondsSinceEpoch - _virtualStartMs;
-      return _formatElapsedTime(elapsedMs < 0 ? 0 : elapsedMs);
-    }
-    final int remainingMs = _endTimeMs - now.millisecondsSinceEpoch;
-    return _formatCountdownTime(remainingMs < 0 ? 0 : remainingMs);
-  }
-
-  // Format using intl for consistency.
-  // Stopwatch/Total: H:mm:ss
-  String _formatElapsedTime(int ms) {
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-    // User requested H:MM:SS for Total/Interval.
-    // For Stopwatch, they asked for H:MM:SS:MS, but we'll stick to 1s ticks.
-    if (ms >= 3600000) {
-      return DateFormat('H:mm:ss').format(date);
-    }
-    return DateFormat('mm:ss').format(date);
-  }
-
-  // Countdown Format.
-  // Interval: H:mm:ss, Rest: mm:ss
-  String _formatCountdownTime(int ms) {
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-    if (_timerType == kTimerTypeRest) {
-      return DateFormat('mm:ss').format(date);
-    }
-    if (ms >= 3600000) {
-      return DateFormat('H:mm:ss').format(date);
-    }
-    return DateFormat('mm:ss').format(date);
+    _totalText = data['total'] as String? ?? _totalText;
+    _segmentText = data['segment'] as String? ?? _segmentText;
   }
 }
 
@@ -124,6 +65,9 @@ class ForegroundService {
 
   ForegroundService._internal();
   static final ForegroundService _instance = ForegroundService._internal();
+
+  // Unique service ID for GYMPLY's foreground service.
+  static const int kGymplyServiceId = 901;
 
   final Logger _logger = Logger();
   bool _isInitialized = false;
@@ -171,79 +115,51 @@ class ForegroundService {
     }
   }
 
-  // Starts the service in "Total Workout Timer" mode.
-  Future<void> startTotalTimerService({required int virtualStartMs}) async {
-    await _startOrUpdateService(
-      timerType: kTimerTypeTotal,
-      virtualStartMs: virtualStartMs,
-    );
-  }
-
-  // Starts the service for a countdown timer (Rest/Interval).
-  Future<void> startCountdownService({
-    required String timerType,
-    required int endTimeMs,
-  }) async {
-    await _startOrUpdateService(
-      timerType: timerType,
-      endTimeMs: endTimeMs,
-    );
-  }
-
-  // Starts the service for the stopwatch.
-  Future<void> startStopwatchService({required int virtualStartMs}) async {
-    await _startOrUpdateService(
-      timerType: kTimerTypeStopwatch,
-      virtualStartMs: virtualStartMs,
-    );
-  }
-
-  // Internal helper to manage the service transitions.
-  Future<void> _startOrUpdateService({
-    required String timerType,
-    int endTimeMs = 0,
-    int virtualStartMs = 0,
+  // Updates the workout notification display.
+  Future<void> updateWorkoutDisplay({
+    required String totalTime,
+    required String segmentLabel,
+    required String segmentTime,
   }) async {
     try {
-      const String title = 'GYMPLY:';
-      final String body = _formatInitialDisplay(
-        timerType,
-        endTimeMs,
-        virtualStartMs,
-      );
-
-      // Persist state for the task isolate.
-      await FlutterForegroundTask.saveData(key: 'timerType', value: timerType);
-      await FlutterForegroundTask.saveData(key: 'endTimeMs', value: endTimeMs);
-      await FlutterForegroundTask.saveData(
-        key: 'virtualStartMs',
-        value: virtualStartMs,
-      );
+      final String body = 'Total: $totalTime | $segmentLabel: $segmentTime';
 
       if (await FlutterForegroundTask.isRunningService) {
         await FlutterForegroundTask.updateService(
-          notificationTitle: title,
           notificationText: body,
         );
-        // Communicate with the running TaskHandler isolate.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
-          'action': 'start',
-          'timerType': timerType,
-          'endTimeMs': endTimeMs,
-          'virtualStartMs': virtualStartMs,
+          'total': totalTime,
+          'segment': '$segmentLabel: $segmentTime',
         });
-      } else {
-        await FlutterForegroundTask.startService(
-          serviceId: kGymplyServiceId,
-          notificationTitle: title,
-          notificationText: body,
-          callback: gymplyTaskCallback,
-        );
       }
-      _logger.i('ForegroundService: Service running [$timerType].');
     } catch (e, stack) {
       _logger.e(
-        'ForegroundService: Failed to start/update service',
+        'ForegroundService: Failed to update',
+        error: e,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  // Starts the service for the first time.
+  Future<void> startService() async {
+    try {
+      if (await FlutterForegroundTask.isRunningService) return;
+
+      await FlutterForegroundTask.startService(
+        serviceId: ForegroundService.kGymplyServiceId,
+        serviceTypes: const <ForegroundServiceTypes>[
+          ForegroundServiceTypes.health,
+        ],
+        notificationTitle: 'GYMPLY.',
+        notificationText: 'Total: 00:00:00 | Ready',
+        callback: gymplyTaskCallback,
+      );
+      _logger.i('ForegroundService: Started.');
+    } catch (e, stack) {
+      _logger.e(
+        'ForegroundService: Failed to start',
         error: e,
         stackTrace: stack,
       );
@@ -318,28 +234,6 @@ class ForegroundService {
 
   void _onReceiveTaskData(Object data) {
     // Port for extension if we need to receive signals from the service isolate.
-  }
-
-  // Formats the initial display for the notification before the TaskHandler ticks.
-  String _formatInitialDisplay(String type, int end, int start) {
-    final int now = DateTime.now().millisecondsSinceEpoch;
-    if (type == kTimerTypeStopwatch || type == kTimerTypeTotal) {
-      final int elapsed = now - start;
-      final DateTime date = DateTime.fromMillisecondsSinceEpoch(
-        elapsed < 0 ? 0 : elapsed,
-        isUtc: true,
-      );
-      if (elapsed >= 3600000) return DateFormat('H:mm:ss').format(date);
-      return DateFormat('mm:ss').format(date);
-    }
-    final int remaining = end - now;
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(
-      remaining < 0 ? 0 : remaining,
-      isUtc: true,
-    );
-    if (type == kTimerTypeRest) return DateFormat('mm:ss').format(date);
-    if (remaining >= 3600000) return DateFormat('H:mm:ss').format(date);
-    return DateFormat('mm:ss').format(date);
   }
 }
 
