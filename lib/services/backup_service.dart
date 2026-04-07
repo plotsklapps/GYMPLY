@@ -3,6 +3,9 @@ import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:gymply/services/bodymetrics_service.dart';
+import 'package:gymply/services/hive_service.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
@@ -137,8 +140,17 @@ class BackupService {
       // Show toast to user.
       ToastService.showError(title: 'Backup Failed', subtitle: '$e');
     } finally {
-      // Create fresh workoutService.
-      await workoutService.init();
+      try {
+        // Re-initialize Hive boxes first!
+        await hiveService.init();
+        // Then re-initialize all dependent services.
+        await workoutService.init();
+        settingsService.init();
+        bodyMetricsService.init();
+      } on Object catch (e) {
+        // Log error.
+        _logger.e('BackupService: Failed to re-initialize services: $e');
+      }
 
       // Reset Signals.
       sIsBackingUp.value = false;
@@ -237,19 +249,27 @@ class BackupService {
         title: 'Restore Successful',
         subtitle: 'Your data and images have been restored.',
       );
-
-      // Refresh WorkoutService.
-      await workoutService.init();
     } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: Apply restore failed: $e');
 
       // Show toast to user.
       ToastService.showError(title: 'Restore Failed', subtitle: '$e');
-
-      // Refresh WorkoutService.
-      await workoutService.init();
     } finally {
+      try {
+        // Re-initialize Hive boxes first!
+        await hiveService.init();
+        // Then re-initialize all dependent services.
+        await workoutService.init();
+        settingsService.init();
+        bodyMetricsService.init();
+      } on Object catch (e) {
+        // Log error.
+        _logger.e(
+          'BackupService: Failed to re-initialize services after restore: $e',
+        );
+      }
+
       // Reset Signals.
       sIsRestoring.value = false;
       sProgress.value = 0;

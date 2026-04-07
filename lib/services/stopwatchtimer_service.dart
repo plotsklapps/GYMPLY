@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart'; // To revert to total timer when stopped.
 import 'package:logger/logger.dart';
@@ -54,8 +54,8 @@ class StopwatchTimer {
       sStopwatchTimerRunning.value = true;
       _stopwatch.start();
 
-      // Always start the foreground service.
-      await foregroundService.startService();
+      // Always start the notification service.
+      await notificationService.startService();
 
       // 10ms ticks to capture every centisecond.
       _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
@@ -64,7 +64,7 @@ class StopwatchTimer {
 
         // Update notification with live TotalTimer value.
         unawaited(
-          foregroundService.updateWorkoutDisplay(
+          notificationService.updateWorkoutDisplay(
             totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
             segmentLabel: 'Stopwatch',
             segmentTime: (sElapsedStopwatchTime.value ~/ 1000).formatHMMSS(),
@@ -72,7 +72,8 @@ class StopwatchTimer {
         );
       });
       _logger.i('StopwatchTimer: Started.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('StopwatchTimer: Failed to start', error: e, stackTrace: stack);
     }
   }
@@ -94,14 +95,16 @@ class StopwatchTimer {
       // Sync final value.
       sElapsedStopwatchTime.value = _baseTime;
 
-      // Revert the foreground service back to "Total" mode if workout timer is running.
+      // Revert the foreground service back to "Total" mode if workout
+      //timer is running.
       if (TotalTimer.sTotalTimerRunning.value) {
         await totalTimer.startTimer();
       } else {
-        unawaited(foregroundService.stopService());
+        unawaited(notificationService.stopService());
       }
       _logger.i('StopwatchTimer: Paused.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('StopwatchTimer: Failed to pause', error: e, stackTrace: stack);
     }
   }
@@ -134,10 +137,11 @@ class StopwatchTimer {
       if (TotalTimer.sTotalTimerRunning.value) {
         await totalTimer.startTimer();
       } else {
-        unawaited(foregroundService.stopService());
+        unawaited(notificationService.stopService());
       }
       _logger.i('StopwatchTimer: Reset.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('StopwatchTimer: Failed to reset', error: e, stackTrace: stack);
     }
   }

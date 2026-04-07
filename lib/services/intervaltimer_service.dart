@@ -5,7 +5,7 @@ import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
@@ -141,8 +141,8 @@ class IntervalTimer {
         Duration(milliseconds: sElapsedIntervalTime.value),
       );
 
-      // Always start the foreground service.
-      await foregroundService.startService();
+      // Always start the notification service.
+      await notificationService.startService();
 
       // Set a high-frequency timer (10ms) to support centisecond updates.
       _timer = Timer.periodic(const Duration(milliseconds: 100), (
@@ -157,7 +157,7 @@ class IntervalTimer {
         final String totalStr = TotalTimer.sElapsedTotalTime.value
             .formatHMMSS();
         unawaited(
-          foregroundService.updateWorkoutDisplay(
+          notificationService.updateWorkoutDisplay(
             totalTime: totalStr,
             segmentLabel: 'Interval',
             segmentTime: (remainingMs ~/ 1000).formatHMMSS(),
@@ -191,7 +191,8 @@ class IntervalTimer {
         }
       });
       _logger.i('IntervalTimer: Started.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('IntervalTimer: Failed to start', error: e, stackTrace: stack);
     }
   }
@@ -207,9 +208,10 @@ class IntervalTimer {
       _endTime = null;
       sIntervalTimerRunning.value = false;
 
-      unawaited(foregroundService.stopService());
+      unawaited(notificationService.stopService());
       _logger.i('IntervalTimer: Paused.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('IntervalTimer: Failed to pause', error: e, stackTrace: stack);
     }
   }
@@ -226,14 +228,15 @@ class IntervalTimer {
       _timer = null;
       _endTime = null;
 
-      unawaited(foregroundService.stopService());
+      unawaited(notificationService.stopService());
 
       // Reset to initial milliseconds.
       sElapsedIntervalTime.value = sInitialIntervalTime.value;
       sIntervalTimerRunning.value = false;
       sIntervalTimerCompleted.value = false;
       _logger.i('IntervalTimer: Reset.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('IntervalTimer: Failed to reset', error: e, stackTrace: stack);
     }
   }

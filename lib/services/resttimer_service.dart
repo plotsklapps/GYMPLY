@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:logger/logger.dart';
@@ -63,12 +63,12 @@ class RestTimer {
       // Calculate when resttimer should end.
       _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
-      // Always start the foreground service.
-      await foregroundService.startService();
+      // Always start the notification service.
+      await notificationService.startService();
 
       // Immediately signal the Rest segment to the notification.
       unawaited(
-        foregroundService.updateWorkoutDisplay(
+        notificationService.updateWorkoutDisplay(
           totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
           segmentLabel: 'Rest',
           segmentTime: sElapsedRestTime.value.formatMSS(),
@@ -86,7 +86,7 @@ class RestTimer {
         final String totalStr = TotalTimer.sElapsedTotalTime.value
             .formatHMMSS();
         unawaited(
-          foregroundService.updateWorkoutDisplay(
+          notificationService.updateWorkoutDisplay(
             totalTime: totalStr,
             segmentLabel: 'Rest',
             segmentTime: (remainingSeconds > 0 ? remainingSeconds : 0)
@@ -115,7 +115,8 @@ class RestTimer {
         }
       });
       _logger.i('RestTimer: Started.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('RestTimer: Failed to start', error: e, stackTrace: stack);
     }
   }
@@ -134,10 +135,11 @@ class RestTimer {
       if (TotalTimer.sTotalTimerRunning.value) {
         await totalTimer.startTimer();
       } else {
-        unawaited(foregroundService.stopService());
+        unawaited(notificationService.stopService());
       }
       _logger.i('RestTimer: Paused.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('RestTimer: Failed to pause', error: e, stackTrace: stack);
     }
   }
@@ -156,7 +158,7 @@ class RestTimer {
       if (TotalTimer.sTotalTimerRunning.value) {
         await totalTimer.startTimer();
       } else {
-        unawaited(foregroundService.stopService());
+        unawaited(notificationService.stopService());
       }
 
       // Reset to initial seconds.
@@ -164,7 +166,8 @@ class RestTimer {
       sRestTimerRunning.value = false;
       sRestTimerCompleted.value = false;
       _logger.i('RestTimer: Reset.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('RestTimer: Failed to reset', error: e, stackTrace: stack);
     }
   }

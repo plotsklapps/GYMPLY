@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:gymply/services/foreground_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
@@ -54,8 +54,8 @@ class TotalTimer {
         Duration(seconds: sElapsedTotalTime.value),
       );
 
-      // Start the foreground service for total workout duration.
-      await foregroundService.startService();
+      // Start the notification service for total workout duration.
+      await notificationService.startService();
 
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         if (_startTime != null) {
@@ -65,16 +65,15 @@ class TotalTimer {
 
           // Update notification
           unawaited(
-            foregroundService.updateWorkoutDisplay(
+            notificationService.updateWorkoutDisplay(
               totalTime: sElapsedTotalTime.value.formatHMMSS(),
-              segmentLabel: null,
-              segmentTime: null,
             ),
           );
         }
       });
       _logger.i('TotalTimer: Started.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('TotalTimer: Failed to start', error: e, stackTrace: stack);
     }
   }
@@ -86,10 +85,8 @@ class TotalTimer {
       _startTime = DateTime.now().subtract(Duration(seconds: seconds));
       // Update foreground service if running.
       unawaited(
-        foregroundService.updateWorkoutDisplay(
+        notificationService.updateWorkoutDisplay(
           totalTime: sElapsedTotalTime.value.formatHMMSS(),
-          segmentLabel: null,
-          segmentTime: null,
         ),
       );
     }
@@ -108,9 +105,10 @@ class TotalTimer {
 
       // Stop the foreground service (will revert to total if another timer
       // isn't overriding, but here we stop it entirely if pause is called).
-      unawaited(foregroundService.stopService());
+      unawaited(notificationService.stopService());
       _logger.i('TotalTimer: Paused.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('TotalTimer: Failed to pause', error: e, stackTrace: stack);
     }
   }
@@ -127,9 +125,10 @@ class TotalTimer {
       sElapsedTotalTime.value = sInitialTotalTime.value;
       sTotalTimerRunning.value = false;
 
-      unawaited(foregroundService.stopService());
+      unawaited(notificationService.stopService());
       _logger.i('TotalTimer: Reset.');
-    } catch (e, stack) {
+    } on Object catch (e, stack) {
+      // Log error.
       _logger.e('TotalTimer: Failed to reset', error: e, stackTrace: stack);
     }
   }

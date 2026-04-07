@@ -6,9 +6,9 @@ import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/screens/exercisescreen/stretchset_builder.dart';
 import 'package:gymply/screens/exercisescreen/stretchtimer_text.dart';
-import 'package:gymply/services/foreground_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
@@ -208,9 +208,10 @@ class StretchExerciseScreen extends StatelessWidget {
                               await Permission.notification.isGranted;
 
                           if (!notificationsGranted && context.mounted) {
-                            await foregroundService.requestPermissionWithDialog(
-                              context,
-                            );
+                            await notificationService
+                                .requestPermissionWithDialog(
+                                  context,
+                                );
                           }
                         }
 

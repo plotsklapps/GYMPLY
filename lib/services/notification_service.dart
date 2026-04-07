@@ -6,53 +6,19 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/notification_handler.dart';
 import 'package:logger/logger.dart';
 
-// Unique service ID for GYMPLY's foreground service.
-const int kGymplyServiceId = 901;
-
-// Top-level entry point for the foreground service isolate.
-@pragma('vm:entry-point')
-void gymplyTaskCallback() {
-  FlutterForegroundTask.setTaskHandler(GymplyTaskHandler());
-}
-
-// Private TaskHandler — runs in the foreground service isolate.
-class GymplyTaskHandler extends TaskHandler {
-  String _totalText = '00:00:00';
-  String _segmentText = '';
-
-  @override
-  Future<void> onStart(DateTime timestamp, TaskStarter starter) async {}
-
-  @override
-  void onRepeatEvent(DateTime timestamp) {
-    // Re-sync logic: If the main isolate hasn't sent data yet, it defaults to 'Total'.
-    final String body = _segmentText.isNotEmpty
-        ? 'Total: $_totalText | $_segmentText'
-        : 'Total: $_totalText';
-
-    unawaited(FlutterForegroundTask.updateService(notificationText: body));
-  }
-
-  @override
-  Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
-
-  @override
-  void onReceiveData(Object data) {
-    if (data is! Map<String, dynamic>) return;
-    _totalText = data['total'] as String? ?? _totalText;
-    _segmentText = data['segment'] as String? ?? '';
-  }
-}
-
-class ForegroundService {
-  factory ForegroundService() => _instance;
-  ForegroundService._internal();
-  static final ForegroundService _instance = ForegroundService._internal();
+class NotificationService {
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+  static final NotificationService _instance = NotificationService._internal();
 
   final Logger _logger = Logger();
   bool _isInitialized = false;
+
+  // Unique service ID for GYMPLY's foreground service.
+  static const int _serviceId = 901;
 
   Future<void> init() async {
     if (_isInitialized) return;
@@ -64,24 +30,19 @@ class ForegroundService {
           channelId: 'gymply_timer_channel',
           channelName: 'GYMPLY Timer',
           channelDescription: 'Shows the live timer status.',
-          channelImportance: NotificationChannelImportance.LOW,
-          priority: NotificationPriority.LOW,
-          showWhen: false,
         ),
         iosNotificationOptions: const IOSNotificationOptions(
           showNotification: false,
-          playSound: false,
         ),
         foregroundTaskOptions: ForegroundTaskOptions(
           eventAction: ForegroundTaskEventAction.repeat(1000),
-          allowWakeLock: true,
         ),
       );
       _isInitialized = true;
-      _logger.i('ForegroundService: Initialized successfully.');
+      _logger.i('NotificationService: Initialized successfully.');
     } on Object catch (e, stack) {
       _logger.e(
-        'ForegroundService: Failed to initialize',
+        'NotificationService: Failed to initialize',
         error: e,
         stackTrace: stack,
       );
@@ -101,7 +62,8 @@ class ForegroundService {
 
       if (await FlutterForegroundTask.isRunningService) {
         // Send data to the background task isolate.
-        // The TaskHandler's onRepeatEvent() handles the actual notification update.
+        // The NotificationHandler's onRepeatEvent() handles the actual
+        // notification update.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
           'segment': segmentDisplay,
@@ -109,7 +71,7 @@ class ForegroundService {
       }
     } on Object catch (e, stack) {
       _logger.e(
-        'ForegroundService: Failed to update',
+        'NotificationService: Failed to update',
         error: e,
         stackTrace: stack,
       );
@@ -121,18 +83,18 @@ class ForegroundService {
       if (await FlutterForegroundTask.isRunningService) return;
 
       await FlutterForegroundTask.startService(
-        serviceId: kGymplyServiceId,
+        serviceId: _serviceId,
         serviceTypes: const <ForegroundServiceTypes>[
           ForegroundServiceTypes.health,
         ],
         notificationTitle: 'GYMPLY.',
         notificationText: 'Total: 00:00:00',
-        callback: gymplyTaskCallback,
+        callback: notificationTaskCallback,
       );
-      _logger.i('ForegroundService: Started.');
+      _logger.i('NotificationService: Started.');
     } on Object catch (e, stack) {
       _logger.e(
-        'ForegroundService: Failed to start',
+        'NotificationService: Failed to start',
         error: e,
         stackTrace: stack,
       );
@@ -142,10 +104,10 @@ class ForegroundService {
   Future<void> stopService() async {
     try {
       await FlutterForegroundTask.stopService();
-      _logger.i('ForegroundService: Service stopped.');
+      _logger.i('NotificationService: Service stopped.');
     } on Object catch (e, stack) {
       _logger.e(
-        'ForegroundService: Failed to stop',
+        'NotificationService: Failed to stop',
         error: e,
         stackTrace: stack,
       );
@@ -179,7 +141,7 @@ class ForegroundService {
       );
     } on Object catch (e, stack) {
       _logger.e(
-        'ForegroundService: Permission request failed',
+        'NotificationService: Permission request failed',
         error: e,
         stackTrace: stack,
       );
@@ -198,4 +160,4 @@ class ForegroundService {
   void _onReceiveTaskData(Object data) {}
 }
 
-final ForegroundService foregroundService = ForegroundService();
+final NotificationService notificationService = NotificationService();
