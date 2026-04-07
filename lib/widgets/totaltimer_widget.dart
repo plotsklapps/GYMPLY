@@ -63,7 +63,7 @@ class TotalTimerWidget extends StatelessWidget {
                     // Before starting the total timer, ensure foreground
                     // service permissions are handled so the tracker stays
                     // alive.
-                    await notificationService.requestPermissionWithDialog(
+                    await notificationService.requestPermissionWithModal(
                       context,
                     );
                     await totalTimer.startTimer();

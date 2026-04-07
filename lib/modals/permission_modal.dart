@@ -42,10 +42,12 @@ class PermissionModal extends StatelessWidget {
             'GYMPLY. uses a foreground service to keep your timers '
             'accurate and audible even when the app is minimised or '
             'your screen is off.\n\n'
-            'Android will ask for the following permission:\n\n'
+            'Android will ask for the following permissions:\n\n'
             '• Notification access - to display the live timer in your '
             'status bar and keep the timer running.\n\n'
-            'Allowing this does NOT change the fact that GYMPLY. is '
+            '• Physical Activity - required by Android to allow fitness '
+            'apps to run these timers in the background.\n\n'
+            'Allowing these does NOT change the fact that GYMPLY. is '
             'strictly offline-first. Your data never leaves your device, '
             'and no metrics are ever transmitted.',
             style: theme.textTheme.bodyLarge,
@@ -59,8 +61,11 @@ class PermissionModal extends StatelessWidget {
             Expanded(
               child: FilledButton.tonal(
                 onPressed: () async {
-                  // 1. Request notification permission (OS dialog).
-                  await Permission.notification.request();
+                  // 1. Request permissions (OS dialogs).
+                  await <Permission>[
+                    Permission.notification,
+                    Permission.activityRecognition,
+                  ].request();
 
                   // Close the modal.
                   if (context.mounted) {

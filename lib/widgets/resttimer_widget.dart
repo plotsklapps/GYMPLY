@@ -63,7 +63,7 @@ class RestTimerWidget extends StatelessWidget {
                   if (isRestTimerRunning) {
                     await restTimer.pauseTimer();
                   } else {
-                    await notificationService.requestPermissionWithDialog(
+                    await notificationService.requestPermissionWithModal(
                       context,
                     );
                     await restTimer.startTimer();

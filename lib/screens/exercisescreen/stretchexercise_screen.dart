@@ -15,7 +15,6 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
@@ -204,14 +203,9 @@ class StretchExerciseScreen extends StatelessWidget {
                       onPressed: () async {
                         // Permissie-wrapper voor een naadloze ervaring.
                         Future<void> handlePermissions() async {
-                          final bool notificationsGranted =
-                              await Permission.notification.isGranted;
-
-                          if (!notificationsGranted && context.mounted) {
+                          if (context.mounted) {
                             await notificationService
-                                .requestPermissionWithDialog(
-                                  context,
-                                );
+                                .requestPermissionWithModal(context);
                           }
                         }
 

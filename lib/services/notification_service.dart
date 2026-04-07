@@ -8,6 +8,7 @@ import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/notification_handler.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   factory NotificationService() => _instance;
@@ -114,11 +115,17 @@ class NotificationService {
     }
   }
 
-  Future<void> requestPermissionWithDialog(BuildContext context) async {
+  Future<void> requestPermissionWithModal(BuildContext context) async {
     try {
-      final NotificationPermission permission =
+      // Check both Notification and Physical Activity permissions.
+      final NotificationPermission notificationPerm =
           await FlutterForegroundTask.checkNotificationPermission();
-      if (permission == NotificationPermission.granted) {
+      final bool activityPermGranted =
+          await Permission.activityRecognition.isGranted;
+
+      // If both are already granted, we can skip the modal.
+      if (notificationPerm == NotificationPermission.granted &&
+          activityPermGranted) {
         if (Platform.isAndroid) await _requestBatteryOptimization();
         return;
       }
