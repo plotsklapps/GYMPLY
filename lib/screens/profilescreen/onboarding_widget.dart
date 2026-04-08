@@ -11,7 +11,7 @@ class NostrOnboarding extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 48, 16, 32),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: <Widget>[
           Text(

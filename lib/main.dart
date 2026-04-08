@@ -59,8 +59,8 @@ void main() async {
   // NostrService loads keys from secure storage.
   await nostrService.init();
 
-  // NotificationService initializes the timer service channel and registers
-  // the task data callback for two-way service ↔ UI communication.
+  // NotificationService initializes timer service channel and registers
+  // task data callback for two-way service ↔ UI communication.
   FlutterForegroundTask.initCommunicationPort();
   await notificationService.init();
 
@@ -78,6 +78,7 @@ class MainEntry extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'GYMPLY.',
+        // Theming fully done with flex_color_scheme package.
         theme: cThemeData.watch(context),
         // First time users get an onboarding.
         home: sOnboardingCompleted.watch(context)

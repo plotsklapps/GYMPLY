@@ -20,30 +20,32 @@ class ProfileScreen extends StatelessWidget {
     final bool hasNsec = nostrService.sNsec.watch(context);
     final Metadata? metadata = nostrService.sMetadata.watch(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PROFILE'),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            // Banner and Avatar.
-            ProfileHeader(metadata: metadata),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('PROFILE'),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              // Banner and Avatar.
+              ProfileHeader(metadata: metadata),
 
-            Column(
-              children: <Widget>[
-                if (npub == null)
-                  const NostrOnboarding()
-                else
-                  _ProfileWidget(
-                    npub: npub,
-                    hasNsec: hasNsec,
-                    metadata: metadata,
-                  ),
-              ],
-            ),
-          ],
+              Column(
+                children: <Widget>[
+                  if (npub == null)
+                    const NostrOnboarding()
+                  else
+                    _ProfileWidget(
+                      npub: npub,
+                      hasNsec: hasNsec,
+                      metadata: metadata,
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

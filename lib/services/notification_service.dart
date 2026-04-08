@@ -11,20 +11,25 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  factory NotificationService() => _instance;
+  // Singleton pattern.
+  factory NotificationService() {
+    return _instance;
+  }
+
   NotificationService._internal();
   static final NotificationService _instance = NotificationService._internal();
 
   final Logger _logger = Logger();
   bool _isInitialized = false;
 
-  // Unique service ID for GYMPLY's foreground service.
+  // Unique service ID for foreground service.
   static const int _serviceId = 901;
 
   Future<void> init() async {
     if (_isInitialized) return;
 
     try {
+      // Relying on flutter_foreground_task package.
       FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
       FlutterForegroundTask.init(
         androidNotificationOptions: AndroidNotificationOptions(
@@ -40,8 +45,11 @@ class NotificationService {
         ),
       );
       _isInitialized = true;
+
+      // Log success.
       _logger.i('NotificationService: Initialized successfully.');
     } on Object catch (e, stack) {
+      // Log error.
       _logger.e(
         'NotificationService: Failed to initialize',
         error: e,

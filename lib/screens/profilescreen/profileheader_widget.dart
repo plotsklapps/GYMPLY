@@ -21,7 +21,7 @@ class ProfileHeader extends StatelessWidget {
       children: <Widget>[
         // Banner defaults to theme.colorScheme.secondary is no banner is set.
         Container(
-          height: 140,
+          height: 120,
           width: double.infinity,
           decoration: BoxDecoration(
             color: theme.colorScheme.secondary,
