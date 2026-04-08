@@ -11,22 +11,17 @@ void notificationTaskCallback() {
 // Background TaskHandler — runs in the foreground service isolate.
 class NotificationHandler extends TaskHandler {
   String _totalTime = '00:00:00';
-  String _segmentBody = '';
+  String _statusText = '';
 
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {}
 
   @override
   void onRepeatEvent(DateTime timestamp) {
-    // Show total always, segment only if it has content.
-    final String body = _segmentBody.isNotEmpty
-        ? 'TOTAL: $_totalTime | $_segmentBody'
-        : 'TOTAL: $_totalTime';
-
     unawaited(
       FlutterForegroundTask.updateService(
-        notificationTitle: 'GYMPLY.',
-        notificationText: body,
+        notificationTitle: 'TOTAL TIME: $_totalTime',
+        notificationText: _statusText,
       ),
     );
   }
@@ -45,16 +40,16 @@ class NotificationHandler extends TaskHandler {
 
     // 2. Update segment logic
     final String? label = data['segmentLabel'] as String?;
-    final String? time = data['segment'] as String?;
+    final String? time = data['segmentTime'] as String?;
 
-    if (label != null) {
+    if (label != null && label.isNotEmpty) {
       if (time != null && time.isNotEmpty) {
-        _segmentBody = '$label: $time';
+        _statusText = '$label: $time';
       } else {
-        _segmentBody = label;
+        _statusText = label;
       }
     } else {
-      _segmentBody = '';
+      _statusText = '';
     }
   }
 }

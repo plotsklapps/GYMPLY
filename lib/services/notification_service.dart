@@ -67,8 +67,8 @@ class NotificationService {
         // Send separate fields to the background task isolate.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
-          'segment': segmentTime ?? '',
           'segmentLabel': segmentLabel,
+          'segmentTime': segmentTime ?? '',
         });
       }
     } on Object catch (e, stack) {
@@ -89,8 +89,8 @@ class NotificationService {
         serviceTypes: const <ForegroundServiceTypes>[
           ForegroundServiceTypes.dataSync,
         ],
-        notificationTitle: 'GYMPLY.',
-        notificationText: 'Total: 00:00:00',
+        notificationTitle: 'TOTAL TIME: 00:00:00',
+        notificationText: '',
         callback: notificationTaskCallback,
       );
       _logger.i('NotificationService: Started.');
