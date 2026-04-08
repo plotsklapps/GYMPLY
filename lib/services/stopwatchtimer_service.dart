@@ -66,7 +66,7 @@ class StopwatchTimer {
         unawaited(
           notificationService.updateWorkoutDisplay(
             totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
-            segmentLabel: 'Stopwatch',
+            segmentLabel: 'STOPWATCH',
             segmentTime: (sElapsedStopwatchTime.value ~/ 1000).formatHMMSS(),
           ),
         );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -45,8 +46,9 @@ class PermissionModal extends StatelessWidget {
             'Android will ask for the following permissions:\n\n'
             '• Notification access - to display the live timer in your '
             'status bar and keep the timer running.\n\n'
-            '• Physical Activity - required by Android to allow fitness '
-            'apps to run these timers in the background.\n\n'
+            '• Ignore battery optimisations - to ensure your workout '
+            'timer continues running smoothly without being closed by '
+            'the system to save power.\n\n'
             'Allowing these does NOT change the fact that GYMPLY. is '
             'strictly offline-first. Your data never leaves your device, '
             'and no metrics are ever transmitted.',
@@ -64,8 +66,10 @@ class PermissionModal extends StatelessWidget {
                   // 1. Request permissions (OS dialogs).
                   await <Permission>[
                     Permission.notification,
-                    Permission.activityRecognition,
                   ].request();
+
+                  // Request battery optimalisation.
+                  await NotificationService.requestBatteryOptimization();
 
                   // Close the modal.
                   if (context.mounted) {

@@ -159,7 +159,7 @@ class IntervalTimer {
         unawaited(
           notificationService.updateWorkoutDisplay(
             totalTime: totalStr,
-            segmentLabel: 'Interval',
+            segmentLabel: 'INTERVAL',
             segmentTime: (remainingMs ~/ 1000).formatHMMSS(),
           ),
         );

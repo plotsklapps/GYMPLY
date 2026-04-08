@@ -5,12 +5,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     
     <!-- Permissions for foreground service timers -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH"/>
-    <!-- Required for Foreground Service Type 'health' to justify workout tracking -->
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <application
         android:label="GYMPLY."
         android:name="${applicationName}"
@@ -37,7 +35,8 @@
         <!-- Warning: Do not change this service name. -->
         <service
             android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
-            android:foregroundServiceType="health"
+            android:permission="android.permission.FOREGROUND_SERVICE"
+            android:foregroundServiceType="dataSync"
             android:stopWithTask="true"
             android:exported="false" />
         <!-- FileProvider for secure file sharing (Keep this for future use) -->

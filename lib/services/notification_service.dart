@@ -8,7 +8,6 @@ import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/notification_handler.dart';
 import 'package:logger/logger.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   // Singleton pattern.
@@ -64,18 +63,12 @@ class NotificationService {
     String? segmentTime,
   }) async {
     try {
-      final String segmentDisplay =
-          (segmentLabel != null && segmentTime != null)
-          ? '$segmentLabel: $segmentTime'
-          : '';
-
       if (await FlutterForegroundTask.isRunningService) {
-        // Send data to the background task isolate.
-        // The NotificationHandler's onRepeatEvent() handles the actual
-        // notification update.
+        // Send separate fields to the background task isolate.
         FlutterForegroundTask.sendDataToTask(<String, dynamic>{
           'total': totalTime,
-          'segment': segmentDisplay,
+          'segment': segmentTime ?? '',
+          'segmentLabel': segmentLabel,
         });
       }
     } on Object catch (e, stack) {
@@ -94,7 +87,7 @@ class NotificationService {
       await FlutterForegroundTask.startService(
         serviceId: _serviceId,
         serviceTypes: const <ForegroundServiceTypes>[
-          ForegroundServiceTypes.health,
+          ForegroundServiceTypes.dataSync,
         ],
         notificationTitle: 'GYMPLY.',
         notificationText: 'Total: 00:00:00',
@@ -125,15 +118,12 @@ class NotificationService {
 
   Future<void> requestPermissionWithModal(BuildContext context) async {
     try {
-      // Check both Notification and Physical Activity permissions.
+      // Check Notification permission only.
       final NotificationPermission notificationPerm =
           await FlutterForegroundTask.checkNotificationPermission();
-      final bool activityPermGranted =
-          await Permission.activityRecognition.isGranted;
 
-      // If both are already granted, we can skip the modal.
-      if (notificationPerm == NotificationPermission.granted &&
-          activityPermGranted) {
+      // If already granted, we can skip the modal.
+      if (notificationPerm == NotificationPermission.granted) {
         if (Platform.isAndroid) await _requestBatteryOptimization();
         return;
       }
@@ -163,8 +153,9 @@ class NotificationService {
     }
   }
 
-  static Future<void> requestBatteryOptimization() async =>
-      _requestBatteryOptimization();
+  static Future<void> requestBatteryOptimization() async {
+    return _requestBatteryOptimization();
+  }
 
   static Future<void> _requestBatteryOptimization() async {
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {

@@ -70,7 +70,7 @@ class RestTimer {
       unawaited(
         notificationService.updateWorkoutDisplay(
           totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
-          segmentLabel: 'Rest',
+          segmentLabel: 'REST',
           segmentTime: sElapsedRestTime.value.formatMSS(),
         ),
       );
@@ -88,7 +88,7 @@ class RestTimer {
         unawaited(
           notificationService.updateWorkoutDisplay(
             totalTime: totalStr,
-            segmentLabel: 'Rest',
+            segmentLabel: 'REST',
             segmentTime: (remainingSeconds > 0 ? remainingSeconds : 0)
                 .formatMSS(),
           ),
@@ -105,6 +105,14 @@ class RestTimer {
           _endTime = null;
           sRestTimerRunning.value = false;
           sElapsedRestTime.value = 0;
+
+          // Clear segment notification.
+          unawaited(
+            notificationService.updateWorkoutDisplay(
+              totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
+              segmentTime: '',
+            ),
+          );
 
           // Play rest-completed sound first.
           unawaited(AudioService().playTimerBell());
