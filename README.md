@@ -1,4 +1,4 @@
-# GYMPLY. — The Simple, Private, Local Workout Tracker
+# GYMPLY. - The Simple, Private, Local Workout Tracker
 
 [![Status](https://img.shields.io/badge/Status-Open%20Source-blue.svg)](https://github.com/plotsklapps/gymply)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
@@ -7,7 +7,7 @@
 **GYMPLY. Website:** https://gymply.app
 
 **GYMPLY.** is a straightforward, ad‑free, and 100% local fitness tracking application built with Flutter.  
-Your workout data belongs to you — GYMPLY. **collects absolutely no data** and **runs entirely offline**.  
+Your workout data belongs to you - GYMPLY. **collects absolutely no data** and **runs entirely offline**.  
 Simplicity and privacy are at the core of everything we do.
 
 **GYMPLY.** also supports the **Nostr protocol**, allowing you to share workouts with other GYMPLY. users without compromising your identity or security. This feature is entirely **optional**.
@@ -18,7 +18,7 @@ Simplicity and privacy are at the core of everything we do.
 
 ### 1. Ultimate Privacy & Offline Use
 - **100% Local Storage:** All workout logs, metrics, and settings remain on your device.
-- **No Data Collection:** We do not track usage, metrics, or personal information — ever.
+- **No Data Collection:** We do not track usage, metrics, or personal information - ever.
 - **Ad‑Free Experience:** Completely free of advertisements.
 
 ### 2. Comprehensive Exercise Database
@@ -63,7 +63,7 @@ None.
 2. **Install** it on your Android device
 3. **Request updates** from within the app
 
-No accounts, no setup — instant start.
+No accounts, no setup - instant start.
 
 ---
 
@@ -77,11 +77,11 @@ Please read our **[Contribution Guidelines](CONTRIBUTING.md)** for details on ho
 
 ## 📄 License & Assets Scope
 
-This project is licensed under the **GNU General Public License v3.0 (GPLv3)** — see the **[LICENSE](LICENSE.md)** file for details.
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)** - see the **[LICENSE](LICENSE.md)** file for details.
 
 ### Important Note on Assets
 The source code and underlying logic of **GYMPLY.** are released under GPLv3.  
-However, the contents of the `/assets/` folder — including all high‑quality exercise images — are **excluded** from the open‑source license. These assets are proprietary and represent a significant investment.
+However, the contents of the `/assets/` folder - including all high‑quality exercise images - are **excluded** from the open‑source license. These assets are proprietary and represent a significant investment.
 
 If you fork or copy this repository, you **must** create or acquire your own exercise assets to replace the excluded folder for the application to function fully.
 
