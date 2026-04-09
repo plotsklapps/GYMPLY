@@ -72,7 +72,7 @@ class WorkoutNote extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Header (author info).
+          // Header: author info.
           InkWell(
             onTap: () async {
               await ModalService.showModal(
@@ -99,45 +99,45 @@ class WorkoutNote extends StatelessWidget {
               ),
               trailing: isMine
                   ? PopupMenuButton<String>(
-                      icon: const Icon(LucideIcons.ellipsisVertical),
+                      icon: const Icon(LucideIcons.circleEllipsis),
                       onSelected: (String value) async {
                         if (value == 'delete') {
                           await nostrService.deleteWorkoutNote(event.id);
                         }
                       },
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<String>>[
-                            PopupMenuItem<String>(
-                              value: 'delete',
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  const Text(
-                                    'Delete',
-                                  ),
-                                  const SizedBox(width: 4),
-                                  SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: Center(
-                                      child: Icon(
-                                        LucideIcons.trash,
-                                        color: theme.colorScheme.error,
-                                        size: 20,
-                                      ),
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                const Text(
+                                  'Delete',
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.trash,
+                                      color: theme.colorScheme.error,
+                                      size: 20,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                        ];
+                      },
                     )
                   : null,
             ),
           ),
 
-          // BODY (The Workout Image)
+          // Body: Workout Image.
           Image.network(
             imageUrl,
             fit: BoxFit.cover,
@@ -164,9 +164,9 @@ class WorkoutNote extends StatelessWidget {
                     ),
           ),
 
-          // FOOTER (Actions).
+          // Footer: Actions.
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
             child: Row(
               children: <Widget>[
                 Row(
@@ -193,8 +193,10 @@ class WorkoutNote extends StatelessWidget {
                       ),
                   ],
                 ),
+
                 const Spacer(),
-                // BICEPS FLEX (Like).
+
+                // Like button (biceps).
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -210,7 +212,7 @@ class WorkoutNote extends StatelessWidget {
                     if (likes.isNotEmpty) ...<Widget>[
                       Text(
                         '${likes.length}',
-                        style: theme.textTheme.labelLarge?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: hasLiked ? theme.colorScheme.secondary : null,
                           fontWeight: hasLiked
                               ? FontWeight.bold
@@ -227,6 +229,7 @@ class WorkoutNote extends StatelessWidget {
                               child: UserDetailModal(likers: likers),
                             );
                           },
+                          // Stack of 'likers' avatars.
                           child: SizedBox(
                             height: 24,
                             width:
@@ -255,10 +258,11 @@ class WorkoutNote extends StatelessWidget {
                                       ),
                                       child: CircleAvatar(
                                         radius: 11,
-                                        backgroundColor: theme
-                                            .colorScheme
-                                            .surfaceContainerHighest,
-                                        backgroundImage: avatarUrl != null
+                                        backgroundColor:
+                                            theme.colorScheme.secondary,
+                                        backgroundImage:
+                                            avatarUrl != null &&
+                                                avatarUrl.isNotEmpty
                                             ? NetworkImage(avatarUrl)
                                             : const AssetImage(
                                                     'assets/icons/gymplyIcon.png',
