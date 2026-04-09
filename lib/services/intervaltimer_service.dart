@@ -9,7 +9,6 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
-import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:logger/logger.dart';

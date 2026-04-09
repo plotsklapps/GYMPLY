@@ -71,8 +71,8 @@ class NotificationService {
   }) async {
     try {
       if (await FlutterForegroundTask.isRunningService) {
-        // Send separate fields to the background task isolate.
-        // We only send keys that are present to allow the handler to be stateful.
+        // Send separate fields to background task isolate.
+        // Only send keys that are present.
         final Map<String, dynamic> data = <String, dynamic>{
           'total': totalTime,
         };
@@ -93,7 +93,7 @@ class NotificationService {
     }
   }
 
-  /// Centralized effect that watches all timer signals and syncs the notification.
+  // Centralized effect that watches all timer signals and syncs notification.
   void _setupTimerEffect() {
     effect(() async {
       final bool isTotalRunning = TotalTimer.sTotalTimerRunning.value;
@@ -105,7 +105,8 @@ class NotificationService {
       final bool isRestRunning = RestTimer.sRestTimerRunning.value;
       final int restSeconds = RestTimer.sElapsedRestTime.value;
 
-      final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.value;
+      final bool isStopwatchRunning =
+          StopwatchTimer.sStopwatchTimerRunning.value;
       final int stopwatchMs = StopwatchTimer.sElapsedStopwatchTime.value;
 
       // 1. Manage Service Lifecycle based on TotalTimer

@@ -39,7 +39,7 @@ class NotificationHandler extends TaskHandler {
     }
 
     // 2. Update segment logic.
-    // If the key is missing, we keep the previous _statusText (prevents flickering).
+    // If the key is missing, we keep the previous _statusText.
     if (data.containsKey('segmentLabel')) {
       final String? label = data['segmentLabel'] as String?;
       final String? time = data['segmentTime'] as String?;

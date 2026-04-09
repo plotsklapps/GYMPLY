@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
-import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
@@ -56,7 +55,8 @@ class RestTimer {
           IntervalTimer.sIntervalTimerRunning.value) {
         ToastService.showWarning(
           title: 'Timer already running',
-          subtitle: 'Please stop the active timer before starting a rest period.',
+          subtitle:
+              'Please stop the active timer before starting a rest period.',
         );
         return;
       }
