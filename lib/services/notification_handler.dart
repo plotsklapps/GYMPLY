@@ -33,23 +33,26 @@ class NotificationHandler extends TaskHandler {
   void onReceiveData(Object data) {
     if (data is! Map<String, dynamic>) return;
 
-    // 1. Always update total time if present
+    // 1. Always update total time if present.
     if (data.containsKey('total')) {
       _totalTime = data['total'] as String? ?? _totalTime;
     }
 
-    // 2. Update segment logic
-    final String? label = data['segmentLabel'] as String?;
-    final String? time = data['segmentTime'] as String?;
+    // 2. Update segment logic.
+    // If the key is missing, we keep the previous _statusText (prevents flickering).
+    if (data.containsKey('segmentLabel')) {
+      final String? label = data['segmentLabel'] as String?;
+      final String? time = data['segmentTime'] as String?;
 
-    if (label != null && label.isNotEmpty) {
-      if (time != null && time.isNotEmpty) {
-        _statusText = '$label: $time';
+      if (label != null && label.isNotEmpty) {
+        if (time != null && time.isNotEmpty) {
+          _statusText = '$label: $time';
+        } else {
+          _statusText = label;
+        }
       } else {
-        _statusText = label;
+        _statusText = '';
       }
-    } else {
-      _statusText = '';
     }
   }
 }

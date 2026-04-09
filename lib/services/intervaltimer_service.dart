@@ -5,9 +5,10 @@ import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
+import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
@@ -125,6 +126,15 @@ class IntervalTimer {
     if (_timer != null || sIntervalTimerRunning.value) return;
 
     try {
+      // Mutual Exclusion Guard.
+      if (StopwatchTimer.sStopwatchTimerRunning.value) {
+        ToastService.showWarning(
+          title: 'Timer already running',
+          subtitle: 'Please stop the Stopwatch before starting an Interval.',
+        );
+        return;
+      }
+
       // Ensure Audio engine is primed while in tap callback.
       unawaited(AudioService().initialize());
 
@@ -141,9 +151,6 @@ class IntervalTimer {
         Duration(milliseconds: sElapsedIntervalTime.value),
       );
 
-      // Always start the notification service.
-      await notificationService.startService();
-
       // Set a high-frequency timer (10ms) to support centisecond updates.
       _timer = Timer.periodic(const Duration(milliseconds: 100), (
         Timer timer,
@@ -152,17 +159,6 @@ class IntervalTimer {
 
         final Duration remaining = _endTime!.difference(DateTime.now());
         final int remainingMs = remaining.inMilliseconds;
-
-        // Update notification
-        final String totalStr = TotalTimer.sElapsedTotalTime.value
-            .formatHMMSS();
-        unawaited(
-          notificationService.updateWorkoutDisplay(
-            totalTime: totalStr,
-            segmentLabel: 'INTERVAL',
-            segmentTime: (remainingMs ~/ 1000).formatHMMSS(),
-          ),
-        );
 
         if (remainingMs > 0) {
           sElapsedIntervalTime.value = remainingMs;
@@ -208,7 +204,6 @@ class IntervalTimer {
       _endTime = null;
       sIntervalTimerRunning.value = false;
 
-      unawaited(notificationService.stopService());
       _logger.i('IntervalTimer: Paused.');
     } on Object catch (e, stack) {
       // Log error.
@@ -227,8 +222,6 @@ class IntervalTimer {
       _timer?.cancel();
       _timer = null;
       _endTime = null;
-
-      unawaited(notificationService.stopService());
 
       // Reset to initial milliseconds.
       sElapsedIntervalTime.value = sInitialIntervalTime.value;

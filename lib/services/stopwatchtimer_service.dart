@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:gymply/services/notification_service.dart';
+import 'package:gymply/services/intervaltimer_service.dart';
+import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:gymply/services/totaltimer_service.dart'; // To revert to total timer when stopped.
+import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -48,28 +49,26 @@ class StopwatchTimer {
     if (_timer != null) return;
 
     try {
+      // Mutual Exclusion Guard.
+      if (IntervalTimer.sIntervalTimerRunning.value ||
+          RestTimer.sRestTimerRunning.value) {
+        ToastService.showWarning(
+          title: 'Timer already running',
+          subtitle: 'Please stop the active timer before starting a stopwatch.',
+        );
+        return;
+      }
+
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
 
       sStopwatchTimerRunning.value = true;
       _stopwatch.start();
 
-      // Always start the notification service.
-      await notificationService.startService();
-
       // 10ms ticks to capture every centisecond.
       _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
         sElapsedStopwatchTime.value =
             _baseTime + _stopwatch.elapsedMilliseconds;
-
-        // Update notification with live TotalTimer value.
-        unawaited(
-          notificationService.updateWorkoutDisplay(
-            totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
-            segmentLabel: 'STOPWATCH',
-            segmentTime: (sElapsedStopwatchTime.value ~/ 1000).formatHMMSS(),
-          ),
-        );
       });
       _logger.i('StopwatchTimer: Started.');
     } on Object catch (e, stack) {
@@ -95,13 +94,6 @@ class StopwatchTimer {
       // Sync final value.
       sElapsedStopwatchTime.value = _baseTime;
 
-      // Revert the foreground service back to "Total" mode if workout
-      //timer is running.
-      if (TotalTimer.sTotalTimerRunning.value) {
-        await totalTimer.startTimer();
-      } else {
-        unawaited(notificationService.stopService());
-      }
       _logger.i('StopwatchTimer: Paused.');
     } on Object catch (e, stack) {
       // Log error.
@@ -133,12 +125,6 @@ class StopwatchTimer {
       sElapsedStopwatchTime.value = 0;
       sStopwatchTimerRunning.value = false;
 
-      // Revert back or stop service entirely.
-      if (TotalTimer.sTotalTimerRunning.value) {
-        await totalTimer.startTimer();
-      } else {
-        unawaited(notificationService.stopService());
-      }
       _logger.i('StopwatchTimer: Reset.');
     } on Object catch (e, stack) {
       // Log error.

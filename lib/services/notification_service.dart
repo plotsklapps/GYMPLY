@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gymply/modals/permission_modal.dart';
+import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/notification_handler.dart';
+import 'package:gymply/services/resttimer_service.dart';
+import 'package:gymply/services/stopwatchtimer_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:logger/logger.dart';
+import 'package:signals/signals_flutter.dart';
 
 class NotificationService {
   // Singleton pattern.
@@ -44,6 +50,7 @@ class NotificationService {
         ),
       );
       _isInitialized = true;
+      _setupTimerEffect();
 
       // Log success.
       _logger.i('NotificationService: Initialized successfully.');
@@ -57,7 +64,7 @@ class NotificationService {
     }
   }
 
-  Future<void> updateWorkoutDisplay({
+  Future<void> updateNotificationDisplay({
     required String totalTime,
     String? segmentLabel,
     String? segmentTime,
@@ -65,11 +72,17 @@ class NotificationService {
     try {
       if (await FlutterForegroundTask.isRunningService) {
         // Send separate fields to the background task isolate.
-        FlutterForegroundTask.sendDataToTask(<String, dynamic>{
+        // We only send keys that are present to allow the handler to be stateful.
+        final Map<String, dynamic> data = <String, dynamic>{
           'total': totalTime,
-          'segmentLabel': segmentLabel,
-          'segmentTime': segmentTime ?? '',
-        });
+        };
+
+        if (segmentLabel != null) {
+          data['segmentLabel'] = segmentLabel;
+          data['segmentTime'] = segmentTime ?? '';
+        }
+
+        FlutterForegroundTask.sendDataToTask(data);
       }
     } on Object catch (e, stack) {
       _logger.e(
@@ -78,6 +91,63 @@ class NotificationService {
         stackTrace: stack,
       );
     }
+  }
+
+  /// Centralized effect that watches all timer signals and syncs the notification.
+  void _setupTimerEffect() {
+    effect(() async {
+      final bool isTotalRunning = TotalTimer.sTotalTimerRunning.value;
+      final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
+
+      final bool isIntervalRunning = IntervalTimer.sIntervalTimerRunning.value;
+      final int intervalMs = IntervalTimer.sElapsedIntervalTime.value;
+
+      final bool isRestRunning = RestTimer.sRestTimerRunning.value;
+      final int restSeconds = RestTimer.sElapsedRestTime.value;
+
+      final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.value;
+      final int stopwatchMs = StopwatchTimer.sElapsedStopwatchTime.value;
+
+      // 1. Manage Service Lifecycle based on TotalTimer
+      if (isTotalRunning) {
+        if (!await FlutterForegroundTask.isRunningService) {
+          await startService();
+        }
+      } else {
+        if (await FlutterForegroundTask.isRunningService) {
+          await stopService();
+        }
+        return; // No need to update if service is stopping
+      }
+
+      // 2. Determine active segment (Priority: Interval > Rest > Stopwatch)
+      String? label;
+      String? timeStr;
+
+      if (isIntervalRunning) {
+        label = 'INTERVAL';
+        timeStr = (intervalMs ~/ 1000).formatHMMSS();
+      } else if (isRestRunning) {
+        label = 'REST';
+        timeStr = restSeconds.formatMSS();
+      } else if (isStopwatchRunning) {
+        label = 'STOPWATCH';
+        timeStr = (stopwatchMs ~/ 1000).formatHMMSS();
+      } else {
+        // Explicitly clear segment if none are running
+        label = '';
+        timeStr = '';
+      }
+
+      // 3. Dispatch Update
+      unawaited(
+        updateNotificationDisplay(
+          totalTime: totalSeconds.formatHMMSS(),
+          segmentLabel: label,
+          segmentTime: timeStr,
+        ),
+      );
+    });
   }
 
   Future<void> startService() async {

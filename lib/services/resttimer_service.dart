@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/services/audio_service.dart';
-import 'package:gymply/services/notification_service.dart';
+import 'package:gymply/services/intervaltimer_service.dart';
+import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -50,6 +51,16 @@ class RestTimer {
     if (_timer != null || sRestTimerRunning.value) return;
 
     try {
+      // Mutual Exclusion Guard.
+      if (StopwatchTimer.sStopwatchTimerRunning.value ||
+          IntervalTimer.sIntervalTimerRunning.value) {
+        ToastService.showWarning(
+          title: 'Timer already running',
+          subtitle: 'Please stop the active timer before starting a rest period.',
+        );
+        return;
+      }
+
       // Ensure Audio engine is primed while in the tap callback.
       unawaited(AudioService().initialize());
 
@@ -63,36 +74,12 @@ class RestTimer {
       // Calculate when resttimer should end.
       _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
-      // Always start the notification service.
-      await notificationService.startService();
-
-      // Immediately signal the Rest segment to the notification.
-      unawaited(
-        notificationService.updateWorkoutDisplay(
-          totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
-          segmentLabel: 'REST',
-          segmentTime: sElapsedRestTime.value.formatMSS(),
-        ),
-      );
-
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         if (_endTime == null) return;
 
         final Duration remaining = _endTime!.difference(DateTime.now());
         // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
         final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
-
-        // Update notification
-        final String totalStr = TotalTimer.sElapsedTotalTime.value
-            .formatHMMSS();
-        unawaited(
-          notificationService.updateWorkoutDisplay(
-            totalTime: totalStr,
-            segmentLabel: 'REST',
-            segmentTime: (remainingSeconds > 0 ? remainingSeconds : 0)
-                .formatMSS(),
-          ),
-        );
 
         if (remainingSeconds > 0) {
           sElapsedRestTime.value = remainingSeconds;
@@ -105,14 +92,6 @@ class RestTimer {
           _endTime = null;
           sRestTimerRunning.value = false;
           sElapsedRestTime.value = 0;
-
-          // Clear segment notification.
-          unawaited(
-            notificationService.updateWorkoutDisplay(
-              totalTime: TotalTimer.sElapsedTotalTime.value.formatHMMSS(),
-              segmentTime: '',
-            ),
-          );
 
           // Play rest-completed sound first.
           unawaited(AudioService().playTimerBell());
@@ -140,11 +119,6 @@ class RestTimer {
       _endTime = null;
       sRestTimerRunning.value = false;
 
-      if (TotalTimer.sTotalTimerRunning.value) {
-        await totalTimer.startTimer();
-      } else {
-        unawaited(notificationService.stopService());
-      }
       _logger.i('RestTimer: Paused.');
     } on Object catch (e, stack) {
       // Log error.
@@ -162,12 +136,6 @@ class RestTimer {
       _timer?.cancel();
       _timer = null;
       _endTime = null;
-
-      if (TotalTimer.sTotalTimerRunning.value) {
-        await totalTimer.startTimer();
-      } else {
-        unawaited(notificationService.stopService());
-      }
 
       // Reset to initial seconds.
       sElapsedRestTime.value = sInitialRestTime.value;

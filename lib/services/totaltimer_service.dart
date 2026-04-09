@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:gymply/services/notification_service.dart';
-import 'package:gymply/services/timeformat_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -54,21 +52,11 @@ class TotalTimer {
         Duration(seconds: sElapsedTotalTime.value),
       );
 
-      // Start the notification service for total workout duration.
-      await notificationService.startService();
-
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         if (_startTime != null) {
           sElapsedTotalTime.value = DateTime.now()
               .difference(_startTime!)
               .inSeconds;
-
-          // Update notification
-          unawaited(
-            notificationService.updateWorkoutDisplay(
-              totalTime: sElapsedTotalTime.value.formatHMMSS(),
-            ),
-          );
         }
       });
       _logger.i('TotalTimer: Started.');
@@ -83,12 +71,6 @@ class TotalTimer {
     sElapsedTotalTime.value = seconds;
     if (_startTime != null) {
       _startTime = DateTime.now().subtract(Duration(seconds: seconds));
-      // Update foreground service if running.
-      unawaited(
-        notificationService.updateWorkoutDisplay(
-          totalTime: sElapsedTotalTime.value.formatHMMSS(),
-        ),
-      );
     }
   }
 
@@ -103,9 +85,6 @@ class TotalTimer {
       sTotalTimerRunning.value = false;
       _startTime = null;
 
-      // Stop the foreground service (will revert to total if another timer
-      // isn't overriding, but here we stop it entirely if pause is called).
-      unawaited(notificationService.stopService());
       _logger.i('TotalTimer: Paused.');
     } on Object catch (e, stack) {
       // Log error.
@@ -125,7 +104,6 @@ class TotalTimer {
       sElapsedTotalTime.value = sInitialTotalTime.value;
       sTotalTimerRunning.value = false;
 
-      unawaited(notificationService.stopService());
       _logger.i('TotalTimer: Reset.');
     } on Object catch (e, stack) {
       // Log error.
