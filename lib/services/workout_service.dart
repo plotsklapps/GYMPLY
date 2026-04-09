@@ -497,7 +497,7 @@ class WorkoutService {
     int? intensity,
     int? reps,
   }) {
-    // 1. Update the set.
+    // Update the set.
     final int setIndex = exercise.sets.indexOf(oldSet);
     if (setIndex == -1) return;
 
@@ -514,7 +514,7 @@ class WorkoutService {
     final List<CardioSet> updatedSets = List<CardioSet>.from(exercise.sets);
     updatedSets[setIndex] = newSet;
 
-    // 2. Update the Exercise input (sticky values).
+    // Update the Exercise input (sticky values).
     final CardioExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
       cardioDurationInput: cardioDuration,
@@ -525,7 +525,7 @@ class WorkoutService {
       repsInput: reps,
     );
 
-    // 3. Helper method to replace Object inside active workout.
+    // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log update.
@@ -565,7 +565,7 @@ class WorkoutService {
     );
   }
 
-  // Update set in StretchExercise.
+  // Update set and input state in StretchExercise.
   void updateStretchSet(
     StretchExercise exercise,
     StretchSet oldSet, {
@@ -575,9 +575,9 @@ class WorkoutService {
     int? calories,
     int? intensity,
   }) {
-    // Find index of set to update.
-    final int index = exercise.sets.indexOf(oldSet);
-    if (index == -1) return;
+    // Update the set.
+    final int setIndex = exercise.sets.indexOf(oldSet);
+    if (setIndex == -1) return;
 
     // Create new StretchSet Object with updated values.
     final StretchSet newSet = StretchSet(
@@ -590,18 +590,22 @@ class WorkoutService {
 
     // Create updated List<StretchSet> and replace Object.
     final List<StretchSet> updatedSets = List<StretchSet>.from(exercise.sets);
-    updatedSets[index] = newSet;
+    updatedSets[setIndex] = newSet;
 
-    // Create updated StretchExercise Object.
+    // Update the Exercise input (sticky values).
     final StretchExercise updatedExercise = exercise.copyWith(
       sets: updatedSets,
+      stretchDurationInput: stretchDuration,
+      restDurationInput: restDuration,
+      caloriesInput: calories,
+      intensityInput: intensity,
     );
 
     // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
 
     // Log update.
-    _logger.i('WorkoutService: Updated Stretch set');
+    _logger.i('WorkoutService: Updated Stretch set and sticky inputs');
   }
 
   // Delete set from StretchExercise.

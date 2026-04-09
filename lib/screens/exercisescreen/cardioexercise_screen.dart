@@ -19,7 +19,7 @@ import 'package:signals/signals_flutter.dart';
 
 enum CardioMode { stopwatch, interval }
 
-// Global CardioMode Signal.
+// Global CardioMode Signal, default to Stopwatch.
 final Signal<CardioMode> sCardioMode = Signal<CardioMode>(
   CardioMode.stopwatch,
   debugLabel: 'sCardioMode',
@@ -55,7 +55,6 @@ class CardioExerciseScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // FIXED TOP SECTION.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
@@ -68,7 +67,7 @@ class CardioExerciseScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         exercise.imagePath,
-                        height: 140,
+                        height: 120,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
@@ -106,6 +105,7 @@ class CardioExerciseScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 // CardioMode ChoiceChips.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -117,11 +117,13 @@ class CardioExerciseScreen extends StatelessWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? const Icon(LucideIcons.circleCheck)
+                              ? Icon(
+                                  LucideIcons.circleCheck,
+                                  color: theme.colorScheme.onSecondary,
+                                )
                               : null,
                           label: Text(
                             value.name.capitalizeFirst(),
-                            style: theme.textTheme.titleLarge,
                           ),
                           selected: isSelected,
                           onSelected: (bool selected) {
@@ -130,6 +132,7 @@ class CardioExerciseScreen extends StatelessWidget {
                         );
                       }).toList(),
                     ),
+
                     // Auto-Interval Switch.
                     if (mode == CardioMode.interval)
                       Padding(
@@ -155,7 +158,7 @@ class CardioExerciseScreen extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
                 // Timer.
                 TextButton(
@@ -175,7 +178,7 @@ class CardioExerciseScreen extends StatelessWidget {
                   child: CardioTimerText(mode: mode),
                 ),
 
-                // FAB ROW.
+                // FAB Row.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -194,14 +197,14 @@ class CardioExerciseScreen extends StatelessWidget {
                       },
                       child: const Icon(LucideIcons.circleX),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
 
                     // Start/Pause FAB.
                     FloatingActionButton.large(
                       heroTag: 'cardioPlay',
                       elevation: 0,
                       onPressed: () async {
-                        // Permissie-wrapper voor een naadloze ervaring.
+                        // Check notification permission.
                         Future<void> handlePermissions() async {
                           if (context.mounted) {
                             await notificationService
@@ -235,7 +238,7 @@ class CardioExerciseScreen extends StatelessWidget {
                           ? const Icon(LucideIcons.circlePause)
                           : const Icon(LucideIcons.circlePlay),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
 
                     // Add set FAB.
                     FloatingActionButton(
@@ -245,13 +248,13 @@ class CardioExerciseScreen extends StatelessWidget {
                         // Check WorkoutType before adding set.
                         if (mode == CardioMode.stopwatch) {
                           await StopwatchTimer().pauseTimer();
-                          final int elapsed =
+                          final int elapsedTime =
                               StopwatchTimer.sElapsedStopwatchTime.value;
                           workoutService.addCardioSet(
                             exercise,
-                            cardioDuration: Duration(milliseconds: elapsed),
+                            cardioDuration: Duration(milliseconds: elapsedTime),
                             restDuration: Duration.zero,
-                            totalDuration: Duration(milliseconds: elapsed),
+                            totalDuration: Duration(milliseconds: elapsedTime),
                             intensity: exercise.intensityInput ?? 1,
                           );
                           await StopwatchTimer().resetTimer();
@@ -259,11 +262,11 @@ class CardioExerciseScreen extends StatelessWidget {
                           await IntervalTimer().pauseTimer();
                           await RestTimer().pauseTimer();
 
-                          // Log the full prescribed interval + rest.
                           final int cardioMs =
                               IntervalTimer.sInitialIntervalTime.value;
                           final int restSec = RestTimer.sInitialRestTime.value;
 
+                          // Log Cardio + Rest.
                           workoutService.addCardioSet(
                             exercise,
                             cardioDuration: Duration(milliseconds: cardioMs),
@@ -287,7 +290,7 @@ class CardioExerciseScreen extends StatelessWidget {
           ),
           const Divider(),
 
-          // SCROLLABLE SET LIST SECTION.
+          // Scrollable Set List Section.
           CardioSetCard(
             exercise: exercise,
             userWeight: userWeight,

@@ -4,7 +4,7 @@ import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/screens/exercisescreen/rep_controls.dart';
-import 'package:gymply/screens/exercisescreen/strengthset_builder.dart';
+import 'package:gymply/screens/exercisescreen/strengthset_card.dart';
 import 'package:gymply/screens/exercisescreen/weight_controls.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
@@ -37,7 +37,6 @@ class StrengthExerciseScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // FIXED TOP SECTION.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
@@ -50,15 +49,15 @@ class StrengthExerciseScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         exercise.imagePath,
-                        height: 140,
+                        height: 120,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
                     ),
-                    // History/Statistics Buttons.
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
+                        // History Button.
                         IconButton(
                           onPressed: () async {
                             await ModalService.showModal(
@@ -71,6 +70,7 @@ class StrengthExerciseScreen extends StatelessWidget {
                             color: theme.colorScheme.secondary,
                           ),
                         ),
+                        // Statistics Button.
                         IconButton(
                           onPressed: () async {
                             await ModalService.showModal(
@@ -104,7 +104,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                     updateInput(exercise, weight: (currentWeight ?? 0) + 10);
                   },
                 ),
-                const SizedBox(height: 8),
+
+                const SizedBox(height: 4),
 
                 // Reps Row.
                 RepControls(
@@ -122,7 +123,7 @@ class StrengthExerciseScreen extends StatelessWidget {
                     updateInput(exercise, reps: (currentReps ?? 0) + 10);
                   },
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
 
                 // Add Set Button.
                 SizedBox(
@@ -141,7 +142,9 @@ class StrengthExerciseScreen extends StatelessWidget {
                       }
                     },
                     icon: const Icon(LucideIcons.circlePlus),
-                    label: const Text('ADD SET'),
+                    label: const Text(
+                      'ADD SET',
+                    ),
                   ),
                 ),
                 const Divider(),
@@ -149,8 +152,8 @@ class StrengthExerciseScreen extends StatelessWidget {
             ),
           ),
 
-          // SCROLLABLE SET LIST SECTION.
-          StrengthSetBuilder(exercise: exercise),
+          // Scrollable Set List Section.
+          StrengthSetCard(exercise: exercise),
         ],
       ),
     );

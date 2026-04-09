@@ -4,7 +4,6 @@ import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:logger/logger.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class CardioSetCard extends StatelessWidget {
@@ -35,7 +34,6 @@ class CardioSetCard extends StatelessWidget {
           final String cardioTime = set.cardioDuration.inMilliseconds
               .formatHMMSSCC();
           final String restTime = set.restDuration.inSeconds.formatMSS();
-
           final String modeLabel = set.restDuration == Duration.zero
               ? 'STOPWATCH'
               : 'INTERVAL';
@@ -64,6 +62,9 @@ class CardioSetCard extends StatelessWidget {
                 set.restDuration == Duration.zero
                     ? set.totalDuration.inMilliseconds.formatHMMSSCC()
                     : 'CARDIO: $cardioTime REST: $restTime',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: Row(
                 children: <Widget>[
@@ -72,18 +73,20 @@ class CardioSetCard extends StatelessWidget {
                   // Flame icons for intensity.
                   ...List<Widget>.generate(
                     (set.intensity ?? 1) + 1,
-                    (int index) => Icon(
-                      LucideIcons.flame,
-                      size: 14,
-                      color: (set.intensity ?? 1) == 2
-                          ? theme.colorScheme.error
-                          : theme.colorScheme.primary,
-                    ),
+                    (int index) {
+                      return Icon(
+                        LucideIcons.flame,
+                        size: 14,
+                        color: (set.intensity ?? 1) == 2
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.primary,
+                      );
+                    },
                   ),
                 ],
               ),
               trailing: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
+                icon: const Icon(LucideIcons.circleEllipsis),
                 onSelected: (String value) async {
                   if (value == 'deleteSet') {
                     workoutService.deleteCardioSet(exercise, set);
@@ -107,11 +110,11 @@ class CardioSetCard extends StatelessWidget {
                     await ModalService.showModal(
                       context: context,
                       child: CardioSetStatsModal(
+                        // Retrieve previous input for faster logging.
                         initialDistance: stickyDistance,
                         initialIntensity: stickyIntensity,
                         initialReps: stickyReps,
                         onConfirm: (double distance, int intensity, int reps) {
-                          Logger().i('Reps captured from modal: $reps');
                           // Update current set and sticky input.
                           workoutService.updateCardioSet(
                             exercise,
@@ -138,9 +141,7 @@ class CardioSetCard extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Center(
-                              child: Icon(
-                                LucideIcons.plus,
-                              ),
+                              child: Icon(LucideIcons.plus),
                             ),
                           ),
                         ],

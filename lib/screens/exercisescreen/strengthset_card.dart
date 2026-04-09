@@ -4,8 +4,8 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class StrengthSetBuilder extends StatelessWidget {
-  const StrengthSetBuilder({
+class StrengthSetCard extends StatelessWidget {
+  const StrengthSetCard({
     required this.exercise,
     super.key,
   });
@@ -82,6 +82,10 @@ class StrengthSetBuilder extends StatelessWidget {
                 prLabel = 'NEW PR!';
               }
 
+              final String weight = set.weight.toStringAsFixed(0);
+              final String reps = set.reps.toString();
+              final double totalSetWeight = set.weight * set.reps;
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 8),
                 color: isNewPR ? theme.colorScheme.secondary : null,
@@ -103,16 +107,15 @@ class StrengthSetBuilder extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        '${set.weight.toStringAsFixed(0)} kg x '
-                        '${set.reps} reps',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        '${totalSetWeight.toInt()} | $weight kg x $reps reps',
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           color: isNewPR ? theme.colorScheme.onSecondary : null,
                         ),
                       ),
                       if (isNewPR) ...<Widget>[
                         Text(
                           prLabel,
-                          style: theme.textTheme.titleLarge?.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.onSecondary,
                           ),
                         ),
@@ -121,7 +124,7 @@ class StrengthSetBuilder extends StatelessWidget {
                   ),
                   trailing: PopupMenuButton<String>(
                     icon: Icon(
-                      LucideIcons.ellipsisVertical,
+                      LucideIcons.circleEllipsis,
                       color: isNewPR ? theme.colorScheme.onSecondary : null,
                     ),
                     onSelected: (String value) {

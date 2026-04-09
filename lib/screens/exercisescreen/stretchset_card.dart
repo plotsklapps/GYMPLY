@@ -6,8 +6,8 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class StretchSetBuilder extends StatelessWidget {
-  const StretchSetBuilder({
+class StretchSetCard extends StatelessWidget {
+  const StretchSetCard({
     required this.exercise,
     required this.userWeight,
     required this.userAge,
@@ -34,7 +34,6 @@ class StretchSetBuilder extends StatelessWidget {
           final String stretchTime = set.stretchDuration.inMilliseconds
               .formatHMMSSCC();
           final String restTime = set.restDuration.inSeconds.formatMSS();
-
           final String modeLabel = set.restDuration == Duration.zero
               ? 'STOPWATCH'
               : 'INTERVAL';
@@ -57,6 +56,9 @@ class StretchSetBuilder extends StatelessWidget {
                 set.restDuration == Duration.zero
                     ? set.totalDuration.inMilliseconds.formatHMMSSCC()
                     : 'STRETCH: $stretchTime REST: $restTime',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: Row(
                 children: <Widget>[
@@ -65,39 +67,43 @@ class StretchSetBuilder extends StatelessWidget {
                   // Flame icons for intensity.
                   ...List<Widget>.generate(
                     (set.intensity ?? 1) + 1,
-                    (int index) => Icon(
-                      LucideIcons.flame,
-                      size: 14,
-                      color: (set.intensity ?? 1) == 2
-                          ? theme.colorScheme.error
-                          : theme.colorScheme.primary,
-                    ),
+                    (int index) {
+                      return Icon(
+                        LucideIcons.flame,
+                        size: 14,
+                        color: (set.intensity ?? 1) == 2
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.primary,
+                      );
+                    },
                   ),
                 ],
               ),
               trailing: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
+                icon: const Icon(LucideIcons.circleEllipsis),
                 onSelected: (String value) async {
                   if (value == 'deleteSet') {
                     workoutService.deleteStretchSet(exercise, set);
                   } else if (value == 'addStats') {
+                    // Logic to retrieve sticky values from exercise or
+                    // fallback to defaults.
+                    final int stickyIntensity =
+                        (set.intensity != null && set.intensity! > 0)
+                        ? set.intensity!
+                        : (exercise.intensityInput ?? 1);
+
                     await ModalService.showModal(
                       context: context,
                       child: StretchSetStatsModal(
-                        initialIntensity: set.intensity ?? 1,
+                        // Retrieve previous input for faster logging.
+                        initialIntensity: stickyIntensity,
                         onConfirm: (int intensity) {
-                          // Update current set.
-                          workoutService
-                            ..updateStretchSet(
-                              exercise,
-                              set,
-                              intensity: intensity,
-                            )
-                            // Stickily update exercise input.
-                            ..updateStretchInput(
-                              exercise,
-                              intensity: intensity,
-                            );
+                          // Update current set and sticky input.
+                          workoutService.updateStretchSet(
+                            exercise,
+                            set,
+                            intensity: intensity,
+                          );
                         },
                       ),
                     );

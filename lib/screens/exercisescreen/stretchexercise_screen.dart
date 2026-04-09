@@ -4,7 +4,7 @@ import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/modals/stopwatchtimer_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
-import 'package:gymply/screens/exercisescreen/stretchset_builder.dart';
+import 'package:gymply/screens/exercisescreen/stretchset_card.dart';
 import 'package:gymply/screens/exercisescreen/stretchtimer_text.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -19,7 +19,7 @@ import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
 
-// Global StretchMode Signal.
+// Global StretchMode Signal, default to Stopwatch.
 final Signal<StretchMode> sStretchMode = Signal<StretchMode>(
   StretchMode.stopwatch,
   debugLabel: 'sStretchMode',
@@ -55,7 +55,6 @@ class StretchExerciseScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // FIXED TOP SECTION.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
@@ -68,7 +67,7 @@ class StretchExerciseScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Image.asset(
                         exercise.imagePath,
-                        height: 140,
+                        height: 120,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
@@ -106,6 +105,7 @@ class StretchExerciseScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 // StretchMode ChoiceChips.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -117,11 +117,13 @@ class StretchExerciseScreen extends StatelessWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? const Icon(LucideIcons.circleCheck)
+                              ? Icon(
+                                  LucideIcons.circleCheck,
+                                  color: theme.colorScheme.onSecondary,
+                                )
                               : null,
                           label: Text(
                             value.name.capitalizeFirst(),
-                            style: theme.textTheme.titleLarge,
                           ),
                           selected: isSelected,
                           onSelected: (bool selected) {
@@ -130,6 +132,7 @@ class StretchExerciseScreen extends StatelessWidget {
                         );
                       }).toList(),
                     ),
+
                     // Auto-Interval Switch.
                     if (mode == StretchMode.interval)
                       Padding(
@@ -155,7 +158,7 @@ class StretchExerciseScreen extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
                 // Timer.
                 TextButton(
@@ -175,7 +178,7 @@ class StretchExerciseScreen extends StatelessWidget {
                   child: StretchTimerText(mode: mode),
                 ),
 
-                // FAB ROW.
+                // FAB Row.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -194,14 +197,14 @@ class StretchExerciseScreen extends StatelessWidget {
                       },
                       child: const Icon(LucideIcons.circleX),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
 
                     // Start/Pause FAB.
                     FloatingActionButton.large(
                       heroTag: 'stretchPlay',
                       elevation: 0,
                       onPressed: () async {
-                        // Permissie-wrapper voor een naadloze ervaring.
+                        // Check notification permission.
                         Future<void> handlePermissions() async {
                           if (context.mounted) {
                             await notificationService
@@ -209,6 +212,7 @@ class StretchExerciseScreen extends StatelessWidget {
                           }
                         }
 
+                        // Check WorkoutType before starting/pausing.
                         if (mode == StretchMode.stopwatch) {
                           if (isStopwatchRunning) {
                             await StopwatchTimer().pauseTimer();
@@ -234,7 +238,7 @@ class StretchExerciseScreen extends StatelessWidget {
                           ? const Icon(LucideIcons.circlePause)
                           : const Icon(LucideIcons.circlePlay),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 4),
 
                     // Add set FAB.
                     FloatingActionButton(
@@ -258,11 +262,11 @@ class StretchExerciseScreen extends StatelessWidget {
                           await IntervalTimer().pauseTimer();
                           await RestTimer().pauseTimer();
 
-                          // Log the full prescribed interval + rest.
                           final int stretchMs =
                               IntervalTimer.sInitialIntervalTime.value;
                           final int restSec = RestTimer.sInitialRestTime.value;
 
+                          // Log Cardio + Rest.
                           workoutService.addStretchSet(
                             exercise,
                             stretchDuration: Duration(milliseconds: stretchMs),
@@ -286,8 +290,8 @@ class StretchExerciseScreen extends StatelessWidget {
           ),
           const Divider(),
 
-          // SCROLLABLE SET LIST SECTION.
-          StretchSetBuilder(
+          // Scrollable Set List Section.
+          StretchSetCard(
             exercise: exercise,
             userWeight: userWeight,
             userAge: userAge,

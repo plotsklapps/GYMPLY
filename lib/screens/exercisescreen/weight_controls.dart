@@ -31,8 +31,10 @@ class WeightControls extends StatelessWidget {
           heroTag: 'WeightDecrement10',
           elevation: 0,
           onPressed: () async {
-            onDecrementLarge();
+            // Give a bigger bzzz.
             await HapticFeedback.mediumImpact();
+
+            onDecrementLarge();
           },
           child: const Icon(LucideIcons.chevronsDown),
         ),
@@ -41,12 +43,14 @@ class WeightControls extends StatelessWidget {
           heroTag: 'WeightDecrement1',
           elevation: 0,
           onPressed: () async {
-            onDecrementSmall();
+            // Give a little bzzz.
             await HapticFeedback.lightImpact();
+
+            onDecrementSmall();
           },
           child: const Icon(LucideIcons.chevronDown),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         Expanded(
           child: Text(
             currentValue == null ? 'WEIGHT' : currentValue!.toStringAsFixed(0),
@@ -63,13 +67,15 @@ class WeightControls extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'WeightIncrement1',
           elevation: 0,
           onPressed: () async {
-            onIncrementSmall();
+            // Give a little bzzz.
             await HapticFeedback.lightImpact();
+
+            onIncrementSmall();
           },
           child: const Icon(LucideIcons.chevronUp),
         ),

@@ -31,8 +31,10 @@ class RepControls extends StatelessWidget {
           heroTag: 'RepsDecrement10',
           elevation: 0,
           onPressed: () async {
+            // Give a bigger bzzz.
+            await HapticFeedback.mediumImpact();
+
             onDecrementLarge();
-            await HapticFeedback.lightImpact();
           },
           child: const Icon(LucideIcons.chevronsDown),
         ),
@@ -41,12 +43,14 @@ class RepControls extends StatelessWidget {
           heroTag: 'RepsDecrement1',
           elevation: 0,
           onPressed: () async {
-            onDecrementSmall();
+            // Give a little bzzz.
             await HapticFeedback.lightImpact();
+
+            onDecrementSmall();
           },
           child: const Icon(LucideIcons.chevronDown),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         Expanded(
           child: Text(
             currentValue == null ? 'REPS' : currentValue!.toString(),
@@ -63,13 +67,15 @@ class RepControls extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         FloatingActionButton(
           heroTag: 'RepsIncrement1',
           elevation: 0,
           onPressed: () async {
-            onIncrementSmall();
+            // Give a little bzzz.
             await HapticFeedback.lightImpact();
+
+            onIncrementSmall();
           },
           child: const Icon(LucideIcons.chevronUp),
         ),
@@ -78,8 +84,10 @@ class RepControls extends StatelessWidget {
           heroTag: 'RepsIncrement10',
           elevation: 0,
           onPressed: () async {
-            onIncrementLarge();
+            // Give a bigger bzzz.
             await HapticFeedback.lightImpact();
+
+            onIncrementLarge();
           },
           child: const Icon(LucideIcons.chevronsUp),
         ),
