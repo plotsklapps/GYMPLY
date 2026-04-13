@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
@@ -259,13 +258,6 @@ class OnboardingSlide extends StatelessWidget {
           SizedBox(
             height: 128,
             child: Center(child: iconWidget),
-          ).animate(
-            effects: <Effect<dynamic>>[
-              const FadeEffect(
-                duration: Duration(milliseconds: 800),
-                curve: Curves.easeInOut,
-              ),
-            ],
           ),
           const SizedBox(height: 48),
           Text(
