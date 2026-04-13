@@ -80,11 +80,20 @@ class ExercisesGridResults extends StatelessWidget {
                                   end: Alignment.bottomCenter,
                                   colors: <Color>[
                                     Colors.transparent,
-                                    Colors.black.withAlpha(200),
+                                    theme.cardColor.withAlpha(200),
                                   ],
                                 ),
                               )
-                            : null,
+                            : BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: <Color>[
+                                    Colors.transparent,
+                                    theme.cardColor.withAlpha(200),
+                                  ],
+                                ),
+                              ),
                         padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
                         child: Text(
                           exercise.exerciseName,
