@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/about_modal.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/modals/themesettings_modal.dart';
@@ -10,9 +11,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MenuModal extends StatelessWidget {
   const MenuModal({super.key});
@@ -27,14 +26,11 @@ class MenuModal extends StatelessWidget {
     // Watch backup/restore Signals.
     final bool isBackingUp = sIsBackingUp.watch(context);
     final bool isRestoring = sIsRestoring.watch(context);
-    final double backupProgress = sProgress.watch(context);
 
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
 
-    // The progress indicator now only tracks backups, since updates are
-    //handled by the browser.
-    final double currentProgress = backupProgress;
+    final double backupProgress = sProgress.watch(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -122,10 +118,10 @@ class MenuModal extends StatelessWidget {
                 const Divider(),
 
                 // ProgressIndicator (Conditional).
-                if (currentProgress > 0)
+                if (backupProgress > 0)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: LinearProgressIndicator(value: currentProgress),
+                    child: LinearProgressIndicator(value: backupProgress),
                   ),
 
                 // Backup ListTile.
@@ -178,60 +174,19 @@ class MenuModal extends StatelessWidget {
                 ),
                 const Divider(),
 
-                // App Update ListTile.
-                FutureBuilder<PackageInfo>(
-                  future: PackageInfo.fromPlatform(),
-                  builder:
-                      (
-                        BuildContext context,
-                        AsyncSnapshot<PackageInfo> snapshot,
-                      ) {
-                        final String versionDisplay = snapshot.hasData
-                            ? '${snapshot.data!.version}+'
-                                  '${snapshot.data!.buildNumber}'
-                            : 'Checking...';
-
-                        return ListTile(
-                          onTap: isAnyProcessing
-                              ? null
-                              : () async {
-                                  await UpdateService().checkForUpdates();
-                                },
-                          leading: isChecking
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(),
-                                )
-                              : const Icon(LucideIcons.cloudSync),
-                          title: const Text('Check for Updates'),
-                          subtitle: Text('Current Version: $versionDisplay'),
-                          trailing: const Icon(LucideIcons.chevronRight),
-                        );
-                      },
-                ),
-
-                // GitHub ListTile.
+                // About GYMPLY ListTile.
                 ListTile(
                   onTap: () async {
-                    await launchUrl(
-                      Uri.parse('https://github.com/plotsklapps/gymply'),
+                    // Close MenuModal first.
+                    Navigator.pop(context);
+                    // Open AboutModal.
+                    await ModalService.showModal(
+                      context: context,
+                      child: const AboutModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.code),
-                  title: const Text('Github Repository'),
-                  subtitle: const Text('Source code, file issues'),
-                  trailing: const Icon(LucideIcons.chevronRight),
-                ),
-
-                // Licenses ListTile.
-                ListTile(
-                  onTap: () async {
-                    showLicensePage(context: context);
-                  },
-                  leading: const Icon(LucideIcons.fileBraces),
-                  title: const Text('Licenses'),
-                  subtitle: const Text('Third party packages used by GYMPLY.'),
+                  title: const Text('About GYMPLY.'),
+                  subtitle: const Text('Source Code, Updates, Licenses'),
                   trailing: const Icon(LucideIcons.chevronRight),
                 ),
               ],

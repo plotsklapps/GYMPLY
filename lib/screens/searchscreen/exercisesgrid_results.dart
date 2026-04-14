@@ -80,7 +80,7 @@ class ExercisesGridResults extends StatelessWidget {
                                   end: Alignment.bottomCenter,
                                   colors: <Color>[
                                     Colors.transparent,
-                                    theme.cardColor.withAlpha(200),
+                                    Colors.black.withAlpha(200),
                                   ],
                                 ),
                               )
@@ -90,7 +90,7 @@ class ExercisesGridResults extends StatelessWidget {
                                   end: Alignment.bottomCenter,
                                   colors: <Color>[
                                     Colors.transparent,
-                                    theme.cardColor.withAlpha(200),
+                                    Colors.white.withAlpha(200),
                                   ],
                                 ),
                               ),
