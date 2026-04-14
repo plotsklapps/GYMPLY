@@ -48,7 +48,6 @@ class EquipmentChoiceChips extends StatelessWidget {
                           ),
                     label: Text(
                       e.name.capitalizeFirst(),
-                      style: theme.textTheme.titleLarge,
                     ),
                     selected: isSelected,
                     onSelected: (bool selected) {

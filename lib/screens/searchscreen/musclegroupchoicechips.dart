@@ -40,7 +40,6 @@ class MuscleGroupChoiceChips extends StatelessWidget {
                         ),
                   label: Text(
                     assetName,
-                    style: theme.textTheme.titleLarge,
                   ),
                   selected: isSelected,
                   onSelected: (bool selected) {

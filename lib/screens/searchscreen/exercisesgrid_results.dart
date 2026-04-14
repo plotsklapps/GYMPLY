@@ -79,8 +79,8 @@ class ExercisesGridResults extends StatelessWidget {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: <Color>[
-                                    Colors.transparent,
-                                    Colors.black.withAlpha(200),
+                                    Colors.black.withAlpha(0),
+                                    Colors.black.withAlpha(255),
                                   ],
                                 ),
                               )
@@ -89,8 +89,8 @@ class ExercisesGridResults extends StatelessWidget {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: <Color>[
-                                    Colors.transparent,
-                                    Colors.white.withAlpha(200),
+                                    Colors.white.withAlpha(0),
+                                    Colors.white.withAlpha(255),
                                   ],
                                 ),
                               ),

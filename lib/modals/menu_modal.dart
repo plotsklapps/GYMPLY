@@ -185,6 +185,7 @@ class MenuModal extends StatelessWidget {
                       child: const AboutModal(),
                     );
                   },
+                  leading: const Icon(LucideIcons.circleQuestionMark),
                   title: const Text('About GYMPLY.'),
                   subtitle: const Text('Source Code, Updates, Licenses'),
                   trailing: const Icon(LucideIcons.chevronRight),
