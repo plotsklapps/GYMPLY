@@ -271,7 +271,7 @@ class OnboardingSlide extends StatelessWidget {
             style: textTheme.bodyLarge?.copyWith(),
             textAlign: TextAlign.center,
           ),
-          if (actions != null) ...actions!,
+          ...?actions,
           const Spacer(),
         ],
       ),

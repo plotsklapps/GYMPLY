@@ -49,8 +49,8 @@ class MenuModal extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                // Pop and return false.
-                Navigator.pop(context, false);
+                // Pop the modal.
+                Navigator.pop(context);
               },
               icon: const Icon(LucideIcons.circleX),
             ),
@@ -185,7 +185,7 @@ class MenuModal extends StatelessWidget {
                       child: const AboutModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.circleQuestionMark),
+                  leading: const Icon(LucideIcons.info),
                   title: const Text('About GYMPLY.'),
                   subtitle: const Text('Source Code, Updates, Licenses'),
                   trailing: const Icon(LucideIcons.chevronRight),

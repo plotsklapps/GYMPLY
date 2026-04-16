@@ -45,9 +45,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       itemCount: reversedExercises.length,
       // Use custom handle (LucideIcons.gripVertical).
       buildDefaultDragHandles: false,
-      onReorder: (int oldIndex, int newIndex) {
+      onReorderItem: (int oldIndex, int newIndex) {
         // Map reversed indices back to original indices for WorkoutService.
         final int originalOldIndex = workout.exercises.length - 1 - oldIndex;
+        // We remove and re-insert, adjust index based on newIndex.
         final int originalNewIndex = workout.exercises.length - newIndex;
 
         workoutService.moveExercise(originalOldIndex, originalNewIndex);

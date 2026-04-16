@@ -99,8 +99,15 @@ class AboutModal extends StatelessWidget {
 
         // GitHub ChangeLog ListTile.
         ListTile(
-          onTap: () {},
-          leading: const Icon(LucideIcons.code),
+          onTap: () async {
+            await launchUrl(
+              Uri.parse(
+                'https://github.com/plotsklapps/GYMPLY.'
+                '/blob/master/CHANGELOG.md',
+              ),
+            );
+          },
+          leading: const Icon(LucideIcons.squarePen),
           title: const Text('Github Changelog'),
           subtitle: const Text('See changes made in the last version'),
           trailing: const Icon(LucideIcons.chevronRight),
