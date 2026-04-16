@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
+import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
 import 'package:gymply/screens/feedscreen/feed_screen.dart';
-import 'package:gymply/screens/searchscreen/search_screen.dart';
 import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     // Determine initial length based on whether we show the feed.
-    final int initialLength = cShowFeed.value ? 5 : 4;
+    final int initialLength = cShowFeed.value ? 4 : 3;
     _tabController = TabController(
       length: initialLength,
       vsync: this,
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     // Listen for Nostr login/logout to recreate the TabController.
     _feedToggleSubscription = cShowFeed.subscribe((bool showFeed) {
-      final int newLength = showFeed ? 5 : 4;
+      final int newLength = showFeed ? 4 : 3;
       if (_tabController.length != newLength) {
         _recreateTabController(newLength);
       }
@@ -136,9 +136,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               const Tab(
                 icon: Icon(LucideIcons.notebookPen),
               ),
-              const Tab(
-                icon: Icon(LucideIcons.search),
-              ),
             ],
           ),
         ),
@@ -150,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           const StatisticsScreen(),
           const WorkoutScreen(),
           const ExerciseScreen(),
-          const SearchScreen(),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
@@ -216,8 +212,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               // Give a little bzzz.
               await HapticFeedback.lightImpact();
 
-              // Navigate to SearchScreen.
-              navigateToTab(AppTab.search);
+              if (context.mounted) {
+                await ModalService.showModal(
+                  context: context,
+                  child: const SearchModal(),
+                );
+              }
             },
             child: const Icon(LucideIcons.circlePlus),
           ),

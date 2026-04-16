@@ -3,7 +3,7 @@ import 'package:gymply/services/nostr_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Logical Enum for all tabs.
-enum AppTab { feed, stats, workout, exercise, search }
+enum AppTab { feed, stats, workout, exercise }
 
 // Computed Signal for Feed visibility.
 // Shows only if user has a pubkey AND is online.
@@ -26,7 +26,6 @@ void navigateToTab(AppTab tab) {
     AppTab.stats => showFeed ? 1 : 0,
     AppTab.workout => showFeed ? 2 : 1,
     AppTab.exercise => showFeed ? 3 : 2,
-    AppTab.search => showFeed ? 4 : 3,
   };
 
   sCurrentTab.value = targetIndex;

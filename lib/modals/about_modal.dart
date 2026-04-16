@@ -34,7 +34,7 @@ class AboutModal extends StatelessWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'DELETE WORKOUT',
+                'ABOUT GYMPLY.',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),

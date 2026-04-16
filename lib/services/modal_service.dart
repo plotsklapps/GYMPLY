@@ -13,21 +13,15 @@ class ModalService {
       // Keeps top modal below status bar.
       useSafeArea: true,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        maxHeight: MediaQuery.sizeOf(context).height,
+        minHeight: MediaQuery.sizeOf(context).height,
       ),
       context: context,
       builder: (BuildContext context) {
         // Keeps bottom modal above OS navigation (gesture or buttons).
         return SafeArea(
           top: false,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-            ),
-            child: scrollable ? SingleChildScrollView(child: child) : child,
-          ),
+          child: child,
         );
       },
     );

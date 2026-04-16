@@ -48,6 +48,11 @@ class ExercisesGridResults extends StatelessWidget {
 
                 if (confirm) {
                   workoutService.addExercise(exercise);
+                  // Pop both ExerciseDetailSheet and SearchModal
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+
                   navigateToTab(AppTab.workout);
                 }
               },
