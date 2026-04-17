@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2026-04-14
+- **UI/UX & Navigation:** 
+    - Refactored exercise search functionality from a standalone screen to a modal-based implementation (`SearchModal`) to simplify `HomeScreen` navigation.
+    - Updated `home_screen.dart` to launch `SearchModal` directly via FAB, removing the dedicated search tab.
+    - Refined navigation and icons across `MenuModal`, `AboutModal`, and `Nostr Onboarding`, standardizing on `circleChevronRight`.
+    - Added `AboutModal` to centralize app info, update checks, changelogs, and license links, streamlining the main settings menu.
+- **Service & Modal Logic:** 
+    - Enhanced `ModalService` to improve system inset handling (keyboard/navigation bar) with dynamic padding and optional `SingleChildScrollView` support.
+    - Improved `addimage_modal.dart` and `exercisedetail_modal.dart` with `useSafeArea` and refined bottom padding for better responsiveness.
+    - Standardized modal interaction patterns, including automatic modal closing upon exercise selection.
+- **Architecture & Build:** 
+    - Migrated `WorkoutScreen` reordering to the standard `onReorder` callback for Flutter Stable compatibility.
+    - Added `android.builtInKotlin` and `android.newDsl` to `gradle.properties` for Flutter's built-in Kotlin migration.
+    - Bumped min Flutter SDK to `3.41.0` and updated internal dependencies (`analyzer`, `meta`, `vm_service`, `motor`, `stupid_simple_sheet`).
+- **Cleanup & Polish:** 
+    - Updated UI components (`ProfileHeader`, `BodyMetricsModal`, `ThemeSettingsModal`) for improved spacing and aesthetics.
+    - Standardized choice chip styling by removing redundant text styles.
+    - Enhanced visual elements, including exercise name gradients for better contrast and adding new icons to `MenuModal`.
+    - Corrected various typos and refined title labeling across modals.
+
 ## [0.0.5] - 2026-04-13
 - **Cleanup & Maintenance:** Removed `flutter_animate` and `flutter_shaders` to streamline dependencies. Updated project version to 0.0.5+51 and refined exercise result card styling.
 
@@ -76,5 +96,3 @@ All notable changes to this project will be documented in this file.
 ## [0.0.1] - 2026-03-05
 - **Project Pivot:** Complete rewrite from PWA to native APK to resolve audio/timer issues on Android.
 - **Core Functionality:** Established basic timer services and workout logging capabilities.
-
-

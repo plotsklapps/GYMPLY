@@ -102,8 +102,7 @@ class AboutModal extends StatelessWidget {
           onTap: () async {
             await launchUrl(
               Uri.parse(
-                'https://github.com/plotsklapps/GYMPLY.'
-                '/blob/master/CHANGELOG.md',
+                'https://github.com/plotsklapps/GYMPLY./blob/master/CHANGELOG.md',
               ),
             );
           },
