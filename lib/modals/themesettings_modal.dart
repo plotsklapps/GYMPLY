@@ -27,7 +27,7 @@ class ThemeSettingsModal extends StatelessWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'SETTINGS MENU',
+                'THEME SETTINGS',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),

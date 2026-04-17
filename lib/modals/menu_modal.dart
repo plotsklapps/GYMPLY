@@ -90,7 +90,6 @@ class MenuModal extends StatelessWidget {
                   onTap: () async {
                     await ModalService.showModal(
                       context: context,
-                      scrollable: false,
                       child: const BodyMetricsModal(),
                     );
                   },

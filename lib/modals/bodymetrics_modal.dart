@@ -447,7 +447,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
                 Row(
                   children: <Widget>[
                     Expanded(

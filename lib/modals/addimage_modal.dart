@@ -9,10 +9,11 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
   return showModalBottomSheet<ImageSource>(
     showDragHandle: true,
     isScrollControlled: true,
+    useSafeArea: true,
     context: context,
     builder: (BuildContext context) {
       return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 48),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -30,7 +31,7 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                 IconButton(
                   onPressed: () {
                     // Pop and return false.
-                    Navigator.pop(context, false);
+                    Navigator.pop(context);
                   },
                   icon: const Icon(LucideIcons.circleX),
                 ),
@@ -45,7 +46,7 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                 // Pop and return gallery.
                 Navigator.of(context).pop(ImageSource.gallery);
               },
-              trailing: const Icon(LucideIcons.chevronRight),
+              trailing: const Icon(LucideIcons.circleChevronRight),
             ),
             ListTile(
               leading: const Icon(LucideIcons.camera),
@@ -54,7 +55,7 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                 // Pop and return camera.
                 Navigator.of(context).pop(ImageSource.camera);
               },
-              trailing: const Icon(LucideIcons.chevronRight),
+              trailing: const Icon(LucideIcons.circleChevronRight),
             ),
           ],
         ),
