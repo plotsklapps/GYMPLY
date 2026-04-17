@@ -43,9 +43,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                             LucideIcons.circleCheck,
                             color: theme.colorScheme.onSecondary,
                           )
-                        : Image.asset(
-                            'assets/images/equipment/$assetName.png',
-                          ),
+                        : Image.asset('assets/images/equipment/$assetName.png'),
                     label: Text(
                       e.name.capitalizeFirst(),
                     ),
@@ -72,14 +70,9 @@ class EquipmentChoiceChips extends StatelessWidget {
                             LucideIcons.circleCheck,
                             color: theme.colorScheme.onSecondary,
                           )
-                        : Image.asset(
-                            'assets/images/equipment/$assetName.png',
-                            height: 24,
-                            width: 24,
-                          ),
+                        : Image.asset('assets/images/equipment/$assetName.png'),
                     label: Text(
                       e.name.capitalizeFirst(),
-                      style: theme.textTheme.titleLarge,
                     ),
                     selected: isSelected,
                     onSelected: (bool selected) {

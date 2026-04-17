@@ -41,6 +41,7 @@ class ExercisesGridResults extends StatelessWidget {
             return InkWell(
               onTap: () async {
                 searchFocusNode.unfocus();
+
                 final bool confirm = await ModalService.showModal(
                   context: context,
                   child: ExerciseDetailSheet(exercise: exercise),
@@ -48,7 +49,7 @@ class ExercisesGridResults extends StatelessWidget {
 
                 if (confirm) {
                   workoutService.addExercise(exercise);
-                  // Pop both ExerciseDetailSheet and SearchModal
+                  // Pop both ExerciseDetailSheet and SearchModal.
                   if (context.mounted) {
                     Navigator.pop(context);
                   }

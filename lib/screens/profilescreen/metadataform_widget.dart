@@ -122,7 +122,6 @@ class _MetaDataFormState extends State<MetaDataForm> {
           controller: _websiteController,
           hint: 'https://yourwebsite.com',
         ),
-        const SizedBox(height: 8),
         if (widget.canSign)
           Row(
             children: <Widget>[

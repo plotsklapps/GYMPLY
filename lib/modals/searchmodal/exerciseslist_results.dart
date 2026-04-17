@@ -53,9 +53,12 @@ class ExercisesListResults extends StatelessWidget {
                         child: ListTile(
                           onTap: () async {
                             searchFocusNode.unfocus();
+
                             final bool confirm = await ModalService.showModal(
                               context: context,
-                              child: ExerciseDetailSheet(exercise: exercise),
+                              child: ExerciseDetailSheet(
+                                exercise: exercise,
+                              ),
                             );
 
                             if (confirm) {

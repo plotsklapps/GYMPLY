@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class NostrOnboarding extends StatelessWidget {
   const NostrOnboarding({super.key});
@@ -11,7 +12,7 @@ class NostrOnboarding extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 48),
       child: Column(
         children: <Widget>[
           Text(
@@ -42,31 +43,32 @@ class NostrOnboarding extends StatelessWidget {
             'your device.',
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           Row(
             children: <Widget>[
               Expanded(
-                child: FilledButton(
+                child: FilledButton.icon(
                   onPressed: () async {
                     await nostrService.generateKeys();
                   },
-                  child: const Text('Create New Keys'),
+                  icon: const Icon(LucideIcons.userPlus),
+                  label: const Text('Create new Keys'),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
           Row(
             children: <Widget>[
               Expanded(
-                child: OutlinedButton(
+                child: OutlinedButton.icon(
                   onPressed: () async {
                     await ModalService.showModal(
                       context: context,
                       child: const ImportKeysModal(),
                     );
                   },
-                  child: const Text('Use Existing Keys'),
+                  icon: const Icon(LucideIcons.userCheck),
+                  label: const Text('Use Existing Keys'),
                 ),
               ),
             ],

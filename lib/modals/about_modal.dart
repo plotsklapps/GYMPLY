@@ -79,7 +79,7 @@ class AboutModal extends StatelessWidget {
                       : const Icon(LucideIcons.cloudSync),
                   title: const Text('Check for Updates'),
                   subtitle: Text('Current Version: $versionDisplay'),
-                  trailing: const Icon(LucideIcons.chevronRight),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
                 );
               },
         ),
@@ -94,7 +94,7 @@ class AboutModal extends StatelessWidget {
           leading: const Icon(LucideIcons.code),
           title: const Text('Github Repository'),
           subtitle: const Text('Source code, file issues'),
-          trailing: const Icon(LucideIcons.chevronRight),
+          trailing: const Icon(LucideIcons.circleChevronRight),
         ),
 
         // GitHub ChangeLog ListTile.
@@ -110,7 +110,7 @@ class AboutModal extends StatelessWidget {
           leading: const Icon(LucideIcons.squarePen),
           title: const Text('Github Changelog'),
           subtitle: const Text('See changes made in the last version'),
-          trailing: const Icon(LucideIcons.chevronRight),
+          trailing: const Icon(LucideIcons.circleChevronRight),
         ),
 
         // Licenses ListTile.
@@ -121,7 +121,7 @@ class AboutModal extends StatelessWidget {
           leading: const Icon(LucideIcons.fileBraces),
           title: const Text('Licenses'),
           subtitle: const Text('Third party packages used by GYMPLY.'),
-          trailing: const Icon(LucideIcons.chevronRight),
+          trailing: const Icon(LucideIcons.circleChevronRight),
         ),
       ],
     );

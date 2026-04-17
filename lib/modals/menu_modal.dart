@@ -82,7 +82,7 @@ class MenuModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.hatGlasses),
                   title: const Text('Nostr Profile'),
                   subtitle: const Text('Manage your Nostr settings'),
-                  trailing: const Icon(LucideIcons.chevronRight),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
 
                 // BodyMetrics ListTile.
@@ -97,7 +97,7 @@ class MenuModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.personStanding),
                   title: const Text('Body Metrics'),
                   subtitle: const Text('Age, height, weight and more'),
-                  trailing: const Icon(LucideIcons.chevronRight),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
 
                 // Theme settings ListTile.
@@ -112,7 +112,7 @@ class MenuModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.paintbrush),
                   title: const Text('Theme Settings'),
                   subtitle: const Text('Set up your GYMPLY experience'),
-                  trailing: const Icon(LucideIcons.chevronRight),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
 
                 const Divider(),
@@ -188,7 +188,7 @@ class MenuModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.info),
                   title: const Text('About GYMPLY.'),
                   subtitle: const Text('Source Code, Updates, Licenses'),
-                  trailing: const Icon(LucideIcons.chevronRight),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
               ],
             ),

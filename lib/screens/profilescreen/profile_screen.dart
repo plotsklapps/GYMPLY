@@ -20,32 +20,30 @@ class ProfileScreen extends StatelessWidget {
     final bool hasNsec = nostrService.sNsec.watch(context);
     final Metadata? metadata = nostrService.sMetadata.watch(context);
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('PROFILE'),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              // Banner and Avatar.
-              ProfileHeader(metadata: metadata),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PROFILE'),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            // Banner and Avatar.
+            ProfileHeader(metadata: metadata),
 
-              Column(
-                children: <Widget>[
-                  if (npub == null)
-                    const NostrOnboarding()
-                  else
-                    _ProfileWidget(
-                      npub: npub,
-                      hasNsec: hasNsec,
-                      metadata: metadata,
-                    ),
-                ],
-              ),
-            ],
-          ),
+            Column(
+              children: <Widget>[
+                if (npub == null)
+                  const NostrOnboarding()
+                else
+                  _ProfileWidget(
+                    npub: npub,
+                    hasNsec: hasNsec,
+                    metadata: metadata,
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -68,7 +66,7 @@ class _ProfileWidget extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 48),
       child: Column(
         children: <Widget>[
           const SizedBox(height: 40),
@@ -155,7 +153,8 @@ class _ProfileWidget extends StatelessWidget {
               isSensitive: true,
             ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 8),
+
           Row(
             children: <Widget>[
               Expanded(

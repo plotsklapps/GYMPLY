@@ -21,10 +21,14 @@ class ProfileHeader extends StatelessWidget {
       children: <Widget>[
         // Banner defaults to theme.colorScheme.secondary is no banner is set.
         Container(
-          height: 120,
+          height: 80,
           width: double.infinity,
           decoration: BoxDecoration(
             color: theme.colorScheme.secondary,
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
             image: bannerUrl != null && bannerUrl.isNotEmpty
                 ? DecorationImage(
                     image: NetworkImage(bannerUrl),

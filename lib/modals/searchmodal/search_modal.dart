@@ -82,7 +82,6 @@ class _SearchModalState extends State<SearchModal> {
     if (showEquipment) chipsHeight += 52.0;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -98,7 +97,7 @@ class _SearchModalState extends State<SearchModal> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context, false);
+                  Navigator.pop(context);
                 },
                 icon: const Icon(LucideIcons.circleX),
               ),

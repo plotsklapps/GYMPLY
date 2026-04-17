@@ -163,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   // Open menu modal.
                   await ModalService.showModal(
                     context: context,
-                    scrollable: false,
                     child: const MenuModal(),
                   );
                 }
@@ -213,9 +212,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               await HapticFeedback.lightImpact();
 
               if (context.mounted) {
-                await ModalService.showModal(
+                // Do not use ModalService here because of entirely different
+                // layout and scrollability.
+                await showModalBottomSheet<void>(
                   context: context,
-                  child: const SearchModal(),
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return const SearchModal();
+                  },
                 );
               }
             },
