@@ -3,13 +3,19 @@
 All notable changes to this project will be documented in this file.
 
 ## [0.0.5] - 2026-04-19
-- **Modal Improvements & UI Polish:**
-    - Implemented a centralized `ModalService` to manage consistent modal behavior, including standardized safe-area and keyboard handling.
-    - Updated various modals (`addimage_modal.dart`, `exercisedetail_modal.dart`, `bodymetrics_modal.dart`) to use `SafeArea` and dynamic bottom padding for better responsiveness with system navigation.
-    - Standardized navigation icons (`circleChevronRight`) across `MenuModal`, `AboutModal`, and Nostr onboarding.
-    - Corrected UI titles and labeling inconsistencies (`THEME SETTINGS`, `ABOUT GYMPLY.`).
-    - Fixed a malformed GitHub Changelog link in `about_modal.dart`.
-    - Incremented project version to `0.0.5+53`.
+- **Muscle Activation Heatmaps:**
+    - Integrated `flutter_body_atlas` to provide visual muscle activation heatmaps on the `StatisticsScreen`, displaying worked muscles on front and back views.
+    - Implemented `AtlasService` and `AtlasMapper` for efficient mapping of internal muscle groups to atlas-specific IDs.
+- **Enhanced Progress Visualization:**
+    - Refactored `ProgressChart` into a `StatefulWidget` to support dynamic timescale switching (30 Days, 6 Months, 1 Year, All Time).
+    - Added bar and line chart visualization support with interactive Y-axis dynamic scaling.
+- **User Experience & Attributions:**
+    - Introduced `AttributionsModal` and added it to the `AboutModal` to provide proper credit for anatomical assets, theme engines, and state management libraries.
+    - Standardized UI components and cleaned up internal code structure, including removing redundant `Builder` patterns and refining logging practices.
+    - Improved robustness of workout filtering logic to prevent duplicate data rendering.
+- **Internal Refactoring:**
+    - Cleaned up `progresschart_widget.dart` and `exercisehistory_modal.dart` with more descriptive variable names and improved structural clarity.
+    - Updated project version to 0.0.5+53.
 
 ## [0.0.5] - 2026-04-14
 - **UI/UX & Navigation:** 
