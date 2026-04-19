@@ -12,6 +12,7 @@ import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
+import 'package:logger/logger.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -30,6 +31,7 @@ class ExerciseHistoryModal extends StatefulWidget {
 }
 
 class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
+  final Logger _logger = Logger();
   // Default to Volume for Strength, or Distance/Time for others.
   WorkoutMetric _selectedMetric = WorkoutMetric.volume;
 
@@ -50,10 +52,24 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     final List<Workout> history = sWorkoutHistory.watch(context);
     final Workout active = sActiveWorkout.watch(context);
 
-    // Combine history and active workout to get all occurrences.
-    final List<Workout> allWorkouts = <Workout>[...history];
-    if (active.exercises.isNotEmpty) {
-      allWorkouts.add(active);
+    // Combine history and active workout, ensuring no duplicates by ID.
+    final Map<String, Workout> uniqueWorkouts = {
+      for (final w in history) w.id: w,
+      if (active.exercises.isNotEmpty) active.id: active,
+    };
+    final List<Workout> allWorkouts = uniqueWorkouts.values.toList();
+
+    // DEBUG: Log workouts for this exercise
+    final List<Workout> tempRelevant = allWorkouts.where((Workout w) {
+      return w.exercises.any(
+        (WorkoutExercise ex) => ex.exerciseName == widget.exercise.exerciseName,
+      );
+    }).toList();
+    _logger.i(
+      'DEBUG: Found ${tempRelevant.length} workouts for exercise: ${widget.exercise.exerciseName}',
+    );
+    for (var w in tempRelevant) {
+      _logger.i('DEBUG: Workout ID: ${w.id}, Date: ${w.dateTime}');
     }
 
     // Filter for workouts containing this specific exercise.
@@ -103,7 +119,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 16),
-        
+
                 if (relevantWorkouts.isEmpty)
                   const Text('No history found for this exercise yet.')
                 else ...<Widget>[
@@ -114,7 +130,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                     selectedMetric: _selectedMetric,
                   ),
                   const SizedBox(height: 24),
-        
+
                   // Metric Selector.
                   MetricSelector(
                     selectedMetric: _selectedMetric,
@@ -124,16 +140,17 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                       });
                     },
                   ),
-        
+
                   if (relevantWorkouts.isNotEmpty) ...<Widget>[
                     const SizedBox(height: 24),
                     const Divider(),
                     Builder(
                       builder: (BuildContext context) {
-                        final PersonalRecord pr = workoutService.getPersonalRecords(
-                          widget.exercise.id,
-                        );
-        
+                        final PersonalRecord pr = workoutService
+                            .getPersonalRecords(
+                              widget.exercise.id,
+                            );
+
                         if (widget.exercise is StrengthExercise) {
                           return _StrengthPRs(pr: pr);
                         } else if (widget.exercise is CardioExercise) {

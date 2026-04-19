@@ -50,7 +50,7 @@ class UserDetailModal extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 16),
-                ...likers.asMap().entries.map((entry) {
+                ...likers.asMap().entries.map((MapEntry<int, (String, Metadata?)> entry) {
                   final int index = entry.key;
                   final (String pubkey, Metadata? metadata) = entry.value;
                   final String npub = Nip19.encodePubKey(pubkey);
