@@ -33,121 +33,129 @@ class SomatotypeModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Somatotypes help GYMPLY refine your body fat percentage '
-                'calculation beyond standard BMI formulas.',
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              SomatotypeInfo(
-                context: context,
-                title: 'ECTOMORPH',
-                description:
-                    'Lean and long, with difficulty building muscle. '
-                    'Naturally low body fat.',
-                adjustment: '-2.0% Adjustment',
-              ),
-              SomatotypeInfo(
-                context: context,
-                title: 'MESOMORPH',
-                description:
-                    'Muscular and well-built, with a high metabolism '
-                    'and responsive muscle cells.',
-                adjustment: '-5.0% Adjustment',
-              ),
-              SomatotypeInfo(
-                context: context,
-                title: 'ENDOMORPH',
-                description:
-                    'Big, high tendency to store body fat. Often '
-                    'strong with a slower metabolism.',
-                adjustment: '+1.0% Adjustment',
-              ),
-              const Divider(height: 32),
-              Text(
-                'CALCULATION FORMULAS',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: theme.colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Somatotypes help GYMPLY refine your body fat percentage '
+                        'calculation beyond standard BMI formulas.',
+                        style: theme.textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      SomatotypeInfo(
+                        context: context,
+                        title: 'ECTOMORPH',
+                        description:
+                            'Lean and long, with difficulty building muscle. '
+                            'Naturally low body fat.',
+                        adjustment: '-2.0% Adjustment',
+                      ),
+                      SomatotypeInfo(
+                        context: context,
+                        title: 'MESOMORPH',
+                        description:
+                            'Muscular and well-built, with a high metabolism '
+                            'and responsive muscle cells.',
+                        adjustment: '-5.0% Adjustment',
+                      ),
+                      SomatotypeInfo(
+                        context: context,
+                        title: 'ENDOMORPH',
+                        description:
+                            'Big, high tendency to store body fat. Often '
+                            'strong with a slower metabolism.',
+                        adjustment: '+1.0% Adjustment',
+                      ),
+                      const Divider(height: 32),
+                      Text(
+                        'CALCULATION FORMULAS',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              '1. BMI (Quetelet Index)',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'BMI = weight (kg) / height (m)²',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontFamily: 'monospace',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const Divider(height: 24),
+                            Text(
+                              '2. BASE BF% (Gallagher Formula)',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'BF% = (1.46 × BMI) + (0.14 × Age) - '
+                              '(11.6 × Sex) - 10.0',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontFamily: 'monospace',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              '*Sex: Male = 1, Female = 0',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontStyle: FontStyle.italic,
+                                color: theme.colorScheme.outline,
+                              ),
+                            ),
+                            const Divider(height: 24),
+                            Text(
+                              '3. SOMATOTYPE TUNING',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Final BF% = Base BF% ± Somatotype Adjustment',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontFamily: 'monospace',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      '1. BMI (Quetelet Index)',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'BMI = weight (kg) / height (m)²',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'monospace',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const Divider(height: 24),
-                    Text(
-                      '2. BASE BF% (Gallagher Formula)',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'BF% = (1.46 × BMI) + (0.14 × Age) - '
-                      '(11.6 × Sex) - 10.0',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'monospace',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '*Sex: Male = 1, Female = 0',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontStyle: FontStyle.italic,
-                        color: theme.colorScheme.outline,
-                      ),
-                    ),
-                    const Divider(height: 24),
-                    Text(
-                      '3. SOMATOTYPE TUNING',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Final BF% = Base BF% ± Somatotype Adjustment',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'monospace',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

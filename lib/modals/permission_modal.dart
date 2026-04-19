@@ -36,52 +36,61 @@ class PermissionModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'GYMPLY. uses a foreground service to keep your timers '
-            'accurate and audible even when the app is minimised or '
-            'your screen is off.\n\n'
-            'Android will ask for the following permissions:\n\n'
-            '• Notification access - to display the live timer in your '
-            'status bar and keep the timer running.\n\n'
-            '• Ignore battery optimisations - to ensure your workout '
-            'timer continues running smoothly without being closed by '
-            'the system to save power.\n\n'
-            'Allowing these does NOT change the fact that GYMPLY. is '
-            'strictly offline-first. Your data never leaves your device, '
-            'and no metrics are ever transmitted.',
-            style: theme.textTheme.bodyLarge,
-            textAlign: TextAlign.center,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'GYMPLY. uses a foreground service to keep your timers '
+                    'accurate and audible even when the app is minimised or '
+                    'your screen is off.\n\n'
+                    'Android will ask for the following permissions:\n\n'
+                    '• Notification access - to display the live timer in your '
+                    'status bar and keep the timer running.\n\n'
+                    '• Ignore battery optimisations - to ensure your workout '
+                    'timer continues running smoothly without being closed by '
+                    'the system to save power.\n\n'
+                    'Allowing these does NOT change the fact that GYMPLY. is '
+                    'strictly offline-first. Your data never leaves your device, '
+                    'and no metrics are ever transmitted.',
+                    style: theme.textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () async {
+                          // 1. Request permissions (OS dialogs).
+                          await <Permission>[
+                            Permission.notification,
+                          ].request();
+        
+                          // Request battery optimalisation.
+                          await NotificationService.requestBatteryOptimization();
+        
+                          // Close the modal.
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('UNDERSTOOD'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () async {
-                  // 1. Request permissions (OS dialogs).
-                  await <Permission>[
-                    Permission.notification,
-                  ].request();
-
-                  // Request battery optimalisation.
-                  await NotificationService.requestBatteryOptimization();
-
-                  // Close the modal.
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Text('UNDERSTOOD'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
       ],
     );
   }

@@ -151,37 +151,46 @@ class ExerciseDetailSheet extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            exercise.fullPath,
-            fit: BoxFit.contain,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    exercise.fullPath,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Pop and return false.
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          // Pop and return true.
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('ADD TO WORKOUT'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  // Pop and return false.
-                  Navigator.pop(context, false);
-                },
-                child: const Text('CANCEL'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () {
-                  // Pop and return true.
-                  Navigator.pop(context, true);
-                },
-                child: const Text('ADD TO WORKOUT'),
-              ),
-            ),
-          ],
         ),
       ],
     );

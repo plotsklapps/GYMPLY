@@ -33,49 +33,58 @@ class StopwatchTimerModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        // M:S Picker.
-        StopwatchDurationPicker(
-          initialSeconds: (StopwatchTimer.sElapsedStopwatchTime.value / 1000)
-              .round(),
-          onChanged: (int newSeconds) {
-            // Update the temporary value for display/confirmation.
-            _tempSeconds = newSeconds;
-          },
-        ),
-        const SizedBox(height: 24),
-        // Cancel/Confirm Buttons.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () async {
-                  // Reset to zero.
-                  await StopwatchTimer().resetTimer();
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                // M:S Picker.
+                StopwatchDurationPicker(
+                  initialSeconds: (StopwatchTimer.sElapsedStopwatchTime.value / 1000)
+                      .round(),
+                  onChanged: (int newSeconds) {
+                    // Update the temporary value for display/confirmation.
+                    _tempSeconds = newSeconds;
+                  },
+                ),
+                const SizedBox(height: 24),
+                // Cancel/Confirm Buttons.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          // Reset to zero.
+                          await StopwatchTimer().resetTimer();
 
-                  // Pop and return false.
-                  if (context.mounted) Navigator.pop(context, false);
-                },
-                child: const Text('RESET'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () {
-                  // Set to confirmed value.
-                  // We do NOT call resetTimer() here, because it sets
-                  // sElapsedStopwatchTime to 0.
-                  StopwatchTimer().setManualTime(_tempSeconds * 1000);
+                          // Pop and return false.
+                          if (context.mounted) Navigator.pop(context, false);
+                        },
+                        child: const Text('RESET'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          // Set to confirmed value.
+                          // We do NOT call resetTimer() here, because it sets
+                          // sElapsedStopwatchTime to 0.
+                          StopwatchTimer().setManualTime(_tempSeconds * 1000);
 
-                  // Pop and return true.
-                  Navigator.pop(context, true);
-                },
-                child: const Text('CONFIRM'),
-              ),
+                          // Pop and return true.
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('CONFIRM'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

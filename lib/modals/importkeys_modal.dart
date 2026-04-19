@@ -34,46 +34,55 @@ class ImportKeysModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        const Text(
-          'Enter your npub for read-only or nsec for full access.',
-          style: TextStyle(fontSize: 12),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: keyController,
-          decoration: const InputDecoration(
-            labelText: 'npub or nsec',
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                const Text(
+                  'Enter your npub for read-only or nsec for full access.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: keyController,
+                  decoration: const InputDecoration(
+                    labelText: 'npub or nsec',
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Pop and return false.
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () async {
+                          final String input = keyController.text.trim();
+                          final bool success = await nostrService.useExistingKeys(
+                            input,
+                          );
+                          if (context.mounted) {
+                            Navigator.pop(context, success);
+                          }
+                        },
+                        child: const Text('IMPORT'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  // Pop and return false.
-                  Navigator.pop(context, false);
-                },
-                child: const Text('CANCEL'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                onPressed: () async {
-                  final String input = keyController.text.trim();
-                  final bool success = await nostrService.useExistingKeys(
-                    input,
-                  );
-                  if (context.mounted) {
-                    Navigator.pop(context, success);
-                  }
-                },
-                child: const Text('IMPORT'),
-              ),
-            ),
-          ],
         ),
       ],
     );

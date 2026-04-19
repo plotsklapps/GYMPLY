@@ -177,7 +177,6 @@ class WorkoutNote extends StatelessWidget {
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
-                          scrollable: false,
                           child: CommentModal(
                             event: event,
                             imageUrl: imageUrl,

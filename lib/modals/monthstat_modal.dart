@@ -102,128 +102,135 @@ class _MonthStatModalState extends State<MonthStatModal> {
         ),
 
         const Divider(),
-
-        // Weekday Header.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: weekdays.map((String day) {
-            return Expanded(
-              child: Center(
-                child: Text(
-                  day,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 8),
-
-        // Calendar.
-        GridView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7,
-            mainAxisSpacing: 2,
-            crossAxisSpacing: 2,
-          ),
-          itemCount: startOffset + daysInMonth,
-          itemBuilder: (BuildContext context, int index) {
-            // Empty space before first day.
-            if (index < startOffset) {
-              return const SizedBox.shrink();
-            }
-
-            final int day = index - startOffset + 1;
-            final DateTime currentDay = DateTime(
-              widget.date.year,
-              widget.date.month,
-              day,
-            );
-            final String key = DateFormat('yyyyMMdd').format(currentDay);
-            final bool hasWorkout = workoutDateKeys.contains(key);
-            final bool isToday =
-                DateFormat('yyyyMMdd').format(DateTime.now()) == key;
-
-            return InkWell(
-              onTap: hasWorkout
-                  ? () async {
-                      // Find workout in history or active workout.
-                      final Workout? historical = history.where((Workout w) {
-                        return w.dateKey == key;
-                      }).firstOrNull;
-
-                      final Workout? activeIfMatch =
-                          (active.dateKey == key && active.exercises.isNotEmpty)
-                          ? active
-                          : null;
-
-                      final Workout? workoutToShow =
-                          historical ?? activeIfMatch;
-
-                      if (workoutToShow != null && context.mounted) {
-                        await ModalService.showModal(
-                          context: context,
-                          child: WorkoutSummaryModal(workout: workoutToShow),
-                          scrollable: false,
-                        );
-                      }
-                    }
-                  : null,
-              borderRadius: BorderRadius.circular(24),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: hasWorkout
-                        ? theme.colorScheme.secondary
-                        : isToday
-                        ? theme.colorScheme.surfaceContainerHighest
-                        : null,
-                    border: isToday
-                        ? Border.all(color: theme.colorScheme.secondary)
-                        : null,
-                  ),
-                  child: Center(
-                    child: Text(
-                      day.toString(),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: hasWorkout || isToday
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: hasWorkout
-                            ? theme.colorScheme.onSecondary
-                            : isToday
-                            ? theme.colorScheme.secondary
-                            : null,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                // Weekday Header.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: weekdays.map((String day) {
+                    return Expanded(
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.outline,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 32),
-        MonthChart(
-          workouts: monthWorkouts,
-          daysInMonth: daysInMonth,
-          selectedMetric: _selectedMetric,
-        ),
-        const SizedBox(height: 16),
-        MetricSelector(
-          selectedMetric: _selectedMetric,
-          onSelected: (WorkoutMetric metric) {
-            setState(() {
-              _selectedMetric = metric;
-            });
-          },
+                const SizedBox(height: 8),
+        
+                // Calendar.
+                GridView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    mainAxisSpacing: 2,
+                    crossAxisSpacing: 2,
+                  ),
+                  itemCount: startOffset + daysInMonth,
+                  itemBuilder: (BuildContext context, int index) {
+                    // Empty space before first day.
+                    if (index < startOffset) {
+                      return const SizedBox.shrink();
+                    }
+        
+                    final int day = index - startOffset + 1;
+                    final DateTime currentDay = DateTime(
+                      widget.date.year,
+                      widget.date.month,
+                      day,
+                    );
+                    final String key = DateFormat('yyyyMMdd').format(currentDay);
+                    final bool hasWorkout = workoutDateKeys.contains(key);
+                    final bool isToday =
+                        DateFormat('yyyyMMdd').format(DateTime.now()) == key;
+        
+                    return InkWell(
+                      onTap: hasWorkout
+                          ? () async {
+                              // Find workout in history or active workout.
+                              final Workout? historical = history.where((Workout w) {
+                                return w.dateKey == key;
+                              }).firstOrNull;
+        
+                              final Workout? activeIfMatch =
+                                  (active.dateKey == key && active.exercises.isNotEmpty)
+                                  ? active
+                                  : null;
+        
+                              final Workout? workoutToShow =
+                                  historical ?? activeIfMatch;
+        
+                              if (workoutToShow != null && context.mounted) {
+                                await ModalService.showModal(
+                                  context: context,
+                                  child: WorkoutSummaryModal(workout: workoutToShow),
+                                );
+                              }
+                            }
+                          : null,
+                      borderRadius: BorderRadius.circular(24),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: hasWorkout
+                                ? theme.colorScheme.secondary
+                                : isToday
+                                ? theme.colorScheme.surfaceContainerHighest
+                                : null,
+                            border: isToday
+                                ? Border.all(color: theme.colorScheme.secondary)
+                                : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              day.toString(),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: hasWorkout || isToday
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: hasWorkout
+                                    ? theme.colorScheme.onSecondary
+                                    : isToday
+                                    ? theme.colorScheme.secondary
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 32),
+                MonthChart(
+                  workouts: monthWorkouts,
+                  daysInMonth: daysInMonth,
+                  selectedMetric: _selectedMetric,
+                ),
+                const SizedBox(height: 16),
+                MetricSelector(
+                  selectedMetric: _selectedMetric,
+                  onSelected: (WorkoutMetric metric) {
+                    setState(() {
+                      _selectedMetric = metric;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

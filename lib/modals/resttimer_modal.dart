@@ -37,50 +37,59 @@ class RestTimerModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        // M:S Picker.
-        RestDurationPicker(
-          initialSeconds: initialSeconds,
-          onChanged: (int newSeconds) {
-            // Update the initial duration.
-            RestTimer.sInitialRestTime.value = newSeconds;
-
-            // Sync the elapsed duration if the timer is not currently running.
-            // This is handled manually to keep the service logic simple.
-            if (!RestTimer.sRestTimerRunning.value) {
-              RestTimer.sElapsedRestTime.value = newSeconds;
-            }
-          },
-        ),
-        const SizedBox(height: 24),
-        // Cancel/Confirm Buttons.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  // Reset to default.
-                  RestTimer.sInitialRestTime.value = 60;
-                  RestTimer.sElapsedRestTime.value = 60;
-
-                  // Pop and return false.
-                  Navigator.pop(context, false);
-                },
-                child: const Text('DEFAULT'),
-              ),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                // M:S Picker.
+                RestDurationPicker(
+                  initialSeconds: initialSeconds,
+                  onChanged: (int newSeconds) {
+                    // Update the initial duration.
+                    RestTimer.sInitialRestTime.value = newSeconds;
+        
+                    // Sync the elapsed duration if the timer is not currently running.
+                    // This is handled manually to keep the service logic simple.
+                    if (!RestTimer.sRestTimerRunning.value) {
+                      RestTimer.sElapsedRestTime.value = newSeconds;
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+                // Cancel/Confirm Buttons.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Reset to default.
+                          RestTimer.sInitialRestTime.value = 60;
+                          RestTimer.sElapsedRestTime.value = 60;
+        
+                          // Pop and return false.
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('DEFAULT'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          // Pop and return true.
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('CONFIRM'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () {
-                  // Pop and return true.
-                  Navigator.pop(context, true);
-                },
-                child: const Text('CONFIRM'),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

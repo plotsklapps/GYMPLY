@@ -106,207 +106,220 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        Row(
-          children: <Widget>[
-            Text(
-              formattedDate,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.secondary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-
-        // Title Field.
-        TextField(
-          controller: _titleController,
-          focusNode: _titleFocusNode,
-          onTapOutside: (PointerDownEvent event) {
-            _titleFocusNode.unfocus();
-          },
-          decoration: const InputDecoration(
-            labelText: 'Workout title',
-          ),
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-          maxLength: _maxTitleLength,
-          buildCounter:
-              (
-                BuildContext context, {
-                required int currentLength,
-                required bool isFocused,
-                int? maxLength,
-              }) {
-                return Text(
-                  '${_maxTitleLength - currentLength} / $_maxTitleLength',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: currentLength >= _maxTitleLength
-                        ? theme.colorScheme.error
-                        : theme.colorScheme.primary,
-                  ),
-                );
-              },
-        ),
-
-        const SizedBox(height: 16),
-
-        // Notes field.
-        TextField(
-          controller: _notesController,
-          focusNode: _notesFocusNode,
-          onTapOutside: (PointerDownEvent event) {
-            _notesFocusNode.unfocus();
-          },
-          decoration: const InputDecoration(
-            labelText: 'How did it go?',
-          ),
-          maxLines: 3,
-          maxLength: _maxNoteLength,
-          buildCounter:
-              (
-                BuildContext context, {
-                required int currentLength,
-                required bool isFocused,
-                required int? maxLength,
-              }) {
-                return Text(
-                  '${_maxNoteLength - currentLength} / $_maxNoteLength',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: currentLength >= _maxNoteLength
-                        ? theme.colorScheme.error
-                        : theme.colorScheme.primary,
-                  ),
-                );
-              },
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            for (int i = 0; i < 2; i++)
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: i == 0 ? 0 : 4,
-                    right: i == 1 ? 0 : 4,
-                  ),
-                  child: InkWell(
-                    onTap: () async {
-                      await _pickImage(i);
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: SizedBox(
-                        height: 160,
-                        child: _imageFilenames[i] == null
-                            ? const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(LucideIcons.imagePlus),
-                                  SizedBox(height: 8),
-                                  Text('Add image'),
-                                ],
-                              )
-                            : FutureBuilder<String>(
-                                future: imageService.getAbsolutePath(
-                                  _imageFilenames[i]!,
-                                ),
-                                builder:
-                                    (
-                                      BuildContext context,
-                                      AsyncSnapshot<String> snapshot,
-                                    ) {
-                                      if (snapshot.hasData) {
-                                        return Stack(
-                                          fit: StackFit.expand,
-                                          children: <Widget>[
-                                            Image.file(
-                                              File(snapshot.data!),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                              top: 4,
-                                              right: 4,
-                                              child: CircleAvatar(
-                                                backgroundColor: Colors.black54,
-                                                radius: 16,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  icon: const Icon(
-                                                    LucideIcons.trash2,
-                                                    size: 16,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () =>
-                                                      _removeImage(i),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    },
-                              ),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      formattedDate,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: const Text('CANCEL'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                onPressed: () async {
-                  await HapticFeedback.mediumImpact();
+                const SizedBox(height: 24),
 
-                  // Filter out null values for saving.
-                  final List<String> imagesToSave = _imageFilenames
-                      .where((String? path) => path != null)
-                      .cast<String>()
-                      .toList();
+                // Title Field.
+                TextField(
+                  controller: _titleController,
+                  focusNode: _titleFocusNode,
+                  onTapOutside: (PointerDownEvent event) {
+                    _titleFocusNode.unfocus();
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Workout title',
+                  ),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLength: _maxTitleLength,
+                  buildCounter:
+                      (
+                        BuildContext context, {
+                        required int currentLength,
+                        required bool isFocused,
+                        int? maxLength,
+                      }) {
+                        return Text(
+                          '${_maxTitleLength - currentLength} / $_maxTitleLength',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: currentLength >= _maxTitleLength
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.primary,
+                          ),
+                        );
+                      },
+                ),
 
-                  // Save current workout.
-                  await workoutService.finishWorkout(
-                    title: _titleController.text,
-                    notes: _notesController.text,
-                    imagePaths: imagesToSave,
-                  );
+                const SizedBox(height: 16),
 
-                  if (context.mounted) {
-                    // Close the current modal.
-                    Navigator.pop(context, true);
-
-                    // Open the Share sheet.
-                    await ModalService.showModal(
-                      context: context,
-                      child: ShareToSocialsModal(
-                        workout: sActiveWorkout.value,
+                // Notes field.
+                TextField(
+                  controller: _notesController,
+                  focusNode: _notesFocusNode,
+                  onTapOutside: (PointerDownEvent event) {
+                    _notesFocusNode.unfocus();
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'How did it go?',
+                  ),
+                  maxLines: 3,
+                  maxLength: _maxNoteLength,
+                  buildCounter:
+                      (
+                        BuildContext context, {
+                        required int currentLength,
+                        required bool isFocused,
+                        required int? maxLength,
+                      }) {
+                        return Text(
+                          '${_maxNoteLength - currentLength} / $_maxNoteLength',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: currentLength >= _maxNoteLength
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.primary,
+                          ),
+                        );
+                      },
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    for (int i = 0; i < 2; i++)
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: i == 0 ? 0 : 4,
+                            right: i == 1 ? 0 : 4,
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              await _pickImage(i);
+                            },
+                            child: Card(
+                              clipBehavior: Clip.antiAlias,
+                              child: SizedBox(
+                                height: 160,
+                                child: _imageFilenames[i] == null
+                                    ? const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(LucideIcons.imagePlus),
+                                          SizedBox(height: 8),
+                                          Text('Add image'),
+                                        ],
+                                      )
+                                    : FutureBuilder<String>(
+                                        future: imageService.getAbsolutePath(
+                                          _imageFilenames[i]!,
+                                        ),
+                                        builder:
+                                            (
+                                              BuildContext context,
+                                              AsyncSnapshot<String> snapshot,
+                                            ) {
+                                              if (snapshot.hasData) {
+                                                return Stack(
+                                                  fit: StackFit.expand,
+                                                  children: <Widget>[
+                                                    Image.file(
+                                                      File(snapshot.data!),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                    Positioned(
+                                                      top: 4,
+                                                      right: 4,
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            Colors.black54,
+                                                        radius: 16,
+                                                        child: IconButton(
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          icon: const Icon(
+                                                            LucideIcons.trash2,
+                                                            size: 16,
+                                                            color: Colors.white,
+                                                          ),
+                                                          onPressed: () =>
+                                                              _removeImage(i),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            },
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  }
-                },
-                child: const Text('SAVE'),
-              ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () async {
+                          await HapticFeedback.mediumImpact();
+
+                          // Filter out null values for saving.
+                          final List<String> imagesToSave = _imageFilenames
+                              .where((String? path) => path != null)
+                              .cast<String>()
+                              .toList();
+
+                          // Save current workout.
+                          await workoutService.finishWorkout(
+                            title: _titleController.text,
+                            notes: _notesController.text,
+                            imagePaths: imagesToSave,
+                          );
+
+                          if (context.mounted) {
+                            // Close the current modal.
+                            Navigator.pop(context, true);
+
+                            // Open the Share sheet.
+                            await ModalService.showModal(
+                              context: context,
+                              child: ShareToSocialsModal(
+                                workout: sActiveWorkout.value,
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('SAVE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

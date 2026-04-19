@@ -39,50 +39,59 @@ class IntervalTimerModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        // H:M:S Picker.
-        IntervalDurationPicker(
-          initialMilliSeconds: initialMilliSeconds,
-          onChanged: (int newMilliSeconds) {
-            // Update the initial duration.
-            IntervalTimer.sInitialIntervalTime.value = newMilliSeconds;
-
-            // Sync the elapsed duration if the timer is not currently running.
-            // This is handled manually to keep the service logic simple.
-            if (!IntervalTimer.sIntervalTimerRunning.value) {
-              IntervalTimer.sElapsedIntervalTime.value = newMilliSeconds;
-            }
-          },
-        ),
-        const SizedBox(height: 24),
-        // Cancel/Confirm Buttons.
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  // Reset to default.
-                  IntervalTimer.sInitialIntervalTime.value = 60000;
-                  IntervalTimer.sElapsedIntervalTime.value = 60000;
-
-                  // Pop and return false.
-                  Navigator.pop(context, false);
-                },
-                child: const Text('DEFAULT'),
-              ),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                // H:M:S Picker.
+                IntervalDurationPicker(
+                  initialMilliSeconds: initialMilliSeconds,
+                  onChanged: (int newMilliSeconds) {
+                    // Update the initial duration.
+                    IntervalTimer.sInitialIntervalTime.value = newMilliSeconds;
+        
+                    // Sync the elapsed duration if the timer is not currently running.
+                    // This is handled manually to keep the service logic simple.
+                    if (!IntervalTimer.sIntervalTimerRunning.value) {
+                      IntervalTimer.sElapsedIntervalTime.value = newMilliSeconds;
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+                // Cancel/Confirm Buttons.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // Reset to default.
+                          IntervalTimer.sInitialIntervalTime.value = 60000;
+                          IntervalTimer.sElapsedIntervalTime.value = 60000;
+        
+                          // Pop and return false.
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('DEFAULT'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          // Pop and return true;
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('CONFIRM'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () {
-                  // Pop and return true;
-                  Navigator.pop(context, true);
-                },
-                child: const Text('CONFIRM'),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

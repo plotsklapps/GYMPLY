@@ -32,32 +32,43 @@ class RestoreBackupModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const Text(
-          'This will overwrite all current data. This action '
-          'cannot be undone.',
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: const Text('CANCEL'),
-              ),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                const Text(
+                  'This will overwrite all current data. This action '
+                  'cannot be undone.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('RESTORE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text('RESTORE'),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );

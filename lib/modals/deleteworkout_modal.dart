@@ -32,25 +32,34 @@ class DeleteWorkoutModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        const Text(
-          'Are you sure you want to delete this workout? '
-          'This action cannot be undone.',
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: FilledButton(
-                onPressed: () {
-                  // Pop and return true.
-                  Navigator.pop(context, true);
-                },
-                child: const Text('DELETE'),
-              ),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                const Text(
+                  'Are you sure you want to delete this workout? '
+                  'This action cannot be undone.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {
+                          // Pop and return true.
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('DELETE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

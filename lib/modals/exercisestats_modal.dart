@@ -231,8 +231,18 @@ class ExerciseStatsModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 8),
-        ...detailRows,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 8),
+                ...detailRows,
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

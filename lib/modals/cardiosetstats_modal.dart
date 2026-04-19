@@ -56,103 +56,112 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-        // Intensity SegmentedButton on top
-        SizedBox(
-          width: double.infinity,
-          child: SegmentedButton<int>(
-            segments: <ButtonSegment<int>>[
-              ButtonSegment<int>(
-                value: 0,
-                label: const Text('Light'),
-                icon: Icon(
-                  LucideIcons.flame,
-                  color: theme.colorScheme.secondary,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                // Intensity SegmentedButton on top
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<int>(
+                    segments: <ButtonSegment<int>>[
+                      ButtonSegment<int>(
+                        value: 0,
+                        label: const Text('Light'),
+                        icon: Icon(
+                          LucideIcons.flame,
+                          color: theme.colorScheme.secondary,
+                        ),
+                      ),
+                      ButtonSegment<int>(
+                        value: 1,
+                        label: const Text('Medium'),
+                        icon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              LucideIcons.flame,
+                              size: 16,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              size: 16,
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ButtonSegment<int>(
+                        value: 2,
+                        label: const Text('Hard'),
+                        icon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              LucideIcons.flame,
+                              size: 16,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              size: 16,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              size: 16,
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    selected: <int>{_currentIntensity},
+                    onSelectionChanged: (Set<int> newSelection) {
+                      setState(() => _currentIntensity = newSelection.first);
+                    },
+                  ),
                 ),
-              ),
-              ButtonSegment<int>(
-                value: 1,
-                label: const Text('Medium'),
-                icon: Row(
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 16),
+                // Combined Picker underneath
+                MetricPicker(
+                  initialDistance: _currentDistance,
+                  initialReps: _currentReps,
+                  onDistanceChanged: (double val) => _currentDistance = val,
+                  onRepsChanged: (int val) => _currentReps = val,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(
-                      LucideIcons.flame,
-                      size: 16,
-                      color: theme.colorScheme.secondary,
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('CANCEL'),
+                      ),
                     ),
-                    Icon(
-                      LucideIcons.flame,
-                      size: 16,
-                      color: theme.colorScheme.secondary,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          widget.onConfirm(
+                            _currentDistance,
+                            _currentIntensity,
+                            _currentReps,
+                          );
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('CONFIRM'),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              ButtonSegment<int>(
-                value: 2,
-                label: const Text('Hard'),
-                icon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      LucideIcons.flame,
-                      size: 16,
-                      color: theme.colorScheme.secondary,
-                    ),
-                    Icon(
-                      LucideIcons.flame,
-                      size: 16,
-                      color: theme.colorScheme.secondary,
-                    ),
-                    Icon(
-                      LucideIcons.flame,
-                      size: 16,
-                      color: theme.colorScheme.secondary,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            selected: <int>{_currentIntensity},
-            onSelectionChanged: (Set<int> newSelection) {
-              setState(() => _currentIntensity = newSelection.first);
-            },
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        // Combined Picker underneath
-        MetricPicker(
-          initialDistance: _currentDistance,
-          initialReps: _currentReps,
-          onDistanceChanged: (double val) => _currentDistance = val,
-          onRepsChanged: (int val) => _currentReps = val,
-        ),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('CANCEL'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: () {
-                  widget.onConfirm(
-                    _currentDistance,
-                    _currentIntensity,
-                    _currentReps,
-                  );
-                  Navigator.pop(context, true);
-                },
-                child: const Text('CONFIRM'),
-              ),
-            ),
-          ],
         ),
       ],
     );

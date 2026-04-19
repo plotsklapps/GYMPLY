@@ -5,7 +5,6 @@ class ModalService {
   static Future<bool> showModal({
     required BuildContext context,
     required Widget child,
-    bool scrollable = false,
   }) async {
     final bool? result = await showModalBottomSheet<bool>(
       context: context,
@@ -16,15 +15,18 @@ class ModalService {
         // Keyboard and system gesture/navigation bar.
         final EdgeInsets viewInsets = MediaQuery.viewInsetsOf(context);
 
-        final double bottomPadding = scrollable ? viewInsets.bottom + 16 : 16;
-
         return Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, viewInsets.bottom + 16),
           child: SafeArea(
             left: false,
             top: false,
             right: false,
-            child: scrollable ? SingleChildScrollView(child: child) : child,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+              ),
+              child: child,
+            ),
           ),
         );
       },

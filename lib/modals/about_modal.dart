@@ -49,78 +49,87 @@ class AboutModal extends StatelessWidget {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-
-        // App Update ListTile.
-        FutureBuilder<PackageInfo>(
-          future: PackageInfo.fromPlatform(),
-          builder:
-              (
-                BuildContext context,
-                AsyncSnapshot<PackageInfo> snapshot,
-              ) {
-                final String versionDisplay = snapshot.hasData
-                    ? '${snapshot.data!.version}+'
-                          '${snapshot.data!.buildNumber}'
-                    : 'Checking...';
-
-                return ListTile(
-                  onTap: isAnyProcessing
-                      ? null
-                      : () async {
-                          await UpdateService().checkForUpdates();
-                        },
-                  leading: isChecking
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(),
-                        )
-                      : const Icon(LucideIcons.cloudSync),
-                  title: const Text('Check for Updates'),
-                  subtitle: Text('Current Version: $versionDisplay'),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+        
+                // App Update ListTile.
+                FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder:
+                      (
+                        BuildContext context,
+                        AsyncSnapshot<PackageInfo> snapshot,
+                      ) {
+                        final String versionDisplay = snapshot.hasData
+                            ? '${snapshot.data!.version}+'
+                                  '${snapshot.data!.buildNumber}'
+                            : 'Checking...';
+        
+                        return ListTile(
+                          onTap: isAnyProcessing
+                              ? null
+                              : () async {
+                                  await UpdateService().checkForUpdates();
+                                },
+                          leading: isChecking
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Icon(LucideIcons.cloudSync),
+                          title: const Text('Check for Updates'),
+                          subtitle: Text('Current Version: $versionDisplay'),
+                          trailing: const Icon(LucideIcons.circleChevronRight),
+                        );
+                      },
+                ),
+        
+                // GitHub SourceCode ListTile.
+                ListTile(
+                  onTap: () async {
+                    await launchUrl(
+                      Uri.parse('https://github.com/plotsklapps/gymply'),
+                    );
+                  },
+                  leading: const Icon(LucideIcons.code),
+                  title: const Text('Github Repository'),
+                  subtitle: const Text('Source code, file issues'),
                   trailing: const Icon(LucideIcons.circleChevronRight),
-                );
-              },
-        ),
-
-        // GitHub SourceCode ListTile.
-        ListTile(
-          onTap: () async {
-            await launchUrl(
-              Uri.parse('https://github.com/plotsklapps/gymply'),
-            );
-          },
-          leading: const Icon(LucideIcons.code),
-          title: const Text('Github Repository'),
-          subtitle: const Text('Source code, file issues'),
-          trailing: const Icon(LucideIcons.circleChevronRight),
-        ),
-
-        // GitHub ChangeLog ListTile.
-        ListTile(
-          onTap: () async {
-            await launchUrl(
-              Uri.parse(
-                'https://github.com/plotsklapps/GYMPLY./blob/master/CHANGELOG.md',
-              ),
-            );
-          },
-          leading: const Icon(LucideIcons.squarePen),
-          title: const Text('Github Changelog'),
-          subtitle: const Text('See changes made in the last version'),
-          trailing: const Icon(LucideIcons.circleChevronRight),
-        ),
-
-        // Licenses ListTile.
-        ListTile(
-          onTap: () async {
-            showLicensePage(context: context);
-          },
-          leading: const Icon(LucideIcons.fileBraces),
-          title: const Text('Licenses'),
-          subtitle: const Text('Third party packages used by GYMPLY.'),
-          trailing: const Icon(LucideIcons.circleChevronRight),
+                ),
+        
+                // GitHub ChangeLog ListTile.
+                ListTile(
+                  onTap: () async {
+                    await launchUrl(
+                      Uri.parse(
+                        'https://github.com/plotsklapps/GYMPLY./blob/master/CHANGELOG.md',
+                      ),
+                    );
+                  },
+                  leading: const Icon(LucideIcons.squarePen),
+                  title: const Text('Github Changelog'),
+                  subtitle: const Text('See changes made in the last version'),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
+                ),
+        
+                // Licenses ListTile.
+                ListTile(
+                  onTap: () async {
+                    showLicensePage(context: context);
+                  },
+                  leading: const Icon(LucideIcons.fileBraces),
+                  title: const Text('Licenses'),
+                  subtitle: const Text('Third party packages used by GYMPLY.'),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

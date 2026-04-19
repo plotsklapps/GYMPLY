@@ -97,50 +97,59 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
-
-        if (relevantWorkouts.isEmpty)
-          const Text('No history found for this exercise yet.')
-        else ...<Widget>[
-          // The adaptive progress chart.
-          ProgressChart(
-            workouts: relevantWorkouts,
-            exerciseName: widget.exercise.exerciseName,
-            selectedMetric: _selectedMetric,
-          ),
-          const SizedBox(height: 24),
-
-          // Metric Selector.
-          MetricSelector(
-            selectedMetric: _selectedMetric,
-            onSelected: (WorkoutMetric metric) {
-              setState(() {
-                _selectedMetric = metric;
-              });
-            },
-          ),
-
-          if (relevantWorkouts.isNotEmpty) ...<Widget>[
-            const SizedBox(height: 24),
-            const Divider(),
-            Builder(
-              builder: (BuildContext context) {
-                final PersonalRecord pr = workoutService.getPersonalRecords(
-                  widget.exercise.id,
-                );
-
-                if (widget.exercise is StrengthExercise) {
-                  return _StrengthPRs(pr: pr);
-                } else if (widget.exercise is CardioExercise) {
-                  return _CardioPRs(pr: pr);
-                } else if (widget.exercise is StretchExercise) {
-                  return _StretchPRs(pr: pr);
-                }
-                return const SizedBox.shrink();
-              },
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
+        
+                if (relevantWorkouts.isEmpty)
+                  const Text('No history found for this exercise yet.')
+                else ...<Widget>[
+                  // The adaptive progress chart.
+                  ProgressChart(
+                    workouts: relevantWorkouts,
+                    exerciseName: widget.exercise.exerciseName,
+                    selectedMetric: _selectedMetric,
+                  ),
+                  const SizedBox(height: 24),
+        
+                  // Metric Selector.
+                  MetricSelector(
+                    selectedMetric: _selectedMetric,
+                    onSelected: (WorkoutMetric metric) {
+                      setState(() {
+                        _selectedMetric = metric;
+                      });
+                    },
+                  ),
+        
+                  if (relevantWorkouts.isNotEmpty) ...<Widget>[
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    Builder(
+                      builder: (BuildContext context) {
+                        final PersonalRecord pr = workoutService.getPersonalRecords(
+                          widget.exercise.id,
+                        );
+        
+                        if (widget.exercise is StrengthExercise) {
+                          return _StrengthPRs(pr: pr);
+                        } else if (widget.exercise is CardioExercise) {
+                          return _CardioPRs(pr: pr);
+                        } else if (widget.exercise is StretchExercise) {
+                          return _StretchPRs(pr: pr);
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
+                ],
+              ],
             ),
-          ],
-        ],
+          ),
+        ),
       ],
     );
   }

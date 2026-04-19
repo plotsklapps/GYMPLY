@@ -77,6 +77,11 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
           ],
         ),
         const Divider(),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
 
         // Overwrite vs Merge Toggle.
         SwitchListTile(
@@ -185,6 +190,10 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               ),
             ),
           ],
+        ),
+              ],
+            ),
+          ),
         ),
       ],
     );

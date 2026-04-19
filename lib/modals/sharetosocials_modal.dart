@@ -143,7 +143,12 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
           ],
         ),
         const Divider(),
-        const SizedBox(height: 16),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 16),
 
         // --- PREVIEW CARD (RepaintBoundary) ---
         RepaintBoundary(
@@ -418,6 +423,10 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                   )
                 : const Icon(LucideIcons.share2),
             label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
+          ),
+        ),
+              ],
+            ),
           ),
         ),
       ],
