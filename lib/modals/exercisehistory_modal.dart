@@ -12,7 +12,6 @@ import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
-import 'package:logger/logger.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -31,7 +30,6 @@ class ExerciseHistoryModal extends StatefulWidget {
 }
 
 class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
-  final Logger _logger = Logger();
   // Default to Volume for Strength, or Distance/Time for others.
   WorkoutMetric _selectedMetric = WorkoutMetric.volume;
 
@@ -39,7 +37,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
   void initState() {
     super.initState();
     // Set a sensible default based on exercise type.
-    if (widget.exercise.imagePath.contains('cardio')) {
+    if (widget.exercise.imagePath.toLowerCase().contains('cardio')) {
       _selectedMetric = WorkoutMetric.distance;
     }
   }
@@ -53,24 +51,11 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     final Workout active = sActiveWorkout.watch(context);
 
     // Combine history and active workout, ensuring no duplicates by ID.
-    final Map<String, Workout> uniqueWorkouts = {
-      for (final w in history) w.id: w,
+    final Map<String, Workout> uniqueWorkouts = <String, Workout>{
+      for (final Workout workout in history) workout.id: workout,
       if (active.exercises.isNotEmpty) active.id: active,
     };
     final List<Workout> allWorkouts = uniqueWorkouts.values.toList();
-
-    // DEBUG: Log workouts for this exercise
-    final List<Workout> tempRelevant = allWorkouts.where((Workout w) {
-      return w.exercises.any(
-        (WorkoutExercise ex) => ex.exerciseName == widget.exercise.exerciseName,
-      );
-    }).toList();
-    _logger.i(
-      'DEBUG: Found ${tempRelevant.length} workouts for exercise: ${widget.exercise.exerciseName}',
-    );
-    for (var w in tempRelevant) {
-      _logger.i('DEBUG: Workout ID: ${w.id}, Date: ${w.dateTime}');
-    }
 
     // Filter for workouts containing this specific exercise.
     final List<Workout> relevantWorkouts =
@@ -81,7 +66,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
               },
             );
           }).toList()
-          // Sort by date (ascending) for the chart.
+          // Sort by date (ascending) for chart.
           ..sort(
             (Workout a, Workout b) {
               return a.dateTime.compareTo(b.dateTime);
@@ -91,7 +76,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // Header.
+        // Fixed Header.
         Row(
           children: <Widget>[
             const SizedBox(width: 48),
@@ -102,6 +87,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             IconButton(
@@ -113,6 +99,8 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
           ],
         ),
         const Divider(),
+
+        // Scrollable body.
         Flexible(
           child: SingleChildScrollView(
             child: Column(
@@ -129,7 +117,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                     exerciseName: widget.exercise.exerciseName,
                     selectedMetric: _selectedMetric,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
                   // Metric Selector.
                   MetricSelector(
@@ -142,25 +130,22 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                   ),
 
                   if (relevantWorkouts.isNotEmpty) ...<Widget>[
-                    const SizedBox(height: 24),
                     const Divider(),
-                    Builder(
-                      builder: (BuildContext context) {
-                        final PersonalRecord pr = workoutService
-                            .getPersonalRecords(
-                              widget.exercise.id,
-                            );
+                    (() {
+                      final PersonalRecord pr = workoutService
+                          .getPersonalRecords(
+                            widget.exercise.id,
+                          );
 
-                        if (widget.exercise is StrengthExercise) {
-                          return _StrengthPRs(pr: pr);
-                        } else if (widget.exercise is CardioExercise) {
-                          return _CardioPRs(pr: pr);
-                        } else if (widget.exercise is StretchExercise) {
-                          return _StretchPRs(pr: pr);
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
+                      if (widget.exercise is StrengthExercise) {
+                        return _StrengthPRs(pr: pr);
+                      } else if (widget.exercise is CardioExercise) {
+                        return _CardioPRs(pr: pr);
+                      } else if (widget.exercise is StretchExercise) {
+                        return _StretchPRs(pr: pr);
+                      }
+                      return const SizedBox.shrink();
+                    })(),
                   ],
                 ],
               ],
