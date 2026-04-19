@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
+import 'package:gymply/models/exercise_model.dart';
+import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/statisticsscreen/exercisedetailcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/monthstat_widget.dart';
 import 'package:gymply/screens/statisticsscreen/prcard_widget.dart';
 import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
+import 'package:gymply/services/atlas_mapper.dart';
+import 'package:gymply/services/atlas_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -25,21 +30,17 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   late final PageController _pageController;
 
-  // Always use current year.
   final int _targetYear = DateTime.now().year;
 
   @override
   void initState() {
     super.initState();
-    // Calculate current quarter index (0-3).
     final int currentQuarter = (DateTime.now().month - 1) ~/ 3;
-    // Set PageController to show currentQuarter on init.
     _pageController = PageController(initialPage: currentQuarter);
   }
 
   @override
   void dispose() {
-    // Kill PageController.
     _pageController.dispose();
     super.dispose();
   }
@@ -47,34 +48,23 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-
-    // Watch sWorkoutHistory for past workouts (heatmap dots).
     final List<Workout> history = sWorkoutHistory.watch(context);
-
-    // Watch sActiveWorkout for live statistics of current workout.
     final Workout activeWorkout = sActiveWorkout.watch(context);
-
-    // Watch personal stats for calorie calculation.
     final double userWeight = sWeight.watch(context);
     final int userAge = sAge.watch(context);
     final int userSex = sSex.watch(context);
 
-    // Store workout dates in a Set for quick lookups in heatmap.
-    final Set<String> workoutDateKeys = history.map((Workout w) {
-      return w.dateKey;
-    }).toSet();
-
-    // If active workout has exercises, today has a dot too.
+    final Set<String> workoutDateKeys = history
+        .map((Workout w) => w.dateKey)
+        .toSet();
     if (activeWorkout.exercises.isNotEmpty) {
       workoutDateKeys.add(activeWorkout.dateKey);
     }
 
-    // Use activeWorkout as source of truth for "Today".
     final Workout? currentWorkout = activeWorkout.exercises.isEmpty
         ? null
         : activeWorkout;
 
-    // Pre-calculate formatted strings for totals sections to keep lines short.
     final String avgWeight =
         currentWorkout?.avgWorkoutWeight.toStringAsFixed(1) ?? '0.0';
     final String cardioDist =
@@ -98,15 +88,29 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             .toString() ??
         '0';
 
-    // Fetch PRs for the current workout.
     final List<Map<String, dynamic>> workoutPRs = currentWorkout != null
         ? workoutService.getWorkoutPRs(currentWorkout)
         : <Map<String, dynamic>>[];
 
+    final List<MuscleGroup> workedMuscles = <MuscleGroup>[];
+    if (currentWorkout != null) {
+      for (final WorkoutExercise ex in currentWorkout.exercises) {
+        if (ex is StrengthExercise) {
+          workedMuscles.add(ex.muscleGroup);
+        }
+      }
+    }
+
+    final Map<String, double> intensityMap = getAtlasIntensityMap(
+      workedMuscles,
+    );
+
+    final Map<atlas.MuscleInfo, Color> atlasColors = atlasService
+        .getAtlasColors(workedMuscles, theme.colorScheme);
+
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // QUARTERLY MONTH STATS (Heatmap).
           SizedBox(
             height: 100,
             child: PageView.builder(
@@ -117,7 +121,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: List<Widget>.generate(3, (int monthInQuarter) {
                       final int month = (quarterIndex * 3) + monthInQuarter + 1;
                       return MonthStat(
@@ -133,9 +136,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const Divider(),
           Expanded(
             child: currentWorkout == null
-                ? const Center(
-                    child: Text('No workout recorded today.'),
-                  )
+                ? const Center(child: Text('No workout recorded today.'))
                 : ListView(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     children: <Widget>[
@@ -143,7 +144,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Expanded(
-                            // Workout Title and Date.
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -161,32 +161,46 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               ],
                             ),
                           ),
-                          // Today's ID and dateKey.
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                'ID: ${currentWorkout.id.substring(0, 8)}',
-                                style: theme.textTheme.labelSmall,
-                              ),
-                              Text(
-                                'dateKey: ${currentWorkout.dateKey}',
-                                style: theme.textTheme.labelSmall,
-                              ),
-                            ],
-                          ),
                         ],
                       ),
-                      const SizedBox(height: 12),
-                      // If any PR's were broken, show them.
                       if (workoutPRs.isNotEmpty) ...<Widget>[
+                        const SizedBox(height: 12),
                         const StatisticsSectionHeader(
                           title: 'NEW ACHIEVEMENTS',
                         ),
                         PRCard(workoutPRs: workoutPRs),
                       ],
+                      if (intensityMap.isNotEmpty) ...<Widget>[
+                        const SizedBox(height: 12),
+                        const StatisticsSectionHeader(
+                          title: 'MUSCLE ACTIVATION',
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: SizedBox(
+                                height: 250,
+                                child: atlas.BodyAtlasView<atlas.MuscleInfo>(
+                                  view: atlas.AtlasAsset.musclesFront,
+                                  resolver: const atlas.MuscleResolver(),
+                                  colorMapping: atlasColors,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 250,
+                                child: atlas.BodyAtlasView<atlas.MuscleInfo>(
+                                  view: atlas.AtlasAsset.musclesBack,
+                                  resolver: const atlas.MuscleResolver(),
+                                  colorMapping: atlasColors,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 12),
-                      // Workout Overview Section.
                       const StatisticsSectionHeader(title: 'WORKOUT OVERVIEW'),
                       GridView.count(
                         shrinkWrap: true,
@@ -212,7 +226,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           ),
                         ],
                       ),
-                      // Strength Totals Section (Conditional).
                       if (currentWorkout.strengthExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
                         const StatisticsSectionHeader(title: 'STRENGTH TOTALS'),
@@ -241,7 +254,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           ],
                         ),
                       ],
-                      // Cardio Totals Section (Conditional).
                       if (currentWorkout.cardioExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
                         const StatisticsSectionHeader(title: 'CARDIO TOTALS'),
@@ -270,12 +282,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           ],
                         ),
                       ],
-                      // Stretch Totals Section (Conditional).
                       if (currentWorkout.stretchExerciseCount > 0) ...<Widget>[
                         const SizedBox(height: 12),
-                        const StatisticsSectionHeader(
-                          title: 'STRETCH TOTALS',
-                        ),
+                        const StatisticsSectionHeader(title: 'STRETCH TOTALS'),
                         GridView.count(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -307,9 +316,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         title: 'EXERCISE BREAKDOWN',
                       ),
                       ...currentWorkout.exercises.map(
-                        (WorkoutExercise ex) {
-                          return ExerciseDetailCard(exercise: ex);
-                        },
+                        (WorkoutExercise ex) =>
+                            ExerciseDetailCard(exercise: ex),
                       ),
                     ],
                   ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/attributions_modal.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -55,7 +57,7 @@ class AboutModal extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 16),
-        
+
                 // App Update ListTile.
                 FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
@@ -68,7 +70,7 @@ class AboutModal extends StatelessWidget {
                             ? '${snapshot.data!.version}+'
                                   '${snapshot.data!.buildNumber}'
                             : 'Checking...';
-        
+
                         return ListTile(
                           onTap: isAnyProcessing
                               ? null
@@ -88,7 +90,7 @@ class AboutModal extends StatelessWidget {
                         );
                       },
                 ),
-        
+
                 // GitHub SourceCode ListTile.
                 ListTile(
                   onTap: () async {
@@ -101,7 +103,7 @@ class AboutModal extends StatelessWidget {
                   subtitle: const Text('Source code, file issues'),
                   trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
-        
+
                 // GitHub ChangeLog ListTile.
                 ListTile(
                   onTap: () async {
@@ -116,7 +118,7 @@ class AboutModal extends StatelessWidget {
                   subtitle: const Text('See changes made in the last version'),
                   trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
-        
+
                 // Licenses ListTile.
                 ListTile(
                   onTap: () async {
@@ -125,6 +127,20 @@ class AboutModal extends StatelessWidget {
                   leading: const Icon(LucideIcons.fileBraces),
                   title: const Text('Licenses'),
                   subtitle: const Text('Third party packages used by GYMPLY.'),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
+                ),
+
+                // Attributions ListTile.
+                ListTile(
+                  onTap: () async {
+                    await ModalService.showModal(
+                      context: context,
+                      child: const AttributionsModal(),
+                    );
+                  },
+                  leading: const Icon(LucideIcons.info),
+                  title: const Text('Attributions'),
+                  subtitle: const Text('Attributions for assets and packages.'),
                   trailing: const Icon(LucideIcons.circleChevronRight),
                 ),
               ],
