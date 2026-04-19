@@ -23,7 +23,9 @@ class ProgressChart extends StatefulWidget {
   final WorkoutMetric selectedMetric;
 
   @override
-  State<ProgressChart> createState() => _ProgressChartState();
+  State<ProgressChart> createState() {
+    return _ProgressChartState();
+  }
 }
 
 class _ProgressChartState extends State<ProgressChart> {
@@ -32,25 +34,29 @@ class _ProgressChartState extends State<ProgressChart> {
   List<Workout> _getFilteredWorkouts() {
     final DateTime now = DateTime.now();
     final List<Workout> sorted = List<Workout>.from(widget.workouts)
-      ..sort((Workout a, Workout b) => a.dateTime.compareTo(b.dateTime));
+      ..sort((Workout a, Workout b) {
+        return a.dateTime.compareTo(b.dateTime);
+      });
 
     switch (_selectedRange) {
       case WorkoutRange.days30:
         return sorted.length > 30 ? sorted.sublist(sorted.length - 30) : sorted;
       case WorkoutRange.months6:
-        return sorted
-            .where(
-              (Workout w) =>
-                  w.dateTime.isAfter(now.subtract(const Duration(days: 180))),
-            )
-            .toList();
+        return sorted.where(
+          (Workout workout) {
+            return workout.dateTime.isAfter(
+              now.subtract(const Duration(days: 180)),
+            );
+          },
+        ).toList();
       case WorkoutRange.year1:
-        return sorted
-            .where(
-              (Workout w) =>
-                  w.dateTime.isAfter(now.subtract(const Duration(days: 365))),
-            )
-            .toList();
+        return sorted.where(
+          (Workout workout) {
+            return workout.dateTime.isAfter(
+              now.subtract(const Duration(days: 365)),
+            );
+          },
+        ).toList();
       case WorkoutRange.allTime:
         return sorted;
     }
@@ -76,14 +82,16 @@ class _ProgressChartState extends State<ProgressChart> {
 
     if (filtered.isEmpty) return const SizedBox.shrink();
 
-    final List<double> values = filtered.map((Workout w) {
-      final WorkoutExercise? ex = w.exercises
-          .where((WorkoutExercise e) => e.exerciseName == widget.exerciseName)
-          .firstOrNull;
+    final List<double> values = filtered.map((Workout workout) {
+      final WorkoutExercise? ex = workout.exercises.where((
+        WorkoutExercise exercise,
+      ) {
+        return exercise.exerciseName == widget.exerciseName;
+      }).firstOrNull;
       return (ex != null ? _getExerciseMetricValue(ex) : 0).toDouble();
     }).toList();
 
-    final double maxValue = values.fold(0.0, max);
+    final double maxValue = values.fold(0, max);
     final double minValue = values.fold(double.infinity, min);
 
     return Column(
@@ -144,22 +152,28 @@ class _ProgressChartState extends State<ProgressChart> {
     );
   }
 
-  double _getExerciseMetricValue(WorkoutExercise ex) {
+  double _getExerciseMetricValue(WorkoutExercise exercise) {
     switch (widget.selectedMetric) {
       case WorkoutMetric.volume:
-        return ex is StrengthExercise ? ex.totalWeight : 0;
+        return exercise is StrengthExercise ? exercise.totalWeight : 0;
       case WorkoutMetric.reps:
-        return ex is StrengthExercise ? ex.totalReps.toDouble() : 0;
+        return exercise is StrengthExercise ? exercise.totalReps.toDouble() : 0;
       case WorkoutMetric.sets:
-        return ex.totalSets.toDouble();
+        return exercise.totalSets.toDouble();
       case WorkoutMetric.time:
-        if (ex is CardioExercise) return ex.totalDuration.inMinutes.toDouble();
-        if (ex is StretchExercise) return ex.totalDuration.inMinutes.toDouble();
+        if (exercise is CardioExercise) {
+          return exercise.totalDuration.inMinutes.toDouble();
+        }
+        if (exercise is StretchExercise) {
+          return exercise.totalDuration.inMinutes.toDouble();
+        }
         return 0;
       case WorkoutMetric.distance:
-        return ex is CardioExercise ? ex.totalDistance : 0;
+        return exercise is CardioExercise ? exercise.totalDistance : 0;
       case WorkoutMetric.calories:
-        return ex is CardioExercise ? ex.totalCalories.toDouble() : 0;
+        return exercise is CardioExercise
+            ? exercise.totalCalories.toDouble()
+            : 0;
     }
   }
 }
@@ -177,13 +191,13 @@ class _ChartBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: List.generate(30, (int index) {
+      children: List<Widget>.generate(30, (int index) {
         final int dataIndex = index - (30 - values.length);
         if (dataIndex < 0 || dataIndex >= values.length) {
           return const Expanded(child: SizedBox());
         }
 
-        // Skip zero values to avoid showing empty bars for non-existent workouts
+        // Skip zero values to avoid showing empty bars.
         if (values[dataIndex] == 0) {
           return const Expanded(child: SizedBox());
         }
@@ -252,7 +266,7 @@ class _LinePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     final Path path = Path();
     final double step = size.width / (values.length - 1);
-    final double maxVal = values.fold(0.0, max);
+    final double maxVal = values.fold(0, max);
 
     for (int i = 0; i < values.length; i++) {
       final double x = i * step;
@@ -267,5 +281,7 @@ class _LinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }
