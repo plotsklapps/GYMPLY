@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2026-04-19
+- **Modal Improvements & UI Polish:**
+    - Implemented a centralized `ModalService` to manage consistent modal behavior, including standardized safe-area and keyboard handling.
+    - Updated various modals (`addimage_modal.dart`, `exercisedetail_modal.dart`, `bodymetrics_modal.dart`) to use `SafeArea` and dynamic bottom padding for better responsiveness with system navigation.
+    - Standardized navigation icons (`circleChevronRight`) across `MenuModal`, `AboutModal`, and Nostr onboarding.
+    - Corrected UI titles and labeling inconsistencies (`THEME SETTINGS`, `ABOUT GYMPLY.`).
+    - Fixed a malformed GitHub Changelog link in `about_modal.dart`.
+    - Incremented project version to `0.0.5+53`.
+
 ## [0.0.5] - 2026-04-14
 - **UI/UX & Navigation:** 
     - Refactored exercise search functionality from a standalone screen to a modal-based implementation (`SearchModal`) to simplify `HomeScreen` navigation.
