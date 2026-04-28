@@ -4,10 +4,10 @@ import 'package:gymply/models/exercise_model.dart' as gymply;
 import 'package:gymply/services/atlas_mapper.dart' as mapper;
 
 class AtlasService {
-  // Singleton instance
-  static final AtlasService _instance = AtlasService._internal();
   factory AtlasService() => _instance;
   AtlasService._internal();
+  // Singleton instance
+  static final AtlasService _instance = AtlasService._internal();
 
   /// Calculates a map of [atlas.MuscleInfo] to [Color] for the heatmap
   /// based on the intensity of muscle groups used in a list of exercises.
@@ -23,8 +23,8 @@ class AtlasService {
 
     if (intensityMap.isNotEmpty) {
       final double maxVal = intensityMap.values.fold(
-        0.0,
-        (a, b) => a > b ? a : b,
+        0,
+        (double a, double b) => a > b ? a : b,
       );
 
       intensityMap.forEach((String id, double val) {
