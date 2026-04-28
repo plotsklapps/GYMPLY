@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2026-04-21
+- **Muscle Activation & Statistics:**
+    - Integrated `flutter_body_atlas` to provide visual muscle activation heatmaps on the `StatisticsScreen`, displaying intensity-based mappings for worked muscles.
+    - Implemented `AtlasService` and `AtlasMapper` to translate internal muscle groups into heatmap data.
+    - Enhanced `ProgressChart` with dynamic timescale filtering (30 Days, 6 Months, 1 Year, All Time) and support for both bar and line chart visualizations.
+- **UI/UX & Modals:**
+    - Implemented `ModalService` to centralize and standardize various UI modals for settings and workout management.
+    - Introduced `AttributionsModal` to provide proper credit for anatomy assets, theme engines, and state management libraries.
+    - Refined `ExerciseHistoryModal` to prevent duplicate workout entries and improved header layout for better text overflow handling.
+- **Code Quality & Maintenance:**
+    - Refactored `ProgressChart` into a `StatefulWidget` for better state management and improved internal code readability.
+    - Enhanced robustness of release signing logic in `build.gradle.kts` with safe-casting for better cross-platform compatibility (Fedora migration).
+    - Removed redundant `Logger` dependencies and standardized variable naming across the project.
+    - Updated project version to 0.0.5+55 and updated dependencies including 
+      `lucide_icons_flutter`, `hooks`, and `build_runner`.
+
 ## [0.0.5] - 2026-04-19
 - **Muscle Activation Heatmaps:**
     - Integrated `flutter_body_atlas` to provide visual muscle activation heatmaps on the `StatisticsScreen`, displaying worked muscles on front and back views.
