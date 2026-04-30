@@ -13,7 +13,12 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return Padding(
-        padding: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.viewInsetsOf(context).bottom + 16),
+        padding: EdgeInsets.fromLTRB(
+          16,
+          0,
+          16,
+          MediaQuery.viewInsetsOf(context).bottom + 16,
+        ),
         child: SafeArea(
           left: false,
           top: false,

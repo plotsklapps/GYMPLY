@@ -68,9 +68,8 @@ class ImportKeysModal extends StatelessWidget {
                       child: FilledButton(
                         onPressed: () async {
                           final String input = keyController.text.trim();
-                          final bool success = await nostrService.useExistingKeys(
-                            input,
-                          );
+                          final bool success = await nostrService
+                              .useExistingKeys(input);
                           if (context.mounted) {
                             Navigator.pop(context, success);
                           }

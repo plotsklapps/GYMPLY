@@ -49,9 +49,10 @@ class RestTimerModal extends StatelessWidget {
                   onChanged: (int newSeconds) {
                     // Update the initial duration.
                     RestTimer.sInitialRestTime.value = newSeconds;
-        
-                    // Sync the elapsed duration if the timer is not currently running.
-                    // This is handled manually to keep the service logic simple.
+
+                    // Sync the elapsed duration if the timer is not currently
+                    // running. This is handled manually to keep the service
+                    // logic simple.
                     if (!RestTimer.sRestTimerRunning.value) {
                       RestTimer.sElapsedRestTime.value = newSeconds;
                     }
@@ -68,7 +69,7 @@ class RestTimerModal extends StatelessWidget {
                           // Reset to default.
                           RestTimer.sInitialRestTime.value = 60;
                           RestTimer.sElapsedRestTime.value = 60;
-        
+
                           // Pop and return false.
                           Navigator.pop(context, false);
                         },

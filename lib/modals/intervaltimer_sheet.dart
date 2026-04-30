@@ -51,11 +51,13 @@ class IntervalTimerModal extends StatelessWidget {
                   onChanged: (int newMilliSeconds) {
                     // Update the initial duration.
                     IntervalTimer.sInitialIntervalTime.value = newMilliSeconds;
-        
-                    // Sync the elapsed duration if the timer is not currently running.
-                    // This is handled manually to keep the service logic simple.
+
+                    // Sync the elapsed duration if the timer is not currently
+                    // running. This is handled manually to keep the service
+                    // logic simple.
                     if (!IntervalTimer.sIntervalTimerRunning.value) {
-                      IntervalTimer.sElapsedIntervalTime.value = newMilliSeconds;
+                      IntervalTimer.sElapsedIntervalTime.value =
+                          newMilliSeconds;
                     }
                   },
                 ),
@@ -70,7 +72,7 @@ class IntervalTimerModal extends StatelessWidget {
                           // Reset to default.
                           IntervalTimer.sInitialIntervalTime.value = 60000;
                           IntervalTimer.sElapsedIntervalTime.value = 60000;
-        
+
                           // Pop and return false.
                           Navigator.pop(context, false);
                         },

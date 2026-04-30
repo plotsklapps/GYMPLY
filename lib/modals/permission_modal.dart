@@ -55,8 +55,8 @@ class PermissionModal extends StatelessWidget {
                     'timer continues running smoothly without being closed by '
                     'the system to save power.\n\n'
                     'Allowing these does NOT change the fact that GYMPLY. is '
-                    'strictly offline-first. Your data never leaves your device, '
-                    'and no metrics are ever transmitted.',
+                    'strictly offline-first. Your data never leaves your '
+                    'device, and no metrics are ever transmitted.',
                     style: theme.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -72,10 +72,10 @@ class PermissionModal extends StatelessWidget {
                           await <Permission>[
                             Permission.notification,
                           ].request();
-        
+
                           // Request battery optimalisation.
                           await NotificationService.requestBatteryOptimization();
-        
+
                           // Close the modal.
                           if (context.mounted) {
                             Navigator.pop(context);

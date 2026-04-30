@@ -75,8 +75,14 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                            Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
+                            Icon(
+                              LucideIcons.flame,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              color: theme.colorScheme.secondary,
+                            ),
                           ],
                         ),
                       ),
@@ -86,9 +92,18 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                            Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
-                            Icon(LucideIcons.flame, color: theme.colorScheme.secondary),
+                            Icon(
+                              LucideIcons.flame,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              color: theme.colorScheme.secondary,
+                            ),
+                            Icon(
+                              LucideIcons.flame,
+                              color: theme.colorScheme.secondary,
+                            ),
                           ],
                         ),
                       ),

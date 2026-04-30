@@ -50,17 +50,20 @@ class UserDetailModal extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 16),
-                ...likers.asMap().entries.map((MapEntry<int, (String, Metadata?)> entry) {
+                ...likers.asMap().entries.map((
+                  MapEntry<int, (String, Metadata?)> entry,
+                ) {
                   final int index = entry.key;
                   final (String pubkey, Metadata? metadata) = entry.value;
                   final String npub = Nip19.encodePubKey(pubkey);
-                  final String name = metadata?.name ?? 'User ${pubkey.substring(0, 8)}';
+                  final String name =
+                      metadata?.name ?? 'User ${pubkey.substring(0, 8)}';
                   final String? avatar = metadata?.picture;
                   final String? bio = metadata?.about;
                   final String? nip05 = metadata?.nip05;
                   final String? lud16 = metadata?.lud16;
                   final String? website = metadata?.website;
-        
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -68,10 +71,14 @@ class UserDetailModal extends StatelessWidget {
                         children: <Widget>[
                           CircleAvatar(
                             radius: 24,
-                            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                            backgroundColor:
+                                theme.colorScheme.surfaceContainerHighest,
                             backgroundImage: avatar != null
                                 ? NetworkImage(avatar)
-                                : const AssetImage('assets/icons/gymplyIcon.png') as ImageProvider,
+                                : const AssetImage(
+                                        'assets/icons/gymplyIcon.png',
+                                      )
+                                      as ImageProvider,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -90,19 +97,23 @@ class UserDetailModal extends StatelessWidget {
                                     Expanded(
                                       child: Text(
                                         npub,
-                                        style: theme.textTheme.labelSmall?.copyWith(
-                                          color: Colors.grey,
-                                        ),
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                              color: Colors.grey,
+                                            ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
                                     GestureDetector(
                                       onTap: () async {
-                                        await Clipboard.setData(ClipboardData(text: npub));
+                                        await Clipboard.setData(
+                                          ClipboardData(text: npub),
+                                        );
                                         ToastService.showSuccess(
                                           title: 'Npub Copied',
-                                          subtitle: 'Public key copied to clipboard',
+                                          subtitle:
+                                              'Public key copied to clipboard',
                                         );
                                       },
                                       child: Icon(

@@ -41,8 +41,9 @@ class StopwatchTimerModal extends StatelessWidget {
                 const SizedBox(height: 16),
                 // M:S Picker.
                 StopwatchDurationPicker(
-                  initialSeconds: (StopwatchTimer.sElapsedStopwatchTime.value / 1000)
-                      .round(),
+                  initialSeconds:
+                      (StopwatchTimer.sElapsedStopwatchTime.value / 1000)
+                          .round(),
                   onChanged: (int newSeconds) {
                     // Update the temporary value for display/confirmation.
                     _tempSeconds = newSeconds;

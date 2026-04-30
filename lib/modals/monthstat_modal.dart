@@ -125,7 +125,7 @@ class _MonthStatModalState extends State<MonthStatModal> {
                   }).toList(),
                 ),
                 const SizedBox(height: 8),
-        
+
                 // Calendar.
                 GridView.builder(
                   shrinkWrap: true,
@@ -142,38 +142,45 @@ class _MonthStatModalState extends State<MonthStatModal> {
                     if (index < startOffset) {
                       return const SizedBox.shrink();
                     }
-        
+
                     final int day = index - startOffset + 1;
                     final DateTime currentDay = DateTime(
                       widget.date.year,
                       widget.date.month,
                       day,
                     );
-                    final String key = DateFormat('yyyyMMdd').format(currentDay);
+                    final String key = DateFormat(
+                      'yyyyMMdd',
+                    ).format(currentDay);
                     final bool hasWorkout = workoutDateKeys.contains(key);
                     final bool isToday =
                         DateFormat('yyyyMMdd').format(DateTime.now()) == key;
-        
+
                     return InkWell(
                       onTap: hasWorkout
                           ? () async {
                               // Find workout in history or active workout.
-                              final Workout? historical = history.where((Workout w) {
+                              final Workout? historical = history.where((
+                                Workout w,
+                              ) {
                                 return w.dateKey == key;
                               }).firstOrNull;
-        
+
                               final Workout? activeIfMatch =
-                                  (active.dateKey == key && active.exercises.isNotEmpty)
+                                  (active.dateKey == key &&
+                                      active.exercises.isNotEmpty)
                                   ? active
                                   : null;
-        
+
                               final Workout? workoutToShow =
                                   historical ?? activeIfMatch;
-        
+
                               if (workoutToShow != null && context.mounted) {
                                 await ModalService.showModal(
                                   context: context,
-                                  child: WorkoutSummaryModal(workout: workoutToShow),
+                                  child: WorkoutSummaryModal(
+                                    workout: workoutToShow,
+                                  ),
                                 );
                               }
                             }

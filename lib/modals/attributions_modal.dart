@@ -39,8 +39,9 @@ class AttributionsModal extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 24),
                   child: Text(
-                    'GYMPLY would not be possible without the exceptional work of these talented individuals. '
-                    'This section is dedicated to them with my sincere thanks.',
+                    'GYMPLY would not be possible without the exceptional '
+                    'work of these talented individuals. This section is '
+                    'dedicated to them with my sincere thanks.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontStyle: FontStyle.italic,
                       color: theme.colorScheme.secondary,

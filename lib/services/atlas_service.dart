@@ -31,8 +31,9 @@ class AtlasService {
         final atlas.MuscleInfo element = atlas.MuscleCatalog.byIdOrThrow(id);
 
         // Intensity mapping logic:
-        // Muscles with higher volume (val) appear as solid secondary color (alpha: 1.0).
-        // Muscles with lower volume appear as fainter/translucent secondary color (alpha: 0.2).
+        // Muscles with higher volume (val) appear as solid secondary color
+        // (alpha: 1.0). Muscles with lower volume appear as fainter /
+        // translucent secondary color (alpha: 0.2).
         // This creates a heatmap effect using only the theme's secondary color.
         atlasColors[element] = colorScheme.secondary.withValues(
           alpha: (val / (maxVal == 0 ? 1.0 : maxVal)).clamp(0.2, 1.0),

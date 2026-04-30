@@ -44,8 +44,8 @@ class SomatotypeModal extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Somatotypes help GYMPLY refine your body fat percentage '
-                        'calculation beyond standard BMI formulas.',
+                        'Somatotypes help GYMPLY refine your body fat '
+                        'percentage calculation beyond standard BMI formulas.',
                         style: theme.textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
