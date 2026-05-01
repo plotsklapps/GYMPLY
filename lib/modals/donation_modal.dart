@@ -53,7 +53,7 @@ class DonationModal extends StatelessWidget {
                 Icon(
                   LucideIcons.heart,
                   size: 48,
-                  color: theme.colorScheme.primary,
+                  color: theme.colorScheme.secondary,
                 ),
                 const SizedBox(height: 16),
                 Text(

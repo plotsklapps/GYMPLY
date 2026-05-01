@@ -181,7 +181,7 @@ class MenuModal extends StatelessWidget {
                   },
                   leading: Icon(
                     LucideIcons.heart,
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.secondary,
                   ),
                   title: const Text('Support GYMPLY.'),
                   subtitle: const Text('Help keep this app free and private'),
