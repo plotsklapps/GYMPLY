@@ -102,8 +102,8 @@ class DonationModal extends StatelessWidget {
                   ...products
                       .where(
                         (ProductDetails p) {
-                          return p.id == DonationService.idMonthly ||
-                              p.id == DonationService.idYearly;
+                          return p.id.contains('support_monthly') ||
+                              p.id.contains('support_yearly');
                         },
                       )
                       .map(
@@ -179,10 +179,10 @@ class _ProductTile extends StatelessWidget {
     String subtitle = '';
     IconData icon = LucideIcons.heart;
 
-    if (product.id == DonationService.idMonthly) {
+    if (product.id.contains('support_monthly')) {
       subtitle = 'Support monthly';
       icon = LucideIcons.calendarClock;
-    } else if (product.id == DonationService.idYearly) {
+    } else if (product.id.contains('support_yearly')) {
       subtitle = 'Support yearly (Best value!)';
       icon = LucideIcons.star;
     } else {

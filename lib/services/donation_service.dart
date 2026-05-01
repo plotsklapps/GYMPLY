@@ -24,6 +24,7 @@ class DonationService {
   static const String idOneTime15 = 'donate_15';
   static const String idOneTime50 = 'donate_50';
 
+  // For the query, we use the base IDs for subscriptions on Android.
   static const Set<String> _kIds = <String>{
     idMonthly,
     idYearly,
