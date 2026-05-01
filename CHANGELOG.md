@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2026-05-01
+- **Donations & Monetization:**
+    - Implemented `DonationService` and `DonationModal` to support in-app purchases and voluntary user donations.
+    - Integrated Google Play Billing with necessary manifest permissions and Android-specific configuration.
+    - Refined donation UI with substring-based product ID matching (`contains`) to ensure compatibility with Google Play's dynamic subscription IDs.
+- **Maintenance & Dependency Updates:**
+    - Standardized code formatting and improved line breaking across various UI modals and core services.
+    - Updated several project dependencies, including `image_picker`, `build_runner`, `hooks`, and `lucide_icons_flutter`.
+    - Incremented project version to `0.0.5+57`.
+
 ## [0.0.5] - 2026-04-21
 - **Muscle Activation & Statistics:**
     - Integrated `flutter_body_atlas` to provide visual muscle activation heatmaps on the `StatisticsScreen`, displaying intensity-based mappings for worked muscles.
