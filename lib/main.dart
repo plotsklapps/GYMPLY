@@ -6,6 +6,7 @@ import 'package:gymply/screens/home_screen.dart';
 import 'package:gymply/screens/onboarding_screen.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/connectivity_service.dart';
+import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
@@ -63,6 +64,9 @@ void main() async {
   // task data callback for two-way service ↔ UI communication.
   FlutterForegroundTask.initCommunicationPort();
   await notificationService.init();
+
+  // DonationService initializes billing connection.
+  donationService.initialize();
 
   // Run the app.
   runApp(const MainEntry());

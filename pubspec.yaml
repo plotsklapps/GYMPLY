@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^6.3.1
   uuid: ^4.5.3
   wakelock_plus: ^1.4.0
+  in_app_purchase: ^3.2.0
 
 dev_dependencies:
   build_runner: ^2.11.1

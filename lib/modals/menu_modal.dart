@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/about_modal.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
+import 'package:gymply/modals/donation_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/modals/themesettings_modal.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
@@ -170,6 +171,23 @@ class MenuModal extends StatelessWidget {
                   title: const Text('Restore Data'),
                   subtitle: const Text('Load data from a backup file'),
                 ),
+                // Support GYMPLY. ListTile.
+                ListTile(
+                  onTap: () async {
+                    await ModalService.showModal(
+                      context: context,
+                      child: const DonationModal(),
+                    );
+                  },
+                  leading: Icon(
+                    LucideIcons.heart,
+                    color: theme.colorScheme.primary,
+                  ),
+                  title: const Text('Support GYMPLY.'),
+                  subtitle: const Text('Help keep this app free and private'),
+                  trailing: const Icon(LucideIcons.circleChevronRight),
+                ),
+
                 const Divider(),
 
                 // About GYMPLY ListTile.
