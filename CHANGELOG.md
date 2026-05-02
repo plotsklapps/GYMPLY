@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.5] - 2026-05-01
+## [0.0.5+58] - 2026-05-02
+- **UI/UX Refactor:**
+    - Standardized exercise screens (`Strength`, `Stretch`, `Cardio`) by removing `Stack` overlays from exercise images.
+    - Centralized action buttons (History, Statistics, Mode chips) into a unified row below the image for a cleaner, more consistent layout.
+- **Conversion Tools:**
+    - Implemented `ConvertCalculator` to support real-time weight conversions between kilograms (KG) and pounds (LBS).
+    - Integrated the calculator as a modal tool within the `StrengthExerciseScreen`.
+    - Added a custom numeric keypad with quick "Clear" and "Delete" functionality.
+- **Maintenance:**
+    - Incremented project version to `0.0.5+58`.
+
+## [0.0.5+57] - 2026-05-01
 - **Donations & Monetization:**
     - Implemented `DonationService` and `DonationModal` to support in-app purchases and voluntary user donations.
     - Integrated Google Play Billing with necessary manifest permissions and Android-specific configuration.
