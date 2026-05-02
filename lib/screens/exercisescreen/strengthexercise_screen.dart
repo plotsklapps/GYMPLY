@@ -8,6 +8,7 @@ import 'package:gymply/screens/exercisescreen/strengthset_card.dart';
 import 'package:gymply/screens/exercisescreen/weight_controls.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/widgets/calculator_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class StrengthExerciseScreen extends StatelessWidget {
@@ -105,6 +106,38 @@ class StrengthExerciseScreen extends StatelessWidget {
                         color: theme.colorScheme.secondary,
                       ),
                     ),
+
+                    // Statistics Button.
+                    IconButton(
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseStatsModal(exercise: exercise),
+                        );
+                      },
+                      icon: Icon(
+                        LucideIcons.chartColumn,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+
+                    // Calculator Button.
+                    IconButton(
+                      onPressed: () async {
+                        // Show metric to us system modal.
+                        await ModalService.showModal(
+                          context: context,
+                          child: const ConvertCalculator(),
+                        );
+                      },
+                      icon: Icon(
+                        LucideIcons.calculator,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+
+                    const SizedBox(width: 8),
+
                     // Add Set Button.
                     Expanded(
                       child: FilledButton.icon(
@@ -124,19 +157,6 @@ class StrengthExerciseScreen extends StatelessWidget {
                         label: const Text(
                           'ADD SET',
                         ),
-                      ),
-                    ),
-                    // Statistics Button.
-                    IconButton(
-                      onPressed: () async {
-                        await ModalService.showModal(
-                          context: context,
-                          child: ExerciseStatsModal(exercise: exercise),
-                        );
-                      },
-                      icon: Icon(
-                        LucideIcons.chartColumn,
-                        color: theme.colorScheme.secondary,
                       ),
                     ),
                   ],
