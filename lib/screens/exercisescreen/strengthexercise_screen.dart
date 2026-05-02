@@ -42,50 +42,15 @@ class StrengthExerciseScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    // Exercise Image.
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        exercise.imagePath,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // History Button.
-                        IconButton(
-                          onPressed: () async {
-                            await ModalService.showModal(
-                              context: context,
-                              child: ExerciseHistoryModal(exercise: exercise),
-                            );
-                          },
-                          icon: Icon(
-                            LucideIcons.history,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                        // Statistics Button.
-                        IconButton(
-                          onPressed: () async {
-                            await ModalService.showModal(
-                              context: context,
-                              child: ExerciseStatsModal(exercise: exercise),
-                            );
-                          },
-                          icon: Icon(
-                            LucideIcons.chartColumn,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                // Exercise Image.
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    exercise.imagePath,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
                 ),
 
                 // Weight Row.
@@ -125,27 +90,56 @@ class StrengthExerciseScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // Add Set Button.
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () async {
-                      // Give a little bzzz.
-                      await HapticFeedback.lightImpact();
-
-                      if (currentWeight != null && currentReps != null) {
-                        workoutService.addStrengthSet(
-                          exercise,
-                          currentWeight,
-                          currentReps,
+                Row(
+                  children: <Widget>[
+                    // History Button.
+                    IconButton(
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseHistoryModal(exercise: exercise),
                         );
-                      }
-                    },
-                    icon: const Icon(LucideIcons.circlePlus),
-                    label: const Text(
-                      'ADD SET',
+                      },
+                      icon: Icon(
+                        LucideIcons.history,
+                        color: theme.colorScheme.secondary,
+                      ),
                     ),
-                  ),
+                    // Add Set Button.
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () async {
+                          // Give a little bzzz.
+                          await HapticFeedback.lightImpact();
+
+                          if (currentWeight != null && currentReps != null) {
+                            workoutService.addStrengthSet(
+                              exercise,
+                              currentWeight,
+                              currentReps,
+                            );
+                          }
+                        },
+                        icon: const Icon(LucideIcons.circlePlus),
+                        label: const Text(
+                          'ADD SET',
+                        ),
+                      ),
+                    ),
+                    // Statistics Button.
+                    IconButton(
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseStatsModal(exercise: exercise),
+                        );
+                      },
+                      icon: Icon(
+                        LucideIcons.chartColumn,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                  ],
                 ),
                 const Divider(),
               ],
