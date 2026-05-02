@@ -60,56 +60,35 @@ class CardioExerciseScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    // Exercise Image.
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        exercise.imagePath,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // History Button.
-                        IconButton(
-                          onPressed: () async {
-                            await ModalService.showModal(
-                              context: context,
-                              child: ExerciseHistoryModal(exercise: exercise),
-                            );
-                          },
-                          icon: Icon(
-                            LucideIcons.history,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                        // Statistics Button.
-                        IconButton(
-                          onPressed: () async {
-                            await ModalService.showModal(
-                              context: context,
-                              child: ExerciseStatsModal(exercise: exercise),
-                            );
-                          },
-                          icon: Icon(
-                            LucideIcons.chartColumn,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                // Exercise Image.
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    exercise.imagePath,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
                 ),
 
-                // CardioMode ChoiceChips.
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    // History Button.
+                    IconButton(
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseHistoryModal(exercise: exercise),
+                        );
+                      },
+                      icon: Icon(
+                        LucideIcons.history,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+
+                    // Choice Chips.
                     Wrap(
                       spacing: 4,
                       children: CardioMode.values.map((CardioMode value) {
@@ -155,6 +134,19 @@ class CardioExerciseScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                    // Statistics Button.
+                    IconButton(
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseStatsModal(exercise: exercise),
+                        );
+                      },
+                      icon: Icon(
+                        LucideIcons.chartColumn,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
                   ],
                 ),
 
