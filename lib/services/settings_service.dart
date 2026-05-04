@@ -288,7 +288,7 @@ class SettingsService {
         );
       }
 
-      await _iconChannel.invokeMethod('changeIcon', {'iconName': iconName});
+      await _iconChannel.invokeMethod('changeIcon', <String, String>{'iconName': iconName});
       _logger.i('SettingsService: AppIcon updated to $iconName');
     } on Object catch (e, stackTrace) {
       _logger.e(

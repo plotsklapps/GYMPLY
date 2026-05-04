@@ -45,6 +45,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["applicationName"] = "io.flutter.app.FlutterApplication"
     }
 
     buildTypes {
