@@ -4,13 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.6+61] - 2026-05-04
 - **Native Android Integration:**
-    - Configured application entry point by adding the `applicationName` manifest placeholder and setting up `MAIN` action intent filters.
-    - Improved platform channel reliability in `SettingsService` by using explicit type arguments for icon change requests.
+    - Configured application entry point by adding the `applicationName` 
+      manifest placeholder and setting up `MAIN` action intent filters.
+    - Improved platform channel reliability in `SettingsService` by using 
+      explicit type arguments for icon change requests.
+    - Updated `AndroidManifest.xml` to explicitly remove storage and media 
+      permissions (`READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, 
+      `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, and `READ_MEDIA_AUDIO`) using 
+      `tools:node="remove"` to ensure compliance with Google Play privacy 
+      policies and prevent unwanted inclusion by third-party plugins.
 - **Features & Assets:**
     - Added custom app icons for supporters.
 - **Maintenance & Dependencies:**
     - Integrated `crypto` package for enhanced data security.
-    - Incremented project version to `0.0.6+61`.
+    - Incremented project version to `0.0.6+62`.
 
 ## [0.0.5+58] - 2026-05-02
 - **UI/UX Refactor:**
