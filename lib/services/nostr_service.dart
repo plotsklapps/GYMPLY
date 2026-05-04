@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart'; // For SHA-256 calculation
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gymply/services/connectivity_service.dart';
 import 'package:gymply/services/toast_service.dart';
@@ -47,22 +48,20 @@ class NostrService {
   // Static list of 8 reliable Nostr relays.
   final List<String> _defaultRelays = <String>[
     'wss://relay.primal.net',
-    'wss://relay.damus.io',
     'wss://nos.lol',
-    'wss://relay.snort.social',
+    'wss://relay.damus.io',
     'wss://relay.nostr.band',
     'wss://relay.nostr.wine',
     'wss://nostr.mom',
-    'wss://atlas.nostr.land',
+    'wss://relay.plebstr.com',
+    'wss://nostr.bitcoiner.social',
   ];
 
-  // Static list of 5 Blossom servers for image hosting.
+  // Static list of reliable Blossom servers for image hosting.
   final List<String> _defaultBlossomServers = <String>[
-    'https://cdn.nostr.build',
-    'https://nostr.download',
     'https://blossom.primal.net',
-    'https://nostr.checkreels.com',
-    'https://blossom.nostr.v0l.io',
+    'https://blossom.nostr.build',
+    'https://files.sovbit.host',
   ];
 
   // --- SIGNALS ---
@@ -248,21 +247,61 @@ class NostrService {
     // Iterate through servers one by one until one succeeds.
     for (final String serverUrl in waterfallServers) {
       try {
+        _logger.i('NostrService: Attempting upload to $serverUrl');
         final List<BlobUploadResult> results = await _ndk.blossom.uploadBlob(
           data: imageBytes,
           serverUrls: <String>[serverUrl],
           contentType: 'image/png',
         );
 
-        if (results.isNotEmpty &&
-            results.first.success &&
-            results.first.descriptor != null) {
-          success = results.first;
+        if (results.isNotEmpty) {
+          final BlobUploadResult result = results.first;
+          if (result.success && result.descriptor != null) {
+            success = result;
+            _logger.i('NostrService: Successfully uploaded to $serverUrl');
+            break;
+          } else {
+            _logger.w(
+              'NostrService: Server $serverUrl returned failure. '
+              'Message: ${result.error}',
+            );
+          }
+        } else {
+          _logger.w('NostrService: Server $serverUrl returned empty results.');
+        }
+      } on TypeError catch (e) {
+        _logger.e(
+          'NostrService: Parsing error (API response mismatch) at $serverUrl: $e',
+        );
+        // Continue to the next server instead of crashing
+        continue;
+      } on Object catch (e) {
+        // If the error message is "STATUS: 201", it actually succeeded.
+        // This is a workaround for a bug in the ndk package (v0.8.1).
+        if (e.toString().contains('STATUS: 201')) {
+          _logger.i(
+            'NostrService: Successfully uploaded to $serverUrl (Handled 201)',
+          );
+
+          // Since the ndk package didn't return the descriptor, we reconstruct
+          // the URL using the Blossom standard: server_url/sha256_hash.png
+          final String hash = sha256.convert(imageBytes).toString();
+          success = BlobUploadResult(
+            serverUrl: serverUrl,
+            success: true,
+            descriptor: BlobDescriptor(
+              url: '$serverUrl/$hash.png',
+              sha256: hash,
+              size: imageBytes.length,
+              type: 'image/png',
+              uploaded: DateTime.now(),
+            ),
+          );
           break;
         }
-      } on Object catch (e) {
-        // Log warning (this is NOT an error!).
-        _logger.w('Upload failed for $serverUrl: $e');
+
+        // Log detailed error.
+        _logger.w('NostrService: Upload failed for $serverUrl: $e');
       }
     }
 
