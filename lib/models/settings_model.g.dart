@@ -32,13 +32,16 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       onboardingCompleted: fields[9] == null ? false : fields[9] as bool,
       fontFamily: fields[11] == null ? 'LeagueGothic' : fields[11] as String,
       isExercisesGridMode: fields[12] == null ? true : fields[12] as bool,
+      appIcon: fields[13] == null
+          ? 'MainActivityDefault'
+          : fields[13] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -64,7 +67,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(11)
       ..write(obj.fontFamily)
       ..writeByte(12)
-      ..write(obj.isExercisesGridMode);
+      ..write(obj.isExercisesGridMode)
+      ..writeByte(13)
+      ..write(obj.appIcon);
   }
 
   @override

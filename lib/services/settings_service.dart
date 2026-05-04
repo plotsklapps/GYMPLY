@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/signals/appicon_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
@@ -28,6 +30,11 @@ class SettingsService {
   SettingsService._internal();
   static final SettingsService _instance = SettingsService._internal();
   final Logger _logger = Logger();
+
+  // MethodChannel for native communication.
+  static const MethodChannel _iconChannel = MethodChannel(
+    'dev.plotsklapps.gymply/app_icon',
+  );
 
   // Reference to settings box from HiveService.
   late final Box<Settings> _settingsBox;
@@ -71,6 +78,7 @@ class SettingsService {
     sSomatotype.value = settings.somatotypeIndex;
     sOnboardingCompleted.value = settings.onboardingCompleted;
     sExercisesGridMode.value = settings.isExercisesGridMode;
+    sAppIcon.value = settings.appIcon;
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -200,7 +208,7 @@ class SettingsService {
       if (settings != null) {
         await _settingsBox.put(
           'settings',
-          settings.copyWith(favoriteExerciseIds: currentFavorites),
+          settings.copyWith(favoriteExercises: currentFavorites),
         );
       }
     } on Object catch (e, stackTrace) {
@@ -263,6 +271,34 @@ class SettingsService {
       ToastService.showError(
         title: 'Settings Error',
         subtitle: 'Failed to update font.',
+      );
+    }
+  }
+
+  // Update App Icon.
+  Future<void> updateAppIcon(String iconName) async {
+    try {
+      sAppIcon.value = iconName;
+
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(appIcon: iconName),
+        );
+      }
+
+      await _iconChannel.invokeMethod('changeIcon', {'iconName': iconName});
+      _logger.i('SettingsService: AppIcon updated to $iconName');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to update AppIcon',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Settings Error',
+        subtitle: 'Failed to update app icon.',
       );
     }
   }

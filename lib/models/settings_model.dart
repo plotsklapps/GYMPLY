@@ -19,6 +19,7 @@ class Settings {
     this.onboardingCompleted = false,
     this.fontFamily = 'LeagueGothic',
     this.isExercisesGridMode = true,
+    this.appIcon = 'MainActivityDefault',
   });
 
   @HiveField(0, defaultValue: true)
@@ -48,17 +49,20 @@ class Settings {
   @HiveField(8, defaultValue: 0)
   final int sex;
 
-  @HiveField(10, defaultValue: 1)
-  final int somatotypeIndex;
-
   @HiveField(9, defaultValue: false)
   final bool onboardingCompleted;
+
+  @HiveField(10, defaultValue: 1)
+  final int somatotypeIndex;
 
   @HiveField(11, defaultValue: 'LeagueGothic')
   final String fontFamily;
 
   @HiveField(12, defaultValue: true)
   final bool isExercisesGridMode;
+
+  @HiveField(13, defaultValue: 'MainActivityDefault')
+  final String appIcon;
 
   // Custom enum mapping.
   FlexSchemes get flexScheme {
@@ -68,7 +72,7 @@ class Settings {
   Settings copyWith({
     bool? darkMode,
     int? initialRestTime,
-    List<int>? favoriteExerciseIds,
+    List<int>? favoriteExercises,
     bool? isWakelock,
     FlexSchemes? flexScheme,
     int? age,
@@ -79,11 +83,12 @@ class Settings {
     bool? onboardingCompleted,
     String? fontFamily,
     bool? isExercisesGridMode,
+    String? appIcon,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
       initialRestTime: initialRestTime ?? this.initialRestTime,
-      favoriteExercises: favoriteExerciseIds ?? favoriteExercises,
+      favoriteExercises: favoriteExercises ?? this.favoriteExercises,
       isWakelock: isWakelock ?? this.isWakelock,
       flexSchemeIndex: flexScheme?.index ?? flexSchemeIndex,
       age: age ?? this.age,
@@ -94,6 +99,7 @@ class Settings {
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
       fontFamily: fontFamily ?? this.fontFamily,
       isExercisesGridMode: isExercisesGridMode ?? this.isExercisesGridMode,
+      appIcon: appIcon ?? this.appIcon,
     );
   }
 }
