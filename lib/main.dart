@@ -66,7 +66,7 @@ void main() async {
   await notificationService.init();
 
   // DonationService initializes billing connection.
-  donationService.initialize();
+  await donationService.initialize();
 
   // Run the app.
   runApp(const MainEntry());

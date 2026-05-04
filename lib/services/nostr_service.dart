@@ -29,14 +29,14 @@ class NostrService {
   // Getter for Ndk with lazy initialization.
   Ndk get _ndk {
     _ndkInstance ??= Ndk(
-        NdkConfig(
-          bootstrapRelays: _defaultRelays,
-          cache: MemCacheManager(),
-          eventVerifier: Bip340EventVerifier(),
-          // Reduce default query timeout to avoid long hangs on slow relays.
-          defaultQueryTimeout: const Duration(seconds: 5),
-        ),
-      );
+      NdkConfig(
+        bootstrapRelays: _defaultRelays,
+        cache: MemCacheManager(),
+        eventVerifier: Bip340EventVerifier(),
+        // Reduce default query timeout to avoid long hangs on slow relays.
+        defaultQueryTimeout: const Duration(seconds: 5),
+      ),
+    );
     return _ndkInstance!;
   }
 
@@ -58,10 +58,10 @@ class NostrService {
 
   // Static list of 5 Blossom servers for image hosting.
   final List<String> _defaultBlossomServers = <String>[
+    'https://cdn.nostr.build',
+    'https://nostr.download',
     'https://blossom.primal.net',
     'https://nostr.checkreels.com',
-    'https://nostr.download',
-    'https://cdn.nostr.build',
     'https://blossom.nostr.v0l.io',
   ];
 
@@ -233,14 +233,15 @@ class NostrService {
   Future<void> publishWorkoutNote({required Uint8List imageBytes}) async {
     if (!sNsec.value) throw Exception('No Private Key found.');
 
-    // Prepare Waterfall List: blossom.primal.net first, then others shuffled.
-    final List<String> fallbacks = List<String>.from(_defaultBlossomServers)
-      ..remove('https://blossom.primal.net')
-      ..shuffle();
-    final List<String> waterfallServers = <String>[
-      'https://blossom.primal.net',
-      ...fallbacks,
-    ];
+    // Prepare Waterfall List: Start with more open servers, Primal as fallback.
+    final List<String> waterfallServers = List<String>.from(
+      _defaultBlossomServers,
+    );
+    // Shuffle the secondary servers to distribute load, but keep the list stable
+    // for this specific attempt.
+    final String firstChoice = waterfallServers.removeAt(0);
+    waterfallServers.shuffle();
+    waterfallServers.insert(0, firstChoice);
 
     BlobUploadResult? success;
 
@@ -567,37 +568,42 @@ class NostrService {
           filter: Filter(kinds: <int>[kGymplyWorkoutKind], limit: 50),
         )
         .stream
-        .listen((Nip01Event event) async {
-          // Duplicate Check: Process only unique IDs.
-          if (!sFeedEvents.value.any((Nip01Event e) {
-            return e.id == event.id;
-          })) {
-            // Update Feed List (newest first).
-            final List<Nip01Event> newList =
-                <Nip01Event>[event, ...sFeedEvents.value]..sort(
-                  (Nip01Event a, Nip01Event b) {
-                    return b.createdAt.compareTo(a.createdAt);
-                  },
-                );
-            // Set Signal.
-            sFeedEvents.value = newList;
+        .listen(
+          (Nip01Event event) async {
+            // Duplicate Check: Process only unique IDs.
+            if (!sFeedEvents.value.any((Nip01Event e) {
+              return e.id == event.id;
+            })) {
+              // Update Feed List (newest first).
+              final List<Nip01Event> newList =
+                  <Nip01Event>[event, ...sFeedEvents.value]..sort(
+                    (Nip01Event a, Nip01Event b) {
+                      return b.createdAt.compareTo(a.createdAt);
+                    },
+                  );
+              // Set Signal.
+              sFeedEvents.value = newList;
 
-            // Fetch user's name/avatar and refresh listeners.
-            await _resolveMetadata(event.pubKey);
+              // Fetch user's name/avatar and refresh listeners.
+              await _resolveMetadata(event.pubKey);
 
-            // Debounce the engagement subscription update.
-            _engagementDebounce?.cancel();
-            _engagementDebounce = Timer(
-              const Duration(seconds: 2),
-              _updateEngagementSubscription,
-            );
-          }
+              // Debounce the engagement subscription update.
+              _engagementDebounce?.cancel();
+              _engagementDebounce = Timer(
+                const Duration(seconds: 2),
+                _updateEngagementSubscription,
+              );
+            }
 
-          // Loading State Cleanup.
-          if (sLoadingFeed.value && sFeedEvents.value.isNotEmpty) {
-            sLoadingFeed.value = false;
-          }
-        });
+            // Loading State Cleanup.
+            if (sLoadingFeed.value && sFeedEvents.value.isNotEmpty) {
+              sLoadingFeed.value = false;
+            }
+          },
+          onError: (Object e) {
+            _logger.e('NostrService: Feed subscription error: $e');
+          },
+        );
 
     // If no events are found after 5 seconds, stop the spinner.
     Future<void>.delayed(const Duration(seconds: 5), () {
