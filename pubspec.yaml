@@ -24,6 +24,7 @@ dependencies:
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
   image_picker: ^1.2.1
+  in_app_purchase: ^3.2.0
   intl: ^0.20.2
   logger: ^2.6.2
   lucide_icons_flutter: ^3.1.10
@@ -41,7 +42,6 @@ dependencies:
   url_launcher: ^6.3.1
   uuid: ^4.5.3
   wakelock_plus: ^1.4.0
-  in_app_purchase: ^3.2.0
 
   crypto: any
 dev_dependencies:

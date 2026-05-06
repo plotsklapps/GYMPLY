@@ -288,7 +288,9 @@ class SettingsService {
         );
       }
 
-      await _iconChannel.invokeMethod('changeIcon', <String, String>{'iconName': iconName});
+      await _iconChannel.invokeMethod('changeIcon', <String, String>{
+        'iconName': iconName,
+      });
       _logger.i('SettingsService: AppIcon updated to $iconName');
     } on Object catch (e, stackTrace) {
       _logger.e(
@@ -301,6 +303,31 @@ class SettingsService {
         subtitle: 'Failed to update app icon.',
       );
     }
+  }
+
+  // Update Supporter Status.
+  Future<void> updateIsSupporter({required bool value}) async {
+    try {
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(isSupporter: value),
+        );
+      }
+      _logger.i('SettingsService: isSupporter updated to $value');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to update isSupporter',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  // Get current Supporter Status from Hive.
+  bool get isSupporter {
+    return _settingsBox.get('settings')?.isSupporter ?? false;
   }
 }
 

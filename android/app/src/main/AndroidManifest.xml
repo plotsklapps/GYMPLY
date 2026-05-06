@@ -44,20 +44,6 @@
                 android:resource="@style/NormalTheme"/>
         </activity>
 
-        <!-- Launcher Aliases -->
-        <activity-alias
-            android:name=".MainActivityDefault"
-            android:enabled="true"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="GYMPLY."
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
         <activity-alias
             android:name=".MainActivityPink"
             android:enabled="false"

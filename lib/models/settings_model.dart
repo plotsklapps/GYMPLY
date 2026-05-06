@@ -20,6 +20,7 @@ class Settings {
     this.fontFamily = 'LeagueGothic',
     this.isExercisesGridMode = true,
     this.appIcon = 'MainActivityDefault',
+    this.isSupporter = false,
   });
 
   @HiveField(0, defaultValue: true)
@@ -64,6 +65,9 @@ class Settings {
   @HiveField(13, defaultValue: 'MainActivityDefault')
   final String appIcon;
 
+  @HiveField(14, defaultValue: false)
+  final bool isSupporter;
+
   // Custom enum mapping.
   FlexSchemes get flexScheme {
     return FlexSchemes.values[flexSchemeIndex];
@@ -84,6 +88,7 @@ class Settings {
     String? fontFamily,
     bool? isExercisesGridMode,
     String? appIcon,
+    bool? isSupporter,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
@@ -100,6 +105,7 @@ class Settings {
       fontFamily: fontFamily ?? this.fontFamily,
       isExercisesGridMode: isExercisesGridMode ?? this.isExercisesGridMode,
       appIcon: appIcon ?? this.appIcon,
+      isSupporter: isSupporter ?? this.isSupporter,
     );
   }
 }

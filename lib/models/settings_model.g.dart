@@ -35,13 +35,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       appIcon: fields[13] == null
           ? 'MainActivityDefault'
           : fields[13] as String,
+      isSupporter: fields[14] == null ? false : fields[14] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -69,7 +70,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(12)
       ..write(obj.isExercisesGridMode)
       ..writeByte(13)
-      ..write(obj.appIcon);
+      ..write(obj.appIcon)
+      ..writeByte(14)
+      ..write(obj.isSupporter);
   }
 
   @override

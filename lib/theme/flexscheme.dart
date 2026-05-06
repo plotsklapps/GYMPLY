@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
+const Color kPink = Color(0xFFEBA1A6);
+const Color kPurple = Color(0xFF815AA3);
+const Color kOrange = Color(0xFFFCB075);
+
 enum FlexSchemes { shark, greyLaw, sanJuanBlue }
 
 extension FlexSchemesExtension on FlexSchemes {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:logger/logger.dart';
@@ -43,6 +44,8 @@ class DonationService {
 
   // Initialize the service.
   Future<void> initialize() async {
+    sIsSupporter.value = settingsService.isSupporter;
+
     final Stream<List<PurchaseDetails>> purchaseUpdated = _iap.purchaseStream;
     _subscription = purchaseUpdated.listen(
       _onPurchaseUpdate,
@@ -61,6 +64,11 @@ class DonationService {
       },
     );
     await _checkAvailability();
+
+    // Restore past purchases silently
+    if (sIsAvailable.value) {
+      await _iap.restorePurchases();
+    }
   }
 
   Future<void> _checkAvailability() async {
@@ -149,6 +157,7 @@ class DonationService {
         }
 
         sIsSupporter.value = true;
+        await settingsService.updateIsSupporter(value: true);
 
         ToastService.showSuccess(
           title: 'Thank You!',

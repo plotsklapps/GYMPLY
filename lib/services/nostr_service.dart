@@ -239,8 +239,9 @@ class NostrService {
     // Shuffle the secondary servers to distribute load, but keep the list stable
     // for this specific attempt.
     final String firstChoice = waterfallServers.removeAt(0);
-    waterfallServers.shuffle();
-    waterfallServers.insert(0, firstChoice);
+    waterfallServers
+      ..shuffle()
+      ..insert(0, firstChoice);
 
     BlobUploadResult? success;
 
@@ -269,12 +270,6 @@ class NostrService {
         } else {
           _logger.w('NostrService: Server $serverUrl returned empty results.');
         }
-      } on TypeError catch (e) {
-        _logger.e(
-          'NostrService: Parsing error (API response mismatch) at $serverUrl: $e',
-        );
-        // Continue to the next server instead of crashing
-        continue;
       } on Object catch (e) {
         // If the error message is "STATUS: 201", it actually succeeded.
         // This is a workaround for a bug in the ndk package (v0.8.1).
