@@ -43,7 +43,7 @@ class MainActivity : FlutterActivity() {
         packageManager.setComponentEnabledSetting(
             newComponent,
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
+            0
         )
 
         // Then disable the others
@@ -53,7 +53,7 @@ class MainActivity : FlutterActivity() {
                 packageManager.setComponentEnabledSetting(
                     componentName,
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP 
+                    0
                 )
             }
         }

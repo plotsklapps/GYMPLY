@@ -122,10 +122,10 @@ class ThemeSettingsModal extends StatelessWidget {
                           selected: <FlexSchemes>{flexScheme},
                           onSelectionChanged:
                               (Set<FlexSchemes> newSelection) async {
-                            await settingsService.updateFlexScheme(
-                              newSelection.first,
-                            );
-                          },
+                                await settingsService.updateFlexScheme(
+                                  newSelection.first,
+                                );
+                              },
                         ),
                       ),
                     ],
@@ -341,11 +341,12 @@ class _AppIconPicker extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Note: Changing the icon might restart the app to apply the change.',
+          'WARNING: Changing the app icon WILL immediately close the app.\n'
+          'Please save your data first.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontStyle: FontStyle.italic,
-                color: Theme.of(context).hintColor,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.error,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

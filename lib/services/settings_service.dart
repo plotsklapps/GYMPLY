@@ -291,7 +291,10 @@ class SettingsService {
       await _iconChannel.invokeMethod('changeIcon', <String, String>{
         'iconName': iconName,
       });
-      _logger.i('SettingsService: AppIcon updated to $iconName');
+      _logger.i('SettingsService: AppIcon updated to $iconName. Exiting app.');
+      
+      // Force close the app to ensure the new icon applies consistently
+      SystemNavigator.pop();
     } on Object catch (e, stackTrace) {
       _logger.e(
         'SettingsService: Failed to update AppIcon',
