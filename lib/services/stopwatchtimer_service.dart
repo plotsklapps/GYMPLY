@@ -66,7 +66,7 @@ class StopwatchTimer {
       _stopwatch.start();
 
       // 10ms ticks to capture every centisecond.
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
+      _timer = Timer.periodic(const Duration(milliseconds: 10), (Timer timer) {
         sElapsedStopwatchTime.value =
             _baseTime + _stopwatch.elapsedMilliseconds;
       });

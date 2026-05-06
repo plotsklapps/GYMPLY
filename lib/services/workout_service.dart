@@ -662,7 +662,7 @@ class WorkoutService {
     Workout workoutToCopy, {
     required bool merge,
     required bool keepValues,
-    required bool addTime,
+    required bool keepCurrentTime,
   }) {
     final List<WorkoutExercise> exercisesToAdd = <WorkoutExercise>[];
 
@@ -707,9 +707,9 @@ class WorkoutService {
     final bool isSameWorkout = workoutToCopy.id == sActiveWorkout.value.id;
     final int durationToAdd = isSameWorkout ? 0 : workoutToCopy.totalDuration;
 
-    final int newTotalDuration = addTime
-        ? TotalTimer.sElapsedTotalTime.value + durationToAdd
-        : workoutToCopy.totalDuration;
+    final int newTotalDuration = keepCurrentTime
+        ? sActiveWorkout.value.totalDuration
+        : TotalTimer.sElapsedTotalTime.value + durationToAdd;
 
     sActiveWorkout.value = sActiveWorkout.value.copyWith(
       exercises: newExercises,
@@ -727,7 +727,7 @@ class WorkoutService {
     // Log success.
     _logger.i(
       'WorkoutService: Workout copied. '
-      'Merge: $merge, KeepValues: $keepValues, AddTime: $addTime',
+      'Merge: $merge, KeepValues: $keepValues, KeepCurrentTime: $keepCurrentTime',
     );
   }
 

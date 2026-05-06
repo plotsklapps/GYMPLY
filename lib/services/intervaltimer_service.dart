@@ -115,7 +115,7 @@ class IntervalTimer {
   // Computed Signal for formatted time (watches sElapsedIntervalTime Signal).
   static final Computed<String> cFormattedIntervalTime = Computed<String>(
     () {
-      return sElapsedIntervalTime.value.formatHMMSSCC();
+      return sElapsedIntervalTime.value.formatHMMSSD();
     },
     debugLabel: 'cFormattedIntervalTime',
   );

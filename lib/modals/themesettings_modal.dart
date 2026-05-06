@@ -341,7 +341,7 @@ class _AppIconPicker extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'WARNING: Changing the app icon WILL immediately close the app.\n'
+          'WARNING: Changing the app icon will immediately close the app.\n'
           'Please save your data first.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.bold,
