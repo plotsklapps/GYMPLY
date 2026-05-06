@@ -12,6 +12,7 @@ dependencies:
   archive: ^4.0.9
   audioplayers: ^6.5.1
   connectivity_plus: ^7.1.0
+  crypto: ^3.0.7
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.3.0
   file_picker: ^11.0.1
@@ -43,7 +44,6 @@ dependencies:
   uuid: ^4.5.3
   wakelock_plus: ^1.4.0
 
-  crypto: any
 dev_dependencies:
   build_runner: ^2.11.1
   flutter_launcher_icons: ^0.14.4
