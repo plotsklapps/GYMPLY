@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.6+63] - 2026-05-06
+- **Timer Accuracy & Precision:**
+    - Upgraded `StopwatchTimer` to a 100Hz (10ms) update frequency to provide high-precision timing.
+    - Simplified `IntervalTimer` to a 10Hz (100ms) frequency and updated display formatting to show tenths of a second, ensuring a stable and resource-efficient user interface.
+- **Copy Workout Enhancements:**
+    - Refactored `CopyWorkoutModal` and `WorkoutService` to introduce a "Keep Current Total Time" option, allowing users to preserve their active workout's existing duration when copying exercises from history.
+    - Standardized terminology across the UI, consistently using "Total Time" instead of "Training Time".
+- **Maintenance & Dependencies:**
+    - Fixed a bug where app icons were not correctly applied in specific scenarios.
+    - Incremented project version to `0.0.6+63`.
+
 ## [0.0.6+61] - 2026-05-04
 - **Native Android Integration:**
     - Configured application entry point by adding the `applicationName` 
