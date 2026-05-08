@@ -31,14 +31,16 @@ class MainActivity : FlutterActivity() {
         val packageName = context.packageName
 
         // List of all aliases we defined in AndroidManifest.xml
+        // We NEVER include the base "MainActivity" here to ensure it stays enabled
+        // for Flutter tools and system stability.
         val aliases = listOf(
-            "MainActivity",
+            "MainActivityDefault",
             "MainActivityPink",
             "MainActivityPurple",
             "MainActivityOrange"
         )
 
-        // Enable the new icon first
+        // Enable the new icon alias first
         val newComponent = ComponentName(packageName, "$packageName.$iconName")
         packageManager.setComponentEnabledSetting(
             newComponent,
@@ -46,7 +48,7 @@ class MainActivity : FlutterActivity() {
             0
         )
 
-        // Then disable the others
+        // Then disable the other aliases
         for (alias in aliases) {
             if (alias != iconName) {
                 val componentName = ComponentName(packageName, "$packageName.$alias")

@@ -210,7 +210,7 @@ class _AppIconPicker extends StatelessWidget {
 
     final List<_IconOption> options = <_IconOption>[
       _IconOption(
-        name: 'MainActivity',
+        name: 'MainActivityDefault',
         asset: 'assets/icons/gymplyIcon.png',
         label: 'Default',
         isLocked: false,
