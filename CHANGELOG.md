@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.6+67] - 2026-05-11
+- **Activity & Icon Management:**
+  - Introduced `MainActivityDefault` activity-alias to handle default app icon launcher intents.
+  - Updated `MainActivity.kt` to refine alias-switching logic and ensure system stability.
+  - Updated `themesettings_modal.dart` to reference the new activity alias.
+- **Dependency & Asset Updates:**
+  - Upgraded dependencies including `flutter_secure_storage` (v10.1.0), `sembast`, and `vector_graphics_compiler`.
+  - Updated `ic_launcher_foreground.png` assets across all density buckets.
+- **Maintenance:**
+  - Incremented project version to `0.0.6+67`.
+
 ## [0.0.6+63] - 2026-05-06
 - **Timer Accuracy & Precision:**
     - Upgraded `StopwatchTimer` to a 100Hz (10ms) update frequency to provide high-precision timing.

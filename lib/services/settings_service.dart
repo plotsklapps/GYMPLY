@@ -294,7 +294,7 @@ class SettingsService {
       _logger.i('SettingsService: AppIcon updated to $iconName. Exiting app.');
       
       // Force close the app to ensure the new icon applies consistently
-      SystemNavigator.pop();
+      await SystemNavigator.pop();
     } on Object catch (e, stackTrace) {
       _logger.e(
         'SettingsService: Failed to update AppIcon',
