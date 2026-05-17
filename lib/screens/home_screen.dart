@@ -174,7 +174,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               'GYMPLY.',
               style: theme.textTheme.displaySmall?.copyWith(
                 color: theme.colorScheme.secondary,
-                fontFamily: 'BebasNeue',
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
               ),

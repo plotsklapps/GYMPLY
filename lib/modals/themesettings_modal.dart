@@ -1,10 +1,9 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:gymply/modals/donation_modal.dart';
+import 'package:gymply/modals/supporter_font_modal.dart';
+import 'package:gymply/modals/supporter_theme_modal.dart';
 import 'package:gymply/services/donation_service.dart';
-import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
-import 'package:gymply/services/toast_service.dart';
-import 'package:gymply/signals/appicon_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
@@ -19,8 +18,9 @@ class ThemeSettingsModal extends StatelessWidget {
     // Watch settings Signals.
     final bool isDarkMode = sDarkMode.watch(context);
     final bool isWakelock = sWakelock.watch(context);
-    final FlexSchemes flexScheme = sFlexScheme.watch(context);
+    final FlexScheme flexScheme = sFlexScheme.watch(context);
     final String font = sFont.watch(context);
+    final bool isSupporter = donationService.sIsSupporter.watch(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -90,109 +90,123 @@ class ThemeSettingsModal extends StatelessWidget {
                   },
                 ),
 
-                // Color picker.
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                if (isSupporter) ...<Widget>[
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(LucideIcons.palette),
+                    title: const Text('Themes'),
+                    subtitle: const Text('Change your theme'),
+                    trailing: const Icon(LucideIcons.chevronRight),
+                    onTap: () async {
+                      await showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return const SupporterThemeModal();
+                        },
+                      );
+                    },
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: SegmentedButton<FlexSchemes>(
-                          segments: const <ButtonSegment<FlexSchemes>>[
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.shark,
-                              label: Text('Orange'),
-                              icon: Icon(LucideIcons.citrus),
-                            ),
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.greyLaw,
-                              label: Text('Purple'),
-                              icon: Icon(LucideIcons.brush),
-                            ),
-                            ButtonSegment<FlexSchemes>(
-                              value: FlexSchemes.sanJuanBlue,
-                              label: Text('Pink'),
-                              icon: Icon(LucideIcons.wine),
-                            ),
-                          ],
-                          selected: <FlexSchemes>{flexScheme},
-                          onSelectionChanged:
-                              (Set<FlexSchemes> newSelection) async {
-                                await settingsService.updateFlexScheme(
-                                  newSelection.first,
-                                );
-                              },
+                  ListTile(
+                    leading: const Icon(LucideIcons.type),
+                    title: const Text('Fonts'),
+                    subtitle: const Text('Change your font'),
+                    trailing: const Icon(LucideIcons.chevronRight),
+                    onTap: () async {
+                      await showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return const SupporterFontModal();
+                        },
+                      );
+                    },
+                  ),
+                ] else ...<Widget>[
+                  // Color picker for non-supporters.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          width: double.infinity,
+                          child: SegmentedButton<FlexScheme>(
+                            segments: const <ButtonSegment<FlexScheme>>[
+                              ButtonSegment<FlexScheme>(
+                                value: FlexScheme.shark,
+                                label: Text('Orange'),
+                                icon: Icon(LucideIcons.citrus),
+                              ),
+                              ButtonSegment<FlexScheme>(
+                                value: FlexScheme.greyLaw,
+                                label: Text('Purple'),
+                                icon: Icon(LucideIcons.brush),
+                              ),
+                              ButtonSegment<FlexScheme>(
+                                value: FlexScheme.sanJuanBlue,
+                                label: Text('Pink'),
+                                icon: Icon(LucideIcons.wine),
+                              ),
+                            ],
+                            selected: <FlexScheme>{flexScheme},
+                            onSelectionChanged:
+                                (Set<FlexScheme> newSelection) async {
+                                  await settingsService.updateFlexScheme(
+                                    newSelection.first,
+                                  );
+                                },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Font Picker.
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        width: double.infinity,
-                        child: SegmentedButton<String>(
-                          segments: const <ButtonSegment<String>>[
-                            ButtonSegment<String>(
-                              value: 'LeagueGothic',
-                              label: Text('Gothic'),
-                              icon: Icon(LucideIcons.church),
-                            ),
-                            ButtonSegment<String>(
-                              value: 'Lato',
-                              label: Text('Lato'),
-                              icon: Icon(LucideIcons.signature),
-                            ),
-                            ButtonSegment<String>(
-                              value: 'FjallaOne',
-                              label: Text('Fjalla'),
-                              icon: Icon(LucideIcons.squareLibrary),
-                            ),
-                          ],
-                          selected: <String>{font},
-                          onSelectionChanged: (Set<String> newSelection) async {
-                            await settingsService.updateFont(
-                              newSelection.first,
-                            );
-                          },
+                  // Font Picker for non-supporters.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          width: double.infinity,
+                          child: SegmentedButton<String>(
+                            segments: const <ButtonSegment<String>>[
+                              ButtonSegment<String>(
+                                value: 'League Gothic',
+                                label: Text('Gothic'),
+                                icon: Icon(LucideIcons.church),
+                              ),
+                              ButtonSegment<String>(
+                                value: 'Lato',
+                                label: Text('Lato'),
+                                icon: Icon(LucideIcons.signature),
+                              ),
+                              ButtonSegment<String>(
+                                value: 'Fjalla One',
+                                label: Text('Fjalla'),
+                                icon: Icon(LucideIcons.squareLibrary),
+                              ),
+                            ],
+                            selected: <String>{font},
+                            onSelectionChanged:
+                                (Set<String> newSelection) async {
+                                  await settingsService.updateFont(
+                                    newSelection.first,
+                                  );
+                                },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                // App Icon Picker.
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'APP ICON',
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _AppIconPicker(),
-                    ],
-                  ),
-                ),
+                ],
               ],
             ),
           ),
@@ -200,169 +214,4 @@ class ThemeSettingsModal extends StatelessWidget {
       ],
     );
   }
-}
-
-class _AppIconPicker extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final bool isSupporter = donationService.sIsSupporter.watch(context);
-    final String currentIcon = sAppIcon.watch(context);
-
-    final List<_IconOption> options = <_IconOption>[
-      _IconOption(
-        name: 'MainActivity',
-        asset: 'assets/icons/gymplyIcon.png',
-        label: 'Default',
-        isLocked: false,
-      ),
-      _IconOption(
-        name: 'MainActivityPink',
-        asset: 'assets/icons/supporterPink.png',
-        label: 'Pink',
-        isLocked: !isSupporter,
-      ),
-      _IconOption(
-        name: 'MainActivityPurple',
-        asset: 'assets/icons/supporterPurple.png',
-        label: 'Purple',
-        isLocked: !isSupporter,
-      ),
-      _IconOption(
-        name: 'MainActivityOrange',
-        asset: 'assets/icons/supporterOrange.png',
-        label: 'Orange',
-        isLocked: !isSupporter,
-      ),
-    ];
-
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: options.map((_IconOption option) {
-            final bool isSelected = currentIcon == option.name;
-
-            return InkWell(
-              onTap: option.isLocked
-                  ? () async {
-                      ToastService.showWarning(
-                        title: 'Supporter Perk',
-                        subtitle: 'Donate to unlock this icon!',
-                      );
-                      // Open Donation Modal.
-                      await ModalService.showModal(
-                        context: context,
-                        child: const DonationModal(),
-                      );
-                    }
-                  : () async {
-                      if (isSelected) return;
-                      await settingsService.updateAppIcon(option.name);
-                    },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.transparent,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        ColorFiltered(
-                          colorFilter: option.isLocked
-                              ? const ColorFilter.matrix(<double>[
-                                  0.2126,
-                                  0.7152,
-                                  0.0722,
-                                  0,
-                                  0,
-                                  0.2126,
-                                  0.7152,
-                                  0.0722,
-                                  0,
-                                  0,
-                                  0.2126,
-                                  0.7152,
-                                  0.0722,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  1,
-                                  0,
-                                ])
-                              : const ColorFilter.mode(
-                                  Colors.transparent,
-                                  BlendMode.multiply,
-                                ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              option.asset,
-                              width: 60,
-                              height: 60,
-                            ),
-                          ),
-                        ),
-                        if (option.isLocked)
-                          const Positioned(
-                            right: 4,
-                            bottom: 4,
-                            child: CircleAvatar(
-                              radius: 10,
-                              backgroundColor: Colors.black54,
-                              child: Icon(
-                                LucideIcons.lock,
-                                size: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      option.label,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'WARNING: Changing the app icon will immediately close the app.\n'
-          'Please save your data first.',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.error,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}
-
-class _IconOption {
-  _IconOption({
-    required this.name,
-    required this.asset,
-    required this.label,
-    required this.isLocked,
-  });
-  final String name;
-  final String asset;
-  final String label;
-  final bool isLocked;
 }

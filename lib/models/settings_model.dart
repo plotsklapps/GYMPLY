@@ -1,4 +1,4 @@
-import 'package:gymply/theme/flexscheme.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 part 'settings_model.g.dart';
@@ -19,8 +19,9 @@ class Settings {
     this.onboardingCompleted = false,
     this.fontFamily = 'LeagueGothic',
     this.isExercisesGridMode = true,
-    this.appIcon = 'MainActivityDefault',
     this.isSupporter = false,
+    this.flexSchemeName,
+    this.googleFontFamily,
   });
 
   @HiveField(0, defaultValue: true)
@@ -62,15 +63,54 @@ class Settings {
   @HiveField(12, defaultValue: true)
   final bool isExercisesGridMode;
 
-  @HiveField(13, defaultValue: 'MainActivityDefault')
-  final String appIcon;
-
   @HiveField(14, defaultValue: false)
   final bool isSupporter;
 
+  // Supporter FlexScheme value.
+  @HiveField(15)
+  final String? flexSchemeName;
+
+  // Supporter Google Fonts value.
+  @HiveField(16)
+  final String? googleFontFamily;
+
   // Custom enum mapping.
-  FlexSchemes get flexScheme {
-    return FlexSchemes.values[flexSchemeIndex];
+  FlexScheme get flexScheme {
+    if (flexSchemeName != null) {
+      return FlexScheme.values.firstWhere(
+        (e) => e.name == flexSchemeName,
+        orElse: () => FlexScheme.shark,
+      );
+    }
+    // Migration logic for old index.
+    switch (flexSchemeIndex) {
+      case 0:
+        return FlexScheme.shark;
+      case 1:
+        return FlexScheme.greyLaw;
+      case 2:
+        return FlexScheme.sanJuanBlue;
+      default:
+        return FlexScheme.shark;
+    }
+  }
+
+  // Google Fonts string mapping
+  String get activeFontFamily {
+    if (googleFontFamily != null) {
+      return googleFontFamily!;
+    }
+    // Migration logic for old hardcoded names
+    switch (fontFamily) {
+      case 'LeagueGothic':
+        return 'League Gothic';
+      case 'Lato':
+        return 'Lato';
+      case 'FjallaOne':
+        return 'Fjalla One';
+      default:
+        return 'League Gothic';
+    }
   }
 
   Settings copyWith({
@@ -78,7 +118,7 @@ class Settings {
     int? initialRestTime,
     List<int>? favoriteExercises,
     bool? isWakelock,
-    FlexSchemes? flexScheme,
+    FlexScheme? flexScheme,
     int? age,
     double? height,
     double? weight,
@@ -87,25 +127,27 @@ class Settings {
     bool? onboardingCompleted,
     String? fontFamily,
     bool? isExercisesGridMode,
-    String? appIcon,
     bool? isSupporter,
+    String? googleFontFamily,
   }) {
     return Settings(
       darkMode: darkMode ?? this.darkMode,
       initialRestTime: initialRestTime ?? this.initialRestTime,
       favoriteExercises: favoriteExercises ?? this.favoriteExercises,
       isWakelock: isWakelock ?? this.isWakelock,
-      flexSchemeIndex: flexScheme?.index ?? flexSchemeIndex,
+      flexSchemeIndex:
+          this.flexSchemeIndex, // Keep legacy untouched unless needed
       age: age ?? this.age,
       height: height ?? this.height,
       weight: weight ?? this.weight,
       sex: sex ?? this.sex,
       somatotypeIndex: somatotypeIndex ?? this.somatotypeIndex,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
-      fontFamily: fontFamily ?? this.fontFamily,
+      fontFamily: this.fontFamily, // Keep legacy untouched
       isExercisesGridMode: isExercisesGridMode ?? this.isExercisesGridMode,
-      appIcon: appIcon ?? this.appIcon,
       isSupporter: isSupporter ?? this.isSupporter,
+      flexSchemeName: flexScheme?.name ?? flexSchemeName,
+      googleFontFamily: googleFontFamily ?? this.googleFontFamily,
     );
   }
 }

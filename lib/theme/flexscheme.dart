@@ -1,29 +1,15 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
 
 const Color kPink = Color(0xFFEBA1A6);
 const Color kPurple = Color(0xFF815AA3);
 const Color kOrange = Color(0xFFFCB075);
 
-enum FlexSchemes { shark, greyLaw, sanJuanBlue }
-
-extension FlexSchemesExtension on FlexSchemes {
-  FlexScheme get libraryScheme {
-    switch (this) {
-      case FlexSchemes.shark:
-        return FlexScheme.shark;
-      case FlexSchemes.greyLaw:
-        return FlexScheme.greyLaw;
-      case FlexSchemes.sanJuanBlue:
-        return FlexScheme.sanJuanBlue;
-    }
-  }
-}
-
-final Signal<FlexSchemes> sFlexScheme = Signal<FlexSchemes>(
-  FlexSchemes.shark,
+final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
+  FlexScheme.shark,
   debugLabel: 'sFlexScheme',
 );
 
@@ -32,19 +18,19 @@ final Signal<bool> sDarkMode = Signal<bool>(true, debugLabel: 'sDarkMode');
 final Signal<bool> sWakelock = Signal<bool>(true, debugLabel: 'sWakelock');
 
 final Signal<String> sFont = Signal<String>(
-  'LeagueGothic',
+  'League Gothic',
   debugLabel: 'sFont',
 );
 
 // Override textTheme for the XL fonts.
-const TextTheme _textThemeOverrides = TextTheme(
-  displayLarge: TextStyle(fontFamily: 'BebasNeue'),
-  displayMedium: TextStyle(fontFamily: 'BebasNeue'),
-  displaySmall: TextStyle(fontFamily: 'BebasNeue'),
+final TextTheme _textThemeOverrides = TextTheme(
+  displayLarge: GoogleFonts.getFont('Bebas Neue'),
+  displayMedium: GoogleFonts.getFont('Bebas Neue'),
+  displaySmall: GoogleFonts.getFont('Bebas Neue'),
 );
 
 final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
-  final FlexScheme activeScheme = sFlexScheme.value.libraryScheme;
+  final FlexScheme activeScheme = sFlexScheme.value;
 
   if (sDarkMode.value) {
     return FlexThemeData.dark(
@@ -219,7 +205,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: sFont.value,
+      fontFamily: GoogleFonts.getFont(sFont.value).fontFamily,
       textTheme: _textThemeOverrides,
     );
   } else {
@@ -388,7 +374,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: sFont.value,
+      fontFamily: GoogleFonts.getFont(sFont.value).fontFamily,
       textTheme: _textThemeOverrides,
     );
   }

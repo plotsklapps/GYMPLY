@@ -86,7 +86,7 @@ class DonationModal extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Supporters get custom app icons!',
+                        'Supporters get more theming and font options!',
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.bold,

@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/services.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/toast_service.dart';
-import 'package:gymply/signals/appicon_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
@@ -16,12 +14,7 @@ import 'package:hive_ce/hive_ce.dart';
 import 'package:logger/logger.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-// Central provider for user preferences and UI configuration. It knows how
-// settings behave.
-//
-// init() / loadSettings(): Read Settings model from Hive and push values
-//                          into global Signals on app startup.
-
+// Central provider for user preferences and UI configuration.
 class SettingsService {
   // Singleton pattern.
   factory SettingsService() {
@@ -31,11 +24,6 @@ class SettingsService {
   SettingsService._internal();
   static final SettingsService _instance = SettingsService._internal();
   final Logger _logger = Logger();
-
-  // MethodChannel for native communication.
-  static const MethodChannel _iconChannel = MethodChannel(
-    'dev.plotsklapps.gymply/app_icon',
-  );
 
   // Reference to settings box from HiveService.
   late final Box<Settings> _settingsBox;
@@ -71,7 +59,7 @@ class SettingsService {
     sFavoriteExercises.value = List<int>.from(settings.favoriteExercises);
     sWakelock.value = settings.isWakelock;
     sFlexScheme.value = settings.flexScheme;
-    sFont.value = settings.fontFamily;
+    sFont.value = settings.activeFontFamily;
     sAge.value = settings.age;
     sHeight.value = settings.height;
     sWeight.value = settings.weight;
@@ -79,7 +67,6 @@ class SettingsService {
     sSomatotype.value = settings.somatotypeIndex;
     sOnboardingCompleted.value = settings.onboardingCompleted;
     sExercisesGridMode.value = settings.isExercisesGridMode;
-    sAppIcon.value = settings.appIcon;
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -226,7 +213,7 @@ class SettingsService {
   }
 
   // Update FlexScheme.
-  Future<void> updateFlexScheme(FlexSchemes scheme) async {
+  Future<void> updateFlexScheme(FlexScheme scheme) async {
     try {
       sFlexScheme.value = scheme;
 
@@ -259,7 +246,10 @@ class SettingsService {
 
       final Settings? settings = _settingsBox.get('settings');
       if (settings != null) {
-        await _settingsBox.put('settings', settings.copyWith(fontFamily: font));
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(googleFontFamily: font),
+        );
       }
 
       _logger.i('SettingsService: Font updated to $font');
@@ -272,47 +262,6 @@ class SettingsService {
       ToastService.showError(
         title: 'Settings Error',
         subtitle: 'Failed to update font.',
-      );
-    }
-  }
-
-  // Update App Icon.
-  Future<void> updateAppIcon(String iconName) async {
-    try {
-      sAppIcon.value = iconName;
-
-      final Settings? settings = _settingsBox.get('settings');
-      if (settings != null) {
-        await _settingsBox.put(
-          'settings',
-          settings.copyWith(appIcon: iconName),
-        );
-      }
-
-      if (Platform.isAndroid) {
-        await _iconChannel.invokeMethod('changeIcon', <String, String>{
-          'iconName': iconName,
-        });
-        _logger.i(
-          'SettingsService: AppIcon updated to $iconName. Exiting app.',
-        );
-
-        // Force close the app to ensure the new icon applies consistently
-        await SystemNavigator.pop();
-      } else {
-        _logger.w(
-          'SettingsService: Dynamic app icon is only supported on Android.',
-        );
-      }
-    } on Object catch (e, stackTrace) {
-      _logger.e(
-        'SettingsService: Failed to update AppIcon',
-        error: e,
-        stackTrace: stackTrace,
-      );
-      ToastService.showError(
-        title: 'Settings Error',
-        subtitle: 'Failed to update app icon.',
       );
     }
   }
