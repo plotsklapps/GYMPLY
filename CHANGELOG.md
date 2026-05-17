@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.6+69] - 2026-05-17
+- **Activity & Icon Management:**
+  - Refactored dynamic app icon switching in `MainActivity.kt` to toggle the base `MainActivity` directly instead of using a `MainActivityDefault` alias, utilizing the `DONT_KILL_APP` flag for smoother transitions.
+  - Removed `MainActivityDefault` activity-alias from `AndroidManifest.xml` and updated standard icon aliases to reference the base launcher mipmap.
+  - Updated `settings_service.dart` to include a platform check for Android and to `await` the `SystemNavigator.pop()` call to ensure correct app closure.
+  - Updated `themesettings_modal.dart` to reference `MainActivity` instead of the removed alias.
+- **Dependency & Asset Updates:**
+  - Added configuration files (`flutter-icons-orange.yaml`, `flutter-icons-pink.yaml`, `flutter-icons-purple.yaml`) for launcher icon generation.
+  - Updated launcher icon assets for orange, pink, and purple variants across all density buckets.
+  - Upgraded dependencies including `device_info_plus`, `file_picker`, `package_info_plus`, `share_plus`, `json_annotation`, `lucide_icons_flutter`, `ndk`, and `wakelock_plus`.
+- **Maintenance:**
+  - Incremented project version to `0.0.6+69` and synced `version.json`.
+
 ## [0.0.6+67] - 2026-05-11
 - **Activity & Icon Management:**
   - Introduced `MainActivityDefault` activity-alias to handle default app icon launcher intents.
