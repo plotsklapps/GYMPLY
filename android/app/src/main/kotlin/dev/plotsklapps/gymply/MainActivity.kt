@@ -30,33 +30,49 @@ class MainActivity : FlutterActivity() {
         val packageManager = context.packageManager
         val packageName = context.packageName
 
-        // List of all aliases we defined in AndroidManifest.xml
-        // We NEVER include the base "MainActivity" here to ensure it stays enabled
-        // for Flutter tools and system stability.
         val aliases = listOf(
-            "MainActivityDefault",
             "MainActivityPink",
             "MainActivityPurple",
             "MainActivityOrange"
         )
 
-        // Enable the new icon alias first
-        val newComponent = ComponentName(packageName, "$packageName.$iconName")
-        packageManager.setComponentEnabledSetting(
-            newComponent,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            0
-        )
-
-        // Then disable the other aliases
-        for (alias in aliases) {
-            if (alias != iconName) {
-                val componentName = ComponentName(packageName, "$packageName.$alias")
+        if (iconName == "MainActivity") {
+            // Re-enable the base MainActivity
+            packageManager.setComponentEnabledSetting(
+                ComponentName(packageName, "$packageName.MainActivity"),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
+            // Disable all custom aliases
+            for (alias in aliases) {
                 packageManager.setComponentEnabledSetting(
-                    componentName,
+                    ComponentName(packageName, "$packageName.$alias"),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    0
+                    PackageManager.DONT_KILL_APP
                 )
+            }
+        } else {
+            // Enable the chosen custom alias
+            packageManager.setComponentEnabledSetting(
+                ComponentName(packageName, "$packageName.$iconName"),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
+            // Disable the base MainActivity
+            packageManager.setComponentEnabledSetting(
+                ComponentName(packageName, "$packageName.MainActivity"),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+            // Disable all other custom aliases
+            for (alias in aliases) {
+                if (alias != iconName) {
+                    packageManager.setComponentEnabledSetting(
+                        ComponentName(packageName, "$packageName.$alias"),
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                }
             }
         }
     }

@@ -1,0 +1,7 @@
+flutter_launcher_icons:
+  image_path: "assets/icons/supporterPink.png"
+  android: "ic_launcher_pink"
+  min_sdk_android: 21
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icons/supporterPink.png"
+  adaptive_icon_foreground_inset: 16

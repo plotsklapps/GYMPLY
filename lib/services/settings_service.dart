@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:gymply/models/settings_model.dart';
@@ -288,13 +289,21 @@ class SettingsService {
         );
       }
 
-      await _iconChannel.invokeMethod('changeIcon', <String, String>{
-        'iconName': iconName,
-      });
-      _logger.i('SettingsService: AppIcon updated to $iconName. Exiting app.');
-      
-      // Force close the app to ensure the new icon applies consistently
-      await SystemNavigator.pop();
+      if (Platform.isAndroid) {
+        await _iconChannel.invokeMethod('changeIcon', <String, String>{
+          'iconName': iconName,
+        });
+        _logger.i(
+          'SettingsService: AppIcon updated to $iconName. Exiting app.',
+        );
+
+        // Force close the app to ensure the new icon applies consistently
+        await SystemNavigator.pop();
+      } else {
+        _logger.w(
+          'SettingsService: Dynamic app icon is only supported on Android.',
+        );
+      }
     } on Object catch (e, stackTrace) {
       _logger.e(
         'SettingsService: Failed to update AppIcon',
