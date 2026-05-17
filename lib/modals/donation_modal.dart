@@ -86,7 +86,7 @@ class DonationModal extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Supporters get more theming and font options!',
+                        'You get: 50+ Themes and 100+ Fonts!',
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.bold,

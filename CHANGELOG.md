@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+70] - 2026-05-17
+- **Supporter Perks Redesign (Themes & Fonts):**
+  - Removed dynamic app icon switching logic (including `activity-alias` entries in `AndroidManifest.xml` and native `MethodChannel` code in `MainActivity.kt`) in favor of advanced theming options.
+  - Introduced `SupporterThemeModal` and `SupporterFontModal` to provide an expanded grid of `FlexScheme` themes and a highly curated list of 100+ `GoogleFonts` typography choices for supporters.
+  - Updated `ThemeSettingsModal` with a new "Become a GYMPLY supporter" call-to-action for free users, and a "Thank you" message for active supporters.
+  - Enabled `showDragHandle` on new bottom sheets for improved UX and refined UI details like font sizing.
+- **Architecture & Data Migration:**
+  - Integrated the `google_fonts` package to dynamically load fonts and removed hardcoded local font assets from `pubspec.yaml`.
+  - Refactored core theme management to directly utilize the library's `FlexScheme` enum, entirely removing the custom wrapper.
+  - Upgraded the `SettingsModel` and `SettingsService` with robust Hive migration logic to securely transition legacy integer-based themes/fonts to flexible string-based `flexSchemeName` and `googleFontFamily` persistence without data loss.
+- **Maintenance:**
+  - Cleaned up obsolete signals and configuration files (`flutter-icons-*.yaml`) related to the removed app icon functionality.
+  - Incremented project version to `0.0.7+70`.
+
 ## [0.0.6+69] - 2026-05-17
 - **Activity & Icon Management:**
   - Refactored dynamic app icon switching in `MainActivity.kt` to toggle the base `MainActivity` directly instead of using a `MainActivityDefault` alias, utilizing the `DONT_KILL_APP` flag for smoother transitions.

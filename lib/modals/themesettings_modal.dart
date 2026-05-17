@@ -1,8 +1,8 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/donation_modal.dart';
-import 'package:gymply/modals/supporter_font_modal.dart';
-import 'package:gymply/modals/supporter_theme_modal.dart';
+import 'package:gymply/modals/supporterfont_modal.dart';
+import 'package:gymply/modals/supportertheme_modal.dart';
 import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';

@@ -63,6 +63,8 @@ class Settings {
   @HiveField(12, defaultValue: true)
   final bool isExercisesGridMode;
 
+  // 13 was for appIcon, type String.
+
   @HiveField(14, defaultValue: false)
   final bool isSupporter;
 
