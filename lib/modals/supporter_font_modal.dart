@@ -136,7 +136,9 @@ class SupporterFontModal extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   icon: const Icon(LucideIcons.circleX),
                 ),
               ],
@@ -169,11 +171,11 @@ class SupporterFontModal extends StatelessWidget {
                           )
                         : const SizedBox(
                             width: 24,
-                          ), // Placeholder to align texts
+                          ),
                     title: Text(
                       fontName,
                       style: fontStyle.copyWith(
-                        fontSize: 24,
+                        fontSize: 20,
                         color: isSelected ? theme.colorScheme.secondary : null,
                       ),
                     ),

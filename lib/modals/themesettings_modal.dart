@@ -1,8 +1,10 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:gymply/modals/donation_modal.dart';
 import 'package:gymply/modals/supporter_font_modal.dart';
 import 'package:gymply/modals/supporter_theme_modal.dart';
 import 'package:gymply/services/donation_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -90,8 +92,14 @@ class ThemeSettingsModal extends StatelessWidget {
                   },
                 ),
 
+                const Divider(),
+
                 if (isSupporter) ...<Widget>[
-                  const Divider(),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Thank you for supporting GYMPLY.',
+                    style: TextStyle(color: theme.colorScheme.secondary),
+                  ),
                   ListTile(
                     leading: const Icon(LucideIcons.palette),
                     title: const Text('Themes'),
@@ -99,6 +107,7 @@ class ThemeSettingsModal extends StatelessWidget {
                     trailing: const Icon(LucideIcons.chevronRight),
                     onTap: () async {
                       await showModalBottomSheet<void>(
+                        showDragHandle: true,
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
@@ -114,6 +123,7 @@ class ThemeSettingsModal extends StatelessWidget {
                     trailing: const Icon(LucideIcons.chevronRight),
                     onTap: () async {
                       await showModalBottomSheet<void>(
+                        showDragHandle: true,
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
@@ -132,6 +142,21 @@ class ThemeSettingsModal extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        ListTile(
+                          onTap: () async {
+                            await ModalService.showModal(
+                              context: context,
+                              child: const DonationModal(),
+                            );
+                          },
+                          leading: const Icon(LucideIcons.heart),
+                          title: const Text('Become a GYMPLY supporter'),
+                          subtitle: const Text(
+                            'Get access to 50+ themes and 100+ '
+                            'fonts!',
+                          ),
+                          trailing: const Icon(LucideIcons.chevronRight),
+                        ),
                         SizedBox(
                           width: double.infinity,
                           child: SegmentedButton<FlexScheme>(
