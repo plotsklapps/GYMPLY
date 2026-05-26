@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
   - Standardized `Settings` model `copyWith` method and cleaned up linter warnings to maintain project-wide coding style consistency.
   - Successfully regenerated Hive adapters following model adjustments.
   - Upgraded dependencies including `hive_ce`, `hive_ce_flutter`, and `hive_ce_generator` for improved data persistence reliability.
+  - Removed obsolete packages (motor & stupid_simple_sheet).
   - Incremented project version to `0.0.7+71`.
 
 ## [0.0.7+70] - 2026-05-17
