@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+71] - 2026-05-17
+- **Supporter Settings Persistence:**
+  - Refactored `Settings` model getters to strictly prioritize new String-based `flexSchemeName` and `googleFontFamily` fields for supporter accounts, ensuring selections persist across app restarts.
+  - Improved fallback logic for non-supporter legacy integer fields to be more robust and defensive.
+- **Code Quality & Maintenance:**
+  - Standardized `Settings` model `copyWith` method and cleaned up linter warnings to maintain project-wide coding style consistency.
+  - Successfully regenerated Hive adapters following model adjustments.
+  - Upgraded dependencies including `hive_ce`, `hive_ce_flutter`, and `hive_ce_generator` for improved data persistence reliability.
+  - Incremented project version to `0.0.7+71`.
+
 ## [0.0.7+70] - 2026-05-17
 - **Supporter Perks Redesign (Themes & Fonts):**
   - Removed dynamic app icon switching logic (including `activity-alias` entries in `AndroidManifest.xml` and native `MethodChannel` code in `MainActivity.kt`) in favor of advanced theming options.
