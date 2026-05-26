@@ -33,13 +33,15 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       fontFamily: fields[11] == null ? 'LeagueGothic' : fields[11] as String,
       isExercisesGridMode: fields[12] == null ? true : fields[12] as bool,
       isSupporter: fields[14] == null ? false : fields[14] as bool,
+      flexSchemeName: fields[15] as String?,
+      googleFontFamily: fields[16] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -67,7 +69,11 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(12)
       ..write(obj.isExercisesGridMode)
       ..writeByte(14)
-      ..write(obj.isSupporter);
+      ..write(obj.isSupporter)
+      ..writeByte(15)
+      ..write(obj.flexSchemeName)
+      ..writeByte(16)
+      ..write(obj.googleFontFamily);
   }
 
   @override

@@ -36,6 +36,7 @@ class Settings {
   @HiveField(3, defaultValue: true)
   final bool isWakelock;
 
+  // Non-supporter FlexScheme value.
   @HiveField(4, defaultValue: 0)
   final int flexSchemeIndex;
 
@@ -57,6 +58,7 @@ class Settings {
   @HiveField(10, defaultValue: 1)
   final int somatotypeIndex;
 
+  // Non-supporter Google Fonts value.
   @HiveField(11, defaultValue: 'LeagueGothic')
   final String fontFamily;
 
@@ -76,15 +78,20 @@ class Settings {
   @HiveField(16)
   final String? googleFontFamily;
 
-  // Custom enum mapping.
   FlexScheme get flexScheme {
-    if (flexSchemeName != null) {
+    // If supporter, use saved Strin or default.
+    if (isSupporter && flexSchemeName != null) {
       return FlexScheme.values.firstWhere(
-        (e) => e.name == flexSchemeName,
-        orElse: () => FlexScheme.shark,
+        (FlexScheme flexScheme) {
+          return flexScheme.name == flexSchemeName;
+        },
+        orElse: () {
+          return FlexScheme.shark;
+        },
       );
     }
-    // Migration logic for old index.
+
+    // Non-supporter indexes.
     switch (flexSchemeIndex) {
       case 0:
         return FlexScheme.shark;
@@ -97,12 +104,13 @@ class Settings {
     }
   }
 
-  // Google Fonts string mapping
   String get activeFontFamily {
-    if (googleFontFamily != null) {
+    // If supporter, use saved String or default.
+    if (isSupporter && googleFontFamily != null) {
       return googleFontFamily!;
     }
-    // Migration logic for old hardcoded names
+
+    // Non-supporter Strings.
     switch (fontFamily) {
       case 'LeagueGothic':
         return 'League Gothic';
@@ -137,8 +145,7 @@ class Settings {
       initialRestTime: initialRestTime ?? this.initialRestTime,
       favoriteExercises: favoriteExercises ?? this.favoriteExercises,
       isWakelock: isWakelock ?? this.isWakelock,
-      flexSchemeIndex:
-          this.flexSchemeIndex, // Keep legacy untouched unless needed
+      flexSchemeIndex: flexSchemeIndex,
       age: age ?? this.age,
       height: height ?? this.height,
       weight: weight ?? this.weight,
