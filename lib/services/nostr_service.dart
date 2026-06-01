@@ -67,54 +67,68 @@ class NostrService {
   // --- SIGNALS ---
 
   // String Signal to track npub.
-  final Signal<String?> sNpub = Signal<String?>(null, debugLabel: 'sNpub');
+  final Signal<String?> sNpub = Signal<String?>(
+    null,
+    options: const SignalOptions<String?>(name: 'sNpub'),
+  );
   // ONLY track if nsec is available, this is a SECRET, DO NOT TRACK.
-  final Signal<bool> sNsec = Signal<bool>(false, debugLabel: 'sNsec');
+  final Signal<bool> sNsec = Signal<bool>(
+    false,
+    options: const SignalOptions<bool>(name: 'sNsec'),
+  );
 
   // Metadata Signal for own profile metadata.
   final Signal<Metadata?> sMetadata = Signal<Metadata?>(
     null,
-    debugLabel: 'sMetadata',
+    options: const SignalOptions<Metadata?>(name: 'sMetadata'),
   );
 
   // Signal<List<Nip01Event>> for Feed Events.
   final Signal<List<Nip01Event>> sFeedEvents = Signal<List<Nip01Event>>(
     <Nip01Event>[],
-    debugLabel: 'sFeedEvents',
+    options: const SignalOptions<List<Nip01Event>>(name: 'sFeedEvents'),
   );
 
   // Signal for Metadata Map (pubkey -> Metadata).
   final Signal<Map<String, Metadata>> sFeedMetadata =
       Signal<Map<String, Metadata>>(
         <String, Metadata>{},
-        debugLabel: 'sFeedMetadata',
+        options: const SignalOptions<Map<String, Metadata>>(
+          name: 'sFeedMetadata',
+        ),
       );
 
   // Signal for Comments of the currently opened WorkoutNote.
   final Signal<List<Nip01Event>> sActiveWorkoutComments =
       Signal<List<Nip01Event>>(
         <Nip01Event>[],
-        debugLabel: 'sActiveWorkoutComments',
+        options: const SignalOptions<List<Nip01Event>>(
+          name: 'sActiveWorkoutComments',
+        ),
       );
 
   // Signal to keep track of reactions to every WorkoutNote on screen.
   final Signal<Map<String, Set<String>>> sFeedReactions =
       Signal<Map<String, Set<String>>>(
         <String, Set<String>>{},
-        debugLabel: 'sFeedReactions',
+        options: const SignalOptions<Map<String, Set<String>>>(
+          name: 'sFeedReactions',
+        ),
       );
 
   // Signal to keep track of comments to every WorkoutNote on screen.
   final Signal<Map<String, Set<String>>> sFeedComments =
       Signal<Map<String, Set<String>>>(
         <String, Set<String>>{},
-        debugLabel: 'sFeedComments',
+        options: const SignalOptions<Map<String, Set<String>>>(
+          name: 'sFeedComments',
+        ),
       );
 
   // Bool Signal to track feed loading state.
   final Signal<bool> sLoadingFeed = Signal<bool>(
     false,
-    debugLabel: 'sLoadingFeed',
+    options: const SignalOptions<bool>(name: 'sLoadingFeed'),
   );
 
   // --- SUBSCRIPTIONS ---
@@ -236,7 +250,7 @@ class NostrService {
     final List<String> waterfallServers = List<String>.from(
       _defaultBlossomServers,
     );
-    // Shuffle the secondary servers to distribute load, but keep the list stable
+    // Shuffle secondary servers to distribute load, but keep list stable
     // for this specific attempt.
     final String firstChoice = waterfallServers.removeAt(0);
     waterfallServers

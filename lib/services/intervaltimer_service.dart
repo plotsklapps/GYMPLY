@@ -85,31 +85,31 @@ class IntervalTimer {
   // Int Signal to track initial interval time (in milliseconds).
   static final Signal<int> sInitialIntervalTime = Signal<int>(
     60000,
-    debugLabel: 'sInitialIntervalTime',
+    options: const SignalOptions<int>(name: 'sInitialIntervalTime'),
   );
 
   // Int Signal to track elapsed interval time (in milliseconds).
   static final Signal<int> sElapsedIntervalTime = Signal<int>(
     60000,
-    debugLabel: 'sElapsedIntervalTime',
+    options: const SignalOptions<int>(name: 'sElapsedIntervalTime'),
   );
 
   // Bool Signal to track if interval timer has completed.
   static final Signal<bool> sIntervalTimerCompleted = Signal<bool>(
     false,
-    debugLabel: 'sIntervalTimerCompleted',
+    options: const SignalOptions<bool>(name: 'sIntervalTimerCompleted'),
   );
 
   // Bool Signal to track if interval timer is running.
   static final Signal<bool> sIntervalTimerRunning = Signal<bool>(
     false,
-    debugLabel: 'sIntervalTimerRunning',
+    options: const SignalOptions<bool>(name: 'sIntervalTimerRunning'),
   );
 
   // Bool Signal to track if auto-interval is enabled.
   static final Signal<bool> sAutoIntervalOn = Signal<bool>(
     false,
-    debugLabel: 'sAutoIntervalOn',
+    options: const SignalOptions<bool>(name: 'sAutoIntervalOn'),
   );
 
   // Computed Signal for formatted time (watches sElapsedIntervalTime Signal).
@@ -117,7 +117,7 @@ class IntervalTimer {
     () {
       return sElapsedIntervalTime.value.formatHMMSSD();
     },
-    debugLabel: 'cFormattedIntervalTime',
+    options: const ComputedOptions<String>(name: 'cFormattedIntervalTime'),
   );
 
   Future<void> startTimer() async {

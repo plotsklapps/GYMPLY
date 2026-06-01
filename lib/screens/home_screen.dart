@@ -14,7 +14,7 @@ import 'package:gymply/widgets/totaltimer_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends SignalStatefulWidget {
   const HomeScreen({super.key});
 
   @override
@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool showFeed = cShowFeed.watch(context);
+    final bool showFeed = cShowFeed.value;
 
     return Scaffold(
       appBar: AppBar(

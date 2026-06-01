@@ -11,11 +11,14 @@ final Computed<bool> cShowFeed = Computed<bool>(
   () {
     return nostrService.sNpub.value != null && sIsOnline.value;
   },
-  debugLabel: 'cShowFeed',
+  options: const ComputedOptions<bool>(name: 'cShowFeed'),
 );
 
 // Int Signal to track current physical tab index. Default to 1 (Statistics).
-final Signal<int> sCurrentTab = Signal<int>(1, debugLabel: 'sCurrentTab');
+final Signal<int> sCurrentTab = Signal<int>(
+  1,
+  options: const SignalOptions<int>(name: 'cShowFeed'),
+);
 
 // Helper to switch tabs using AppTab enum. Feed tab is conditionally showing.
 void navigateToTab(AppTab tab) {

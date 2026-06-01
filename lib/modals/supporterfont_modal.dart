@@ -5,7 +5,7 @@ import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class SupporterFontModal extends StatelessWidget {
+class SupporterFontModal extends SignalWidget {
   const SupporterFontModal({super.key});
 
   static const List<String> _fonts = <String>[
@@ -114,7 +114,7 @@ class SupporterFontModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String currentFont = sFont.watch(context);
+    final String currentFont = sFont.value;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.8,
@@ -158,7 +158,7 @@ class SupporterFontModal extends StatelessWidget {
                   TextStyle fontStyle;
                   try {
                     fontStyle = GoogleFonts.getFont(fontName);
-                  } catch (_) {
+                  } on Exception catch (_) {
                     // Fallback in case a font name is misspelled
                     fontStyle = const TextStyle();
                   }

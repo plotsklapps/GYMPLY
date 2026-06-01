@@ -16,7 +16,7 @@ enum BodyMetricType { weight, bmi, bodyFat }
 // Enum for timerange choices.
 enum BodyMetricRange { days30, sixMonths, oneYear, allTime }
 
-class BodyMetricsModal extends StatefulWidget {
+class BodyMetricsModal extends SignalStatefulWidget {
   const BodyMetricsModal({super.key});
 
   @override
@@ -167,7 +167,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final List<BodyMetric> history = sBodyMetricsHistory.watch(context);
+    final List<BodyMetric> history = sBodyMetricsHistory.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

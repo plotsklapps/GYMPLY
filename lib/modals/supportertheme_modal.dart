@@ -5,14 +5,14 @@ import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class SupporterThemeModal extends StatelessWidget {
+class SupporterThemeModal extends SignalWidget {
   const SupporterThemeModal({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = sDarkMode.watch(context);
-    final FlexScheme currentScheme = sFlexScheme.watch(context);
+    final bool isDark = sDarkMode.value;
+    final FlexScheme currentScheme = sFlexScheme.value;
 
     // Get all valid schemes (exclude custom if it's there and empty)
     final List<FlexScheme> schemes = FlexScheme.values

@@ -3,7 +3,7 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class RestTimerModal extends StatelessWidget {
+class RestTimerModal extends SignalWidget {
   const RestTimerModal({super.key});
 
   @override
@@ -11,7 +11,7 @@ class RestTimerModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final int initialSeconds = RestTimer.sInitialRestTime.watch(context);
+    final int initialSeconds = RestTimer.sInitialRestTime.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

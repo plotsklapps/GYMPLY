@@ -12,7 +12,7 @@ import 'package:signals/signals_flutter.dart';
 
 enum WorkoutMetric { volume, reps, sets, time, distance, calories }
 
-class MonthStatModal extends StatefulWidget {
+class MonthStatModal extends SignalStatefulWidget {
   const MonthStatModal({
     required this.date,
     super.key,
@@ -35,8 +35,8 @@ class _MonthStatModalState extends State<MonthStatModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals to ensure the modal rebuilds on deletion or changes.
-    final List<Workout> history = sWorkoutHistory.watch(context);
-    final Workout active = sActiveWorkout.watch(context);
+    final List<Workout> history = sWorkoutHistory.value;
+    final Workout active = sActiveWorkout.value;
 
     // Calculate workout keys dynamically.
     final Set<String> workoutDateKeys = history.map((Workout w) {

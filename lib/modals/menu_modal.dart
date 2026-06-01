@@ -14,7 +14,7 @@ import 'package:gymply/signals/backup_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class MenuModal extends StatelessWidget {
+class MenuModal extends SignalWidget {
   const MenuModal({super.key});
 
   @override
@@ -22,16 +22,16 @@ class MenuModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch update Signals.
-    final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(context);
+    final bool isChecking = UpdateService().sIsCheckingForUpdate.value;
 
     // Watch backup/restore Signals.
-    final bool isBackingUp = sIsBackingUp.watch(context);
-    final bool isRestoring = sIsRestoring.watch(context);
+    final bool isBackingUp = sIsBackingUp.value;
+    final bool isRestoring = sIsRestoring.value;
 
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
 
-    final double backupProgress = sProgress.watch(context);
+    final double backupProgress = sProgress.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

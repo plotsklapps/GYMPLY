@@ -11,7 +11,7 @@ import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class WorkoutScreen extends StatefulWidget {
+class WorkoutScreen extends SignalStatefulWidget {
   const WorkoutScreen({super.key});
 
   @override
@@ -28,7 +28,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final Workout workout = sActiveWorkout.watch(context);
+    final Workout workout = sActiveWorkout.value;
 
     if (workout.isEmpty) {
       return const Center(
@@ -45,10 +45,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       itemCount: reversedExercises.length,
       // Use custom handle (LucideIcons.gripVertical).
       buildDefaultDragHandles: false,
-      onReorder: (int oldIndex, int newIndex) {
+      onReorderItem: (int oldIndex, int newIndex) {
         // Map reversed indices back to original indices for WorkoutService.
         final int originalOldIndex = workout.exercises.length - 1 - oldIndex;
-        // We remove and re-insert, adjust index based on newIndex.
+        // newIndex is index to insert at, which accounts for item already
+        // being removed.
         final int originalNewIndex = workout.exercises.length - newIndex;
 
         workoutService.moveExercise(originalOldIndex, originalNewIndex);

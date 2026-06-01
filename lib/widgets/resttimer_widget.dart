@@ -7,7 +7,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class RestTimerWidget extends StatelessWidget {
+class RestTimerWidget extends SignalWidget {
   const RestTimerWidget({super.key});
 
   @override
@@ -17,8 +17,8 @@ class RestTimerWidget extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final int elapsedRestTime = RestTimer.sElapsedRestTime.watch(context);
-    final bool isRestTimerRunning = RestTimer.sRestTimerRunning.watch(context);
+    final int elapsedRestTime = RestTimer.sElapsedRestTime.value;
+    final bool isRestTimerRunning = RestTimer.sRestTimerRunning.value;
 
     // Create readable time String.
     final String formattedTime = elapsedRestTime.formatMSS();

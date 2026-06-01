@@ -11,7 +11,7 @@ import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ExerciseStatsModal extends StatelessWidget {
+class ExerciseStatsModal extends SignalWidget {
   const ExerciseStatsModal({
     required this.exercise,
     super.key,
@@ -55,9 +55,9 @@ class ExerciseStatsModal extends StatelessWidget {
       final CardioExercise ex = exercise as CardioExercise;
 
       // Watch personal stats for calorie calculation.
-      final double userWeight = sWeight.watch(context);
-      final int userAge = sAge.watch(context);
-      final int userSex = sSex.watch(context);
+      final double userWeight = sWeight.value;
+      final int userAge = sAge.value;
+      final int userSex = sSex.value;
 
       detailRows.addAll(<Widget>[
         _StatRow(
@@ -87,9 +87,9 @@ class ExerciseStatsModal extends StatelessWidget {
       final StretchExercise ex = exercise as StretchExercise;
 
       // Watch personal stats for calorie calculation.
-      final double userWeight = sWeight.watch(context);
-      final int userAge = sAge.watch(context);
-      final int userSex = sSex.watch(context);
+      final double userWeight = sWeight.value;
+      final int userAge = sAge.value;
+      final int userSex = sSex.value;
 
       detailRows.addAll(<Widget>[
         _StatRow(label: 'Sets', value: ex.totalSets.toString()),

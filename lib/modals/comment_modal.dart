@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
-class CommentModal extends StatefulWidget {
+class CommentModal extends SignalStatefulWidget {
   const CommentModal({
     required this.event,
     required this.imageUrl,
@@ -82,14 +82,10 @@ class _CommentModalState extends State<CommentModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final List<Nip01Event> comments = nostrService.sActiveWorkoutComments.watch(
-      context,
-    );
-    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.watch(
-      context,
-    );
-    final Map<String, Set<String>> reactionsMap = nostrService.sFeedReactions
-        .watch(context);
+    final List<Nip01Event> comments = nostrService.sActiveWorkoutComments.value;
+    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.value;
+    final Map<String, Set<String>> reactionsMap =
+        nostrService.sFeedReactions.value;
 
     final String? myNpub = nostrService.sNpub.value;
     final String myPubKey = myNpub != null ? Nip19.decode(myNpub) : '';

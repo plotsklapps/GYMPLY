@@ -8,7 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutModal extends StatelessWidget {
+class AboutModal extends SignalWidget {
   const AboutModal({super.key});
 
   @override
@@ -16,13 +16,11 @@ class AboutModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch update Signals.
-    final bool isChecking = UpdateService().sIsCheckingForUpdate.watch(
-      context,
-    );
+    final bool isChecking = UpdateService().sIsCheckingForUpdate.value;
 
     // Watch backup/restore Signals.
-    final bool isBackingUp = sIsBackingUp.watch(context);
-    final bool isRestoring = sIsRestoring.watch(context);
+    final bool isBackingUp = sIsBackingUp.value;
+    final bool isRestoring = sIsRestoring.value;
 
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;

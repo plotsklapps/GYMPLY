@@ -10,15 +10,15 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends SignalWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Watch Nostr keys and metadata from service.
-    final String? npub = nostrService.sNpub.watch(context);
-    final bool hasNsec = nostrService.sNsec.watch(context);
-    final Metadata? metadata = nostrService.sMetadata.watch(context);
+    final String? npub = nostrService.sNpub.value;
+    final bool hasNsec = nostrService.sNsec.value;
+    final Metadata? metadata = nostrService.sMetadata.value;
 
     return Scaffold(
       appBar: AppBar(

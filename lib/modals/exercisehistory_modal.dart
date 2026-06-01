@@ -15,7 +15,7 @@ import 'package:gymply/widgets/progresschart_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ExerciseHistoryModal extends StatefulWidget {
+class ExerciseHistoryModal extends SignalStatefulWidget {
   const ExerciseHistoryModal({
     required this.exercise,
     super.key,
@@ -47,8 +47,8 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch history signals.
-    final List<Workout> history = sWorkoutHistory.watch(context);
-    final Workout active = sActiveWorkout.watch(context);
+    final List<Workout> history = sWorkoutHistory.value;
+    final Workout active = sActiveWorkout.value;
 
     // Combine history and active workout, ensuring no duplicates by ID.
     final Map<String, Workout> uniqueWorkouts = <String, Workout>{

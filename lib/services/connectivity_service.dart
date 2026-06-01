@@ -5,7 +5,10 @@ import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Bool Signal to track online status.
-final Signal<bool> sIsOnline = Signal<bool>(true, debugLabel: 'sIsOnline');
+final Signal<bool> sIsOnline = Signal<bool>(
+  true,
+  options: const SignalOptions<bool>(name: 'sIsOnline'),
+);
 
 class ConnectivityService {
   // Singleton pattern.

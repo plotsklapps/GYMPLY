@@ -18,7 +18,7 @@ import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class StatisticsScreen extends StatefulWidget {
+class StatisticsScreen extends SignalStatefulWidget {
   const StatisticsScreen({super.key});
 
   @override
@@ -48,15 +48,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final List<Workout> history = sWorkoutHistory.watch(context);
-    final Workout activeWorkout = sActiveWorkout.watch(context);
-    final double userWeight = sWeight.watch(context);
-    final int userAge = sAge.watch(context);
-    final int userSex = sSex.watch(context);
+    final List<Workout> history = sWorkoutHistory.value;
+    final Workout activeWorkout = sActiveWorkout.value;
+    final double userWeight = sWeight.value;
+    final int userAge = sAge.value;
+    final int userSex = sSex.value;
 
-    final Set<String> workoutDateKeys = history
-        .map((Workout w) => w.dateKey)
-        .toSet();
+    final Set<String> workoutDateKeys = history.map((Workout w) {
+      return w.dateKey;
+    }).toSet();
     if (activeWorkout.exercises.isNotEmpty) {
       workoutDateKeys.add(activeWorkout.dateKey);
     }

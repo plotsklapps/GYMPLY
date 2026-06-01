@@ -7,7 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart' hide Logger;
 import 'package:signals/signals_flutter.dart';
 
-class FeedScreen extends StatefulWidget {
+class FeedScreen extends SignalStatefulWidget {
   const FeedScreen({super.key});
 
   @override
@@ -41,13 +41,11 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     // Watch Signals.
-    final List<Nip01Event> events = nostrService.sFeedEvents.watch(context);
-    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.watch(
-      context,
-    );
-    final Map<String, Set<String>> reactionsMap = nostrService.sFeedReactions
-        .watch(context);
-    final bool isLoading = nostrService.sLoadingFeed.watch(context);
+    final List<Nip01Event> events = nostrService.sFeedEvents.value;
+    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.value;
+    final Map<String, Set<String>> reactionsMap =
+        nostrService.sFeedReactions.value;
+    final bool isLoading = nostrService.sLoadingFeed.value;
 
     // Loading Spinner.
     if (isLoading && events.isEmpty) {

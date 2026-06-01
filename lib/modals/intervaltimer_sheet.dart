@@ -3,7 +3,7 @@ import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class IntervalTimerModal extends StatelessWidget {
+class IntervalTimerModal extends SignalWidget {
   const IntervalTimerModal({super.key});
 
   @override
@@ -11,9 +11,7 @@ class IntervalTimerModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final int initialMilliSeconds = IntervalTimer.sInitialIntervalTime.watch(
-      context,
-    );
+    final int initialMilliSeconds = IntervalTimer.sInitialIntervalTime.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

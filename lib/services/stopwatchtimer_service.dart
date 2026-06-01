@@ -22,7 +22,7 @@ class StopwatchTimer {
   // Int Signal to track elapsed stopwatch time.
   static final Signal<int> sElapsedStopwatchTime = Signal<int>(
     0,
-    debugLabel: 'sElapsedStopwatchTime',
+    options: const SignalOptions<int>(name: 'sElapsedStopwatchTime'),
   );
 
   // Computed Signal for formatted time.
@@ -31,13 +31,13 @@ class StopwatchTimer {
       // Using centiseconds to provide stopwatch 'feel'.
       return sElapsedStopwatchTime.value.formatHMMSSCC();
     },
-    debugLabel: 'sFormattedStopwatchTime',
+    options: const ComputedOptions<String>(name: 'cFormattedStopwatchTime'),
   );
 
   // Bool Signal to track if stopwatch is running.
   static final Signal<bool> sStopwatchTimerRunning = Signal<bool>(
     false,
-    debugLabel: 'sStopwatchTimerRunning',
+    options: const SignalOptions<bool>(name: 'sStopwatchTimerRunning'),
   );
 
   Timer? _timer;

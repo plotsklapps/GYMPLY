@@ -6,7 +6,7 @@ import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:signals/signals_flutter.dart';
 
 // StretchTimer Text Widget to handle high-frequency timer updates.
-class StretchTimerText extends StatelessWidget {
+class StretchTimerText extends SignalWidget {
   const StretchTimerText({
     required this.mode,
     super.key,
@@ -22,9 +22,9 @@ class StretchTimerText extends StatelessWidget {
     // Watch ONLY values needed for text.
     String timerText;
     if (mode == StretchMode.stopwatch) {
-      timerText = StopwatchTimer.cFormattedStopwatchTime.watch(context);
+      timerText = StopwatchTimer.cFormattedStopwatchTime.value;
     } else {
-      timerText = IntervalTimer.cFormattedIntervalTime.watch(context);
+      timerText = IntervalTimer.cFormattedIntervalTime.value;
     }
 
     return Text(

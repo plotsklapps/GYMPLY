@@ -22,7 +22,7 @@ enum StretchMode { stopwatch, interval }
 // Global StretchMode Signal, default to Stopwatch.
 final Signal<StretchMode> sStretchMode = Signal<StretchMode>(
   StretchMode.stopwatch,
-  debugLabel: 'sStretchMode',
+  options: const SignalOptions<StretchMode>(name: 'sStretchMode'),
 );
 
 class StretchExerciseScreen extends StatelessWidget {
@@ -38,19 +38,15 @@ class StretchExerciseScreen extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final StretchMode mode = sStretchMode.watch(context);
-    final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.watch(
-      context,
-    );
-    final bool isIntervalRunning = IntervalTimer.sIntervalTimerRunning.watch(
-      context,
-    );
-    final bool isRestRunning = RestTimer.sRestTimerRunning.watch(context);
+    final StretchMode mode = sStretchMode.value;
+    final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.value;
+    final bool isIntervalRunning = IntervalTimer.sIntervalTimerRunning.value;
+    final bool isRestRunning = RestTimer.sRestTimerRunning.value;
 
     // Watch personal stats for calorie calculation.
-    final double userWeight = sWeight.watch(context);
-    final int userAge = sAge.watch(context);
-    final int userSex = sSex.watch(context);
+    final double userWeight = sWeight.value;
+    final int userAge = sAge.value;
+    final int userSex = sSex.value;
 
     return Scaffold(
       body: Column(
@@ -124,9 +120,7 @@ class StretchExerciseScreen extends StatelessWidget {
                               style: theme.textTheme.titleMedium,
                             ),
                             Switch(
-                              value: IntervalTimer.sAutoIntervalOn.watch(
-                                context,
-                              ),
+                              value: IntervalTimer.sAutoIntervalOn.value,
                               onChanged: (bool value) {
                                 IntervalTimer.sAutoIntervalOn.value = value;
                               },

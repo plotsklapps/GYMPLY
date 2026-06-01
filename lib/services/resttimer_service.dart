@@ -21,25 +21,25 @@ class RestTimer {
   // Int Signal to track initial rest time.
   static final Signal<int> sInitialRestTime = Signal<int>(
     60,
-    debugLabel: 'sInitialRestTime',
+    options: const SignalOptions<int>(name: 'sInitialRestTime'),
   );
 
   // Int Signal to track elapsed rest time.
   static final Signal<int> sElapsedRestTime = Signal<int>(
     60,
-    debugLabel: 'sElapsedRestTime',
+    options: const SignalOptions<int>(name: 'sElapsedRestTime'),
   );
 
   // Bool Signal to track if resttimer has completed.
   static final Signal<bool> sRestTimerCompleted = Signal<bool>(
     false,
-    debugLabel: 'sRestTimerCompleted',
+    options: const SignalOptions<bool>(name: 'sRestTimerCompleted'),
   );
 
   // Bool Signal to track if resttimer is running.
   static final Signal<bool> sRestTimerRunning = Signal<bool>(
     false,
-    debugLabel: 'sRestTimerRunning',
+    options: const SignalOptions<bool>(name: 'sRestTimerRunning'),
   );
 
   Timer? _timer;

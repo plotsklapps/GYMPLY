@@ -12,7 +12,7 @@ import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ExerciseDetailSheet extends StatelessWidget {
+class ExerciseDetailSheet extends SignalWidget {
   const ExerciseDetailSheet({
     required this.exercise,
     super.key,
@@ -30,9 +30,7 @@ class ExerciseDetailSheet extends StatelessWidget {
     final bool isStrength = !isCardio && !isStretch;
 
     // Watch the favorite IDs list.
-    final List<int> favoriteIds = sFavoriteExercises.watch(
-      context,
-    );
+    final List<int> favoriteIds = sFavoriteExercises.value;
     final int exerciseId = int.parse(exercise.id);
     final bool isFavorite = favoriteIds.contains(exerciseId);
 

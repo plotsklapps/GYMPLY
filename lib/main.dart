@@ -72,7 +72,7 @@ void main() async {
   runApp(const MainEntry());
 }
 
-class MainEntry extends StatelessWidget {
+class MainEntry extends SignalWidget {
   const MainEntry({super.key});
 
   @override
@@ -83,9 +83,9 @@ class MainEntry extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'GYMPLY.',
         // Theming fully done with flex_color_scheme package.
-        theme: cThemeData.watch(context),
+        theme: cThemeData.value,
         // First time users get an onboarding.
-        home: sOnboardingCompleted.watch(context)
+        home: sOnboardingCompleted.value
             ? const HomeScreen()
             : const OnboardingScreen(),
       ),

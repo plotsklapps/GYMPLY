@@ -20,15 +20,14 @@ enum ShareableMetric {
   distance('DISTANCE', 'km'),
   calories('CALORIES', 'kcal'),
   reps('REPS', ''),
-  exercises('EXERCISES', '')
-  ;
+  exercises('EXERCISES', '');
 
   const ShareableMetric(this.label, this.unit);
   final String label;
   final String unit;
 }
 
-class ShareToSocialsModal extends StatefulWidget {
+class ShareToSocialsModal extends SignalStatefulWidget {
   const ShareToSocialsModal({
     required this.workout,
     super.key,
@@ -119,7 +118,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch if the user has a private key to enable Nostr sharing.
-    final bool canPostToNostr = nostrService.sNsec.watch(context);
+    final bool canPostToNostr = nostrService.sNsec.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -150,281 +149,299 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
               children: <Widget>[
                 const SizedBox(height: 16),
 
-        // --- PREVIEW CARD (RepaintBoundary) ---
-        RepaintBoundary(
-          key: _boundaryKey,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // Header: Branding
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Image.asset('assets/icons/gymplyIcon.png', height: 64),
-                        Text(
-                          'GYMPLY.',
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                // --- PREVIEW CARD (RepaintBoundary) ---
+                RepaintBoundary(
+                  key: _boundaryKey,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(
-                          widget.workout.title.toUpperCase(),
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          widget.workout.formattedDate,
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Images Section.
-                if (_showPhotos && _loadedImages.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: Row(
-                      children: <Widget>[
-                        for (int i = 0; i < _loadedImages.length; i++)
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: i == 0 ? 0 : 4,
-                                right: i == _loadedImages.length - 1 ? 0 : 4,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.file(
-                                  _loadedImages[i],
-                                  height: 180,
-                                  fit: BoxFit.cover,
+                        // Header: Branding
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  'assets/icons/gymplyIcon.png',
+                                  height: 64,
                                 ),
+                                Text(
+                                  'GYMPLY.',
+                                  style: theme.textTheme.displaySmall?.copyWith(
+                                    color: theme.colorScheme.secondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  widget.workout.title.toUpperCase(),
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  widget.workout.formattedDate,
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: theme.colorScheme.secondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Images Section.
+                        if (_showPhotos && _loadedImages.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: Row(
+                              children: <Widget>[
+                                for (int i = 0; i < _loadedImages.length; i++)
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: i == 0 ? 0 : 4,
+                                        right: i == _loadedImages.length - 1
+                                            ? 0
+                                            : 4,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.file(
+                                          _loadedImages[i],
+                                          height: 180,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )
+                        else if (_showPhotos)
+                          Container(
+                            height: 100,
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(bottom: 24),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest
+                                  .withAlpha(80),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.dumbbell,
+                              size: 40,
+                              color: theme.colorScheme.outlineVariant,
+                            ),
+                          ),
+
+                        // Stats Section
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: _selectedMetrics.map((
+                            ShareableMetric metric,
+                          ) {
+                            return Column(
+                              children: <Widget>[
+                                Text(
+                                  _getMetricValue(metric),
+                                  style: theme.textTheme.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.onPrimary
+                                        .withAlpha(200),
+                                  ),
+                                ),
+                                Text(
+                                  '${metric.label}${metric.unit.isNotEmpty ? ' '
+                                            '(${metric.unit})' : ''}',
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.secondary,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+
+                        // Notes Section
+                        if (_showNotes && widget.workout.notes.isNotEmpty)
+                          Container(
+                            margin: const EdgeInsets.only(top: 24),
+                            padding: const EdgeInsets.all(16),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer
+                                  .withAlpha(
+                                    50,
+                                  ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: theme.colorScheme.primaryContainer,
                               ),
+                            ),
+                            child: Text(
+                              widget.workout.notes,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                       ],
                     ),
-                  )
-                else if (_showPhotos)
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 24),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withAlpha(80),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.dumbbell,
-                      size: 40,
-                      color: theme.colorScheme.outlineVariant,
-                    ),
                   ),
-
-                // Stats Section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: _selectedMetrics.map((ShareableMetric metric) {
-                    return Column(
-                      children: <Widget>[
-                        Text(
-                          _getMetricValue(metric),
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.onPrimary.withAlpha(200),
-                          ),
-                        ),
-                        Text(
-                          '${metric.label}${metric.unit.isNotEmpty ? ' '
-                                    '(${metric.unit})' : ''}',
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
                 ),
 
-                // Notes Section
-                if (_showNotes && widget.workout.notes.isNotEmpty)
-                  Container(
-                    margin: const EdgeInsets.only(top: 24),
-                    padding: const EdgeInsets.all(16),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer.withAlpha(
-                        50,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: theme.colorScheme.primaryContainer,
-                      ),
-                    ),
-                    child: Text(
-                      widget.workout.notes,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontStyle: FontStyle.italic,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                const SizedBox(height: 8),
+
+                // --- CONTROLS ---
+                const Text(
+                  'CUSTOMIZE YOUR POST',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
                   ),
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 8),
-
-        // --- CONTROLS ---
-        const Text(
-          'CUSTOMIZE YOUR POST',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
-        ),
-        const SizedBox(height: 8),
-
-        // Metric Selector
-        SizedBox(
-          height: 40,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: ShareableMetric.values.map((ShareableMetric metric) {
-              final bool isSelected = _selectedMetrics.contains(metric);
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(metric.label),
-                  selected: isSelected,
-                  onSelected: (_) {
-                    _toggleMetric(metric);
-                  },
-                  selectedColor: theme.colorScheme.primaryContainer,
                 ),
-              );
-            }).toList(),
-          ),
-        ),
-        const SizedBox(height: 8),
+                const SizedBox(height: 8),
 
-        // Opt out of sharing images and/or notes.
-        SwitchListTile(
-          title: const Text('Show Images'),
-          secondary: const Icon(LucideIcons.image),
-          value: _showPhotos,
-          onChanged: (bool val) {
-            setState(() => _showPhotos = val);
-          },
-        ),
-        SwitchListTile(
-          title: const Text('Show Notes'),
-          secondary: const Icon(LucideIcons.notebookPen),
-          value: _showNotes,
-          onChanged: (bool val) {
-            setState(() => _showNotes = val);
-          },
-        ),
-
-        // Post to GYMPLY Feed Switch (Only if logged in).
-        if (canPostToNostr)
-          SwitchListTile(
-            title: const Text('Post to GYMPLY feed'),
-            secondary: const Icon(LucideIcons.rss),
-            value: _postToNostr,
-            onChanged: _isSharing
-                ? null
-                : (bool val) {
-                    setState(() => _postToNostr = val);
-                  },
-          ),
-
-        const SizedBox(height: 24),
-
-        // Share Button.
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
-            onPressed: _isSharing
-                ? null
-                : () async {
-                    setState(() => _isSharing = true);
-
-                    try {
-                      // 1. Capture the image bytes.
-                      final Uint8List? imageBytes = await shareService
-                          .captureImage(_boundaryKey);
-
-                      if (imageBytes == null) {
-                        throw Exception('Could not capture workout image.');
-                      }
-
-                      // 2. Handle Nostr Posting (if enabled).
-                      if (canPostToNostr && _postToNostr) {
-                        await nostrService.publishWorkoutNote(
-                          imageBytes: imageBytes,
-                        );
-                        ToastService.showSuccess(
-                          title: 'Posted to Feed!',
-                          subtitle: 'Your workout is live on GYMPLY.',
-                        );
-                      }
-
-                      // 3. Trigger standard system share.
-                      // We do this last as it might pause the app/modal.
-                      await shareService.captureAndShare(
-                        _boundaryKey,
-                        workoutTitle: widget.workout.title,
+                // Metric Selector
+                SizedBox(
+                  height: 40,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: ShareableMetric.values.map((
+                      ShareableMetric metric,
+                    ) {
+                      final bool isSelected = _selectedMetrics.contains(metric);
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: FilterChip(
+                          label: Text(metric.label),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            _toggleMetric(metric);
+                          },
+                          selectedColor: theme.colorScheme.primaryContainer,
+                        ),
                       );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 8),
 
-                      // 4. Close the modal.
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    } on Object catch (e) {
-                      ToastService.showError(
-                        title: 'Sharing Failed',
-                        subtitle: e.toString(),
-                      );
-                    } finally {
-                      if (mounted) {
-                        setState(() => _isSharing = false);
-                      }
-                    }
+                // Opt out of sharing images and/or notes.
+                SwitchListTile(
+                  title: const Text('Show Images'),
+                  secondary: const Icon(LucideIcons.image),
+                  value: _showPhotos,
+                  onChanged: (bool val) {
+                    setState(() => _showPhotos = val);
                   },
-            icon: _isSharing
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(LucideIcons.share2),
-            label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
-          ),
-        ),
+                ),
+                SwitchListTile(
+                  title: const Text('Show Notes'),
+                  secondary: const Icon(LucideIcons.notebookPen),
+                  value: _showNotes,
+                  onChanged: (bool val) {
+                    setState(() => _showNotes = val);
+                  },
+                ),
+
+                // Post to GYMPLY Feed Switch (Only if logged in).
+                if (canPostToNostr)
+                  SwitchListTile(
+                    title: const Text('Post to GYMPLY feed'),
+                    secondary: const Icon(LucideIcons.rss),
+                    value: _postToNostr,
+                    onChanged: _isSharing
+                        ? null
+                        : (bool val) {
+                            setState(() => _postToNostr = val);
+                          },
+                  ),
+
+                const SizedBox(height: 24),
+
+                // Share Button.
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    onPressed: _isSharing
+                        ? null
+                        : () async {
+                            setState(() => _isSharing = true);
+
+                            try {
+                              // 1. Capture the image bytes.
+                              final Uint8List? imageBytes = await shareService
+                                  .captureImage(_boundaryKey);
+
+                              if (imageBytes == null) {
+                                throw Exception(
+                                  'Could not capture workout image.',
+                                );
+                              }
+
+                              // 2. Handle Nostr Posting (if enabled).
+                              if (canPostToNostr && _postToNostr) {
+                                await nostrService.publishWorkoutNote(
+                                  imageBytes: imageBytes,
+                                );
+                                ToastService.showSuccess(
+                                  title: 'Posted to Feed!',
+                                  subtitle: 'Your workout is live on GYMPLY.',
+                                );
+                              }
+
+                              // 3. Trigger standard system share.
+                              // We do this last as it might pause the app/modal.
+                              await shareService.captureAndShare(
+                                _boundaryKey,
+                                workoutTitle: widget.workout.title,
+                              );
+
+                              // 4. Close the modal.
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            } on Object catch (e) {
+                              ToastService.showError(
+                                title: 'Sharing Failed',
+                                subtitle: e.toString(),
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() => _isSharing = false);
+                              }
+                            }
+                          },
+                    icon: _isSharing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(LucideIcons.share2),
+                    label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
+                  ),
+                ),
               ],
             ),
           ),

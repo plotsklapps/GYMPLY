@@ -22,10 +22,10 @@ enum CardioMode { stopwatch, interval }
 // Global CardioMode Signal, default to Stopwatch.
 final Signal<CardioMode> sCardioMode = Signal<CardioMode>(
   CardioMode.stopwatch,
-  debugLabel: 'sCardioMode',
+  options: const SignalOptions<CardioMode>(name: 'sCardioMode'),
 );
 
-class CardioExerciseScreen extends StatelessWidget {
+class CardioExerciseScreen extends SignalWidget {
   const CardioExerciseScreen({
     required this.exercise,
     super.key,
@@ -38,19 +38,15 @@ class CardioExerciseScreen extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final CardioMode mode = sCardioMode.watch(context);
-    final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.watch(
-      context,
-    );
-    final bool isIntervalRunning = IntervalTimer.sIntervalTimerRunning.watch(
-      context,
-    );
-    final bool isRestRunning = RestTimer.sRestTimerRunning.watch(context);
+    final CardioMode mode = sCardioMode.value;
+    final bool isStopwatchRunning = StopwatchTimer.sStopwatchTimerRunning.value;
+    final bool isIntervalRunning = IntervalTimer.sIntervalTimerRunning.value;
+    final bool isRestRunning = RestTimer.sRestTimerRunning.value;
 
     // Watch personal stats for calorie calculation.
-    final double userWeight = sWeight.watch(context);
-    final int userAge = sAge.watch(context);
-    final int userSex = sSex.watch(context);
+    final double userWeight = sWeight.value;
+    final int userAge = sAge.value;
+    final int userSex = sSex.value;
 
     return Scaffold(
       body: Column(
@@ -124,9 +120,7 @@ class CardioExerciseScreen extends StatelessWidget {
                               style: theme.textTheme.titleMedium,
                             ),
                             Switch(
-                              value: IntervalTimer.sAutoIntervalOn.watch(
-                                context,
-                              ),
+                              value: IntervalTimer.sAutoIntervalOn.value,
                               onChanged: (bool value) {
                                 IntervalTimer.sAutoIntervalOn.value = value;
                               },

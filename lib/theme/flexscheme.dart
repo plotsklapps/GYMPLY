@@ -10,16 +10,22 @@ const Color kOrange = Color(0xFFFCB075);
 
 final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
   FlexScheme.shark,
-  debugLabel: 'sFlexScheme',
+  options: const SignalOptions<FlexScheme>(name: 'sFlexScheme'),
 );
 
-final Signal<bool> sDarkMode = Signal<bool>(true, debugLabel: 'sDarkMode');
+final Signal<bool> sDarkMode = Signal<bool>(
+  true,
+  options: const SignalOptions<bool>(name: 'sDarkMode'),
+);
 
-final Signal<bool> sWakelock = Signal<bool>(true, debugLabel: 'sWakelock');
+final Signal<bool> sWakelock = Signal<bool>(
+  true,
+  options: const SignalOptions<bool>(name: 'sWakelock'),
+);
 
 final Signal<String> sFont = Signal<String>(
   'League Gothic',
-  debugLabel: 'sFont',
+  options: const SignalOptions<String>(name: 'sFont'),
 );
 
 // Override textTheme for the XL fonts.

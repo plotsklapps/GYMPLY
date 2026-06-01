@@ -22,7 +22,7 @@ class UpdateService {
   // Bool Signal to track update state.
   final Signal<bool> sIsCheckingForUpdate = Signal<bool>(
     false,
-    debugLabel: 'sIsCheckingForUpdate',
+    options: const SignalOptions<bool>(name: 'sIsCheckingForUpdate'),
   );
 
   // URL pointing to GitHub version metadata.

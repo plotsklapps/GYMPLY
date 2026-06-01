@@ -8,7 +8,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ExerciseDetailCard extends StatelessWidget {
+class ExerciseDetailCard extends SignalWidget {
   const ExerciseDetailCard({
     required this.exercise,
     super.key,
@@ -68,9 +68,9 @@ class ExerciseDetailCard extends StatelessWidget {
       final CardioExercise ex = exercise as CardioExercise;
 
       // Watch personal stats for calorie calculation.
-      final double userWeight = sWeight.watch(context);
-      final int userAge = sAge.watch(context);
-      final int userSex = sSex.watch(context);
+      final double userWeight = sWeight.value;
+      final int userAge = sAge.value;
+      final int userSex = sSex.value;
 
       detailRows.addAll(<Widget>[
         ExerciseDetailRow(

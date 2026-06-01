@@ -168,7 +168,6 @@ class BackupService {
       final FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: <String>['zip'],
-        withData: true,
       );
 
       if (result == null) {
@@ -177,16 +176,7 @@ class BackupService {
       }
 
       // Read ZIP file into bytes.
-      if (result.files.single.bytes != null) {
-        return result.files.single.bytes;
-      } else if (result.files.single.path != null) {
-        return await File(result.files.single.path!).readAsBytes();
-      }
-
-      // Reset Signal.
-      sIsRestoring.value = false;
-
-      return null;
+      return await result.files.single.readAsBytes();
     } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: Local pick failed: $e');

@@ -17,7 +17,7 @@ import 'package:gymply/signals/selectedworkouttype_signal.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class SearchModal extends StatefulWidget {
+class SearchModal extends SignalStatefulWidget {
   const SearchModal({super.key});
 
   @override
@@ -58,23 +58,17 @@ class _SearchModalState extends State<SearchModal> {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final WorkoutType? workoutType = sSelectedWorkoutType.watch(context);
-    final MuscleGroup? selectedMuscleGroup = sSelectedMuscleGroup.watch(
-      context,
-    );
-    final Equipment? selectedEquipment = sSelectedEquipment.watch(context);
-    final String searchQuery = sSearchQuery.watch(context);
-
-    final bool showMuscleGroups = filterService.sShowMuscleGroups.watch(
-      context,
-    );
-    final bool showEquipment = filterService.sShowEquipment.watch(context);
-    final List<ExercisePath> filteredExercises = filterService
-        .cFilteredExercises
-        .watch(context);
-    final bool isLoading = sSearchLoading.watch(context);
-    final List<int> favorites = sFavoriteExercises.watch(context);
-    final bool isGridMode = sExercisesGridMode.watch(context);
+    final WorkoutType? workoutType = sSelectedWorkoutType.value;
+    final MuscleGroup? selectedMuscleGroup = sSelectedMuscleGroup.value;
+    final Equipment? selectedEquipment = sSelectedEquipment.value;
+    final String searchQuery = sSearchQuery.value;
+    final bool showMuscleGroups = filterService.sShowMuscleGroups.value;
+    final bool showEquipment = filterService.sShowEquipment.value;
+    final List<ExercisePath> filteredExercises =
+        filterService.cFilteredExercises.value;
+    final bool isLoading = sSearchLoading.value;
+    final List<int> favorites = sFavoriteExercises.value;
+    final bool isGridMode = sExercisesGridMode.value;
 
     // Calculate dynamic height for floating chips header.
     double chipsHeight = 52;

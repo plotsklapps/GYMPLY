@@ -10,7 +10,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
-class WorkoutNote extends StatelessWidget {
+class WorkoutNote extends SignalWidget {
   const WorkoutNote({
     required this.event,
     required this.likes,
@@ -26,9 +26,7 @@ class WorkoutNote extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.watch(
-      context,
-    );
+    final Map<String, Metadata> metadataMap = nostrService.sFeedMetadata.value;
 
     // List of people who liked this post.
     final List<(String, Metadata?)> likers = likes.map((String pk) {
@@ -62,8 +60,8 @@ class WorkoutNote extends StatelessWidget {
     final bool isMine = event.pubKey == myPubkey;
     final bool hasLiked = likes.contains(myPubkey);
 
-    final Map<String, Set<String>> commentsMap = nostrService.sFeedComments
-        .watch(context);
+    final Map<String, Set<String>> commentsMap =
+        nostrService.sFeedComments.value;
     final Set<String> commentIds = commentsMap[event.id] ?? <String>{};
 
     return Card(

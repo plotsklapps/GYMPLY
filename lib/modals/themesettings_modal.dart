@@ -10,7 +10,7 @@ import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ThemeSettingsModal extends StatelessWidget {
+class ThemeSettingsModal extends SignalWidget {
   const ThemeSettingsModal({super.key});
 
   @override
@@ -18,11 +18,11 @@ class ThemeSettingsModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch settings Signals.
-    final bool isDarkMode = sDarkMode.watch(context);
-    final bool isWakelock = sWakelock.watch(context);
-    final FlexScheme flexScheme = sFlexScheme.watch(context);
-    final String font = sFont.watch(context);
-    final bool isSupporter = donationService.sIsSupporter.watch(context);
+    final bool isDarkMode = sDarkMode.value;
+    final bool isWakelock = sWakelock.value;
+    final FlexScheme flexScheme = sFlexScheme.value;
+    final String font = sFont.value;
+    final bool isSupporter = donationService.sIsSupporter.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

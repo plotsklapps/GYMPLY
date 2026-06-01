@@ -4,7 +4,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class DonationModal extends StatelessWidget {
+class DonationModal extends SignalWidget {
   const DonationModal({super.key});
 
   @override
@@ -12,11 +12,9 @@ class DonationModal extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch signals.
-    final bool isLoading = donationService.sIsLoading.watch(context);
-    final List<ProductDetails> products = donationService.sProducts.watch(
-      context,
-    );
-    final bool isAvailable = donationService.sIsAvailable.watch(context);
+    final bool isLoading = donationService.sIsLoading.value;
+    final List<ProductDetails> products = donationService.sProducts.value;
+    final bool isAvailable = donationService.sIsAvailable.value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

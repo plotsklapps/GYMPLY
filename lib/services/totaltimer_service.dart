@@ -18,19 +18,19 @@ class TotalTimer {
   // Int Signal to track initial total time.
   static final Signal<int> sInitialTotalTime = Signal<int>(
     0,
-    debugLabel: 'sInitialTotalTime',
+    options: const SignalOptions<int>(name: 'sInitialTotalTime'),
   );
 
   // Int Signal to track elapsed total time (in seconds).
   static final Signal<int> sElapsedTotalTime = Signal<int>(
     0,
-    debugLabel: 'sElapsedTotalTime',
+    options: const SignalOptions<int>(name: 'sElapsedTotalTime'),
   );
 
   // Bool Signal to track if total timer is running.
   static final Signal<bool> sTotalTimerRunning = Signal<bool>(
     false,
-    debugLabel: 'sTotalTimerRunning',
+    options: const SignalOptions<bool>(name: 'sTotalTimerRunning'),
   );
 
   Timer? _timer;

@@ -5,7 +5,7 @@ import 'package:gymply/services/totaltimer_service.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
-class TotalTimerWidget extends StatelessWidget {
+class TotalTimerWidget extends SignalWidget {
   const TotalTimerWidget({super.key});
 
   @override
@@ -15,10 +15,8 @@ class TotalTimerWidget extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     // Watch Signals.
-    final int elapsedTotalTime = TotalTimer.sElapsedTotalTime.watch(context);
-    final bool isTotalTimerRunning = TotalTimer.sTotalTimerRunning.watch(
-      context,
-    );
+    final int elapsedTotalTime = TotalTimer.sElapsedTotalTime.value;
+    final bool isTotalTimerRunning = TotalTimer.sTotalTimerRunning.value;
 
     // Use formatting extension.
     final String formattedTime = elapsedTotalTime.formatHMMSS();

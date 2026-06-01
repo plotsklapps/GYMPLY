@@ -10,15 +10,13 @@ import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Dispatcher class. Decide which exercisescreen to show.
-class ExerciseScreen extends StatelessWidget {
+class ExerciseScreen extends SignalWidget {
   const ExerciseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Watch selected exercise from WorkoutService.
-    final WorkoutExercise? exercise = sSelectedExercise.watch(
-      context,
-    );
+    final WorkoutExercise? exercise = sSelectedExercise.value;
 
     // Show Placeholder if no exercise is selected.
     if (exercise == null) {
