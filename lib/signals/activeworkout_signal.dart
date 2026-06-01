@@ -11,5 +11,5 @@ final Signal<Workout> sActiveWorkout = Signal<Workout>(
     dateTime: DateTime.now(),
     totalDuration: 0,
   ),
-  debugLabel: 'sActiveWorkout',
+  options: const SignalOptions<Workout>(name: 'sActiveWorkout'),
 );

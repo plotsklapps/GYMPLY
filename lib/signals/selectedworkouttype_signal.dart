@@ -4,5 +4,5 @@ import 'package:signals/signals_flutter.dart';
 // Signal to track selected WorkoutType (Strength/Cardio/Stretch).
 final Signal<WorkoutType?> sSelectedWorkoutType = Signal<WorkoutType?>(
   null,
-  debugLabel: 'sSelectedWorkoutType',
+  options: const SignalOptions<WorkoutType?>(name: 'sSelectedWorkoutType'),
 );

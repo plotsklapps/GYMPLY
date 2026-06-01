@@ -4,5 +4,5 @@ import 'package:signals/signals_flutter.dart';
 // Signal to track the selected muscle group.
 final Signal<MuscleGroup?> sSelectedMuscleGroup = Signal<MuscleGroup?>(
   null,
-  debugLabel: 'sSelectedMuscleGroup',
+  options: const SignalOptions<MuscleGroup?>(name: 'sSelectedMuscleGroup'),
 );

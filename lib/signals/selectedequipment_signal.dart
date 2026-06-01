@@ -4,5 +4,5 @@ import 'package:signals/signals_flutter.dart';
 // Signal to track the selected equipment.
 final Signal<Equipment?> sSelectedEquipment = Signal<Equipment?>(
   null,
-  debugLabel: 'sSelectedEquipment',
+  options: const SignalOptions<Equipment?>(name: 'sSelectedEquipment'),
 );

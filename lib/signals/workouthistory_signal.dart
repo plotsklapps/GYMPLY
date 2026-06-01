@@ -4,5 +4,5 @@ import 'package:signals/signals_flutter.dart';
 // Signal for ALL workout history.
 final Signal<List<Workout>> sWorkoutHistory = Signal<List<Workout>>(
   <Workout>[],
-  debugLabel: 'sWorkoutHistory',
+  options: const SignalOptions<List<Workout>>(name: 'sWorkoutHistory'),
 );

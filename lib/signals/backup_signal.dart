@@ -3,10 +3,13 @@ import 'package:signals/signals_flutter.dart';
 // Signals for tracking state in BackupService.
 final Signal<bool> sIsBackingUp = Signal<bool>(
   false,
-  debugLabel: 'sIsBackingUp',
+  options: const SignalOptions<bool>(name: 'sIsBackingUp'),
 );
 final Signal<bool> sIsRestoring = Signal<bool>(
   false,
-  debugLabel: 'sIsRestoring',
+  options: const SignalOptions<bool>(name: 'sIsRestoring'),
 );
-final Signal<double> sProgress = Signal<double>(0, debugLabel: 'sProgress');
+final Signal<double> sProgress = Signal<double>(
+  0,
+  options: const SignalOptions<double>(name: 'sProgress'),
+);
