@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+72] - 2026-06-01
+- **Signals Migration:**
+  - Migrated codebase to `signals` 7.1.0, replacing deprecated `.watch(context)` calls with implicit signal tracking via `SignalWidget`, `SignalStatefulWidget`, and `SignalBuilder`.
+  - Updated theme and UI components for optimized, idiomatic reactivity.
+- **Maintenance & Deprecation Fixes:**
+  - Replaced deprecated `onReorder` in `workout_screen.dart` with `onReorderItem` to ensure compatibility with recent Flutter versions.
+  - Refactored `BackupService` to use `PlatformFile.readAsBytes()` for file reading, replacing the deprecated `withData` parameter in `FilePicker`.
+  - Incremented project version to `0.0.7+72`.
+
 ## [0.0.7+71] - 2026-05-17
 - **Supporter Settings Persistence:**
   - Refactored `Settings` model getters to strictly prioritize new String-based `flexSchemeName` and `googleFontFamily` fields for supporter accounts, ensuring selections persist across app restarts.
