@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
 
-const Color kPink = Color(0xFFEBA1A6);
-const Color kPurple = Color(0xFF815AA3);
 const Color kOrange = Color(0xFFFCB075);
+const Color kPurple = Color(0xFF815AA3);
+const Color kPink = Color(0xFFEBA1A6);
 
 final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
   FlexScheme.shark,

@@ -140,19 +140,46 @@ class Settings {
     bool? isSupporter,
     String? googleFontFamily,
   }) {
+    // Map non-supporter FlexScheme enum choices to indexes.
+    int updatedFlexSchemeIndex = this.flexSchemeIndex;
+    if (flexScheme != null) {
+      if (flexScheme == FlexScheme.shark) {
+        updatedFlexSchemeIndex = 0;
+      } else if (flexScheme == FlexScheme.greyLaw) {
+        updatedFlexSchemeIndex = 1;
+      } else if (flexScheme == FlexScheme.sanJuanBlue) {
+        updatedFlexSchemeIndex = 2;
+      }
+    }
+
+    // Map non-supporter font names to spaceless legacy identifiers.
+    String updatedFontFamily = this.fontFamily;
+    if (fontFamily != null) {
+      if (fontFamily == 'League Gothic' || fontFamily == 'LeagueGothic') {
+        updatedFontFamily = 'LeagueGothic';
+      } else if (fontFamily == 'Lato') {
+        updatedFontFamily = 'Lato';
+      } else if (fontFamily == 'Fjalla One' || fontFamily == 'FjallaOne') {
+        updatedFontFamily = 'FjallaOne';
+      } else {
+        updatedFontFamily = fontFamily;
+      }
+    }
+
     return Settings(
       darkMode: darkMode ?? this.darkMode,
       initialRestTime: initialRestTime ?? this.initialRestTime,
       favoriteExercises: favoriteExercises ?? this.favoriteExercises,
       isWakelock: isWakelock ?? this.isWakelock,
-      flexSchemeIndex: flexSchemeIndex,
+      flexSchemeIndex: updatedFlexSchemeIndex,
       age: age ?? this.age,
       height: height ?? this.height,
       weight: weight ?? this.weight,
       sex: sex ?? this.sex,
       somatotypeIndex: somatotypeIndex ?? this.somatotypeIndex,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
-      fontFamily: this.fontFamily, // Keep legacy untouched
+      fontFamily:
+          updatedFontFamily, // Keep legacy untouched, mapping formatted input
       isExercisesGridMode: isExercisesGridMode ?? this.isExercisesGridMode,
       isSupporter: isSupporter ?? this.isSupporter,
       flexSchemeName: flexScheme?.name ?? flexSchemeName,

@@ -248,7 +248,10 @@ class SettingsService {
       if (settings != null) {
         await _settingsBox.put(
           'settings',
-          settings.copyWith(googleFontFamily: font),
+          settings.copyWith(
+            googleFontFamily: font,
+            fontFamily: font,
+          ),
         );
       }
 
