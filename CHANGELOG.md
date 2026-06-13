@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+74] - 2026-06-06
+- **Settings & Preferences:**
+  - Fixed an issue where non-supporter accounts did not retain their chosen color scheme and fonts on app restart.
+  - Implemented a new settings model and service to improve user preference persistence.
+- **Dependencies:**
+  - Upgraded several `pubspec.yaml` dependencies.
+  - Incremented project version to `0.0.7+74` and updated `version.json`.
+
 ## [0.0.7+72] - 2026-06-01
 - **Signals Migration:**
   - Migrated codebase to `signals` 7.1.0, replacing deprecated `.watch(context)` calls with implicit signal tracking via `SignalWidget`, `SignalStatefulWidget`, and `SignalBuilder`.
