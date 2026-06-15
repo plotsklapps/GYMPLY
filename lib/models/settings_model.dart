@@ -141,7 +141,7 @@ class Settings {
     String? googleFontFamily,
   }) {
     // Map non-supporter FlexScheme enum choices to indexes.
-    int updatedFlexSchemeIndex = this.flexSchemeIndex;
+    int updatedFlexSchemeIndex = flexSchemeIndex;
     if (flexScheme != null) {
       if (flexScheme == FlexScheme.shark) {
         updatedFlexSchemeIndex = 0;
