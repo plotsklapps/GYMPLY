@@ -125,42 +125,9 @@ class DonationModal extends SignalWidget {
                     ],
                   )
                 else ...<Widget>[
-                  // --- SUBSCRIPTIONS ---
-                  const _SectionTitle(title: 'SUBSCRIPTIONS'),
-                  const SizedBox(height: 8),
-                  ...products
-                      .where(
-                        (ProductDetails p) {
-                          return p.id.contains('support_monthly') ||
-                              p.id.contains('support_yearly');
-                        },
-                      )
-                      .map(
-                        (ProductDetails p) {
-                          return _ProductTile(
-                            product: p,
-                            isSubscription: true,
-                          );
-                        },
-                      ),
-
-                  const SizedBox(height: 16),
-
-                  // --- ONE-TIME DONATIONS ---
-                  const _SectionTitle(title: 'ONE-TIME DONATIONS'),
-                  const SizedBox(height: 8),
-                  ...products
-                      .where((ProductDetails p) {
-                        return p.id.startsWith('donate_');
-                      })
-                      .map(
-                        (ProductDetails p) {
-                          return _ProductTile(
-                            product: p,
-                            isSubscription: false,
-                          );
-                        },
-                      ),
+                  ...products.map(
+                    (ProductDetails p) => _ProductTile(product: p),
+                  ),
                 ],
                 const SizedBox(height: 16),
               ],
@@ -172,34 +139,11 @@ class DonationModal extends SignalWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.secondary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
-        ),
-      ),
-    );
-  }
-}
 
 class _ProductTile extends StatelessWidget {
-  const _ProductTile({required this.product, required this.isSubscription});
+  const _ProductTile({required this.product});
 
   final ProductDetails product;
-  final bool isSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -214,9 +158,6 @@ class _ProductTile extends StatelessWidget {
     } else if (product.id.contains('support_yearly')) {
       subtitle = 'Support yearly (Best value!)';
       icon = LucideIcons.star;
-    } else {
-      subtitle = 'One-time support';
-      icon = LucideIcons.gift;
     }
 
     return Card(

@@ -21,17 +21,11 @@ class DonationService {
   // IDs for Google Play Console.
   static const String idMonthly = 'support_monthly';
   static const String idYearly = 'support_yearly';
-  static const String idOneTime5 = 'donate_5';
-  static const String idOneTime15 = 'donate_15';
-  static const String idOneTime50 = 'donate_50';
 
-  // For the query, we use the base IDs for subscriptions on Android.
+  // Only subscription IDs — one-time donations have been removed.
   static const Set<String> _kIds = <String>{
     idMonthly,
     idYearly,
-    idOneTime5,
-    idOneTime15,
-    idOneTime50,
   };
 
   // Signals for state management.
@@ -117,17 +111,12 @@ class DonationService {
     }
   }
 
-  // Start a purchase.
+  // Start a purchase. All remaining products are subscriptions.
   Future<void> buyProduct(ProductDetails product) async {
-    late PurchaseParam purchaseParam;
-
-    if (product.id == idMonthly || product.id == idYearly) {
-      purchaseParam = PurchaseParam(productDetails: product);
-      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
-    } else {
-      purchaseParam = PurchaseParam(productDetails: product);
-      await _iap.buyConsumable(purchaseParam: purchaseParam);
-    }
+    final PurchaseParam purchaseParam = PurchaseParam(
+      productDetails: product,
+    );
+    await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
   // Handle purchase updates.
