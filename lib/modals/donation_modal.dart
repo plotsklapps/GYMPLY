@@ -55,14 +55,14 @@ class DonationModal extends SignalWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'GYMPLY. is 100% free, private, and open-source. '
+                  'GYMPLY. is 100% free, private, and open-source.\n\n'
                   'Your donations help cover development costs and keep '
                   'the project alive without ever adding ads or selling '
                   'your data.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 // --- SUPPORTER PERK HIGHLIGHT ---
                 Container(

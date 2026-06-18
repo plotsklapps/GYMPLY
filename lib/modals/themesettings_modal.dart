@@ -134,60 +134,64 @@ class ThemeSettingsModal extends SignalWidget {
                   ),
                 ] else ...<Widget>[
                   // Color picker for non-supporters.
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ListTile(
-                          onTap: () async {
-                            await ModalService.showModal(
-                              context: context,
-                              child: const DonationModal(),
-                            );
-                          },
-                          leading: const Icon(LucideIcons.heart),
-                          title: const Text('Become a GYMPLY supporter'),
-                          subtitle: const Text(
-                            'Get access to 50+ themes and 100+ '
-                            'fonts!',
-                          ),
-                          trailing: const Icon(LucideIcons.chevronRight),
+                  Column(
+                    children: <Widget>[
+                      ListTile(
+                        onTap: () async {
+                          await ModalService.showModal(
+                            context: context,
+                            child: const DonationModal(),
+                          );
+                        },
+                        leading: const Icon(LucideIcons.heart),
+                        title: const Text('Become a GYMPLY supporter'),
+                        subtitle: const Text(
+                          'Get access to 50+ themes and 100+ '
+                          'fonts!',
                         ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: SegmentedButton<FlexScheme>(
-                            segments: const <ButtonSegment<FlexScheme>>[
-                              ButtonSegment<FlexScheme>(
-                                value: FlexScheme.shark,
-                                label: Text('Orange'),
-                                icon: Icon(LucideIcons.citrus),
-                              ),
-                              ButtonSegment<FlexScheme>(
-                                value: FlexScheme.greyLaw,
-                                label: Text('Purple'),
-                                icon: Icon(LucideIcons.brush),
-                              ),
-                              ButtonSegment<FlexScheme>(
-                                value: FlexScheme.sanJuanBlue,
-                                label: Text('Pink'),
-                                icon: Icon(LucideIcons.wine),
-                              ),
-                            ],
-                            selected: <FlexScheme>{flexScheme},
-                            onSelectionChanged:
-                                (Set<FlexScheme> newSelection) async {
-                                  await settingsService.updateFlexScheme(
-                                    newSelection.first,
-                                  );
-                                },
-                          ),
+                        trailing: const Icon(LucideIcons.chevronRight),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                      ],
-                    ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              width: double.infinity,
+                              child: SegmentedButton<FlexScheme>(
+                                segments: const <ButtonSegment<FlexScheme>>[
+                                  ButtonSegment<FlexScheme>(
+                                    value: FlexScheme.shark,
+                                    label: Text('Orange'),
+                                    icon: Icon(LucideIcons.citrus),
+                                  ),
+                                  ButtonSegment<FlexScheme>(
+                                    value: FlexScheme.greyLaw,
+                                    label: Text('Purple'),
+                                    icon: Icon(LucideIcons.brush),
+                                  ),
+                                  ButtonSegment<FlexScheme>(
+                                    value: FlexScheme.sanJuanBlue,
+                                    label: Text('Pink'),
+                                    icon: Icon(LucideIcons.wine),
+                                  ),
+                                ],
+                                selected: <FlexScheme>{flexScheme},
+                                onSelectionChanged:
+                                    (Set<FlexScheme> newSelection) async {
+                                      await settingsService.updateFlexScheme(
+                                        newSelection.first,
+                                      );
+                                    },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
 
                   // Font Picker for non-supporters.
