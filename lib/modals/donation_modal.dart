@@ -11,7 +11,7 @@ class DonationModal extends SignalWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    // Watch signals.
+    // Watch Signals.
     final bool isLoading = donationService.sIsLoading.value;
     final List<ProductDetails> products = donationService.sProducts.value;
     final bool isAvailable = donationService.sIsAvailable.value;
@@ -138,7 +138,6 @@ class DonationModal extends SignalWidget {
     );
   }
 }
-
 
 class _ProductTile extends StatelessWidget {
   const _ProductTile({required this.product});

@@ -293,6 +293,35 @@ class SettingsService {
   bool get isSupporter {
     return _settingsBox.get('settings')?.isSupporter ?? false;
   }
+
+  // Reset perks if no longer a supporter.
+  void verifySupporterPerks() {
+    if (!isSupporter) {
+      // Check if current scheme is one of the free ones.
+      final List<FlexScheme> freeSchemes = <FlexScheme>[
+        FlexScheme.shark,
+        FlexScheme.greyLaw,
+        FlexScheme.sanJuanBlue,
+      ];
+
+      if (!freeSchemes.contains(sFlexScheme.value)) {
+        unawaited(updateFlexScheme(FlexScheme.shark));
+        _logger.i('SettingsService: Theme reset to default (non-supporter)');
+      }
+
+      // Check if current font is one of the free ones.
+      final List<String> freeFonts = <String>[
+        'League Gothic',
+        'Lato',
+        'Fjalla One',
+      ];
+
+      if (!freeFonts.contains(sFont.value)) {
+        unawaited(updateFont('League Gothic'));
+        _logger.i('SettingsService: Font reset to default (non-supporter)');
+      }
+    }
+  }
 }
 
 // Globalize SettingsService.

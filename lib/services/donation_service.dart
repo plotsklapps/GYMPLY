@@ -22,19 +22,37 @@ class DonationService {
   static const String idMonthly = 'support_monthly';
   static const String idYearly = 'support_yearly';
 
-  // Only subscription IDs — one-time donations have been removed.
+  // Subscription IDs.
   static const Set<String> _kIds = <String>{
     idMonthly,
     idYearly,
   };
 
   // Signals for state management.
-  final Signal<bool> sIsAvailable = Signal<bool>(false);
-  final Signal<bool> sIsLoading = Signal<bool>(false);
+  final Signal<bool> sIsAvailable = Signal<bool>(
+    false,
+    options: const SignalOptions<bool>(
+      name: 'sIsAvailable',
+    ),
+  );
+  final Signal<bool> sIsLoading = Signal<bool>(
+    false,
+    options: const SignalOptions<bool>(
+      name: 'sIsLoading',
+    ),
+  );
   final Signal<List<ProductDetails>> sProducts = Signal<List<ProductDetails>>(
     <ProductDetails>[],
+    options: const SignalOptions<List<ProductDetails>>(
+      name: 'sProducts',
+    ),
   );
-  final Signal<bool> sIsSupporter = Signal<bool>(false);
+  final Signal<bool> sIsSupporter = Signal<bool>(
+    false,
+    options: const SignalOptions<bool>(
+      name: 'sIsSupporter',
+    ),
+  );
 
   // Initialize the service.
   Future<void> initialize() async {
@@ -59,7 +77,7 @@ class DonationService {
     );
     await _checkAvailability();
 
-    // Restore past purchases silently
+    // Restore past purchases silently.
     if (sIsAvailable.value) {
       await _iap.restorePurchases();
     }
@@ -67,6 +85,8 @@ class DonationService {
 
   Future<void> _checkAvailability() async {
     sIsAvailable.value = await _iap.isAvailable();
+
+    // Log success.
     _logger.i('DonationService: IAP Available: ${sIsAvailable.value}');
 
     if (sIsAvailable.value) {
@@ -88,7 +108,7 @@ class DonationService {
         );
       }
 
-      // Sort products by price (roughly).
+      // Sort products by price (cheapest first).
       final List<ProductDetails> sortedProducts =
           response.productDetails.toList()
             ..sort((ProductDetails a, ProductDetails b) {
@@ -123,10 +143,15 @@ class DonationService {
   Future<void> _onPurchaseUpdate(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
+    // Check if there's any active (purchased or restored) subscription in the stream.
+    final bool hasValidPurchase = purchaseDetailsList.any(
+      (PurchaseDetails p) =>
+          p.status == PurchaseStatus.purchased ||
+          p.status == PurchaseStatus.restored,
+    );
+
     for (final PurchaseDetails purchase in purchaseDetailsList) {
-      if (purchase.status == PurchaseStatus.pending) {
-        // Show loading or wait.
-      } else if (purchase.status == PurchaseStatus.error) {
+      if (purchase.status == PurchaseStatus.error) {
         _logger.e('DonationService: Purchase error: ${purchase.error}');
         ToastService.showError(
           title: 'Purchase Failed',
@@ -134,24 +159,26 @@ class DonationService {
         );
       } else if (purchase.status == PurchaseStatus.purchased ||
           purchase.status == PurchaseStatus.restored) {
-        _logger.i(
-          'DonationService: Product purchased/restored: ${purchase.productID}',
-        );
-
-        // In a real app, you would validate the receipt here.
-        // For a donation-based free app, we just thank the user.
-
         if (purchase.pendingCompletePurchase) {
           await _iap.completePurchase(purchase);
         }
+      }
+    }
 
-        sIsSupporter.value = true;
-        await settingsService.updateIsSupporter(value: true);
+    // Sync the signal and Hive if the status has changed.
+    if (hasValidPurchase != sIsSupporter.value) {
+      sIsSupporter.value = hasValidPurchase;
+      await settingsService.updateIsSupporter(value: hasValidPurchase);
 
+      if (hasValidPurchase) {
         ToastService.showSuccess(
           title: 'Thank You!',
           subtitle: 'Your support keeps GYMPLY. alive and free.',
         );
+      } else {
+        // Reset themes/fonts if the subscription expired.
+        settingsService.verifySupporterPerks();
+        _logger.i('DonationService: Supporter status revoked (expired).');
       }
     }
   }
