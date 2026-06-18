@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+75] - 2026-06-18
+- **Settings & Preferences:**
+  - Removed one-time-purchases. GYMPLY supporters can now support monthly or yearly.
+  - Fixed UI issues in supporters modal bottom sheets.
+- **Dependencies:**
+  - Upgraded several `pubspec.yaml` dependencies.
+  - Incremented project version to `0.0.7+75` and updated `version.json`.
+
 ## [0.0.7+74] - 2026-06-06
 - **Settings & Preferences:**
   - Fixed an issue where non-supporter accounts did not retain their chosen color scheme and fonts on app restart.
