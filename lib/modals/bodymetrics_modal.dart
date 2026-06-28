@@ -397,6 +397,8 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                         min: sUseLbs.value ? 40 : 20,
                         max: sUseLbs.value ? 600 : 300,
                         value: _weight,
+                        step: 0.1,
+                        precision: 1,
                         onChanged: (double val) {
                           setState(() {
                             _weight = val;
@@ -746,6 +748,8 @@ class _ScrollColumn extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.suffix,
+    this.step = 1.0,
+    this.precision = 0,
   });
 
   final String label;
@@ -754,10 +758,15 @@ class _ScrollColumn extends StatelessWidget {
   final double value;
   final ValueChanged<double> onChanged;
   final String suffix;
+  final double step;
+  final int precision;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    // Calculate total steps.
+    final int count = ((max - min) / step).floor() + 1;
 
     return Column(
       children: <Widget>[
@@ -775,19 +784,20 @@ class _ScrollColumn extends StatelessWidget {
               diameterRatio: 1.2,
               physics: const FixedExtentScrollPhysics(),
               controller: FixedExtentScrollController(
-                initialItem: value.toInt() - min,
+                initialItem: ((value - min) / step).round(),
               ),
               onSelectedItemChanged: (int index) {
-                onChanged((index + min).toDouble());
+                onChanged(min + (index * step));
               },
               childDelegate: ListWheelChildBuilderDelegate(
                 builder: (BuildContext context, int index) {
-                  if (index < 0 || index > (max - min)) return null;
-                  final int displayValue = index + min;
-                  final bool isSelected = displayValue == value.toInt();
+                  if (index < 0 || index >= count) return null;
+                  final double displayValue = min + (index * step);
+                  final bool isSelected =
+                      (displayValue - value).abs() < (step / 2);
                   return Center(
                     child: Text(
-                      displayValue.toString(),
+                      displayValue.toStringAsFixed(precision),
                       style: theme.textTheme.displayMedium?.copyWith(
                         color: isSelected
                             ? theme.colorScheme.secondary.withAlpha(200)
@@ -799,7 +809,7 @@ class _ScrollColumn extends StatelessWidget {
                     ),
                   );
                 },
-                childCount: max - min + 1,
+                childCount: count,
               ),
             ),
           ),

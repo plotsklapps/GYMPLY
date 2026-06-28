@@ -11,6 +11,7 @@ import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -730,7 +731,8 @@ class WorkoutService {
     // Log success.
     _logger.i(
       'WorkoutService: Workout copied. '
-      'Merge: $merge, KeepValues: $keepValues, KeepCurrentTime: $keepCurrentTime',
+      'Merge: $merge, KeepValues: $keepValues, '
+      'KeepCurrentTime: $keepCurrentTime',
     );
   }
 

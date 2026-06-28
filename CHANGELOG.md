@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+76] - 2026-06-28
+- **Weight Unit Improvements:**
+  - **KGS to LBS Toggle:** Implemented a project-wide toggle in Theme Settings for seamless switching between Kilograms and Pounds.
+  - **Data Migration:** Added robust database migration with 1-decimal rounding to ensure data integrity during unit conversion.
+  - **Precision Weight Picker:** Updated Body Metrics weight picker to support 0.1 increments for more precise tracking.
+- **UI & UX Refinements:**
+  - Made BMI and Body Fat formulas unit-agnostic across all documentation and modals.
+  - Improved consistency of weight unit labels in statistics, history, and social sharing previews.
+
 ## [0.0.7+75] - 2026-06-18
 - **Settings & Preferences:**
   - Removed one-time-purchases. GYMPLY supporters can now support monthly or yearly.
