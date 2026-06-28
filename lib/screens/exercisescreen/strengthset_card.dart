@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:signals/signals_flutter.dart';
 
-class StrengthSetCard extends StatelessWidget {
+class StrengthSetCard extends SignalWidget {
   const StrengthSetCard({
     required this.exercise,
     super.key,
@@ -106,12 +108,15 @@ class StrengthSetCard extends StatelessWidget {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        '${totalSetWeight.toInt()} | $weight kg x $reps reps',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isNewPR ? theme.colorScheme.onSecondary : null,
-                        ),
-                      ),
+                      (() {
+                        final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+                        return Text(
+                          '${totalSetWeight.toInt()} | $weight $weightUnit x $reps reps',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: isNewPR ? theme.colorScheme.onSecondary : null,
+                          ),
+                        );
+                      })(),
                       if (isNewPR) ...<Widget>[
                         Text(
                           prLabel,

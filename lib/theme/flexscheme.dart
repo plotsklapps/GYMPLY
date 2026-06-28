@@ -28,6 +28,11 @@ final Signal<String> sFont = Signal<String>(
   options: const SignalOptions<String>(name: 'sFont'),
 );
 
+final Signal<bool> sUseLbs = Signal<bool>(
+  false,
+  options: const SignalOptions<bool>(name: 'sUseLbs'),
+);
+
 // Override textTheme for the XL fonts.
 final TextTheme _textThemeOverrides = TextTheme(
   displayLarge: GoogleFonts.getFont('Bebas Neue'),

@@ -7,6 +7,7 @@ import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -48,7 +49,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
     // Initialize values from Signals.
     _age = sAge.value == 0 ? 25 : sAge.value;
     _height = sHeight.value == 0 ? 170 : sHeight.value;
-    _weight = sWeight.value == 0 ? 70 : sWeight.value;
+    _weight = sWeight.value == 0 ? (sUseLbs.value ? 150 : 70) : sWeight.value;
     _sex = sSex.value;
     _somatotype = sSomatotype.value;
 
@@ -106,7 +107,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   String _getUnit(BodyMetricType type) {
     switch (type) {
       case BodyMetricType.weight:
-        return 'kg';
+        return sUseLbs.value ? 'lbs' : 'kg';
       case BodyMetricType.bmi:
         return '';
       case BodyMetricType.bodyFat:
@@ -142,7 +143,8 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
   double _calculateCurrentBmi() {
     if (_height == 0) return 0;
     final double heightInMeters = _height / 100;
-    return _weight / (heightInMeters * heightInMeters);
+    final double weightKg = sUseLbs.value ? _weight / 2.20462 : _weight;
+    return weightKg / (heightInMeters * heightInMeters);
   }
 
   // Helper to calculate current Body Fat for hintText.
@@ -392,15 +394,15 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                       // WEIGHT Picker.
                       _ScrollColumn(
                         label: 'WEIGHT',
-                        min: 20,
-                        max: 300,
+                        min: sUseLbs.value ? 40 : 20,
+                        max: sUseLbs.value ? 600 : 300,
                         value: _weight,
                         onChanged: (double val) {
                           setState(() {
                             _weight = val;
                           });
                         },
-                        suffix: 'kg',
+                        suffix: sUseLbs.value ? 'lbs' : 'kg',
                       ),
                     ],
                   ),

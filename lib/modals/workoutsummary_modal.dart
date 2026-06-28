@@ -11,9 +11,11 @@ import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:signals/signals_flutter.dart';
 
-class WorkoutSummaryModal extends StatelessWidget {
+class WorkoutSummaryModal extends SignalWidget {
   const WorkoutSummaryModal({required this.workout, super.key});
 
   final Workout workout;
@@ -332,22 +334,28 @@ class WorkoutSummaryModal extends StatelessWidget {
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                     children: <Widget>[
-                      StatTile(
-                        label: 'Volume',
-                        value: '${workout.totalStrengthVolume} kg',
-                        icon: LucideIcons.weight,
-                      ),
+                      (() {
+                        final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+                        return StatTile(
+                          label: 'Volume',
+                          value: '${workout.totalStrengthVolume} $weightUnit',
+                          icon: LucideIcons.weight,
+                        );
+                      })(),
                       StatTile(
                         label: 'Reps',
                         value: workout.totalReps.toString(),
                         icon: LucideIcons.arrowUp10,
                       ),
-                      StatTile(
-                        label: 'Avg Weight',
-                        value:
-                            '${workout.avgWorkoutWeight.toStringAsFixed(1)}kg',
-                        icon: LucideIcons.circleGauge,
-                      ),
+                      (() {
+                        final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+                        return StatTile(
+                          label: 'Avg Weight',
+                          value:
+                              '${workout.avgWorkoutWeight.toStringAsFixed(1)}$weightUnit',
+                          icon: LucideIcons.circleGauge,
+                        );
+                      })(),
                     ],
                   ),
                 ],

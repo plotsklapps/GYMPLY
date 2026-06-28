@@ -4,6 +4,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class PRCard extends StatelessWidget {
@@ -66,16 +67,18 @@ class PRCard extends StatelessWidget {
                   .toUpperCase();
               String detail = '';
 
+              final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+
               if (type == 'REP') {
-                detail = '${(pr['value'] as double).toStringAsFixed(1)} kg';
+                detail = '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit';
               } else if (type == 'SET') {
                 detail =
-                    '${(pr['weight'] as double).toStringAsFixed(1)} kg x '
+                    '${(pr['weight'] as double).toStringAsFixed(1)} $weightUnit x '
                     '${pr['reps']} reps';
               } else if (type == 'TOTAL') {
                 if (exercise is StrengthExercise) {
                   detail =
-                      '${(pr['value'] as double).toStringAsFixed(1)} kg Volume';
+                      '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit Volume';
                 } else {
                   detail = (pr['value'] as Duration).format();
                 }

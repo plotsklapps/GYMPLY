@@ -10,6 +10,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -157,13 +158,14 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
   }
 }
 
-class _StrengthPRs extends StatelessWidget {
+class _StrengthPRs extends SignalWidget {
   const _StrengthPRs({required this.pr});
   final PersonalRecord pr;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -180,15 +182,15 @@ class _StrengthPRs extends StatelessWidget {
           children: <Widget>[
             _PersonalRecordItem(
               label: 'REP PR',
-              value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+              value: '${pr.maxWeight.toStringAsFixed(1)} $weightUnit',
             ),
             _PersonalRecordItem(
               label: 'SET PR',
-              value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+              value: '${pr.maxSetVolume.toStringAsFixed(1)} $weightUnit',
             ),
             _PersonalRecordItem(
               label: 'SESSION PR',
-              value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+              value: '${pr.maxExerciseVolume.toStringAsFixed(1)} $weightUnit',
             ),
           ],
         ),
@@ -207,17 +209,17 @@ class _StrengthPRs extends StatelessWidget {
             _OneRepMaxItem(
               label: 'LOMBARDI',
               repRange: '1-5 reps',
-              value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+              value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
             ),
             _OneRepMaxItem(
               label: 'BRZYCKI',
               repRange: '5-10 reps',
-              value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+              value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} $weightUnit',
             ),
             _OneRepMaxItem(
               label: 'EPLEY',
               repRange: '1-10 reps',
-              value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
+              value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} $weightUnit',
             ),
           ],
         ),

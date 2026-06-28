@@ -20,6 +20,7 @@ class ThemeSettingsModal extends SignalWidget {
     // Watch settings Signals.
     final bool isDarkMode = sDarkMode.value;
     final bool isWakelock = sWakelock.value;
+    final bool isUseLbs = sUseLbs.value;
     final FlexScheme flexScheme = sFlexScheme.value;
     final String font = sFont.value;
     final bool isSupporter = donationService.sIsSupporter.value;
@@ -89,6 +90,23 @@ class ThemeSettingsModal extends SignalWidget {
                   value: isDarkMode,
                   onChanged: (bool value) async {
                     await settingsService.toggleThemeMode(value: value);
+                  },
+                ),
+
+                // Weight Unit ListTile.
+                SwitchListTile(
+                  title: isUseLbs
+                      ? const Text('Use lbs (pounds)')
+                      : const Text('Use kg (kilograms)'),
+                  subtitle: isUseLbs
+                      ? const Text('Weight metrics shown in pounds')
+                      : const Text('Weight metrics shown in kilograms'),
+                  secondary: Icon(
+                    isUseLbs ? LucideIcons.weight : LucideIcons.scale,
+                  ),
+                  value: isUseLbs,
+                  onChanged: (bool value) async {
+                    await settingsService.toggleUseLbs(value: value);
                   },
                 ),
 

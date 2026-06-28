@@ -22,6 +22,7 @@ class Settings {
     this.isSupporter = false,
     this.flexSchemeName,
     this.googleFontFamily,
+    this.useLbs = false,
   });
 
   @HiveField(0, defaultValue: true)
@@ -77,6 +78,9 @@ class Settings {
   // Supporter Google Fonts value.
   @HiveField(16)
   final String? googleFontFamily;
+
+  @HiveField(17, defaultValue: false)
+  final bool useLbs;
 
   FlexScheme get flexScheme {
     // If supporter, use saved Strin or default.
@@ -139,6 +143,7 @@ class Settings {
     bool? isExercisesGridMode,
     bool? isSupporter,
     String? googleFontFamily,
+    bool? useLbs,
   }) {
     // Map non-supporter FlexScheme enum choices to indexes.
     int updatedFlexSchemeIndex = flexSchemeIndex;
@@ -184,6 +189,7 @@ class Settings {
       isSupporter: isSupporter ?? this.isSupporter,
       flexSchemeName: flexScheme?.name ?? flexSchemeName,
       googleFontFamily: googleFontFamily ?? this.googleFontFamily,
+      useLbs: useLbs ?? this.useLbs,
     );
   }
 }

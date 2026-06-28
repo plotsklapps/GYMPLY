@@ -6,6 +6,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailCard extends SignalWidget {
@@ -20,6 +21,8 @@ class ExerciseDetailCard extends SignalWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final List<Widget> detailRows = <Widget>[];
+
+    final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
 
     if (exercise is StrengthExercise) {
       final StrengthExercise ex = exercise as StrengthExercise;
@@ -36,15 +39,15 @@ class ExerciseDetailCard extends SignalWidget {
         ExerciseDetailRow(label: 'Reps', value: ex.totalReps.toString()),
         ExerciseDetailRow(
           label: 'Volume',
-          value: '${ex.totalWeight.toStringAsFixed(1)} kg',
+          value: '${ex.totalWeight.toStringAsFixed(1)} $weightUnit',
         ),
         ExerciseDetailRow(
           label: 'Avg Weight/Rep',
-          value: '${ex.avgWeightPerRep.toStringAsFixed(1)} kg',
+          value: '${ex.avgWeightPerRep.toStringAsFixed(1)} $weightUnit',
         ),
         ExerciseDetailRow(
           label: 'Avg Weight/Set',
-          value: '${ex.avgWeightPerSet.toStringAsFixed(1)} kg',
+          value: '${ex.avgWeightPerSet.toStringAsFixed(1)} $weightUnit',
         ),
         Divider(height: 24, color: theme.colorScheme.secondary),
         Text(
@@ -53,22 +56,22 @@ class ExerciseDetailCard extends SignalWidget {
         ),
         ExerciseDetailRow(
           label: 'Lombardi (rep range 1-5)',
-          value: '${ex.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+          value: '${ex.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
         ),
         ExerciseDetailRow(
           label: 'Brzycki (rep range 5-10)',
-          value: '${ex.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+          value: '${ex.oneRepMaxBrzycki.toStringAsFixed(1)} $weightUnit',
         ),
         ExerciseDetailRow(
           label: 'Epley (rep range 1-10)',
-          value: '${ex.oneRepMaxEpley.toStringAsFixed(1)} kg',
+          value: '${ex.oneRepMaxEpley.toStringAsFixed(1)} $weightUnit',
         ),
       ]);
     } else if (exercise is CardioExercise) {
       final CardioExercise ex = exercise as CardioExercise;
 
-      // Watch personal stats for calorie calculation.
       final double userWeight = sWeight.value;
+      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -90,7 +93,7 @@ class ExerciseDetailCard extends SignalWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-                userWeight: userWeight,
+                userWeight: userWeightKg,
                 userAge: userAge,
                 userSex: userSex,
               )} kcal',

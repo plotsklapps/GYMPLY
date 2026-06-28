@@ -1,10 +1,15 @@
 import 'dart:async';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/settings_model.dart';
+import 'package:gymply/models/strength_model.dart';
+import 'package:gymply/models/workout_model.dart';
+import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/exercisesgridmode_signal.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
@@ -67,6 +72,7 @@ class SettingsService {
     sSomatotype.value = settings.somatotypeIndex;
     sOnboardingCompleted.value = settings.onboardingCompleted;
     sExercisesGridMode.value = settings.isExercisesGridMode;
+    sUseLbs.value = settings.useLbs;
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -320,6 +326,141 @@ class SettingsService {
         unawaited(updateFont('League Gothic'));
         _logger.i('SettingsService: Font reset to default (non-supporter)');
       }
+    }
+  }
+
+  // Toggle Weight metric (LBS or KGS) and migrate database weights.
+  Future<void> toggleUseLbs({required bool value}) async {
+    try {
+      final bool oldValue = sUseLbs.value;
+      if (oldValue == value) return;
+
+      // Update signal.
+      sUseLbs.value = value;
+
+      // Update Settings Box.
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put('settings', settings.copyWith(useLbs: value));
+      }
+
+      // Migrate database weight values.
+      await _migrateWeightUnits(value);
+
+      // Reload Settings and metrics to refresh signals.
+      loadSettings();
+      bodyMetricsService.loadBodyMetrics();
+
+      _logger.i('SettingsService: useLbs toggled to $value and DB migrated');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to toggle useLbs',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Settings Error',
+        subtitle: 'Failed to update weight unit preference.',
+      );
+    }
+  }
+
+  // Database-wide migration helper for weight metrics.
+  Future<void> _migrateWeightUnits(bool toLbs) async {
+    final double factor = toLbs ? 2.20462 : (1.0 / 2.20462);
+
+    // 1. Migrate settings body weight.
+    final Settings? settings = _settingsBox.get('settings');
+    if (settings != null && settings.weight > 0) {
+      await _settingsBox.put(
+        'settings',
+        settings.copyWith(weight: settings.weight * factor),
+      );
+    }
+
+    // 2. Migrate body metrics history box.
+    final List<dynamic> metricKeys = hiveService.bodyMetricsBox.keys.toList();
+    for (final dynamic key in metricKeys) {
+      final BodyMetric? metric = hiveService.bodyMetricsBox.get(key);
+      if (metric != null) {
+        final BodyMetric updatedMetric = BodyMetric(
+          date: metric.date,
+          age: metric.age,
+          height: metric.height,
+          weight: metric.weight * factor,
+          sex: metric.sex,
+          somatotype: metric.somatotype,
+          manualBmi: metric.manualBmi,
+          manualBodyFat: metric.manualBodyFat,
+        );
+        await hiveService.bodyMetricsBox.put(key, updatedMetric);
+      }
+    }
+
+    // 3. Migrate workouts history box.
+    final List<dynamic> workoutKeys = hiveService.workoutBox.keys.toList();
+    for (final dynamic key in workoutKeys) {
+      final Workout? workout = hiveService.workoutBox.get(key);
+      if (workout != null) {
+        bool workoutChanged = false;
+        final List<WorkoutExercise> updatedExercises = <WorkoutExercise>[];
+
+        for (final WorkoutExercise ex in workout.exercises) {
+          if (ex is StrengthExercise) {
+            workoutChanged = true;
+            final double? newWeightInput =
+                ex.weightInput != null ? ex.weightInput! * factor : null;
+            final List<StrengthSet> newSets = ex.sets.map((StrengthSet s) {
+              return StrengthSet(weight: s.weight * factor, reps: s.reps);
+            }).toList();
+
+            updatedExercises.add(
+              ex.copyWith(
+                weightInput: newWeightInput,
+                sets: newSets,
+              ),
+            );
+          } else {
+            updatedExercises.add(ex);
+          }
+        }
+
+        if (workoutChanged) {
+          await hiveService.workoutBox.put(
+            key,
+            workout.copyWith(exercises: updatedExercises),
+          );
+        }
+      }
+    }
+
+    // 4. Migrate active workout session.
+    final Workout active = sActiveWorkout.value;
+    bool activeChanged = false;
+    final List<WorkoutExercise> updatedActiveExercises = <WorkoutExercise>[];
+
+    for (final WorkoutExercise ex in active.exercises) {
+      if (ex is StrengthExercise) {
+        activeChanged = true;
+        final double? newWeightInput =
+            ex.weightInput != null ? ex.weightInput! * factor : null;
+        final List<StrengthSet> newSets = ex.sets.map((StrengthSet s) {
+          return StrengthSet(weight: s.weight * factor, reps: s.reps);
+        }).toList();
+
+        updatedActiveExercises.add(
+          ex.copyWith(
+            weightInput: newWeightInput,
+            sets: newSets,
+          ),
+        );
+      } else {
+        updatedActiveExercises.add(ex);
+      }
+    }
+
+    if (activeChanged) {
+      sActiveWorkout.value = active.copyWith(exercises: updatedActiveExercises);
     }
   }
 }

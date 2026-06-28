@@ -14,6 +14,7 @@ import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -45,6 +46,7 @@ class CardioExerciseScreen extends SignalWidget {
 
     // Watch personal stats for calorie calculation.
     final double userWeight = sWeight.value;
+    final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
     final int userAge = sAge.value;
     final int userSex = sSex.value;
 
@@ -279,7 +281,7 @@ class CardioExerciseScreen extends SignalWidget {
           // Scrollable Set List Section.
           CardioSetCard(
             exercise: exercise,
-            userWeight: userWeight,
+            userWeight: userWeightKg,
             userAge: userAge,
             userSex: userSex,
           ),

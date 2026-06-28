@@ -1,3 +1,4 @@
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 part 'bodymetrics_model.g.dart';
@@ -45,7 +46,8 @@ class BodyMetric {
     if (manualBmi != null && manualBmi! > 0) return manualBmi!;
     if (height == 0) return 0;
     final double heightInMeters = height / 100;
-    return weight / (heightInMeters * heightInMeters);
+    final double weightKg = sUseLbs.value ? weight / 2.20462 : weight;
+    return weightKg / (heightInMeters * heightInMeters);
   }
 
   // Calculate BF% using BMI method with somatotype adjustment.

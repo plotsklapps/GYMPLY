@@ -8,6 +8,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -23,6 +24,8 @@ class ExerciseStatsModal extends SignalWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final List<Widget> detailRows = <Widget>[];
+
+    final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
 
     // Build statistics rows based on exercise type.
     if (exercise is StrengthExercise) {
@@ -40,22 +43,22 @@ class ExerciseStatsModal extends SignalWidget {
         _StatRow(label: 'Reps', value: ex.totalReps.toString()),
         _StatRow(
           label: 'Volume',
-          value: '${ex.totalWeight.toStringAsFixed(1)} kg',
+          value: '${ex.totalWeight.toStringAsFixed(1)} $weightUnit',
         ),
         _StatRow(
           label: 'Avg Weight/Rep',
-          value: '${ex.avgWeightPerRep.toStringAsFixed(1)} kg',
+          value: '${ex.avgWeightPerRep.toStringAsFixed(1)} $weightUnit',
         ),
         _StatRow(
           label: 'Avg Weight/Set',
-          value: '${ex.avgWeightPerSet.toStringAsFixed(1)} kg',
+          value: '${ex.avgWeightPerSet.toStringAsFixed(1)} $weightUnit',
         ),
       ]);
     } else if (exercise is CardioExercise) {
       final CardioExercise ex = exercise as CardioExercise;
 
-      // Watch personal stats for calorie calculation.
       final double userWeight = sWeight.value;
+      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -77,7 +80,7 @@ class ExerciseStatsModal extends SignalWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-                userWeight: userWeight,
+                userWeight: userWeightKg,
                 userAge: userAge,
                 userSex: userSex,
               )} kcal',
@@ -86,8 +89,8 @@ class ExerciseStatsModal extends SignalWidget {
     } else if (exercise is StretchExercise) {
       final StretchExercise ex = exercise as StretchExercise;
 
-      // Watch personal stats for calorie calculation.
       final double userWeight = sWeight.value;
+      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -101,7 +104,7 @@ class ExerciseStatsModal extends SignalWidget {
           label: 'Calories',
           value:
               '${ex.calculateTotalCalories(
-                userWeight: userWeight,
+                userWeight: userWeightKg,
                 userAge: userAge,
                 userSex: userSex,
               )} kcal',
@@ -137,15 +140,15 @@ class ExerciseStatsModal extends SignalWidget {
                   const SizedBox(height: 8),
                   _StatRow(
                     label: 'Lombardi (rep range 1-5)',
-                    value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} kg',
+                    value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Brzycki (rep range 5-10)',
-                    value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} kg',
+                    value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Epley (rep range 1-10)',
-                    value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} kg',
+                    value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} $weightUnit',
                   ),
                   Divider(height: 32, color: theme.colorScheme.outlineVariant),
                 ],
@@ -162,15 +165,15 @@ class ExerciseStatsModal extends SignalWidget {
                 if (exercise is StrengthExercise) ...<Widget>[
                   _StatRow(
                     label: 'Max Weight',
-                    value: '${pr.maxWeight.toStringAsFixed(1)} kg',
+                    value: '${pr.maxWeight.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Max Set Volume',
-                    value: '${pr.maxSetVolume.toStringAsFixed(1)} kg',
+                    value: '${pr.maxSetVolume.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Max Exercise Volume',
-                    value: '${pr.maxExerciseVolume.toStringAsFixed(1)} kg',
+                    value: '${pr.maxExerciseVolume.toStringAsFixed(1)} $weightUnit',
                   ),
                 ] else if (exercise is CardioExercise) ...<Widget>[
                   _StatRow(

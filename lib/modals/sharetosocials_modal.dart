@@ -9,6 +9,7 @@ import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/share_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -264,8 +265,13 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   ),
                                 ),
                                 Text(
-                                  '${metric.label}${metric.unit.isNotEmpty ? ' '
-                                            '(${metric.unit})' : ''}',
+                                  (() {
+                                    final String displayUnit =
+                                        metric == ShareableMetric.volume
+                                        ? (sUseLbs.value ? 'lbs' : 'kg')
+                                        : metric.unit;
+                                    return '${metric.label}${displayUnit.isNotEmpty ? ' ($displayUnit)' : ''}';
+                                  })(),
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     letterSpacing: 1,
                                     fontWeight: FontWeight.bold,

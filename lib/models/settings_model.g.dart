@@ -35,13 +35,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       isSupporter: fields[14] == null ? false : fields[14] as bool,
       flexSchemeName: fields[15] as String?,
       googleFontFamily: fields[16] as String?,
+      useLbs: fields[17] == null ? false : fields[17] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -73,7 +74,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(15)
       ..write(obj.flexSchemeName)
       ..writeByte(16)
-      ..write(obj.googleFontFamily);
+      ..write(obj.googleFontFamily)
+      ..writeByte(17)
+      ..write(obj.useLbs);
   }
 
   @override

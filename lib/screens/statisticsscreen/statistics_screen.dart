@@ -15,6 +15,7 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -51,6 +52,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final List<Workout> history = sWorkoutHistory.value;
     final Workout activeWorkout = sActiveWorkout.value;
     final double userWeight = sWeight.value;
+    final double userWeightKg =
+        sUseLbs.value ? userWeight / 2.20462 : userWeight;
     final int userAge = sAge.value;
     final int userSex = sSex.value;
 
@@ -65,6 +68,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         ? null
         : activeWorkout;
 
+    final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+
     final String avgWeight =
         currentWorkout?.avgWorkoutWeight.toStringAsFixed(1) ?? '0.0';
     final String cardioDist =
@@ -72,7 +77,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final String cardioCals =
         currentWorkout
             ?.calculateTotalCardioCalories(
-              userWeight: userWeight,
+              userWeight: userWeightKg,
               userAge: userAge,
               userSex: userSex,
             )
@@ -81,7 +86,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final String stretchCals =
         currentWorkout
             ?.calculateTotalStretchCalories(
-              userWeight: userWeight,
+              userWeight: userWeightKg,
               userAge: userAge,
               userSex: userSex,
             )
@@ -238,7 +243,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           children: <Widget>[
                             StatTile(
                               label: 'Volume',
-                              value: '${currentWorkout.totalStrengthVolume} kg',
+                              value:
+                                  '${currentWorkout.totalStrengthVolume} '
+                                  '$weightUnit',
                               icon: LucideIcons.weight,
                             ),
                             StatTile(
@@ -248,7 +255,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             ),
                             StatTile(
                               label: 'Avg Weight',
-                              value: '${avgWeight}kg',
+                              value: '$avgWeight$weightUnit',
                               icon: LucideIcons.circleGauge,
                             ),
                           ],

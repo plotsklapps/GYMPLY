@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ConvertCalculator extends StatefulWidget {
@@ -14,6 +15,12 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
   bool isMetric = false;
   String inputWeight = '0';
   String result = '0.0';
+
+  @override
+  void initState() {
+    super.initState();
+    isMetric = !sUseLbs.value;
+  }
 
   void _calculate() {
     final double weight = double.tryParse(inputWeight) ?? 0;
