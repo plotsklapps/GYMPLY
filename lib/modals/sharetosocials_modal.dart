@@ -15,7 +15,7 @@ import 'package:signals/signals_flutter.dart';
 
 // Toggleable metrics.
 enum ShareableMetric {
-  volume('VOLUME', 'kg'),
+  volume('VOLUME', ''),
   sets('SETS', ''),
   duration('DURATION', ''),
   distance('DISTANCE', 'km'),
@@ -254,10 +254,16 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                           children: _selectedMetrics.map((
                             ShareableMetric metric,
                           ) {
+                            final String metricValue = _getMetricValue(metric);
+                            final String displayUnit =
+                                metric == ShareableMetric.volume
+                                ? (sUseLbs.value ? 'lbs' : 'kg')
+                                : metric.unit;
+
                             return Column(
                               children: <Widget>[
                                 Text(
-                                  _getMetricValue(metric),
+                                  metricValue,
                                   style: theme.textTheme.displaySmall?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.onPrimary
@@ -265,13 +271,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   ),
                                 ),
                                 Text(
-                                  (() {
-                                    final String displayUnit =
-                                        metric == ShareableMetric.volume
-                                        ? (sUseLbs.value ? 'lbs' : 'kg')
-                                        : metric.unit;
-                                    return '${metric.label}${displayUnit.isNotEmpty ? ' ($displayUnit)' : ''}';
-                                  })(),
+                                  '${metric.label}${displayUnit.isNotEmpty ? ' ($displayUnit)' : ''}',
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     letterSpacing: 1,
                                     fontWeight: FontWeight.bold,

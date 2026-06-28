@@ -162,7 +162,7 @@ class CardioSet {
         met = 7.0; // Jog / Moderate cardio
     }
 
-    // Standard formula: Calories = MET * weight_kg * (duration_hours)
+    // Standard formula: Calories = MET * weight * (duration_hours)
     final double durationHours = cardioDuration.inSeconds / 3600.0;
     double estimated = met * userWeight * durationHours;
 

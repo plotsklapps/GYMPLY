@@ -41,7 +41,7 @@ class BodyMetric {
   @HiveField(7)
   final double? manualBodyFat;
 
-  // Calculate BMI: weight (kg) / height (m)^2.
+  // Calculate BMI: Weight / height (m)^2.
   double get bmi {
     if (manualBmi != null && manualBmi! > 0) return manualBmi!;
     if (height == 0) return 0;

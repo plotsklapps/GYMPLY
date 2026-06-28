@@ -411,7 +411,10 @@ class WorkoutService {
     _replaceExercise(exercise, updatedExercise);
 
     // Log addition.
-    _logger.i('WorkoutService: Adding Strength set - $weight kg x $reps reps');
+    final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
+    _logger.i(
+      'WorkoutService: Adding Strength set - $weight $weightUnit x $reps reps',
+    );
   }
 
   // Delete set from StrengthExercise Object.

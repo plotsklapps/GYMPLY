@@ -132,7 +132,7 @@ class StretchSet {
         met = 2.3; // Moderate stretching
     }
 
-    // Standard formula: Calories = MET * weight_kg * (duration_hours)
+    // Standard formula: Calories = MET * weight * (duration_hours)
     final double durationHours = stretchDuration.inSeconds / 3600.0;
     double estimated = met * userWeight * durationHours;
 

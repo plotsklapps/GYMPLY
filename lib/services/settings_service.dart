@@ -369,12 +369,14 @@ class SettingsService {
   Future<void> _migrateWeightUnits(bool toLbs) async {
     final double factor = toLbs ? 2.20462 : (1.0 / 2.20462);
 
+    double round(double value) => double.parse(value.toStringAsFixed(1));
+
     // 1. Migrate settings body weight.
     final Settings? settings = _settingsBox.get('settings');
     if (settings != null && settings.weight > 0) {
       await _settingsBox.put(
         'settings',
-        settings.copyWith(weight: settings.weight * factor),
+        settings.copyWith(weight: round(settings.weight * factor)),
       );
     }
 
@@ -387,7 +389,7 @@ class SettingsService {
           date: metric.date,
           age: metric.age,
           height: metric.height,
-          weight: metric.weight * factor,
+          weight: round(metric.weight * factor),
           sex: metric.sex,
           somatotype: metric.somatotype,
           manualBmi: metric.manualBmi,
@@ -408,10 +410,14 @@ class SettingsService {
         for (final WorkoutExercise ex in workout.exercises) {
           if (ex is StrengthExercise) {
             workoutChanged = true;
-            final double? newWeightInput =
-                ex.weightInput != null ? ex.weightInput! * factor : null;
+            final double? newWeightInput = ex.weightInput != null
+                ? round(ex.weightInput! * factor)
+                : null;
             final List<StrengthSet> newSets = ex.sets.map((StrengthSet s) {
-              return StrengthSet(weight: s.weight * factor, reps: s.reps);
+              return StrengthSet(
+                weight: round(s.weight * factor),
+                reps: s.reps,
+              );
             }).toList();
 
             updatedExercises.add(
@@ -442,10 +448,11 @@ class SettingsService {
     for (final WorkoutExercise ex in active.exercises) {
       if (ex is StrengthExercise) {
         activeChanged = true;
-        final double? newWeightInput =
-            ex.weightInput != null ? ex.weightInput! * factor : null;
+        final double? newWeightInput = ex.weightInput != null
+            ? round(ex.weightInput! * factor)
+            : null;
         final List<StrengthSet> newSets = ex.sets.map((StrengthSet s) {
-          return StrengthSet(weight: s.weight * factor, reps: s.reps);
+          return StrengthSet(weight: round(s.weight * factor), reps: s.reps);
         }).toList();
 
         updatedActiveExercises.add(

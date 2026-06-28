@@ -101,7 +101,7 @@ class SomatotypeModal extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'BMI = weight (kg) / height (m)²',
+                              'BMI = Weight / Height (m)²',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontFamily: 'monospace',
                               ),
