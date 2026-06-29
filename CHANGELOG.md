@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+77] - 2026-06-29
+- **Exercise Library & Fixes:**
+  - **StrongMan Support:** Added a dedicated StrongMan equipment image and updated the `Equipment` enum to enable StrongMan exercise logging.
+  - **Issue #1 Resolved:** Fixed an issue that prevented adding StrongMan exercises. Thank you @Zhdun12 for the report (https://github.com/plotsklapps/GYMPLY/issues/1).
+
 ## [0.0.7+76] - 2026-06-28
 - **Weight Unit Improvements:**
   - **KGS to LBS Toggle:** Implemented a project-wide toggle in Theme Settings for seamless switching between Kilograms and Pounds.
