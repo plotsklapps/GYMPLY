@@ -74,6 +74,8 @@ enum Equipment {
   heavybag,
   @HiveField(17)
   battlerope,
+  @HiveField(18)
+  strongman,
 }
 
 // Helper enums for UI filtering (Non-Hive).
@@ -93,6 +95,7 @@ enum StrengthEquipment {
   powersled,
   safetybar,
   trapbar,
+  strongman,
 }
 
 enum CardioEquipment {

@@ -159,6 +159,8 @@ class EquipmentAdapter extends TypeAdapter<Equipment> {
         return Equipment.heavybag;
       case 17:
         return Equipment.battlerope;
+      case 18:
+        return Equipment.strongman;
       default:
         return Equipment.bodyweight;
     }
@@ -203,6 +205,8 @@ class EquipmentAdapter extends TypeAdapter<Equipment> {
         writer.writeByte(16);
       case Equipment.battlerope:
         writer.writeByte(17);
+      case Equipment.strongman:
+        writer.writeByte(18);
     }
   }
 
