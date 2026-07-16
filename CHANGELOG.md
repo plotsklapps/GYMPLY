@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+78] - 2026-07-16
+- **Dependencies:**
+  - Upgraded several `pubspec.yaml` dependencies.
+- **Offline Mode:**
+  - Streamlined offline mode (faster).
+
 ## [0.0.7+77] - 2026-06-29
 - **Exercise Library & Fixes:**
   - **StrongMan Support:** Added a dedicated StrongMan equipment image and updated the `Equipment` enum to enable StrongMan exercise logging.
