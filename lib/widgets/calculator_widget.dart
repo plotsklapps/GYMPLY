@@ -12,7 +12,7 @@ class ConvertCalculator extends StatefulWidget {
 }
 
 class _ConvertCalculatorState extends State<ConvertCalculator> {
-  bool isMetric = false;
+  bool isMetric = true;
   String inputWeight = '0';
   String result = '0.0';
 
