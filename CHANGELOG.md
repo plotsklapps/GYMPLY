@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.7+79] - 2026-07-25
+- **Icon System Migration:**
+  - Replaced `lucide_icons_flutter` dependency with `font_awesome_flutter`.
+  - Introduced `IconUtils` in `lib/theme/icons.dart` to centralize and standardize icon usage across all modals, screens, and widgets.
+- **Nostr Reaction Refactoring:**
+  - Refactored Nostr reaction system: renamed `sendBicepsReaction` to `sendLike` and updated content payload from `💪` to `+` (NIP-25 standard).
+  - Updated reaction UI components across workout notes and comments to use heart icons.
+- **Settings & Defaults:**
+  - Updated default `isMetric` setting to `true`.
+- **Dependencies & Framework:**
+  - Upgraded Flutter SDK to 3.44.7.
+  - Upgraded dependencies including `connectivity_plus`, `share_plus`, and `wakelock_plus`.
+  - Incremented project version to `0.0.7+79`.
+
 ## [0.0.7+78] - 2026-07-16
 - **Dependencies:**
   - Upgraded several `pubspec.yaml` dependencies.
