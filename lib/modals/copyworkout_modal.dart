@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class CopyWorkoutModal extends StatefulWidget {
   const CopyWorkoutModal({required this.workout, super.key});
@@ -72,7 +72,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

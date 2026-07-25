@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/notification_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // Explains GYMPLY's background timer approach and requests the
@@ -31,7 +31,7 @@ class PermissionModal extends StatelessWidget {
                 // Pop cleanly.
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

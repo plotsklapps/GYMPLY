@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -16,7 +17,6 @@ import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StatisticsScreen extends SignalStatefulWidget {
@@ -52,8 +52,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final List<Workout> history = sWorkoutHistory.value;
     final Workout activeWorkout = sActiveWorkout.value;
     final double userWeight = sWeight.value;
-    final double userWeightKg =
-        sUseLbs.value ? userWeight / 2.20462 : userWeight;
+    final double userWeightKg = sUseLbs.value
+        ? userWeight / 2.20462
+        : userWeight;
     final int userAge = sAge.value;
     final int userSex = sSex.value;
 
@@ -217,17 +218,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           StatTile(
                             label: 'Exercises',
                             value: currentWorkout.exerciseCount.toString(),
-                            icon: LucideIcons.dumbbell,
+                            icon: FontAwesomeIcons.dumbbell,
                           ),
                           StatTile(
                             label: 'Sets',
                             value: currentWorkout.totalSets.toString(),
-                            icon: LucideIcons.arrowUpWideNarrow,
+                            icon: FontAwesomeIcons.arrowUp91,
                           ),
                           StatTile(
                             label: 'Time',
                             value: currentWorkout.totalDuration.formatHHMM(),
-                            icon: LucideIcons.timer,
+                            icon: FontAwesomeIcons.clock,
                           ),
                         ],
                       ),
@@ -246,17 +247,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               value:
                                   '${currentWorkout.totalStrengthVolume} '
                                   '$weightUnit',
-                              icon: LucideIcons.weight,
+                              icon: FontAwesomeIcons.weightHanging,
                             ),
                             StatTile(
                               label: 'Reps',
                               value: currentWorkout.totalReps.toString(),
-                              icon: LucideIcons.arrowUp10,
+                              icon: FontAwesomeIcons.arrowUp91,
                             ),
                             StatTile(
                               label: 'Avg Weight',
                               value: '$avgWeight$weightUnit',
-                              icon: LucideIcons.circleGauge,
+                              icon: FontAwesomeIcons.gaugeHigh,
                             ),
                           ],
                         ),
@@ -274,17 +275,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             StatTile(
                               label: 'Distance',
                               value: '${cardioDist}km',
-                              icon: LucideIcons.rulerDimensionLine,
+                              icon: FontAwesomeIcons.rulerHorizontal,
                             ),
                             StatTile(
                               label: 'Calories',
                               value: '${cardioCals}kcal',
-                              icon: LucideIcons.flame,
+                              icon: FontAwesomeIcons.fire,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalCardioTime.format(),
-                              icon: LucideIcons.clock,
+                              icon: FontAwesomeIcons.stopwatch,
                             ),
                           ],
                         ),
@@ -303,17 +304,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               label: 'Stretch Count',
                               value: currentWorkout.stretchExerciseCount
                                   .toString(),
-                              icon: LucideIcons.personStanding,
+                              icon: FontAwesomeIcons.personFallingBurst,
                             ),
                             StatTile(
                               label: 'Calories',
                               value: '${stretchCals}kcal',
-                              icon: LucideIcons.flame,
+                              icon: FontAwesomeIcons.fire,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalStretchTime.format(),
-                              icon: LucideIcons.clock,
+                              icon: FontAwesomeIcons.stopwatch,
                             ),
                           ],
                         ),
@@ -323,8 +324,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         title: 'EXERCISE BREAKDOWN',
                       ),
                       ...currentWorkout.exercises.map(
-                        (WorkoutExercise ex) =>
-                            ExerciseDetailCard(exercise: ex),
+                        (WorkoutExercise ex) {
+                          return ExerciseDetailCard(exercise: ex);
+                        },
                       ),
                     ],
                   ),

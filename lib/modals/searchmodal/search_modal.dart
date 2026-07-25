@@ -14,7 +14,7 @@ import 'package:gymply/signals/searchquery_signal.dart';
 import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:gymply/signals/selectedmusclegroup_signal.dart';
 import 'package:gymply/signals/selectedworkouttype_signal.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class SearchModal extends SignalStatefulWidget {
@@ -93,7 +93,7 @@ class _SearchModalState extends State<SearchModal> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const Icon(LucideIcons.circleX),
+                icon: IconUtils.close,
               ),
             ],
           ),
@@ -134,11 +134,11 @@ class _SearchModalState extends State<SearchModal> {
                                     sSearchQuery.value = '';
                                     searchFocusNode.unfocus();
                                   },
-                                  icon: const Icon(LucideIcons.searchX),
+                                  icon: IconUtils.searchClose,
                                 )
                               : IconButton(
                                   onPressed: () {},
-                                  icon: const Icon(LucideIcons.search),
+                                  icon: IconUtils.search,
                                 ),
                           onChanged: (String value) {
                             sSearchQuery.value = value;
@@ -150,11 +150,9 @@ class _SearchModalState extends State<SearchModal> {
                       padding: const EdgeInsets.only(right: 8),
                       child: IconButton(
                         onPressed: settingsService.toggleExerciseViewMode,
-                        icon: Icon(
-                          isGridMode
-                              ? LucideIcons.layoutList
-                              : LucideIcons.layoutGrid,
-                        ),
+                        icon: isGridMode
+                            ? IconUtils.layoutList
+                            : IconUtils.layoutGrid,
                       ),
                     ),
                     if (_showScrollToTop)
@@ -168,7 +166,7 @@ class _SearchModalState extends State<SearchModal> {
                               curve: Curves.easeInOut,
                             );
                           },
-                          icon: const Icon(LucideIcons.circleChevronUp),
+                          icon: IconUtils.circleUp,
                         ),
                       ),
                   ],

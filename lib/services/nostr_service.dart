@@ -491,7 +491,7 @@ class NostrService {
   }
 
   // Sends 'Like' (Kind 7) to WorkoutNote or Comment.
-  Future<void> sendBicepsReaction(String eventId, {String? rootId}) async {
+  Future<void> sendLike(String eventId, {String? rootId}) async {
     if (!sNsec.value) return;
 
     final String myPubkey = Nip19.decode(sNpub.value!);
@@ -515,7 +515,7 @@ class NostrService {
     final Nip01Event event = Nip01Event(
       pubKey: myPubkey,
       kind: 7,
-      content: '💪',
+      content: '+',
       createdAt: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       tags: <List<String>>[
         <String>['e', eventId],
@@ -698,7 +698,8 @@ class NostrService {
           final String targetEventId = eTag[1];
 
           // Handle Reactions (Kind 7).
-          if (event.kind == 7 && event.content == '💪') {
+          if (event.kind == 7 &&
+              (event.content == '+' || event.content.isEmpty)) {
             final Map<String, Set<String>> reactions =
                 Map<String, Set<String>>.from(sFeedReactions.value);
             final Set<String> eventLikes = Set<String>.from(
@@ -756,7 +757,8 @@ class NostrService {
             }
           }
           // Handle Reactions (Kind 7) to comments.
-          else if (event.kind == 7 && event.content == '💪') {
+          else if (event.kind == 7 &&
+              (event.content == '+' || event.content.isEmpty)) {
             final List<String> eTag = event.tags.firstWhere(
               (List<String> t) => t.length >= 2 && t[0] == 'e',
               orElse: () => <String>[],

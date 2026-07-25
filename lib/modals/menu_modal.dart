@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/about_modal.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/donation_modal.dart';
@@ -11,7 +12,7 @@ import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class MenuModal extends SignalWidget {
@@ -53,7 +54,7 @@ class MenuModal extends SignalWidget {
                 // Pop the modal.
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -80,10 +81,10 @@ class MenuModal extends SignalWidget {
                       ),
                     );
                   },
-                  leading: const Icon(LucideIcons.hatGlasses),
+                  leading: IconUtils.incognito,
                   title: const Text('Nostr Profile'),
                   subtitle: const Text('Manage your Nostr settings'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 // BodyMetrics ListTile.
@@ -94,10 +95,10 @@ class MenuModal extends SignalWidget {
                       child: const BodyMetricsModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.personStanding),
+                  leading: IconUtils.body,
                   title: const Text('Body Metrics'),
                   subtitle: const Text('Age, height, weight and more'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 // Theme settings ListTile.
@@ -108,10 +109,10 @@ class MenuModal extends SignalWidget {
                       child: const ThemeSettingsModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.paintbrush),
+                  leading: IconUtils.palette,
                   title: const Text('Theme Settings'),
                   subtitle: const Text('Set up your GYMPLY experience'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 const Divider(),
@@ -136,7 +137,7 @@ class MenuModal extends SignalWidget {
                           height: 24,
                           child: CircularProgressIndicator(),
                         )
-                      : const Icon(LucideIcons.hardDriveDownload),
+                      : IconUtils.download,
                   title: const Text('Backup Data'),
                   subtitle: const Text('Save your workout history to device'),
                 ),
@@ -167,7 +168,7 @@ class MenuModal extends SignalWidget {
                           height: 24,
                           child: CircularProgressIndicator(),
                         )
-                      : const Icon(LucideIcons.hardDriveUpload),
+                      : IconUtils.upload,
                   title: const Text('Restore Data'),
                   subtitle: const Text('Load data from a backup file'),
                 ),
@@ -179,13 +180,13 @@ class MenuModal extends SignalWidget {
                       child: const DonationModal(),
                     );
                   },
-                  leading: Icon(
-                    LucideIcons.heart,
+                  leading: FaIcon(
+                    FontAwesomeIcons.heart,
                     color: theme.colorScheme.secondary,
                   ),
                   title: const Text('Support GYMPLY.'),
                   subtitle: const Text('Help keep this app free and private'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 const Divider(),
@@ -201,10 +202,10 @@ class MenuModal extends SignalWidget {
                       child: const AboutModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.info),
+                  leading: IconUtils.info,
                   title: const Text('About GYMPLY.'),
                   subtitle: const Text('Source Code, Updates, Licenses'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
               ],
             ),

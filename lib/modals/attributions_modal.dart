@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AttributionsModal extends StatelessWidget {
@@ -25,7 +25,7 @@ class AttributionsModal extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

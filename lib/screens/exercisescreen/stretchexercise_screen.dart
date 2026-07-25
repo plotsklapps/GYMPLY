@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
@@ -15,7 +16,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
@@ -46,7 +47,9 @@ class StretchExerciseScreen extends SignalWidget {
 
     // Watch personal stats for calorie calculation.
     final double userWeight = sWeight.value;
-    final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
+    final double userWeightKg = sUseLbs.value
+        ? userWeight / 2.20462
+        : userWeight;
     final int userAge = sAge.value;
     final int userSex = sSex.value;
 
@@ -80,8 +83,8 @@ class StretchExerciseScreen extends SignalWidget {
                           child: ExerciseHistoryModal(exercise: exercise),
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.history,
+                      icon: FaIcon(
+                        FontAwesomeIcons.clockRotateLeft,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -94,8 +97,8 @@ class StretchExerciseScreen extends SignalWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? Icon(
-                                  LucideIcons.circleCheck,
+                              ? FaIcon(
+                                  FontAwesomeIcons.circleCheck,
                                   color: theme.colorScheme.onSecondary,
                                 )
                               : null,
@@ -138,8 +141,8 @@ class StretchExerciseScreen extends SignalWidget {
                           child: ExerciseStatsModal(exercise: exercise),
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.chartColumn,
+                      icon: FaIcon(
+                        FontAwesomeIcons.chartColumn,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -183,7 +186,7 @@ class StretchExerciseScreen extends SignalWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const Icon(LucideIcons.circleX),
+                      child: IconUtils.close,
                     ),
                     const SizedBox(width: 4),
 
@@ -223,8 +226,8 @@ class StretchExerciseScreen extends SignalWidget {
                           (mode == StretchMode.stopwatch
                               ? isStopwatchRunning
                               : (isIntervalRunning || isRestRunning))
-                          ? const Icon(LucideIcons.circlePause)
-                          : const Icon(LucideIcons.circlePlay),
+                          ? IconUtils.pause
+                          : IconUtils.play,
                     ),
                     const SizedBox(width: 4),
 
@@ -269,7 +272,7 @@ class StretchExerciseScreen extends SignalWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: const Icon(LucideIcons.circlePlus),
+                      child: IconUtils.add,
                     ),
                   ],
                 ),

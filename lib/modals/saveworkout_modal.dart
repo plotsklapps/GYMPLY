@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/addimage_modal.dart';
 import 'package:gymply/modals/sharetosocials_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -9,9 +10,9 @@ import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class SaveWorkoutModal extends StatefulWidget {
   const SaveWorkoutModal({super.key});
@@ -101,7 +102,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -211,7 +212,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          Icon(LucideIcons.imagePlus),
+                                          IconUtils.image,
                                           SizedBox(height: 8),
                                           Text('Add image'),
                                         ],
@@ -243,13 +244,14 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                                         child: IconButton(
                                                           padding:
                                                               EdgeInsets.zero,
-                                                          icon: const Icon(
-                                                            LucideIcons.trash2,
-                                                            size: 16,
+                                                          icon: const FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
                                                             color: Colors.white,
                                                           ),
-                                                          onPressed: () =>
-                                                              _removeImage(i),
+                                                          onPressed: () {
+                                                            _removeImage(i);
+                                                          },
                                                         ),
                                                       ),
                                                     ),

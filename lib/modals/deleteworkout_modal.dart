@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class DeleteWorkoutModal extends StatelessWidget {
   const DeleteWorkoutModal({super.key});
@@ -27,7 +27,7 @@ class DeleteWorkoutModal extends StatelessWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

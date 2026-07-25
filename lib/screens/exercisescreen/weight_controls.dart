@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class WeightControls extends StatelessWidget {
   const WeightControls({
@@ -36,7 +36,7 @@ class WeightControls extends StatelessWidget {
 
             onDecrementLarge();
           },
-          child: const Icon(LucideIcons.chevronsDown),
+          child: IconUtils.chevronsDown,
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
@@ -48,7 +48,7 @@ class WeightControls extends StatelessWidget {
 
             onDecrementSmall();
           },
-          child: const Icon(LucideIcons.chevronDown),
+          child: IconUtils.chevronDown,
         ),
         const SizedBox(width: 4),
         Expanded(
@@ -77,7 +77,7 @@ class WeightControls extends StatelessWidget {
 
             onIncrementSmall();
           },
-          child: const Icon(LucideIcons.chevronUp),
+          child: IconUtils.chevronUp,
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
@@ -89,7 +89,7 @@ class WeightControls extends StatelessWidget {
 
             onIncrementLarge();
           },
-          child: const Icon(LucideIcons.chevronsUp),
+          child: IconUtils.chevronsUp,
         ),
       ],
     );

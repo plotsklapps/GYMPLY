@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:toastification/toastification.dart';
 
 // Instead of Snackbars, GYMPLY uses toastification package.
@@ -18,7 +18,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 400),
-      icon: const Icon(LucideIcons.circleCheck),
+      icon: IconUtils.check,
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -44,7 +44,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 300),
-      icon: const Icon(LucideIcons.circleAlert),
+      icon: IconUtils.warning,
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -70,7 +70,7 @@ class ToastService {
       alignment: Alignment.topRight,
       direction: TextDirection.ltr,
       animationDuration: const Duration(milliseconds: 300),
-      icon: const Icon(LucideIcons.circleX),
+      icon: IconUtils.error,
       showIcon: true,
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),

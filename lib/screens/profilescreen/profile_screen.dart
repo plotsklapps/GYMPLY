@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/screens/profilescreen/keycard_widget.dart';
 import 'package:gymply/screens/profilescreen/metadataform_widget.dart';
@@ -6,7 +7,7 @@ import 'package:gymply/screens/profilescreen/onboarding_widget.dart';
 import 'package:gymply/screens/profilescreen/profileheader_widget.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -87,7 +88,10 @@ class _ProfileWidget extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: <Widget>[
-                        Icon(LucideIcons.eye, color: theme.colorScheme.primary),
+                        FaIcon(
+                          FontAwesomeIcons.eye,
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 12),
                         const Expanded(
                           child: Text(
@@ -114,7 +118,7 @@ class _ProfileWidget extends StatelessWidget {
                                 child: const ImportKeysModal(),
                               );
                             },
-                            icon: const Icon(LucideIcons.lock),
+                            icon: IconUtils.secretKey,
                             label: const Text('Import Private Key (nsec)'),
                           ),
                         ),
@@ -139,7 +143,7 @@ class _ProfileWidget extends StatelessWidget {
           KeyCard(
             label: 'PUBLIC KEY (npub)',
             keyValue: npub,
-            icon: LucideIcons.key,
+            icon: FontAwesomeIcons.key,
             isSensitive: false,
           ),
           const SizedBox(height: 8),
@@ -149,7 +153,7 @@ class _ProfileWidget extends StatelessWidget {
             KeyCard(
               label: 'PRIVATE KEY (nsec)',
               onFetchValue: nostrService.getNsec,
-              icon: LucideIcons.lock,
+              icon: FontAwesomeIcons.lock,
               isSensitive: true,
             ),
 
@@ -162,7 +166,7 @@ class _ProfileWidget extends StatelessWidget {
                   onPressed: () async {
                     await nostrService.logout();
                   },
-                  icon: const Icon(LucideIcons.logOut),
+                  icon: IconUtils.logout,
                   label: const Text('Logout and delete keys from device'),
                 ),
               ),

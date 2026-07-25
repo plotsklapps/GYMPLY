@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/services/textformat_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class MetricSelector extends StatelessWidget {
   const MetricSelector({
@@ -25,7 +25,7 @@ class MetricSelector extends StatelessWidget {
             child: ChoiceChip(
               showCheckmark: true,
               label: Text(metric.name.capitalizeFirst()),
-              avatar: isSelected ? const Icon(LucideIcons.circleCheck) : null,
+              avatar: isSelected ? IconUtils.check : null,
               selected: isSelected,
               onSelected: (bool selected) {
                 if (selected) {

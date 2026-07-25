@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -12,7 +13,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorkoutSummaryModal extends SignalWidget {
@@ -51,7 +52,7 @@ class WorkoutSummaryModal extends SignalWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(LucideIcons.circleX),
+                  icon: IconUtils.close,
                 ),
               ),
             ],
@@ -96,7 +97,7 @@ class WorkoutSummaryModal extends SignalWidget {
               ),
             ),
             PopupMenuButton<String>(
-              icon: const Icon(LucideIcons.circleEllipsis),
+              icon: IconUtils.more,
               onSelected: (String value) async {
                 if (value == 'delete') {
                   // Confirm deletion.
@@ -134,8 +135,8 @@ class WorkoutSummaryModal extends SignalWidget {
                           width: 24,
                           height: 24,
                           child: Center(
-                            child: Icon(
-                              LucideIcons.copy,
+                            child: FaIcon(
+                              FontAwesomeIcons.clone,
                               color: theme.colorScheme.primary,
                             ),
                           ),
@@ -153,8 +154,8 @@ class WorkoutSummaryModal extends SignalWidget {
                           width: 24,
                           height: 24,
                           child: Center(
-                            child: Icon(
-                              LucideIcons.trash,
+                            child: FaIcon(
+                              FontAwesomeIcons.trashCan,
                               color: theme.colorScheme.error,
                             ),
                           ),
@@ -169,7 +170,7 @@ class WorkoutSummaryModal extends SignalWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -221,8 +222,8 @@ class WorkoutSummaryModal extends SignalWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Icon(
-                          LucideIcons.notebookPen,
+                        FaIcon(
+                          FontAwesomeIcons.penToSquare,
                           size: 20,
                           color: theme.colorScheme.primary,
                         ),
@@ -309,17 +310,17 @@ class WorkoutSummaryModal extends SignalWidget {
                     StatTile(
                       label: 'Exercises',
                       value: workout.exerciseCount.toString(),
-                      icon: LucideIcons.dumbbell,
+                      icon: FontAwesomeIcons.dumbbell,
                     ),
                     StatTile(
                       label: 'Sets',
                       value: workout.totalSets.toString(),
-                      icon: LucideIcons.arrowUpWideNarrow,
+                      icon: FontAwesomeIcons.arrowUpWideShort,
                     ),
                     StatTile(
                       label: 'Time',
                       value: workout.totalDuration.formatHHMM(),
-                      icon: LucideIcons.timer,
+                      icon: FontAwesomeIcons.clock,
                     ),
                   ],
                 ),
@@ -339,13 +340,13 @@ class WorkoutSummaryModal extends SignalWidget {
                         return StatTile(
                           label: 'Volume',
                           value: '${workout.totalStrengthVolume} $weightUnit',
-                          icon: LucideIcons.weight,
+                          icon: FontAwesomeIcons.weightHanging,
                         );
                       })(),
                       StatTile(
                         label: 'Reps',
                         value: workout.totalReps.toString(),
-                        icon: LucideIcons.arrowUp10,
+                        icon: FontAwesomeIcons.arrowUp91,
                       ),
                       (() {
                         final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
@@ -353,7 +354,7 @@ class WorkoutSummaryModal extends SignalWidget {
                           label: 'Avg Weight',
                           value:
                               '${workout.avgWorkoutWeight.toStringAsFixed(1)}$weightUnit',
-                          icon: LucideIcons.circleGauge,
+                          icon: FontAwesomeIcons.gaugeHigh,
                         );
                       })(),
                     ],
@@ -373,17 +374,17 @@ class WorkoutSummaryModal extends SignalWidget {
                       StatTile(
                         label: 'Distance',
                         value: '${cardioDistance}km',
-                        icon: LucideIcons.rulerDimensionLine,
+                        icon: FontAwesomeIcons.rulerHorizontal,
                       ),
                       StatTile(
                         label: 'Calories',
                         value: '${workout.totalCardioCalories}kcal',
-                        icon: LucideIcons.flame,
+                        icon: FontAwesomeIcons.fire,
                       ),
                       StatTile(
                         label: 'Duration',
                         value: workout.totalCardioTime.format(),
-                        icon: LucideIcons.clock,
+                        icon: FontAwesomeIcons.stopwatch,
                       ),
                     ],
                   ),
@@ -402,17 +403,17 @@ class WorkoutSummaryModal extends SignalWidget {
                       StatTile(
                         label: 'Stretch Count',
                         value: workout.stretchExerciseCount.toString(),
-                        icon: LucideIcons.arrowUp10,
+                        icon: FontAwesomeIcons.arrowUp91,
                       ),
                       StatTile(
                         label: 'Stretch',
                         value: workout.totalStretchTime.format(),
-                        icon: LucideIcons.personStanding,
+                        icon: FontAwesomeIcons.personFallingBurst,
                       ),
                       StatTile(
                         label: 'Duration',
                         value: workout.totalCardioDuration.format(),
-                        icon: LucideIcons.timer,
+                        icon: FontAwesomeIcons.stopwatch,
                       ),
                     ],
                   ),

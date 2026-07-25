@@ -3,7 +3,7 @@ description: "GYMPLY. The SIMPLE gym tracker."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.0.7+78
+version: 0.0.7+79
 
 environment:
   sdk: ^3.11.0
@@ -30,7 +30,6 @@ dependencies:
   in_app_purchase: ^3.2.0
   intl: ^0.20.2
   logger: ^2.6.2
-  lucide_icons_flutter: ^3.1.10
   ndk: ^0.8.1
   open_filex: ^4.7.0
   package_info_plus: ^10.1.0

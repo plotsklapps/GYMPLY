@@ -2,7 +2,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class SupporterThemeModal extends SignalWidget {
@@ -39,8 +39,10 @@ class SupporterThemeModal extends SignalWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(LucideIcons.circleX),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: IconUtils.close,
                 ),
               ],
             ),

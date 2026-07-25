@@ -8,7 +8,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Enum for Segmentedbutton choices.
@@ -191,7 +191,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -242,7 +242,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                                   BodyMetricRange.values.length];
                         });
                       },
-                      icon: const Icon(LucideIcons.calendarDays, size: 18),
+                      icon: IconUtils.calendar,
                       label: Text(_getRangeLabel(_selectedRange)),
                     ),
                   ],
@@ -265,17 +265,17 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.weight,
                             label: Text('Weight'),
-                            icon: Icon(LucideIcons.weight),
+                            icon: IconUtils.weightScale,
                           ),
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.bmi,
                             label: Text('BMI'),
-                            icon: Icon(LucideIcons.activity),
+                            icon: IconUtils.bmi,
                           ),
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.bodyFat,
                             label: Text('Fat %'),
-                            icon: Icon(LucideIcons.flame),
+                            icon: IconUtils.bodyFat,
                           ),
                         ],
                         selected: <BodyMetricType>{_selectedType},
@@ -296,12 +296,12 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                       ButtonSegment<int>(
                         value: 0,
                         label: Text('Male'),
-                        icon: Icon(LucideIcons.mars),
+                        icon: IconUtils.male,
                       ),
                       ButtonSegment<int>(
                         value: 1,
                         label: Text('Female'),
-                        icon: Icon(LucideIcons.venus),
+                        icon: IconUtils.female,
                       ),
                     ],
                     selected: <int>{_sex},
@@ -353,7 +353,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                           child: const SomatotypeModal(),
                         );
                       },
-                      icon: const Icon(LucideIcons.info),
+                      icon: IconUtils.info,
                     ),
                   ],
                 ),

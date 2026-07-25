@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisedetail_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class ExercisesListResults extends StatelessWidget {
   const ExercisesListResults({
@@ -81,12 +82,12 @@ class ExercisesListResults extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               if (isFavorite)
-                                Icon(
-                                  LucideIcons.star,
+                                FaIcon(
+                                  FontAwesomeIcons.star,
                                   color: theme.colorScheme.secondary,
                                 ),
                               const SizedBox(width: 8),
-                              const Icon(LucideIcons.circleChevronRight),
+                              IconUtils.circleRight,
                             ],
                           ),
                         ),

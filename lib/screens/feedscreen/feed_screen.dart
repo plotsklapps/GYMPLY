@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/screens/feedscreen/workoutnote_widget.dart';
 import 'package:gymply/services/nostr_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:ndk/ndk.dart' hide Logger;
 import 'package:signals/signals_flutter.dart';
 
@@ -72,7 +72,7 @@ class _FeedScreenState extends State<FeedScreen> {
             const Center(
               child: Column(
                 children: <Widget>[
-                  Icon(LucideIcons.rss, size: 48, color: Colors.grey),
+                  FaIcon(FontAwesomeIcons.rss, size: 48, color: Colors.grey),
                   SizedBox(height: 16),
                   Text('No GYMPLY posts found yet.'),
                   Text(

@@ -3,7 +3,7 @@ import 'package:gymply/modals/attributions_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,7 +44,7 @@ class AboutModal extends SignalWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -81,10 +81,10 @@ class AboutModal extends SignalWidget {
                                   height: 24,
                                   child: CircularProgressIndicator(),
                                 )
-                              : const Icon(LucideIcons.cloudSync),
+                              : IconUtils.sync,
                           title: const Text('Check for Updates'),
                           subtitle: Text('Current Version: $versionDisplay'),
-                          trailing: const Icon(LucideIcons.circleChevronRight),
+                          trailing: IconUtils.circleRight,
                         );
                       },
                 ),
@@ -96,10 +96,10 @@ class AboutModal extends SignalWidget {
                       Uri.parse('https://github.com/plotsklapps/gymply'),
                     );
                   },
-                  leading: const Icon(LucideIcons.code),
+                  leading: IconUtils.github,
                   title: const Text('Github Repository'),
                   subtitle: const Text('Source code, file issues'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 // GitHub ChangeLog ListTile.
@@ -111,10 +111,10 @@ class AboutModal extends SignalWidget {
                       ),
                     );
                   },
-                  leading: const Icon(LucideIcons.squarePen),
+                  leading: IconUtils.codeCompare,
                   title: const Text('Github Changelog'),
                   subtitle: const Text('See changes made in the last version'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 // Licenses ListTile.
@@ -122,10 +122,10 @@ class AboutModal extends SignalWidget {
                   onTap: () async {
                     showLicensePage(context: context);
                   },
-                  leading: const Icon(LucideIcons.fileBraces),
+                  leading: IconUtils.copyright,
                   title: const Text('Licenses'),
                   subtitle: const Text('Third party packages used by GYMPLY.'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
 
                 // Attributions ListTile.
@@ -136,10 +136,10 @@ class AboutModal extends SignalWidget {
                       child: const AttributionsModal(),
                     );
                   },
-                  leading: const Icon(LucideIcons.info),
+                  leading: IconUtils.handshake,
                   title: const Text('Attributions'),
                   subtitle: const Text('Attributions for assets and packages.'),
-                  trailing: const Icon(LucideIcons.circleChevronRight),
+                  trailing: IconUtils.circleRight,
                 ),
               ],
             ),

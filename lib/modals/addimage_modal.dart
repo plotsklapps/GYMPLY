@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 // Shows a bottom sheet to choose between Camera and Gallery.
 Future<ImageSource?> addImageModal(BuildContext context) async {
@@ -46,7 +46,7 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                         // Pop and return false.
                         Navigator.pop(context);
                       },
-                      icon: const Icon(LucideIcons.circleX),
+                      icon: IconUtils.close,
                     ),
                   ],
                 ),
@@ -58,22 +58,22 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                       children: <Widget>[
                         const SizedBox(height: 16),
                         ListTile(
-                          leading: const Icon(LucideIcons.image),
+                          leading: IconUtils.image,
                           title: const Text('Photo Library'),
                           onTap: () {
                             // Pop and return gallery.
                             Navigator.of(context).pop(ImageSource.gallery);
                           },
-                          trailing: const Icon(LucideIcons.circleChevronRight),
+                          trailing: IconUtils.circleRight,
                         ),
                         ListTile(
-                          leading: const Icon(LucideIcons.camera),
+                          leading: IconUtils.camera,
                           title: const Text('(Selfie) Camera'),
                           onTap: () {
                             // Pop and return camera.
                             Navigator.of(context).pop(ImageSource.camera);
                           },
-                          trailing: const Icon(LucideIcons.circleChevronRight),
+                          trailing: IconUtils.circleRight,
                         ),
                       ],
                     ),

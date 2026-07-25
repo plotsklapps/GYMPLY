@@ -9,7 +9,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseStatsModal extends SignalWidget {
@@ -58,7 +58,9 @@ class ExerciseStatsModal extends SignalWidget {
       final CardioExercise ex = exercise as CardioExercise;
 
       final double userWeight = sWeight.value;
-      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
+      final double userWeightKg = sUseLbs.value
+          ? userWeight / 2.20462
+          : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -90,7 +92,9 @@ class ExerciseStatsModal extends SignalWidget {
       final StretchExercise ex = exercise as StretchExercise;
 
       final double userWeight = sWeight.value;
-      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
+      final double userWeightKg = sUseLbs.value
+          ? userWeight / 2.20462
+          : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -140,15 +144,18 @@ class ExerciseStatsModal extends SignalWidget {
                   const SizedBox(height: 8),
                   _StatRow(
                     label: 'Lombardi (rep range 1-5)',
-                    value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
+                    value:
+                        '${pr.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Brzycki (rep range 5-10)',
-                    value: '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} $weightUnit',
+                    value:
+                        '${pr.oneRepMaxBrzycki.toStringAsFixed(1)} $weightUnit',
                   ),
                   _StatRow(
                     label: 'Epley (rep range 1-10)',
-                    value: '${pr.oneRepMaxEpley.toStringAsFixed(1)} $weightUnit',
+                    value:
+                        '${pr.oneRepMaxEpley.toStringAsFixed(1)} $weightUnit',
                   ),
                   Divider(height: 32, color: theme.colorScheme.outlineVariant),
                 ],
@@ -173,7 +180,8 @@ class ExerciseStatsModal extends SignalWidget {
                   ),
                   _StatRow(
                     label: 'Max Exercise Volume',
-                    value: '${pr.maxExerciseVolume.toStringAsFixed(1)} $weightUnit',
+                    value:
+                        '${pr.maxExerciseVolume.toStringAsFixed(1)} $weightUnit',
                   ),
                 ] else if (exercise is CardioExercise) ...<Widget>[
                   _StatRow(
@@ -229,7 +237,7 @@ class ExerciseStatsModal extends SignalWidget {
             ),
             IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

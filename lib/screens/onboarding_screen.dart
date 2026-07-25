@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -76,20 +76,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          LucideIcons.shieldCheck,
+                        FaIcon(
+                          FontAwesomeIcons.fileShield,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.bookKey,
+                        FaIcon(
+                          FontAwesomeIcons.key,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.globeLock,
+                        FaIcon(
+                          FontAwesomeIcons.vault,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
@@ -105,20 +105,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          LucideIcons.dumbbell,
+                        FaIcon(
+                          FontAwesomeIcons.dumbbell,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.timer,
+                        FaIcon(
+                          FontAwesomeIcons.stopwatch,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.trendingUp,
+                        FaIcon(
+                          FontAwesomeIcons.arrowTrendUp,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
@@ -134,20 +134,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     iconWidget: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          LucideIcons.fingerprintPattern,
+                        FaIcon(
+                          FontAwesomeIcons.fingerprint,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.hatGlasses,
+                        FaIcon(
+                          FontAwesomeIcons.userSecret,
                           size: 64,
                           color: colorScheme.secondary,
                         ),
                         const SizedBox(width: 16),
-                        Icon(
-                          LucideIcons.keyRound,
+                        FaIcon(
+                          FontAwesomeIcons.keycdn,
                           size: 64,
                           color: colorScheme.secondary,
                         ),

@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/comment_modal.dart';
 import 'package:gymply/modals/userdetail_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -97,7 +98,7 @@ class WorkoutNote extends SignalWidget {
               ),
               trailing: isMine
                   ? PopupMenuButton<String>(
-                      icon: const Icon(LucideIcons.circleEllipsis),
+                      icon: IconUtils.more,
                       onSelected: (String value) async {
                         if (value == 'delete') {
                           await nostrService.deleteWorkoutNote(event.id);
@@ -118,8 +119,8 @@ class WorkoutNote extends SignalWidget {
                                   width: 24,
                                   height: 24,
                                   child: Center(
-                                    child: Icon(
-                                      LucideIcons.trash,
+                                    child: FaIcon(
+                                      FontAwesomeIcons.trashCan,
                                       color: theme.colorScheme.error,
                                       size: 20,
                                     ),
@@ -171,7 +172,7 @@ class WorkoutNote extends SignalWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     IconButton(
-                      icon: const Icon(LucideIcons.messageSquare),
+                      icon: IconUtils.message,
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
@@ -193,17 +194,17 @@ class WorkoutNote extends SignalWidget {
 
                 const Spacer(),
 
-                // Like button (biceps).
+                // Like button.
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(
-                        LucideIcons.bicepsFlexed,
+                      icon: FaIcon(
+                        FontAwesomeIcons.heart,
                         color: hasLiked ? theme.colorScheme.secondary : null,
                       ),
                       onPressed: () async {
-                        await nostrService.sendBicepsReaction(event.id);
+                        await nostrService.sendLike(event.id);
                       },
                     ),
                     if (likes.isNotEmpty) ...<Widget>[

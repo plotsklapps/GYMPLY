@@ -4,7 +4,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerWidget extends SignalWidget {
@@ -69,9 +69,7 @@ class RestTimerWidget extends SignalWidget {
                     await restTimer.startTimer();
                   }
                 },
-                child: isRestTimerRunning
-                    ? const Icon(LucideIcons.circlePause)
-                    : const Icon(LucideIcons.circlePlay),
+                child: isRestTimerRunning ? IconUtils.pause : IconUtils.play,
               ),
             ),
           ],

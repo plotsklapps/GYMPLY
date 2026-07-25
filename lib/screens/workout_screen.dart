@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -8,7 +9,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorkoutScreen extends SignalStatefulWidget {
@@ -84,11 +85,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     index: index,
                     child: const Padding(
                       padding: EdgeInsets.all(16),
-                      child: Icon(LucideIcons.gripVertical),
+                      child: IconUtils.more,
                     ),
                   )
                 : PopupMenuButton<String>(
-                    icon: const Icon(LucideIcons.circleEllipsis),
+                    icon: IconUtils.more,
                     onSelected: (String value) {
                       if (value == 'delete') {
                         // Delete entire exercise from workout.
@@ -111,7 +112,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: Icon(LucideIcons.separatorHorizontal),
+                                  child: IconUtils.grip,
                                 ),
                               ),
                             ],
@@ -127,8 +128,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: Icon(
-                                    LucideIcons.trash,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.trashCan,
                                     color: theme.colorScheme.error,
                                   ),
                                 ),

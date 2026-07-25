@@ -9,7 +9,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailSheet extends SignalWidget {
@@ -121,7 +121,7 @@ class ExerciseDetailSheet extends SignalWidget {
                       child: ExerciseHistoryModal(exercise: dummy),
                     );
                   },
-                  icon: const Icon(LucideIcons.history),
+                  icon: IconUtils.history,
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.only(left: 16),
                     minimumSize: Size.zero,
@@ -134,10 +134,8 @@ class ExerciseDetailSheet extends SignalWidget {
                   onPressed: () async {
                     await settingsService.toggleFavorite(exerciseId);
                   },
-                  icon: Icon(
-                    isFavorite ? LucideIcons.star : LucideIcons.starHalf,
-                    color: isFavorite ? theme.colorScheme.secondary : null,
-                  ),
+                  icon: isFavorite ? IconUtils.starSolid : IconUtils.star,
+                  color: isFavorite ? theme.colorScheme.secondary : null,
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.only(left: 12),
                     minimumSize: Size.zero,

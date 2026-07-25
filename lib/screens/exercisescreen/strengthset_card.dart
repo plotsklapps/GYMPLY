@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StrengthSetCard extends SignalWidget {
@@ -94,8 +94,8 @@ class StrengthSetCard extends SignalWidget {
                 child: ListTile(
                   leading: CircleAvatar(
                     child: isNewPR
-                        ? Icon(
-                            LucideIcons.trophy,
+                        ? FaIcon(
+                            FontAwesomeIcons.medal,
                             color: theme.colorScheme.secondary,
                           )
                         : Text(
@@ -113,7 +113,9 @@ class StrengthSetCard extends SignalWidget {
                         return Text(
                           '${totalSetWeight.toInt()} | $weight $weightUnit x $reps reps',
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: isNewPR ? theme.colorScheme.onSecondary : null,
+                            color: isNewPR
+                                ? theme.colorScheme.onSecondary
+                                : null,
                           ),
                         );
                       })(),
@@ -128,8 +130,8 @@ class StrengthSetCard extends SignalWidget {
                     ],
                   ),
                   trailing: PopupMenuButton<String>(
-                    icon: Icon(
-                      LucideIcons.circleEllipsis,
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
                       color: isNewPR ? theme.colorScheme.onSecondary : null,
                     ),
                     onSelected: (String value) {
@@ -149,8 +151,8 @@ class StrengthSetCard extends SignalWidget {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: Icon(
-                                    LucideIcons.trash,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.trashCan,
                                     color: theme.colorScheme.error,
                                   ),
                                 ),

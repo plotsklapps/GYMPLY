@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/cardiosetstats_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class CardioSetCard extends StatelessWidget {
   const CardioSetCard({
@@ -74,9 +75,8 @@ class CardioSetCard extends StatelessWidget {
                   ...List<Widget>.generate(
                     (set.intensity ?? 1) + 1,
                     (int index) {
-                      return Icon(
-                        LucideIcons.flame,
-                        size: 14,
+                      return FaIcon(
+                        FontAwesomeIcons.fire,
                         color: (set.intensity ?? 1) == 2
                             ? theme.colorScheme.error
                             : theme.colorScheme.primary,
@@ -86,7 +86,7 @@ class CardioSetCard extends StatelessWidget {
                 ],
               ),
               trailing: PopupMenuButton<String>(
-                icon: const Icon(LucideIcons.circleEllipsis),
+                icon: IconUtils.more,
                 onSelected: (String value) async {
                   if (value == 'deleteSet') {
                     workoutService.deleteCardioSet(exercise, set);
@@ -141,7 +141,7 @@ class CardioSetCard extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Center(
-                              child: Icon(LucideIcons.plus),
+                              child: IconUtils.add,
                             ),
                           ),
                         ],
@@ -158,8 +158,8 @@ class CardioSetCard extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Center(
-                              child: Icon(
-                                LucideIcons.trash,
+                              child: FaIcon(
+                                FontAwesomeIcons.trashCan,
                                 color: theme.colorScheme.error,
                               ),
                             ),

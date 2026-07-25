@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/toast_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
 
 class UserDetailModal extends StatelessWidget {
@@ -39,7 +40,7 @@ class UserDetailModal extends StatelessWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -116,9 +117,8 @@ class UserDetailModal extends StatelessWidget {
                                               'Public key copied to clipboard',
                                         );
                                       },
-                                      child: Icon(
-                                        LucideIcons.copy,
-                                        size: 14,
+                                      child: FaIcon(
+                                        FontAwesomeIcons.clone,
                                         color: theme.colorScheme.secondary,
                                       ),
                                     ),
@@ -133,9 +133,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: <Widget>[
-                            Icon(
-                              LucideIcons.badgeCheck,
-                              size: 14,
+                            FaIcon(
+                              FontAwesomeIcons.idCard,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),
@@ -156,9 +155,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: <Widget>[
-                            Icon(
-                              LucideIcons.zap,
-                              size: 14,
+                            FaIcon(
+                              FontAwesomeIcons.boltLightning,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),
@@ -178,9 +176,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: <Widget>[
-                            Icon(
-                              LucideIcons.link,
-                              size: 14,
+                            FaIcon(
+                              FontAwesomeIcons.link,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),

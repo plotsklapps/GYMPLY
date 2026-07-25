@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class StopwatchTimerModal extends StatelessWidget {
   const StopwatchTimerModal({super.key});
@@ -28,7 +28,7 @@ class StopwatchTimerModal extends StatelessWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

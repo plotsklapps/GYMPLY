@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class TotalTimerWidget extends SignalWidget {
@@ -67,9 +67,7 @@ class TotalTimerWidget extends SignalWidget {
                     await totalTimer.startTimer();
                   }
                 },
-                child: isTotalTimerRunning
-                    ? const Icon(LucideIcons.circlePause)
-                    : const Icon(LucideIcons.circlePlay),
+                child: isTotalTimerRunning ? IconUtils.pause : IconUtils.play,
               ),
             ),
           ],

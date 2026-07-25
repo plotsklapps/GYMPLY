@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/donation_service.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class DonationModal extends SignalWidget {
@@ -34,7 +35,7 @@ class DonationModal extends SignalWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -48,8 +49,8 @@ class DonationModal extends SignalWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 8),
-                Icon(
-                  LucideIcons.heart,
+                FaIcon(
+                  FontAwesomeIcons.heart,
                   size: 48,
                   color: theme.colorScheme.secondary,
                 ),
@@ -77,8 +78,8 @@ class DonationModal extends SignalWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Icon(
-                        LucideIcons.sparkles,
+                      FaIcon(
+                        FontAwesomeIcons.wandMagicSparkles,
                         size: 20,
                         color: theme.colorScheme.primary,
                       ),
@@ -149,14 +150,14 @@ class _ProductTile extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     String subtitle = '';
-    IconData icon = LucideIcons.heart;
+    FaIconData icon = FontAwesomeIcons.heart;
 
     if (product.id.contains('support_monthly')) {
       subtitle = 'Support monthly';
-      icon = LucideIcons.calendarClock;
+      icon = FontAwesomeIcons.calendarDay;
     } else if (product.id.contains('support_yearly')) {
       subtitle = 'Support yearly (Best value!)';
-      icon = LucideIcons.star;
+      icon = FontAwesomeIcons.calendarWeek;
     }
 
     return Card(
@@ -171,7 +172,7 @@ class _ProductTile extends StatelessWidget {
         onTap: () async {
           await donationService.buyProduct(product);
         },
-        leading: Icon(icon, color: theme.colorScheme.primary),
+        leading: FaIcon(icon, color: theme.colorScheme.primary),
         title: Text(
           product.title
               .split('(')

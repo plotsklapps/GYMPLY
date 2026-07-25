@@ -9,9 +9,9 @@ import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class HomeScreen extends SignalStatefulWidget {
@@ -125,16 +125,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             tabs: <Widget>[
               if (showFeed)
                 const Tab(
-                  icon: Icon(LucideIcons.rss),
+                  icon: IconUtils.feed,
                 ),
               const Tab(
-                icon: Icon(LucideIcons.trendingUp),
+                icon: IconUtils.trendUp,
               ),
               const Tab(
-                icon: Icon(LucideIcons.dumbbell),
+                icon: IconUtils.dumbbell,
               ),
               const Tab(
-                icon: Icon(LucideIcons.notebookPen),
+                icon: IconUtils.notes,
               ),
             ],
           ),
@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
               },
-              child: const Icon(LucideIcons.circleChevronUp),
+              child: IconUtils.circleUp,
             ),
             const SizedBox(width: 16),
             Text(
@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 );
               }
             },
-            child: const Icon(LucideIcons.circleStop),
+            child: IconUtils.stop,
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 );
               }
             },
-            child: const Icon(LucideIcons.circlePlus),
+            child: IconUtils.add,
           ),
         ],
       ),

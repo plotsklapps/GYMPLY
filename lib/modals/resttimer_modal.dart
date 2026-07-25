@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/resttimer_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerModal extends SignalWidget {
@@ -32,7 +32,7 @@ class RestTimerModal extends SignalWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

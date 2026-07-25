@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -109,7 +110,7 @@ class _CommentModalState extends State<CommentModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -267,8 +268,8 @@ class _CommentModalState extends State<CommentModal> {
                                       },
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
-                                      icon: Icon(
-                                        LucideIcons.trash,
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.trashCan,
                                         color: theme.colorScheme.error,
                                         size: 14,
                                       ),
@@ -284,10 +285,7 @@ class _CommentModalState extends State<CommentModal> {
                                         });
                                         _focusNode.requestFocus();
                                       },
-                                      icon: const Icon(
-                                        LucideIcons.messageSquare,
-                                        size: 14,
-                                      ),
+                                      icon: IconUtils.message,
                                     ),
                                   // Like possible for everyone.
                                   Row(
@@ -295,16 +293,15 @@ class _CommentModalState extends State<CommentModal> {
                                     children: <Widget>[
                                       IconButton(
                                         onPressed: () async {
-                                          await nostrService.sendBicepsReaction(
+                                          await nostrService.sendLike(
                                             comment.id,
                                             rootId: widget.event.id,
                                           );
                                         },
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon: Icon(
-                                          LucideIcons.bicepsFlexed,
-                                          size: 14,
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.heart,
                                           color:
                                               reactionsMap[comment.id]
                                                       ?.contains(myPubKey) ??
@@ -375,7 +372,7 @@ class _CommentModalState extends State<CommentModal> {
                       _replyToPubKey = null;
                     });
                   },
-                  child: const Icon(LucideIcons.x, size: 14),
+                  child: IconUtils.reset,
                 ),
               ],
             ),
@@ -418,8 +415,8 @@ class _CommentModalState extends State<CommentModal> {
                           height: 20,
                           child: CircularProgressIndicator(),
                         )
-                      : Icon(
-                          LucideIcons.sendHorizontal,
+                      : FaIcon(
+                          FontAwesomeIcons.paperPlane,
                           color: _controller.text.trim().isEmpty
                               ? Colors.grey
                               : theme.colorScheme.primary,

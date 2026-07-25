@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 
 class NostrOnboarding extends StatelessWidget {
   const NostrOnboarding({super.key});
@@ -51,7 +51,7 @@ class NostrOnboarding extends StatelessWidget {
                   onPressed: () async {
                     await nostrService.generateKeys();
                   },
-                  icon: const Icon(LucideIcons.userPlus),
+                  icon: IconUtils.userAdd,
                   label: const Text('Create new Keys'),
                 ),
               ),
@@ -67,7 +67,7 @@ class NostrOnboarding extends StatelessWidget {
                       child: const ImportKeysModal(),
                     );
                   },
-                  icon: const Icon(LucideIcons.userCheck),
+                  icon: IconUtils.userCheck,
                   label: const Text('Use Existing Keys'),
                 ),
               ),

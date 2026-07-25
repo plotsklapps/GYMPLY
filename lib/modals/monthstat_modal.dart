@@ -4,10 +4,10 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/monthchart_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum WorkoutMetric { volume, reps, sets, time, distance, calories }
@@ -96,7 +96,7 @@ class _MonthStatModalState extends State<MonthStatModal> {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),

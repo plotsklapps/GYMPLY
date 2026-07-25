@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -8,8 +9,8 @@ import 'package:gymply/screens/exercisescreen/strengthset_card.dart';
 import 'package:gymply/screens/exercisescreen/weight_controls.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/calculator_widget.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class StrengthExerciseScreen extends StatelessWidget {
   const StrengthExerciseScreen({required this.exercise, super.key});
@@ -101,8 +102,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: ExerciseHistoryModal(exercise: exercise),
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.history,
+                      icon: FaIcon(
+                        FontAwesomeIcons.clockRotateLeft,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -115,8 +116,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: ExerciseStatsModal(exercise: exercise),
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.chartColumn,
+                      icon: FaIcon(
+                        FontAwesomeIcons.chartColumn,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -130,8 +131,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: const ConvertCalculator(),
                         );
                       },
-                      icon: Icon(
-                        LucideIcons.calculator,
+                      icon: FaIcon(
+                        FontAwesomeIcons.calculator,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -153,7 +154,7 @@ class StrengthExerciseScreen extends StatelessWidget {
                             );
                           }
                         },
-                        icon: const Icon(LucideIcons.circlePlus),
+                        icon: IconUtils.add,
                         label: const Text(
                           'ADD SET',
                         ),

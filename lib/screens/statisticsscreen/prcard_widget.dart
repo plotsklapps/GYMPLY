@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class PRCard extends StatelessWidget {
   const PRCard({
@@ -28,8 +28,8 @@ class PRCard extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Icon(
-                  LucideIcons.trophy,
+                FaIcon(
+                  FontAwesomeIcons.medal,
                   size: 32,
                   color: theme.colorScheme.onSecondary,
                 ),
@@ -70,7 +70,8 @@ class PRCard extends StatelessWidget {
               final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
 
               if (type == 'REP') {
-                detail = '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit';
+                detail =
+                    '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit';
               } else if (type == 'SET') {
                 detail =
                     '${(pr['weight'] as double).toStringAsFixed(1)} $weightUnit x '
@@ -113,8 +114,8 @@ class PRCard extends StatelessWidget {
                     color: theme.colorScheme.onSecondary,
                   ),
                 ),
-                trailing: Icon(
-                  LucideIcons.chevronRight,
+                trailing: FaIcon(
+                  FontAwesomeIcons.chevronRight,
                   color: theme.colorScheme.onSecondary,
                 ),
               );

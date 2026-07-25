@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisedetail_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ExercisesGridResults extends StatelessWidget {
   const ExercisesGridResults({
@@ -69,8 +69,8 @@ class ExercisesGridResults extends StatelessWidget {
                       Positioned(
                         top: 8,
                         right: 8,
-                        child: Icon(
-                          LucideIcons.star,
+                        child: FaIcon(
+                          FontAwesomeIcons.star,
                           color: theme.colorScheme.secondary,
                         ),
                       ),

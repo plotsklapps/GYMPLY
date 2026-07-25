@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymply/screens/profilescreen/metadatatextfield_widget.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/toast_service.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
 
 class MetaDataForm extends StatefulWidget {
@@ -134,7 +134,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
                           height: 20,
                           child: CircularProgressIndicator(),
                         )
-                      : const Icon(LucideIcons.save),
+                      : IconUtils.save,
                   label: const Text('Save Profile Changes'),
                 ),
               ),

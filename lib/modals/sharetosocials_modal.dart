@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/nostr_service.dart';
@@ -10,7 +11,7 @@ import 'package:gymply/services/share_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Toggleable metrics.
@@ -138,7 +139,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -241,8 +242,8 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   .withAlpha(80),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(
-                              LucideIcons.dumbbell,
+                            child: FaIcon(
+                              FontAwesomeIcons.dumbbell,
                               size: 40,
                               color: theme.colorScheme.outlineVariant,
                             ),
@@ -352,7 +353,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 // Opt out of sharing images and/or notes.
                 SwitchListTile(
                   title: const Text('Show Images'),
-                  secondary: const Icon(LucideIcons.image),
+                  secondary: IconUtils.image,
                   value: _showPhotos,
                   onChanged: (bool val) {
                     setState(() => _showPhotos = val);
@@ -360,10 +361,12 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 ),
                 SwitchListTile(
                   title: const Text('Show Notes'),
-                  secondary: const Icon(LucideIcons.notebookPen),
+                  secondary: IconUtils.notes,
                   value: _showNotes,
                   onChanged: (bool val) {
-                    setState(() => _showNotes = val);
+                    setState(() {
+                      _showNotes = val;
+                    });
                   },
                 ),
 
@@ -371,12 +374,14 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 if (canPostToNostr)
                   SwitchListTile(
                     title: const Text('Post to GYMPLY feed'),
-                    secondary: const Icon(LucideIcons.rss),
+                    secondary: IconUtils.feed,
                     value: _postToNostr,
                     onChanged: _isSharing
                         ? null
                         : (bool val) {
-                            setState(() => _postToNostr = val);
+                            setState(() {
+                              _postToNostr = val;
+                            });
                           },
                   ),
 
@@ -392,7 +397,9 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                     onPressed: _isSharing
                         ? null
                         : () async {
-                            setState(() => _isSharing = true);
+                            setState(() {
+                              _isSharing = true;
+                            });
 
                             try {
                               // 1. Capture the image bytes.
@@ -444,7 +451,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(LucideIcons.share2),
+                        : IconUtils.share,
                     label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
                   ),
                 ),

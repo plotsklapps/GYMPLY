@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gymply/theme/icons.dart';
 
 class CardioSetStatsModal extends StatefulWidget {
   const CardioSetStatsModal({
@@ -50,8 +51,10 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
               ),
             ),
             IconButton(
-              onPressed: () => Navigator.pop(context, false),
-              icon: const Icon(LucideIcons.circleX),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              icon: IconUtils.close,
             ),
           ],
         ),
@@ -70,8 +73,8 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                       ButtonSegment<int>(
                         value: 0,
                         label: const Text('Light'),
-                        icon: Icon(
-                          LucideIcons.flame,
+                        icon: FaIcon(
+                          FontAwesomeIcons.fire,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
@@ -81,13 +84,13 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(
-                              LucideIcons.flame,
+                            FaIcon(
+                              FontAwesomeIcons.fire,
                               size: 16,
                               color: theme.colorScheme.secondary,
                             ),
-                            Icon(
-                              LucideIcons.flame,
+                            FaIcon(
+                              FontAwesomeIcons.fire,
                               size: 16,
                               color: theme.colorScheme.secondary,
                             ),
@@ -100,18 +103,18 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(
-                              LucideIcons.flame,
+                            FaIcon(
+                              FontAwesomeIcons.fire,
                               size: 16,
                               color: theme.colorScheme.secondary,
                             ),
-                            Icon(
-                              LucideIcons.flame,
+                            FaIcon(
+                              FontAwesomeIcons.fire,
                               size: 16,
                               color: theme.colorScheme.secondary,
                             ),
-                            Icon(
-                              LucideIcons.flame,
+                            FaIcon(
+                              FontAwesomeIcons.fire,
                               size: 16,
                               color: theme.colorScheme.secondary,
                             ),
