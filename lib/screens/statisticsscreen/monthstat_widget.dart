@@ -84,7 +84,7 @@ class MonthStat extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: hasWorkout
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.primary,
+                            : theme.colorScheme.outlineVariant,
                       ),
                     ),
                   );

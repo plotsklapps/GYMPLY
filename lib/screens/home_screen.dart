@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
@@ -117,25 +118,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(32),
           child: TabBar(
-            // Use TabAlignment.fill for non-scrollable tab bars.
-            tabAlignment: TabAlignment.fill,
-            indicatorColor: theme.colorScheme.secondary,
             controller: _tabController,
             labelPadding: EdgeInsets.zero,
             tabs: <Widget>[
               if (showFeed)
-                const Tab(
-                  icon: IconUtils.feed,
-                ),
-              const Tab(
-                icon: IconUtils.trendUp,
-              ),
-              const Tab(
-                icon: IconUtils.dumbbell,
-              ),
-              const Tab(
-                icon: IconUtils.notes,
-              ),
+                const Tab(icon: FaIcon(FontAwesomeIcons.rss, size: 20)),
+              const Tab(icon: FaIcon(FontAwesomeIcons.arrowTrendUp, size: 20)),
+              const Tab(icon: FaIcon(FontAwesomeIcons.dumbbell, size: 20)),
+              const Tab(icon: FaIcon(FontAwesomeIcons.penToSquare, size: 20)),
             ],
           ),
         ),
@@ -169,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               },
               child: IconUtils.circleUp,
             ),
-            const SizedBox(width: 16),
+            const Spacer(),
             Text(
               'GYMPLY.',
               style: theme.textTheme.displaySmall?.copyWith(
@@ -178,54 +168,49 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 letterSpacing: 1.2,
               ),
             ),
+            const Spacer(),
+            FloatingActionButton(
+              heroTag: 'saveFAB',
+              elevation: 0,
+              onPressed: () async {
+                // Give a bigger bzzz.
+                await HapticFeedback.mediumImpact();
+
+                if (context.mounted) {
+                  // Open save workout modal.
+                  await ModalService.showModal(
+                    context: context,
+                    child: const SaveWorkoutModal(),
+                  );
+                }
+              },
+              child: IconUtils.stop,
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              heroTag: 'newFAB',
+              elevation: 0,
+              onPressed: () async {
+                // Give a little bzzz.
+                await HapticFeedback.lightImpact();
+
+                if (context.mounted) {
+                  // Do not use ModalService here because of entirely different
+                  // layout and scrollability.
+                  await showModalBottomSheet<void>(
+                    context: context,
+                    showDragHandle: true,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return const SearchModal();
+                    },
+                  );
+                }
+              },
+              child: IconUtils.add,
+            ),
           ],
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: 'saveFAB',
-            elevation: 0,
-            onPressed: () async {
-              // Give a bigger bzzz.
-              await HapticFeedback.mediumImpact();
-
-              if (context.mounted) {
-                // Open save workout modal.
-                await ModalService.showModal(
-                  context: context,
-                  child: const SaveWorkoutModal(),
-                );
-              }
-            },
-            child: IconUtils.stop,
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'newFAB',
-            elevation: 0,
-            onPressed: () async {
-              // Give a little bzzz.
-              await HapticFeedback.lightImpact();
-
-              if (context.mounted) {
-                // Do not use ModalService here because of entirely different
-                // layout and scrollability.
-                await showModalBottomSheet<void>(
-                  context: context,
-                  showDragHandle: true,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return const SearchModal();
-                  },
-                );
-              }
-            },
-            child: IconUtils.add,
-          ),
-        ],
       ),
     );
   }

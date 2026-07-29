@@ -71,7 +71,9 @@ class ExerciseDetailCard extends SignalWidget {
       final CardioExercise ex = exercise as CardioExercise;
 
       final double userWeight = sWeight.value;
-      final double userWeightKg = sUseLbs.value ? userWeight / 2.20462 : userWeight;
+      final double userWeightKg = sUseLbs.value
+          ? userWeight / 2.20462
+          : userWeight;
       final int userAge = sAge.value;
       final int userSex = sSex.value;
 
@@ -112,10 +114,6 @@ class ExerciseDetailCard extends SignalWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: <Widget>[
