@@ -85,7 +85,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     index: index,
                     child: const Padding(
                       padding: EdgeInsets.all(16),
-                      child: IconUtils.more,
+                      child: IconUtils.grip,
                     ),
                   )
                 : PopupMenuButton<String>(

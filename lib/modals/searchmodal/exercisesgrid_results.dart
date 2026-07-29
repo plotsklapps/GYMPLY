@@ -70,7 +70,7 @@ class ExercisesGridResults extends StatelessWidget {
                         top: 8,
                         right: 8,
                         child: FaIcon(
-                          FontAwesomeIcons.star,
+                          FontAwesomeIcons.solidStar,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
@@ -105,7 +105,7 @@ class ExercisesGridResults extends StatelessWidget {
                           exercise.exerciseName,
                           textAlign: TextAlign.right,
                           softWrap: false,
-                          style: theme.textTheme.titleLarge,
+                          style: theme.textTheme.titleMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
