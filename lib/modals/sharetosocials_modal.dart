@@ -159,7 +159,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -188,9 +188,10 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                               children: <Widget>[
                                 Text(
                                   widget.workout.title.toUpperCase(),
-                                  style: theme.textTheme.labelLarge?.copyWith(
+                                  style: theme.textTheme.labelMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   widget.workout.formattedDate,
@@ -267,8 +268,6 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   metricValue,
                                   style: theme.textTheme.displaySmall?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.onPrimary
-                                        .withAlpha(200),
                                   ),
                                 ),
                                 Text(
@@ -356,7 +355,9 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                   secondary: IconUtils.image,
                   value: _showPhotos,
                   onChanged: (bool val) {
-                    setState(() => _showPhotos = val);
+                    setState(() {
+                      _showPhotos = val;
+                    });
                   },
                 ),
                 SwitchListTile(
@@ -393,6 +394,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.all(16),
+                      backgroundColor: theme.colorScheme.secondary,
                     ),
                     onPressed: _isSharing
                         ? null
@@ -441,7 +443,9 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                               );
                             } finally {
                               if (mounted) {
-                                setState(() => _isSharing = false);
+                                setState(() {
+                                  _isSharing = false;
+                                });
                               }
                             }
                           },
@@ -451,8 +455,14 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : IconUtils.share,
-                    label: Text(_isSharing ? 'POSTING...' : 'SHARE WORKOUT'),
+                        : FaIcon(
+                            FontAwesomeIcons.share,
+                            color: theme.colorScheme.onSecondary,
+                          ),
+                    label: Text(
+                      _isSharing ? 'POSTING...' : 'SHARE WORKOUT',
+                      style: TextStyle(color: theme.colorScheme.onSecondary),
+                    ),
                   ),
                 ),
               ],
