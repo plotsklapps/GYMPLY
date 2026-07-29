@@ -1,7 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:signals/signals_flutter.dart';
 
 const Color kOrange = Color(0xFFFCB075);
@@ -34,10 +33,10 @@ final Signal<bool> sUseLbs = Signal<bool>(
 );
 
 // Override textTheme for the XL fonts.
-final TextTheme _textThemeOverrides = TextTheme(
-  displayLarge: GoogleFonts.getFont('Bebas Neue'),
-  displayMedium: GoogleFonts.getFont('Bebas Neue'),
-  displaySmall: GoogleFonts.getFont('Bebas Neue'),
+const TextTheme _textThemeOverrides = TextTheme(
+  displayLarge: TextStyle(fontFamily: 'Bebas Neue'),
+  displayMedium: TextStyle(fontFamily: 'Bebas Neue'),
+  displaySmall: TextStyle(fontFamily: 'Bebas Neue'),
 );
 
 final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
@@ -216,7 +215,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: GoogleFonts.getFont(sFont.value).fontFamily,
+      fontFamily: sFont.value,
       textTheme: _textThemeOverrides,
     );
   } else {
@@ -385,7 +384,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
       visualDensity: VisualDensity.comfortable,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
-      fontFamily: GoogleFonts.getFont(sFont.value).fontFamily,
+      fontFamily: sFont.value,
       textTheme: _textThemeOverrides,
     );
   }

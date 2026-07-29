@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
@@ -12,104 +11,24 @@ class SupporterFontModal extends SignalWidget {
   static const List<String> _fonts = <String>[
     'League Gothic',
     'Bebas Neue',
-    'Fjalla One',
-    'Lato',
-    'Roboto',
-    'Open Sans',
-    'Montserrat',
     'Oswald',
-    'Source Sans 3',
-    'Raleway',
-    'Poppins',
+    'Fjalla One',
+    'Anton',
     'Inter',
-    'Playfair Display',
-    'Ubuntu',
-    'Merriweather',
+    'Roboto',
+    'Poppins',
+    'Montserrat',
+    'Lato',
     'Nunito',
-    'Lora',
-    'PT Sans',
-    'Mukta',
+    'Open Sans',
     'Rubik',
     'Work Sans',
-    'Fira Sans',
-    'Quicksand',
-    'Inconsolata',
-    'Kanit',
-    'Anton',
-    'Josefin Sans',
-    'Dancing Script',
-    'Prompt',
-    'Exo 2',
-    'Pacifico',
-    'Titillium Web',
-    'Karla',
-    'Heebo',
     'Barlow',
-    'PT Serif',
-    'Cabin',
-    'Abel',
-    'Hind',
-    'Bitter',
-    'Varela Round',
-    'Dosis',
-    'Arimo',
-    'Noto Sans',
-    'Noto Serif',
-    'Crimson Text',
-    'Yanone Kaffeesatz',
-    'Righteous',
+    'Kanit',
     'Teko',
-    'Caveat',
-    'Alfa Slab One',
-    'Acme',
-    'Fascinate Inline',
-    'Changa One',
-    'Permanent Marker',
-    'Fredoka One',
-    'Bangers',
-    'Creepster',
-    'Lobster',
-    'Comfortaa',
-    'Amatic SC',
-    'Shadows Into Light',
-    'Courgette',
-    'Abril Fatface',
-    'Cinzel',
-    'Bree Serif',
-    'Satisfy',
-    'Russo One',
-    'Kaushan Script',
-    'Monoton',
-    'Audiowide',
-    'Kalam',
-    'Orbitron',
-    'Carter One',
-    'Press Start 2P',
-    'Signika',
-    'Sriracha',
-    'Patua One',
-    'Zilla Slab',
-    'Rokkitt',
-    'Monda',
-    'Black Ops One',
-    'Rampart One',
-    'Saira Stencil One',
-    'Tourney',
-    'Monofett',
-    'Freckle Face',
-    'Bungee',
-    'Shrikhand',
-    'VT323',
-    'Modak',
-    'Ewert',
-    'Vampiro One',
-    'Fruktur',
-    'Piedra',
-    'Plaster',
-    'Nosifer',
-    'Bungee Shade',
-    'Frijole',
-    'Eater',
+    'Quicksand',
+    'Exo 2',
+    'Fira Sans',
   ];
 
   @override
@@ -155,14 +74,7 @@ class SupporterFontModal extends SignalWidget {
                   final String fontName = _fonts[index];
                   final bool isSelected = currentFont == fontName;
 
-                  // Get the text style for this font from GoogleFonts
-                  TextStyle fontStyle;
-                  try {
-                    fontStyle = GoogleFonts.getFont(fontName);
-                  } on Exception catch (_) {
-                    // Fallback in case a font name is misspelled
-                    fontStyle = const TextStyle();
-                  }
+                  final TextStyle fontStyle = TextStyle(fontFamily: fontName);
 
                   return ListTile(
                     leading: isSelected

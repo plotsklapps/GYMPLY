@@ -318,8 +318,8 @@ class SettingsService {
       // Check if current font is one of the free ones.
       final List<String> freeFonts = <String>[
         'League Gothic',
-        'Lato',
-        'Fjalla One',
+        'Kanit',
+        'Fira Sans',
       ];
 
       if (!freeFonts.contains(sFont.value)) {

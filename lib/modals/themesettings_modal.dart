@@ -238,13 +238,13 @@ class ThemeSettingsModal extends SignalWidget {
                                 icon: IconUtils.fontOne,
                               ),
                               ButtonSegment<String>(
-                                value: 'Lato',
-                                label: Text('Lato'),
+                                value: 'Kanit',
+                                label: Text('Kanit'),
                                 icon: IconUtils.fontTwo,
                               ),
                               ButtonSegment<String>(
-                                value: 'Fjalla One',
-                                label: Text('Fjalla'),
+                                value: 'Fira Sans',
+                                label: Text('Fira Sans'),
                                 icon: IconUtils.fontThree,
                               ),
                             ],

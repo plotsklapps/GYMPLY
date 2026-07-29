@@ -23,7 +23,6 @@ dependencies:
   flutter_foreground_task: ^10.0.0
   flutter_secure_storage: ^10.0.0
   font_awesome_flutter: ^11.0.0
-  google_fonts: ^8.1.0
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
   image_picker: ^1.2.1
@@ -84,3 +83,65 @@ flutter:
     - assets/images/equipment/
     - assets/images/exercises/
     - assets/sounds/
+
+  fonts:
+    - family: League Gothic
+      fonts:
+        - asset: assets/fonts/leaguegothic.ttf
+    - family: Bebas Neue
+      fonts:
+        - asset: assets/fonts/bebasneue.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/oswald.ttf
+    - family: Fjalla One
+      fonts:
+        - asset: assets/fonts/fjallaone.ttf
+    - family: Anton
+      fonts:
+        - asset: assets/fonts/anton.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/poppins.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/montserrat.ttf
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/lato.ttf
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/nunito.ttf
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/opensans.ttf
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/rubik.ttf
+    - family: Work Sans
+      fonts:
+        - asset: assets/fonts/worksans.ttf
+    - family: Barlow
+      fonts:
+        - asset: assets/fonts/barlow.ttf
+    - family: Kanit
+      fonts:
+        - asset: assets/fonts/kanit.ttf
+    - family: Teko
+      fonts:
+        - asset: assets/fonts/teko.ttf
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/quicksand.ttf
+    - family: Exo 2
+      fonts:
+        - asset: assets/fonts/exo2.ttf
+    - family: Fira Sans
+      fonts:
+        - asset: assets/fonts/firasans.ttf

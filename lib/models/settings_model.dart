@@ -118,10 +118,10 @@ class Settings {
     switch (fontFamily) {
       case 'LeagueGothic':
         return 'League Gothic';
-      case 'Lato':
-        return 'Lato';
-      case 'FjallaOne':
-        return 'Fjalla One';
+      case 'Kanit':
+        return 'Kanit';
+      case 'FiraSans':
+        return 'Fira Sans';
       default:
         return 'League Gothic';
     }
@@ -162,10 +162,10 @@ class Settings {
     if (fontFamily != null) {
       if (fontFamily == 'League Gothic' || fontFamily == 'LeagueGothic') {
         updatedFontFamily = 'LeagueGothic';
-      } else if (fontFamily == 'Lato') {
-        updatedFontFamily = 'Lato';
-      } else if (fontFamily == 'Fjalla One' || fontFamily == 'FjallaOne') {
-        updatedFontFamily = 'FjallaOne';
+      } else if (fontFamily == 'Kanit') {
+        updatedFontFamily = 'Kanit';
+      } else if (fontFamily == 'Fira Sans' || fontFamily == 'FiraSans') {
+        updatedFontFamily = 'FiraSans';
       } else {
         updatedFontFamily = fontFamily;
       }
