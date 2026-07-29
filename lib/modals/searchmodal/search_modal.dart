@@ -112,7 +112,7 @@ class _SearchModalState extends State<SearchModal> {
                 primary: false,
                 backgroundColor: theme.colorScheme.surface,
                 toolbarHeight: 82,
-                expandedHeight: 82 + chipsHeight + 8,
+                expandedHeight: 82 + chipsHeight,
                 scrolledUnderElevation: 0,
                 titleSpacing: 0,
                 title: Row(
@@ -176,7 +176,7 @@ class _SearchModalState extends State<SearchModal> {
                   background: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const SizedBox(height: 82),
+                      const SizedBox(height: 90),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
