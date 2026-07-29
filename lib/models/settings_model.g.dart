@@ -30,7 +30,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       sex: fields[8] == null ? 0 : (fields[8] as num).toInt(),
       somatotypeIndex: fields[10] == null ? 1 : (fields[10] as num).toInt(),
       onboardingCompleted: fields[9] == null ? false : fields[9] as bool,
-      fontFamily: fields[11] == null ? 'LeagueGothic' : fields[11] as String,
+      fontFamily: fields[11] == null ? 'Teko' : fields[11] as String,
       isExercisesGridMode: fields[12] == null ? true : fields[12] as bool,
       isSupporter: fields[14] == null ? false : fields[14] as bool,
       flexSchemeName: fields[15] as String?,

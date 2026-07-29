@@ -233,8 +233,8 @@ class ThemeSettingsModal extends SignalWidget {
                           child: SegmentedButton<String>(
                             segments: const <ButtonSegment<String>>[
                               ButtonSegment<String>(
-                                value: 'League Gothic',
-                                label: Text('Gothic'),
+                                value: 'Teko',
+                                label: Text('Teko'),
                                 icon: IconUtils.fontOne,
                               ),
                               ButtonSegment<String>(
@@ -243,8 +243,8 @@ class ThemeSettingsModal extends SignalWidget {
                                 icon: IconUtils.fontTwo,
                               ),
                               ButtonSegment<String>(
-                                value: 'Fira Sans',
-                                label: Text('Fira Sans'),
+                                value: 'Bebas Neue',
+                                label: Text('Bebas'),
                                 icon: IconUtils.fontThree,
                               ),
                             ],

@@ -317,13 +317,13 @@ class SettingsService {
 
       // Check if current font is one of the free ones.
       final List<String> freeFonts = <String>[
-        'League Gothic',
+        'Teko',
         'Kanit',
-        'Fira Sans',
+        'Bebas Neue',
       ];
 
       if (!freeFonts.contains(sFont.value)) {
-        unawaited(updateFont('League Gothic'));
+        unawaited(updateFont('Teko'));
         _logger.i('SettingsService: Font reset to default (non-supporter)');
       }
     }

@@ -23,7 +23,7 @@ final Signal<bool> sWakelock = Signal<bool>(
 );
 
 final Signal<String> sFont = Signal<String>(
-  'League Gothic',
+  'Teko',
   options: const SignalOptions<String>(name: 'sFont'),
 );
 

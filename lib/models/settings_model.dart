@@ -17,7 +17,7 @@ class Settings {
     this.sex = 0,
     this.somatotypeIndex = 1,
     this.onboardingCompleted = false,
-    this.fontFamily = 'LeagueGothic',
+    this.fontFamily = 'Teko',
     this.isExercisesGridMode = true,
     this.isSupporter = false,
     this.flexSchemeName,
@@ -60,7 +60,7 @@ class Settings {
   final int somatotypeIndex;
 
   // Non-supporter Google Fonts value.
-  @HiveField(11, defaultValue: 'LeagueGothic')
+  @HiveField(11, defaultValue: 'Teko')
   final String fontFamily;
 
   @HiveField(12, defaultValue: true)
@@ -116,14 +116,14 @@ class Settings {
 
     // Non-supporter Strings.
     switch (fontFamily) {
-      case 'LeagueGothic':
-        return 'League Gothic';
+      case 'Teko':
+        return 'Teko';
       case 'Kanit':
         return 'Kanit';
-      case 'FiraSans':
-        return 'Fira Sans';
+      case 'BebasNeue':
+        return 'Bebas Neue';
       default:
-        return 'League Gothic';
+        return 'Teko';
     }
   }
 
@@ -160,12 +160,12 @@ class Settings {
     // Map non-supporter font names to spaceless legacy identifiers.
     String updatedFontFamily = this.fontFamily;
     if (fontFamily != null) {
-      if (fontFamily == 'League Gothic' || fontFamily == 'LeagueGothic') {
-        updatedFontFamily = 'LeagueGothic';
+      if (fontFamily == 'Teko' || fontFamily == 'Teko') {
+        updatedFontFamily = 'Teko';
       } else if (fontFamily == 'Kanit') {
         updatedFontFamily = 'Kanit';
-      } else if (fontFamily == 'Fira Sans' || fontFamily == 'FiraSans') {
-        updatedFontFamily = 'FiraSans';
+      } else if (fontFamily == 'Bebas Neue' || fontFamily == 'BebasNeue') {
+        updatedFontFamily = 'BebasNeue';
       } else {
         updatedFontFamily = fontFamily;
       }
