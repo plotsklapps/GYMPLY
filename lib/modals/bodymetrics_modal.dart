@@ -796,15 +796,18 @@ class _ScrollColumn extends StatelessWidget {
                   final bool isSelected =
                       (displayValue - value).abs() < (step / 2);
                   return Center(
-                    child: Text(
-                      displayValue.toStringAsFixed(precision),
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        color: isSelected
-                            ? theme.colorScheme.secondary.withAlpha(200)
-                            : theme.colorScheme.primary.withAlpha(50),
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        displayValue.toStringAsFixed(precision),
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          color: isSelected
+                              ? theme.colorScheme.secondary.withAlpha(200)
+                              : theme.colorScheme.primary.withAlpha(50),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
                       ),
                     ),
                   );
