@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8+80] - 2026-07-30
+- **Local Font Performance & Optimization:**
+  - Removed `google_fonts` runtime package dependency to boost app loading speed, eliminate network dependency, and ensure full offline readiness.
+  - Downloaded and bundled top 20 Google Fonts directly inside `assets/fonts/` and registered them in `pubspec.yaml`.
+  - Updated theme and UI components to use native `fontFamily` strings.
+  - Refined default free fonts to **Teko** (new default), **Kanit**, and **Bebas Neue**.
+- **Rest Timer Enhancements:**
+  - Updated rest timer picker to increment seconds in 5-second steps (`00, 05, 10, 15, ..., 55`) for faster selection while preserving exact second-by-second countdown functionality.
+- **UI & Layout Refinements:**
+  - **BottomAppBar & FABs:** Integrated floating action buttons (`menuFAB`, `saveFAB`, `newFAB`) directly inside `BottomAppBar` row layout for consistent height, alignment, and spacing.
+  - **Body Metrics Modal:** Wrapped body metrics wheel value text in `FittedBox` to automatically scale down font size when displaying 100+ kg/lbs values.
+  - **Share to Socials Modal:** Refined share card styling, reduced border radius to 4px, updated title typography with ellipsis handling, and updated button styling to use secondary theme colors.
+  - **Exercise Grid & Workout Screen:** Changed favorite icon to solid star, adjusted exercise title style to `titleMedium`, and updated reorder handle icon.
+  - **FlexColorScheme Tweaks:** Set `fixedColorStyle` to `seeded`, `splashType` to `inkSparkle`, adjusted visual density, and updated interaction component colors.
+
 ## [0.0.7+79] - 2026-07-25
 - **Icon System Migration:**
   - Replaced `lucide_icons_flutter` dependency with `font_awesome_flutter`.
