@@ -122,7 +122,8 @@ class _RestDurationPickerState extends State<RestDurationPicker> {
     super.initState();
     final Duration duration = Duration(seconds: widget.initialSeconds);
     _minutes = duration.inMinutes % 60;
-    _seconds = duration.inSeconds % 60;
+    final int rawSeconds = duration.inSeconds % 60;
+    _seconds = ((rawSeconds / 5).round() * 5).clamp(0, 55);
   }
 
   void _updateDuration() {
@@ -161,7 +162,8 @@ class _RestDurationPickerState extends State<RestDurationPicker> {
           ),
           _ScrollColumn(
             label: 'SEC',
-            max: 59,
+            max: 55,
+            step: 5,
             value: _seconds,
             onChanged: (int val) {
               setState(() {
@@ -182,16 +184,20 @@ class _ScrollColumn extends StatelessWidget {
     required this.max,
     required this.value,
     required this.onChanged,
+    this.step = 1,
   });
 
   final String label;
   final int max;
   final int value;
   final ValueChanged<int> onChanged;
+  final int step;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final int count = (max ~/ step) + 1;
+    final int selectedIndex = (value / step).round().clamp(0, count - 1);
 
     return Column(
       children: <Widget>[
@@ -199,7 +205,6 @@ class _ScrollColumn extends StatelessWidget {
           label,
           style: theme.textTheme.labelMedium,
         ),
-
         Expanded(
           child: SizedBox(
             width: 100,
@@ -208,15 +213,20 @@ class _ScrollColumn extends StatelessWidget {
               perspective: 0.005,
               diameterRatio: 1.2,
               physics: const FixedExtentScrollPhysics(),
-              controller: FixedExtentScrollController(initialItem: value),
-              onSelectedItemChanged: onChanged,
+              controller: FixedExtentScrollController(
+                initialItem: selectedIndex,
+              ),
+              onSelectedItemChanged: (int index) {
+                onChanged(index * step);
+              },
               childDelegate: ListWheelChildBuilderDelegate(
                 builder: (BuildContext context, int index) {
-                  if (index < 0 || index > max) return null;
-                  final bool isSelected = index == value;
+                  if (index < 0 || index >= count) return null;
+                  final int displayValue = index * step;
+                  final bool isSelected = displayValue == value;
                   return Center(
                     child: Text(
-                      index.toString().padLeft(2, '0'),
+                      displayValue.toString().padLeft(2, '0'),
                       style: theme.textTheme.displayLarge?.copyWith(
                         color: isSelected
                             ? theme.colorScheme.secondary.withAlpha(200)
@@ -228,7 +238,7 @@ class _ScrollColumn extends StatelessWidget {
                     ),
                   );
                 },
-                childCount: max + 1,
+                childCount: count,
               ),
             ),
           ),
