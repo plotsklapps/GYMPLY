@@ -93,7 +93,7 @@ class _SearchModalState extends State<SearchModal> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: IconUtils.close,
+                icon: const IconUtils(Icons.cancel_outlined),
               ),
             ],
           ),
@@ -134,11 +134,11 @@ class _SearchModalState extends State<SearchModal> {
                                     sSearchQuery.value = '';
                                     searchFocusNode.unfocus();
                                   },
-                                  icon: IconUtils.searchClose,
+                                  icon: const IconUtils(Icons.search_off),
                                 )
                               : IconButton(
                                   onPressed: () {},
-                                  icon: IconUtils.search,
+                                  icon: const IconUtils(Icons.search),
                                 ),
                           onChanged: (String value) {
                             sSearchQuery.value = value;
@@ -151,8 +151,8 @@ class _SearchModalState extends State<SearchModal> {
                       child: IconButton(
                         onPressed: settingsService.toggleExerciseViewMode,
                         icon: isGridMode
-                            ? IconUtils.layoutList
-                            : IconUtils.layoutGrid,
+                            ? const IconUtils(Icons.view_agenda_outlined)
+                            : const IconUtils(Icons.grid_view),
                       ),
                     ),
                     if (_showScrollToTop)
@@ -166,7 +166,7 @@ class _SearchModalState extends State<SearchModal> {
                               curve: Curves.easeInOut,
                             );
                           },
-                          icon: IconUtils.circleUp,
+                          icon: const IconUtils(Icons.keyboard_double_arrow_up),
                         ),
                       ),
                   ],

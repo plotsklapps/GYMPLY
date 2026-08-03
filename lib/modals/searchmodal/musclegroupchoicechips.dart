@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedmusclegroup_signal.dart';
+import 'package:gymply/theme/icons.dart';
 
 class MuscleGroupChoiceChips extends StatelessWidget {
   const MuscleGroupChoiceChips({
@@ -31,8 +31,8 @@ class MuscleGroupChoiceChips extends StatelessWidget {
                 child: ChoiceChip(
                   showCheckmark: false,
                   avatar: isSelected
-                      ? FaIcon(
-                          FontAwesomeIcons.circleCheck,
+                      ? IconUtils(
+                          Icons.check_circle_outline,
                           color: theme.colorScheme.onSecondary,
                         )
                       : Image.asset(

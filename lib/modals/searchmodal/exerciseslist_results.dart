@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisedetail_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -82,12 +81,14 @@ class ExercisesListResults extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               if (isFavorite)
-                                FaIcon(
-                                  FontAwesomeIcons.star,
-                                  color: theme.colorScheme.secondary,
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: IconUtils(
+                                    Icons.star_border,
+                                    color: theme.colorScheme.secondary,
+                                  ),
                                 ),
-                              const SizedBox(width: 8),
-                              IconUtils.circleRight,
+                              const IconUtils(Icons.keyboard_arrow_right),
                             ],
                           ),
                         ),

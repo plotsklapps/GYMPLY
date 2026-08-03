@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedequipment_signal.dart';
+import 'package:gymply/theme/icons.dart';
 
 class EquipmentChoiceChips extends StatelessWidget {
   const EquipmentChoiceChips({
@@ -39,8 +39,8 @@ class EquipmentChoiceChips extends StatelessWidget {
                   child: ChoiceChip(
                     showCheckmark: false,
                     avatar: isSelected
-                        ? FaIcon(
-                            FontAwesomeIcons.circleCheck,
+                        ? IconUtils(
+                            Icons.check_circle_outline,
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),
@@ -66,8 +66,8 @@ class EquipmentChoiceChips extends StatelessWidget {
                   child: ChoiceChip(
                     showCheckmark: false,
                     avatar: isSelected
-                        ? FaIcon(
-                            FontAwesomeIcons.circleCheck,
+                        ? IconUtils(
+                            Icons.check_circle_outline,
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),
