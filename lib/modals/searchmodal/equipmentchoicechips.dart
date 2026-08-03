@@ -39,8 +39,8 @@ class EquipmentChoiceChips extends StatelessWidget {
                   child: ChoiceChip(
                     showCheckmark: false,
                     avatar: isSelected
-                        ? IconUtils(
-                            Icons.check_circle_outline,
+                        ? Icon(
+                            IconUtils.check,
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),
@@ -66,8 +66,8 @@ class EquipmentChoiceChips extends StatelessWidget {
                   child: ChoiceChip(
                     showCheckmark: false,
                     avatar: isSelected
-                        ? IconUtils(
-                            Icons.check_circle_outline,
+                        ? Icon(
+                            IconUtils.check,
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),

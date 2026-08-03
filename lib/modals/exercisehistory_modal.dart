@@ -95,7 +95,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),

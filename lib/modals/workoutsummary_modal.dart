@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -52,7 +51,7 @@ class WorkoutSummaryModal extends SignalWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: IconUtils.close,
+                  icon: const Icon(IconUtils.close),
                 ),
               ),
             ],
@@ -97,7 +96,7 @@ class WorkoutSummaryModal extends SignalWidget {
               ),
             ),
             PopupMenuButton<String>(
-              icon: IconUtils.more,
+              icon: const Icon(IconUtils.more),
               onSelected: (String value) async {
                 if (value == 'delete') {
                   // Confirm deletion.
@@ -135,8 +134,8 @@ class WorkoutSummaryModal extends SignalWidget {
                           width: 24,
                           height: 24,
                           child: Center(
-                            child: FaIcon(
-                              FontAwesomeIcons.clone,
+                            child: Icon(
+                              IconUtils.copy,
                               color: theme.colorScheme.primary,
                             ),
                           ),
@@ -154,8 +153,8 @@ class WorkoutSummaryModal extends SignalWidget {
                           width: 24,
                           height: 24,
                           child: Center(
-                            child: FaIcon(
-                              FontAwesomeIcons.trashCan,
+                            child: Icon(
+                              IconUtils.delete,
                               color: theme.colorScheme.error,
                             ),
                           ),
@@ -170,7 +169,7 @@ class WorkoutSummaryModal extends SignalWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -222,7 +221,7 @@ class WorkoutSummaryModal extends SignalWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        FaIcon(
+                        Icon(
                           FontAwesomeIcons.penToSquare,
                           size: 20,
                           color: theme.colorScheme.primary,

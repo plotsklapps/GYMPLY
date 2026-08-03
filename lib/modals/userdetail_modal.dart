@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
@@ -40,7 +39,7 @@ class UserDetailModal extends StatelessWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -117,8 +116,8 @@ class UserDetailModal extends StatelessWidget {
                                               'Public key copied to clipboard',
                                         );
                                       },
-                                      child: FaIcon(
-                                        FontAwesomeIcons.clone,
+                                      child: Icon(
+                                        IconUtils.copy,
                                         color: theme.colorScheme.secondary,
                                       ),
                                     ),
@@ -133,8 +132,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.idCard,
+                            Icon(
+                              IconUtils.idCard,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),
@@ -155,8 +154,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.boltLightning,
+                            Icon(
+                              IconUtils.zap,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),
@@ -176,8 +175,8 @@ class UserDetailModal extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.link,
+                            Icon(
+                              IconUtils.link,
                               color: theme.colorScheme.secondary,
                             ),
                             const SizedBox(width: 4),

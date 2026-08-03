@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/nostr_service.dart';
@@ -139,7 +138,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -243,8 +242,8 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   .withAlpha(80),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: FaIcon(
-                              FontAwesomeIcons.dumbbell,
+                            child: Icon(
+                              IconUtils.dumbbell,
                               size: 40,
                               color: theme.colorScheme.outlineVariant,
                             ),
@@ -356,7 +355,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 // Opt out of sharing images and/or notes.
                 SwitchListTile(
                   title: const Text('Show Images'),
-                  secondary: IconUtils.image,
+                  secondary: const Icon(IconUtils.image),
                   value: _showPhotos,
                   onChanged: (bool val) {
                     setState(() {
@@ -366,7 +365,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 ),
                 SwitchListTile(
                   title: const Text('Show Notes'),
-                  secondary: IconUtils.notes,
+                  secondary: const Icon(IconUtils.notes),
                   value: _showNotes,
                   onChanged: (bool val) {
                     setState(() {
@@ -379,7 +378,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                 if (canPostToNostr)
                   SwitchListTile(
                     title: const Text('Post to GYMPLY feed'),
-                    secondary: IconUtils.feed,
+                    secondary: const Icon(IconUtils.feed),
                     value: _postToNostr,
                     onChanged: _isSharing
                         ? null
@@ -398,7 +397,6 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.all(16),
-                      backgroundColor: theme.colorScheme.secondary,
                     ),
                     onPressed: _isSharing
                         ? null
@@ -459,8 +457,8 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : FaIcon(
-                            FontAwesomeIcons.share,
+                        : Icon(
+                            IconUtils.share,
                             color: theme.colorScheme.onSecondary,
                           ),
                     label: Text(

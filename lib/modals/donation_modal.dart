@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -35,7 +34,7 @@ class DonationModal extends SignalWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -49,8 +48,8 @@ class DonationModal extends SignalWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 8),
-                FaIcon(
-                  FontAwesomeIcons.heart,
+                Icon(
+                  IconUtils.heart,
                   size: 48,
                   color: theme.colorScheme.secondary,
                 ),
@@ -78,8 +77,8 @@ class DonationModal extends SignalWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      FaIcon(
-                        FontAwesomeIcons.wandMagicSparkles,
+                      Icon(
+                        IconUtils.sparkles,
                         size: 20,
                         color: theme.colorScheme.primary,
                       ),
@@ -150,14 +149,14 @@ class _ProductTile extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     String subtitle = '';
-    FaIconData icon = FontAwesomeIcons.heart;
+    IconData icon = IconUtils.heart;
 
     if (product.id.contains('support_monthly')) {
       subtitle = 'Support monthly';
-      icon = FontAwesomeIcons.calendarDay;
+      icon = IconUtils.calendarDay;
     } else if (product.id.contains('support_yearly')) {
       subtitle = 'Support yearly (Best value!)';
-      icon = FontAwesomeIcons.calendarWeek;
+      icon = IconUtils.calendarMonth;
     }
 
     return Card(
@@ -172,7 +171,7 @@ class _ProductTile extends StatelessWidget {
         onTap: () async {
           await donationService.buyProduct(product);
         },
-        leading: FaIcon(icon, color: theme.colorScheme.primary),
+        leading: Icon(icon, color: theme.colorScheme.primary),
         title: Text(
           product.title
               .split('(')

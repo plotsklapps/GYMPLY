@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/addimage_modal.dart';
 import 'package:gymply/modals/sharetosocials_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -102,7 +101,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -212,7 +211,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          IconUtils.image,
+                                          Icon(IconUtils.image),
                                           SizedBox(height: 8),
                                           Text('Add image'),
                                         ],
@@ -244,10 +243,11 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                                         child: IconButton(
                                                           padding:
                                                               EdgeInsets.zero,
-                                                          icon: const FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
-                                                            color: Colors.white,
+                                                          icon: Icon(
+                                                            IconUtils.delete,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .error,
                                                           ),
                                                           onPressed: () {
                                                             _removeImage(i);

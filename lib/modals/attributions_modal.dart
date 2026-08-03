@@ -25,7 +25,7 @@ class AttributionsModal extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),

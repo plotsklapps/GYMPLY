@@ -83,12 +83,12 @@ class ExercisesListResults extends StatelessWidget {
                               if (isFavorite)
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8),
-                                  child: IconUtils(
-                                    Icons.star_border,
+                                  child: Icon(
+                                    IconUtils.star,
                                     color: theme.colorScheme.secondary,
                                   ),
                                 ),
-                              const IconUtils(Icons.keyboard_arrow_right),
+                              const Icon(IconUtils.chevronRight),
                             ],
                           ),
                         ),

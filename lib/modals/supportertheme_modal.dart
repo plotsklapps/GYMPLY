@@ -42,7 +42,7 @@ class SupporterThemeModal extends SignalWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: IconUtils.close,
+                  icon: const Icon(IconUtils.close),
                 ),
               ],
             ),

@@ -93,7 +93,7 @@ class _SearchModalState extends State<SearchModal> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const IconUtils(Icons.cancel_outlined),
+                icon: const Icon(IconUtils.close),
               ),
             ],
           ),
@@ -134,11 +134,11 @@ class _SearchModalState extends State<SearchModal> {
                                     sSearchQuery.value = '';
                                     searchFocusNode.unfocus();
                                   },
-                                  icon: const IconUtils(Icons.search_off),
+                                  icon: const Icon(IconUtils.searchClose),
                                 )
                               : IconButton(
                                   onPressed: () {},
-                                  icon: const IconUtils(Icons.search),
+                                  icon: const Icon(IconUtils.search),
                                 ),
                           onChanged: (String value) {
                             sSearchQuery.value = value;
@@ -151,8 +151,8 @@ class _SearchModalState extends State<SearchModal> {
                       child: IconButton(
                         onPressed: settingsService.toggleExerciseViewMode,
                         icon: isGridMode
-                            ? const IconUtils(Icons.view_agenda_outlined)
-                            : const IconUtils(Icons.grid_view),
+                            ? const Icon(IconUtils.layoutList)
+                            : const Icon(IconUtils.layoutGrid),
                       ),
                     ),
                     if (_showScrollToTop)
@@ -166,7 +166,7 @@ class _SearchModalState extends State<SearchModal> {
                               curve: Curves.easeInOut,
                             );
                           },
-                          icon: const IconUtils(Icons.keyboard_double_arrow_up),
+                          icon: const Icon(IconUtils.chevronsUp),
                         ),
                       ),
                   ],

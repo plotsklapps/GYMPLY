@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
@@ -59,7 +58,7 @@ class SupporterFontModal extends SignalWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: IconUtils.close,
+                  icon: const Icon(IconUtils.close),
                 ),
               ],
             ),
@@ -78,8 +77,8 @@ class SupporterFontModal extends SignalWidget {
 
                   return ListTile(
                     leading: isSelected
-                        ? FaIcon(
-                            FontAwesomeIcons.circleCheck,
+                        ? Icon(
+                            IconUtils.check,
                             color: theme.colorScheme.secondary,
                           )
                         : const SizedBox(

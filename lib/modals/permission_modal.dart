@@ -31,7 +31,7 @@ class PermissionModal extends StatelessWidget {
                 // Pop cleanly.
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),

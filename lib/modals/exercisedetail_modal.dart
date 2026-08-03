@@ -121,7 +121,7 @@ class ExerciseDetailSheet extends SignalWidget {
                       child: ExerciseHistoryModal(exercise: dummy),
                     );
                   },
-                  icon: IconUtils.history,
+                  icon: const Icon(IconUtils.history),
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.only(left: 16),
                     minimumSize: Size.zero,
@@ -134,7 +134,9 @@ class ExerciseDetailSheet extends SignalWidget {
                   onPressed: () async {
                     await settingsService.toggleFavorite(exerciseId);
                   },
-                  icon: isFavorite ? IconUtils.starSolid : IconUtils.star,
+                  icon: isFavorite
+                      ? const Icon(IconUtils.starSolid)
+                      : const Icon(IconUtils.star),
                   color: isFavorite ? theme.colorScheme.secondary : null,
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.only(left: 12),

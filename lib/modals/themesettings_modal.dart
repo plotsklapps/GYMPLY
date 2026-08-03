@@ -1,6 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/donation_modal.dart';
 import 'package:gymply/modals/supporterfont_modal.dart';
 import 'package:gymply/modals/supportertheme_modal.dart';
@@ -46,7 +45,7 @@ class ThemeSettingsModal extends SignalWidget {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -67,8 +66,8 @@ class ThemeSettingsModal extends SignalWidget {
                       ? const Text('Prevent screen from turning off')
                       : const Text('Screen will automatically turn off'),
                   secondary: isWakelock
-                      ? IconUtils.wakelockOn
-                      : IconUtils.wakelockOff,
+                      ? const Icon(IconUtils.wakelockOn)
+                      : const Icon(IconUtils.wakelockOff),
                   value: isWakelock,
                   onChanged: (bool value) async {
                     await settingsService.toggleWakelock(value: value);
@@ -84,8 +83,8 @@ class ThemeSettingsModal extends SignalWidget {
                       ? const Text('Dark theme for all screens')
                       : const Text('Light theme for all screens'),
                   secondary: isDarkMode
-                      ? IconUtils.darkMode
-                      : IconUtils.lightMode,
+                      ? const Icon(IconUtils.darkMode)
+                      : const Icon(IconUtils.lightMode),
 
                   value: isDarkMode,
                   onChanged: (bool value) async {
@@ -101,7 +100,9 @@ class ThemeSettingsModal extends SignalWidget {
                   subtitle: isUseLbs
                       ? const Text('Weight metrics shown in pounds')
                       : const Text('Weight metrics shown in kilograms'),
-                  secondary: isUseLbs ? IconUtils.weight : IconUtils.bmi,
+                  secondary: isUseLbs
+                      ? const Icon(IconUtils.weightScale)
+                      : const Icon(IconUtils.bmi),
                   value: isUseLbs,
                   onChanged: (bool value) async {
                     await settingsService.toggleUseLbs(value: value);
@@ -117,10 +118,10 @@ class ThemeSettingsModal extends SignalWidget {
                     style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   ListTile(
-                    leading: IconUtils.palette,
+                    leading: const Icon(IconUtils.palette),
                     title: const Text('Themes'),
                     subtitle: const Text('Change your theme'),
-                    trailing: IconUtils.circleRight,
+                    trailing: const Icon(IconUtils.chevronRight),
                     onTap: () async {
                       await showModalBottomSheet<void>(
                         showDragHandle: true,
@@ -133,10 +134,10 @@ class ThemeSettingsModal extends SignalWidget {
                     },
                   ),
                   ListTile(
-                    leading: IconUtils.font,
+                    leading: const Icon(IconUtils.font),
                     title: const Text('Fonts'),
                     subtitle: const Text('Change your font'),
-                    trailing: IconUtils.circleRight,
+                    trailing: const Icon(IconUtils.chevronRight),
                     onTap: () async {
                       await showModalBottomSheet<void>(
                         showDragHandle: true,
@@ -159,13 +160,13 @@ class ThemeSettingsModal extends SignalWidget {
                             child: const DonationModal(),
                           );
                         },
-                        leading: IconUtils.like,
+                        leading: const Icon(IconUtils.like),
                         title: const Text('Become a GYMPLY supporter'),
                         subtitle: const Text(
                           'Get access to 50+ themes and 100+ '
                           'fonts!',
                         ),
-                        trailing: IconUtils.circleRight,
+                        trailing: const Icon(IconUtils.chevronRight),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -182,24 +183,24 @@ class ThemeSettingsModal extends SignalWidget {
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.shark,
                                     label: Text('Orange'),
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleDot,
+                                    icon: Icon(
+                                      IconUtils.color,
                                       color: kOrange,
                                     ),
                                   ),
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.greyLaw,
                                     label: Text('Purple'),
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleDot,
+                                    icon: Icon(
+                                      IconUtils.color,
                                       color: kPurple,
                                     ),
                                   ),
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.sanJuanBlue,
                                     label: Text('Pink'),
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleDot,
+                                    icon: Icon(
+                                      IconUtils.color,
                                       color: kPink,
                                     ),
                                   ),
@@ -235,17 +236,17 @@ class ThemeSettingsModal extends SignalWidget {
                               ButtonSegment<String>(
                                 value: 'Teko',
                                 label: Text('Teko'),
-                                icon: IconUtils.fontOne,
+                                icon: Icon(IconUtils.fontOne),
                               ),
                               ButtonSegment<String>(
                                 value: 'Kanit',
                                 label: Text('Kanit'),
-                                icon: IconUtils.fontTwo,
+                                icon: Icon(IconUtils.fontTwo),
                               ),
                               ButtonSegment<String>(
                                 value: 'Bebas Neue',
                                 label: Text('Bebas'),
-                                icon: IconUtils.fontThree,
+                                icon: Icon(IconUtils.fontThree),
                               ),
                             ],
                             selected: <String>{font},

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/theme/icons.dart';
 
 class StretchSetStatsModal extends StatefulWidget {
@@ -48,7 +47,7 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -67,8 +66,8 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
                       ButtonSegment<int>(
                         value: 0,
                         label: const Text('Light'),
-                        icon: FaIcon(
-                          FontAwesomeIcons.fire,
+                        icon: Icon(
+                          IconUtils.fire,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
@@ -78,12 +77,12 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.fire,
+                            Icon(
+                              IconUtils.fire,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
+                            Icon(
+                              IconUtils.fire,
                               color: theme.colorScheme.secondary,
                             ),
                           ],
@@ -95,16 +94,16 @@ class _StretchSetStatsModalState extends State<StretchSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.fire,
+                            Icon(
+                              IconUtils.fire,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
+                            Icon(
+                              IconUtils.fire,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
+                            Icon(
+                              IconUtils.fire,
                               color: theme.colorScheme.secondary,
                             ),
                           ],

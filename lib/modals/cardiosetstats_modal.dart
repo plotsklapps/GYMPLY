@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/theme/icons.dart';
 
 class CardioSetStatsModal extends StatefulWidget {
@@ -17,7 +16,9 @@ class CardioSetStatsModal extends StatefulWidget {
   final void Function(double distance, int intensity, int reps) onConfirm;
 
   @override
-  State<CardioSetStatsModal> createState() => _CardioSetStatsModalState();
+  State<CardioSetStatsModal> createState() {
+    return _CardioSetStatsModalState();
+  }
 }
 
 class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
@@ -54,7 +55,7 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -73,8 +74,9 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                       ButtonSegment<int>(
                         value: 0,
                         label: const Text('Light'),
-                        icon: FaIcon(
-                          FontAwesomeIcons.fire,
+                        icon: Icon(
+                          IconUtils.fire,
+                          size: 14,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
@@ -84,14 +86,14 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.fire,
-                              size: 16,
+                            Icon(
+                              IconUtils.fire,
+                              size: 14,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
-                              size: 16,
+                            Icon(
+                              IconUtils.fire,
+                              size: 14,
                               color: theme.colorScheme.secondary,
                             ),
                           ],
@@ -103,19 +105,19 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            FaIcon(
-                              FontAwesomeIcons.fire,
-                              size: 16,
+                            Icon(
+                              IconUtils.fire,
+                              size: 14,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
-                              size: 16,
+                            Icon(
+                              IconUtils.fire,
+                              size: 14,
                               color: theme.colorScheme.secondary,
                             ),
-                            FaIcon(
-                              FontAwesomeIcons.fire,
-                              size: 16,
+                            Icon(
+                              IconUtils.fire,
+                              size: 14,
                               color: theme.colorScheme.secondary,
                             ),
                           ],
@@ -124,7 +126,9 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                     ],
                     selected: <int>{_currentIntensity},
                     onSelectionChanged: (Set<int> newSelection) {
-                      setState(() => _currentIntensity = newSelection.first);
+                      setState(() {
+                        _currentIntensity = newSelection.first;
+                      });
                     },
                   ),
                 ),
@@ -142,13 +146,15 @@ class _CardioSetStatsModalState extends State<CardioSetStatsModal> {
                   children: <Widget>[
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context, false),
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
                         child: const Text('CANCEL'),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: FilledButton.tonal(
+                      child: FilledButton(
                         onPressed: () {
                           widget.onConfirm(
                             _currentDistance,

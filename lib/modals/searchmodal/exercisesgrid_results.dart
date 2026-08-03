@@ -69,8 +69,8 @@ class ExercisesGridResults extends StatelessWidget {
                       Positioned(
                         top: 8,
                         right: 8,
-                        child: IconUtils(
-                          Icons.star_border,
+                        child: Icon(
+                          IconUtils.star,
                           color: theme.colorScheme.secondary,
                         ),
                       ),

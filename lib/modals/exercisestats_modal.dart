@@ -144,7 +144,8 @@ class ExerciseStatsModal extends SignalWidget {
                   const SizedBox(height: 8),
                   _StatRow(
                     label: 'Lombardi (rep range 1-5)',
-                    value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)}'
+                    value:
+                        '${pr.oneRepMaxLombardi.toStringAsFixed(1)}'
                         ' $weightUnit',
                   ),
                   _StatRow(
@@ -180,7 +181,8 @@ class ExerciseStatsModal extends SignalWidget {
                   ),
                   _StatRow(
                     label: 'Max Exercise Volume',
-                    value: '${pr.maxExerciseVolume.toStringAsFixed(1)}'
+                    value:
+                        '${pr.maxExerciseVolume.toStringAsFixed(1)}'
                         ' $weightUnit',
                   ),
                 ] else if (exercise is CardioExercise) ...<Widget>[
@@ -236,8 +238,10 @@ class ExerciseStatsModal extends SignalWidget {
               ),
             ),
             IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: IconUtils.close,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),

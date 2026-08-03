@@ -72,7 +72,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -150,7 +150,7 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
                     _keepCurrentTime
                         ? "Today's current total time will remain unaffected."
                         : "The copied workout's total time will be "
-                            "added to today's current total time.",
+                              "added to today's current total time.",
                     style: theme.textTheme.bodyMedium,
                   ),
                   value: _keepCurrentTime,

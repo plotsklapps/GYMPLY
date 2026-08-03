@@ -46,7 +46,7 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                         // Pop and return false.
                         Navigator.pop(context);
                       },
-                      icon: IconUtils.close,
+                      icon: const Icon(IconUtils.close),
                     ),
                   ],
                 ),
@@ -58,22 +58,24 @@ Future<ImageSource?> addImageModal(BuildContext context) async {
                       children: <Widget>[
                         const SizedBox(height: 16),
                         ListTile(
-                          leading: IconUtils.image,
+                          leading: const Icon(IconUtils.image),
                           title: const Text('Photo Library'),
                           onTap: () {
                             // Pop and return gallery.
                             Navigator.of(context).pop(ImageSource.gallery);
                           },
-                          trailing: IconUtils.circleRight,
+                          trailing: const Icon(IconUtils.chevronRight),
                         ),
                         ListTile(
-                          leading: IconUtils.camera,
+                          leading: const Icon(IconUtils.camera),
                           title: const Text('(Selfie) Camera'),
                           onTap: () {
                             // Pop and return camera.
                             Navigator.of(context).pop(ImageSource.camera);
                           },
-                          trailing: IconUtils.circleRight,
+                          trailing: const Icon(
+                            IconUtils.chevronRight,
+                          ),
                         ),
                       ],
                     ),

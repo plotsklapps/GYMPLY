@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
@@ -110,7 +109,7 @@ class _CommentModalState extends State<CommentModal> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -269,8 +268,8 @@ class _CommentModalState extends State<CommentModal> {
                                       },
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.trashCan,
+                                      icon: Icon(
+                                        IconUtils.delete,
                                         color: theme.colorScheme.error,
                                         size: 14,
                                       ),
@@ -286,7 +285,7 @@ class _CommentModalState extends State<CommentModal> {
                                         });
                                         _focusNode.requestFocus();
                                       },
-                                      icon: IconUtils.message,
+                                      icon: const Icon(IconUtils.message),
                                     ),
                                   // Like possible for everyone.
                                   Row(
@@ -301,14 +300,15 @@ class _CommentModalState extends State<CommentModal> {
                                         },
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.heart,
-                                          color:
-                                              reactions?.contains(myPubKey) ??
-                                                  false
-                                              ? theme.colorScheme.secondary
-                                              : null,
-                                        ),
+                                        icon:
+                                            reactions?.contains(myPubKey) ??
+                                                false
+                                            ? const Icon(IconUtils.heart)
+                                            : Icon(
+                                                IconUtils.like,
+                                                color:
+                                                    theme.colorScheme.secondary,
+                                              ),
                                       ),
                                       if (reactions?.isNotEmpty ?? false)
                                         Padding(
@@ -371,7 +371,7 @@ class _CommentModalState extends State<CommentModal> {
                       _replyToPubKey = null;
                     });
                   },
-                  child: IconUtils.reset,
+                  child: const Icon(IconUtils.reset),
                 ),
               ],
             ),
@@ -390,7 +390,9 @@ class _CommentModalState extends State<CommentModal> {
                   // Custom counter.
                   counterText: '',
                 ),
-                onChanged: (String value) => setState(() {}),
+                onChanged: (String value) {
+                  setState(() {});
+                },
               ),
             ),
             Column(
@@ -410,12 +412,12 @@ class _CommentModalState extends State<CommentModal> {
                   icon: // Prevent spamming send button.
                   _isSending
                       ? const SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           child: CircularProgressIndicator(),
                         )
-                      : FaIcon(
-                          FontAwesomeIcons.paperPlane,
+                      : Icon(
+                          IconUtils.send,
                           color: _controller.text.trim().isEmpty
                               ? Colors.grey
                               : theme.colorScheme.primary,

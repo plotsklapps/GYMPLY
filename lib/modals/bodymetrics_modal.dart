@@ -191,7 +191,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                 // Pop and return false.
                 Navigator.pop(context, false);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -242,7 +242,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                                   BodyMetricRange.values.length];
                         });
                       },
-                      icon: IconUtils.calendar,
+                      icon: const Icon(IconUtils.calendarMonth),
                       label: Text(_getRangeLabel(_selectedRange)),
                     ),
                   ],
@@ -265,17 +265,17 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.weight,
                             label: Text('Weight'),
-                            icon: IconUtils.weightScale,
+                            icon: Icon(IconUtils.weightScale),
                           ),
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.bmi,
                             label: Text('BMI'),
-                            icon: IconUtils.bmi,
+                            icon: Icon(IconUtils.bmi),
                           ),
                           ButtonSegment<BodyMetricType>(
                             value: BodyMetricType.bodyFat,
                             label: Text('Fat %'),
-                            icon: IconUtils.bodyFat,
+                            icon: Icon(IconUtils.bodyFat),
                           ),
                         ],
                         selected: <BodyMetricType>{_selectedType},
@@ -296,12 +296,12 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                       ButtonSegment<int>(
                         value: 0,
                         label: Text('Male'),
-                        icon: IconUtils.male,
+                        icon: Icon(IconUtils.male),
                       ),
                       ButtonSegment<int>(
                         value: 1,
                         label: Text('Female'),
-                        icon: IconUtils.female,
+                        icon: Icon(IconUtils.female),
                       ),
                     ],
                     selected: <int>{_sex},
@@ -353,7 +353,7 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                           child: const SomatotypeModal(),
                         );
                       },
-                      icon: IconUtils.info,
+                      icon: const Icon(IconUtils.info),
                     ),
                   ],
                 ),
