@@ -74,12 +74,14 @@ class PRCard extends StatelessWidget {
                     '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit';
               } else if (type == 'SET') {
                 detail =
-                    '${(pr['weight'] as double).toStringAsFixed(1)} $weightUnit x '
+                    '${(pr['weight'] as double).toStringAsFixed(1)} '
+                    '$weightUnit x '
                     '${pr['reps']} reps';
               } else if (type == 'TOTAL') {
                 if (exercise is StrengthExercise) {
                   detail =
-                      '${(pr['value'] as double).toStringAsFixed(1)} $weightUnit Volume';
+                      '${(pr['value'] as double).toStringAsFixed(1)} '
+                      '$weightUnit Volume';
                 } else {
                   detail = (pr['value'] as Duration).format();
                 }

@@ -143,7 +143,8 @@ class DonationService {
   Future<void> _onPurchaseUpdate(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
-    // Check if there's any active (purchased or restored) subscription in the stream.
+    // Check if there's any active (purchased or restored) subscription in the
+    // stream.
     final bool hasValidPurchase = purchaseDetailsList.any(
       (PurchaseDetails p) =>
           p.status == PurchaseStatus.purchased ||

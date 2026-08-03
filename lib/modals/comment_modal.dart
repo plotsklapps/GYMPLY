@@ -165,6 +165,7 @@ class _CommentModalState extends State<CommentModal> {
                 final String commenterName =
                     meta?.name ?? 'User ${comment.pubKey.substring(0, 8)}';
                 final bool isCommentAuthor = comment.pubKey == myPubKey;
+                final Set<String>? reactions = reactionsMap[comment.id];
 
                 // Check if comment is a reply.
                 // Reply is any comment that tags another event as 'reply'.
@@ -303,27 +304,25 @@ class _CommentModalState extends State<CommentModal> {
                                         icon: FaIcon(
                                           FontAwesomeIcons.heart,
                                           color:
-                                              reactionsMap[comment.id]
-                                                      ?.contains(myPubKey) ??
+                                              reactions?.contains(myPubKey) ??
                                                   false
                                               ? theme.colorScheme.secondary
                                               : null,
                                         ),
                                       ),
-                                      if (reactionsMap[comment.id]
-                                              ?.isNotEmpty ??
-                                          false)
+                                      if (reactions?.isNotEmpty ?? false)
                                         Padding(
                                           padding: const EdgeInsets.only(
                                             left: 4,
                                           ),
                                           child: Text(
-                                            '${reactionsMap[comment.id]!.length}',
+                                            '${reactions!.length}',
                                             style: theme.textTheme.labelSmall
                                                 ?.copyWith(
                                                   color:
-                                                      reactionsMap[comment.id]!
-                                                          .contains(myPubKey)
+                                                      reactions.contains(
+                                                        myPubKey,
+                                                      )
                                                       ? theme
                                                             .colorScheme
                                                             .secondary

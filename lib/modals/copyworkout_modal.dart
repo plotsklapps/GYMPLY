@@ -149,7 +149,8 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
                   subtitle: Text(
                     _keepCurrentTime
                         ? "Today's current total time will remain unaffected."
-                        : "The copied workout's total time will be added to today's current total time.",
+                        : "The copied workout's total time will be "
+                            "added to today's current total time.",
                     style: theme.textTheme.bodyMedium,
                   ),
                   value: _keepCurrentTime,

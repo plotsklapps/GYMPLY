@@ -37,7 +37,8 @@ class FilterService {
       // Apply filtering criteria.
       final List<ExercisePath> filtered =
           allExercisesPaths.where((ExercisePath ex) {
-              // Allow fuzzy search: 'bench chest' retrieves 'Chest-Bench Press'.
+              // Allow fuzzy search: 'bench chest' retrieves
+              // 'Chest-Bench Press'.
               if (searchQuery.isNotEmpty) {
                 final List<String> tokens = searchQuery.split(' ').where((
                   String t,

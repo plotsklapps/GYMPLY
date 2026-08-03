@@ -111,7 +111,8 @@ class StrengthSetCard extends SignalWidget {
                       (() {
                         final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
                         return Text(
-                          '${totalSetWeight.toInt()} | $weight $weightUnit x $reps reps',
+                          '${totalSetWeight.toInt()} | $weight '
+                          '$weightUnit x $reps reps',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: isNewPR
                                 ? theme.colorScheme.onSecondary

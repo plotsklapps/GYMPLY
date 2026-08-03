@@ -353,7 +353,8 @@ class WorkoutSummaryModal extends SignalWidget {
                         return StatTile(
                           label: 'Avg Weight',
                           value:
-                              '${workout.avgWorkoutWeight.toStringAsFixed(1)}$weightUnit',
+                              '${workout.avgWorkoutWeight.toStringAsFixed(1)}'
+                              '$weightUnit',
                           icon: FontAwesomeIcons.gaugeHigh,
                         );
                       })(),

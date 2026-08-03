@@ -261,6 +261,10 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                 metric == ShareableMetric.volume
                                 ? (sUseLbs.value ? 'lbs' : 'kg')
                                 : metric.unit;
+                            final String suffix = displayUnit.isNotEmpty
+                                ? ' ($displayUnit)'
+                                : '';
+                            final String labelText = '${metric.label}$suffix';
 
                             return Column(
                               children: <Widget>[
@@ -271,7 +275,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                   ),
                                 ),
                                 Text(
-                                  '${metric.label}${displayUnit.isNotEmpty ? ' ($displayUnit)' : ''}',
+                                  labelText,
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     letterSpacing: 1,
                                     fontWeight: FontWeight.bold,

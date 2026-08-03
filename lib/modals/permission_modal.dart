@@ -74,7 +74,9 @@ class PermissionModal extends StatelessWidget {
                           ].request();
 
                           // Request battery optimalisation.
-                          await NotificationService.requestBatteryOptimization();
+                          const Future<void> Function() requestBattery =
+                              NotificationService.requestBatteryOptimization;
+                          await requestBattery();
 
                           // Close the modal.
                           if (context.mounted) {

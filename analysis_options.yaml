@@ -29,3 +29,4 @@ linter:
     prefer_final_locals: true
     prefer_is_not_empty: true
     unawaited_futures: true
+    lines_longer_than_80_chars: true

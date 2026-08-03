@@ -144,8 +144,8 @@ class ExerciseStatsModal extends SignalWidget {
                   const SizedBox(height: 8),
                   _StatRow(
                     label: 'Lombardi (rep range 1-5)',
-                    value:
-                        '${pr.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
+                    value: '${pr.oneRepMaxLombardi.toStringAsFixed(1)}'
+                        ' $weightUnit',
                   ),
                   _StatRow(
                     label: 'Brzycki (rep range 5-10)',
@@ -180,8 +180,8 @@ class ExerciseStatsModal extends SignalWidget {
                   ),
                   _StatRow(
                     label: 'Max Exercise Volume',
-                    value:
-                        '${pr.maxExerciseVolume.toStringAsFixed(1)} $weightUnit',
+                    value: '${pr.maxExerciseVolume.toStringAsFixed(1)}'
+                        ' $weightUnit',
                   ),
                 ] else if (exercise is CardioExercise) ...<Widget>[
                   _StatRow(
