@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8+81] - 2026-08-04
+- **Icon System Refactoring (Material Icons):**
+  - Removed `font_awesome_flutter` package dependency and migrated all icons across the app to standard Flutter Material Icons centralized in `IconUtils` (`lib/theme/icons.dart`).
+- **Expanded Font Library:**
+  - Added 30 new curated, high-legibility Google fonts (expanding the total to 50 supporter fonts), all bundled locally for 100% offline availability and registered in `pubspec.yaml`.
+- **Nostr Feed & Profile Image Fallbacks:**
+  - Implemented strict HTTP URL validation (`isValidHttpUrl`) for Nostr profile metadata (avatars and banners) so empty or invalid image URIs gracefully default to the local GYMPLY icon asset without console errors.
+- **Supporter UI & Navigation:**
+  - Automatically hidden the "Support GYMPLY." promotional ListTile in both the Settings Menu (`MenuModal`) and Theme Settings (`ThemeSettingsModal`) for active supporters.
+
 ## [0.0.8+80] - 2026-07-30
 - **Local Font Performance & Optimization:**
   - Removed `google_fonts` runtime package dependency to boost app loading speed, eliminate network dependency, and ensure full offline readiness.
