@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/stretchsetstats_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -69,8 +68,8 @@ class StretchSetCard extends StatelessWidget {
                   ...List<Widget>.generate(
                     (set.intensity ?? 1) + 1,
                     (int index) {
-                      return FaIcon(
-                        FontAwesomeIcons.fire,
+                      return Icon(
+                        IconUtils.fire,
                         color: (set.intensity ?? 1) == 2
                             ? theme.colorScheme.error
                             : theme.colorScheme.primary,
@@ -80,7 +79,7 @@ class StretchSetCard extends StatelessWidget {
                 ],
               ),
               trailing: PopupMenuButton<String>(
-                icon: IconUtils.more,
+                icon: const Icon(IconUtils.more),
                 onSelected: (String value) async {
                   if (value == 'deleteSet') {
                     workoutService.deleteStretchSet(exercise, set);
@@ -122,7 +121,7 @@ class StretchSetCard extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Center(
-                              child: IconUtils.add,
+                              child: Icon(IconUtils.add),
                             ),
                           ),
                         ],
@@ -139,8 +138,8 @@ class StretchSetCard extends StatelessWidget {
                             width: 24,
                             height: 24,
                             child: Center(
-                              child: FaIcon(
-                                FontAwesomeIcons.trashCan,
+                              child: Icon(
+                                IconUtils.delete,
                                 color: theme.colorScheme.error,
                               ),
                             ),

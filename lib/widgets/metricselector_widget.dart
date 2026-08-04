@@ -25,7 +25,7 @@ class MetricSelector extends StatelessWidget {
             child: ChoiceChip(
               showCheckmark: true,
               label: Text(metric.name.capitalizeFirst()),
-              avatar: isSelected ? IconUtils.check : null,
+              avatar: isSelected ? const Icon(IconUtils.check) : null,
               selected: isSelected,
               onSelected: (bool selected) {
                 if (selected) {

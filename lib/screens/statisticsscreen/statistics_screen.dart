@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -17,6 +16,7 @@ import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StatisticsScreen extends SignalStatefulWidget {
@@ -218,17 +218,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           StatTile(
                             label: 'Exercises',
                             value: currentWorkout.exerciseCount.toString(),
-                            icon: FontAwesomeIcons.dumbbell,
+                            icon: IconUtils.dumbbell,
                           ),
                           StatTile(
                             label: 'Sets',
                             value: currentWorkout.totalSets.toString(),
-                            icon: FontAwesomeIcons.arrowUp91,
+                            icon: IconUtils.numbers,
                           ),
                           StatTile(
                             label: 'Time',
                             value: currentWorkout.totalDuration.formatHHMM(),
-                            icon: FontAwesomeIcons.clock,
+                            icon: IconUtils.clock,
                           ),
                         ],
                       ),
@@ -247,17 +247,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               value:
                                   '${currentWorkout.totalStrengthVolume} '
                                   '$weightUnit',
-                              icon: FontAwesomeIcons.weightHanging,
+                              icon: IconUtils.weight,
                             ),
                             StatTile(
                               label: 'Reps',
                               value: currentWorkout.totalReps.toString(),
-                              icon: FontAwesomeIcons.arrowUp91,
+                              icon: IconUtils.numbers,
                             ),
                             StatTile(
                               label: 'Avg Weight',
                               value: '$avgWeight$weightUnit',
-                              icon: FontAwesomeIcons.gaugeHigh,
+                              icon: IconUtils.speed,
                             ),
                           ],
                         ),
@@ -275,17 +275,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             StatTile(
                               label: 'Distance',
                               value: '${cardioDist}km',
-                              icon: FontAwesomeIcons.rulerHorizontal,
+                              icon: IconUtils.ruler,
                             ),
                             StatTile(
                               label: 'Calories',
                               value: '${cardioCals}kcal',
-                              icon: FontAwesomeIcons.fire,
+                              icon: IconUtils.fire,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalCardioTime.format(),
-                              icon: FontAwesomeIcons.stopwatch,
+                              icon: IconUtils.stopwatch,
                             ),
                           ],
                         ),
@@ -304,17 +304,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               label: 'Stretch Count',
                               value: currentWorkout.stretchExerciseCount
                                   .toString(),
-                              icon: FontAwesomeIcons.personFallingBurst,
+                              icon: IconUtils.numbers,
                             ),
                             StatTile(
                               label: 'Calories',
                               value: '${stretchCals}kcal',
-                              icon: FontAwesomeIcons.fire,
+                              icon: IconUtils.fire,
                             ),
                             StatTile(
                               label: 'Duration',
                               value: currentWorkout.totalStretchTime.format(),
-                              icon: FontAwesomeIcons.stopwatch,
+                              icon: IconUtils.stopwatch,
                             ),
                           ],
                         ),

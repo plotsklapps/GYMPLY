@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -44,7 +43,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     return ReorderableListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: reversedExercises.length,
-      // Use custom handle (LucideIcons.gripVertical).
+      // Use custom handle.
       buildDefaultDragHandles: false,
       onReorderItem: (int oldIndex, int newIndex) {
         // Map reversed indices back to original indices for WorkoutService.
@@ -85,11 +84,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     index: index,
                     child: const Padding(
                       padding: EdgeInsets.all(16),
-                      child: IconUtils.grip,
+                      child: Icon(IconUtils.grip),
                     ),
                   )
                 : PopupMenuButton<String>(
-                    icon: IconUtils.more,
+                    icon: const Icon(IconUtils.more),
                     onSelected: (String value) {
                       if (value == 'delete') {
                         // Delete entire exercise from workout.
@@ -112,7 +111,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: IconUtils.grip,
+                                  child: Icon(IconUtils.grip),
                                 ),
                               ),
                             ],
@@ -128,8 +127,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.trashCan,
+                                  child: Icon(
+                                    IconUtils.delete,
                                     color: theme.colorScheme.error,
                                   ),
                                 ),

@@ -36,7 +36,7 @@ class WeightControls extends StatelessWidget {
 
             onDecrementLarge();
           },
-          child: IconUtils.chevronsDown,
+          child: const Icon(IconUtils.chevronsDown),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
@@ -48,7 +48,7 @@ class WeightControls extends StatelessWidget {
 
             onDecrementSmall();
           },
-          child: IconUtils.chevronDown,
+          child: const Icon(IconUtils.chevronDown),
         ),
         const SizedBox(width: 4),
         Expanded(
@@ -77,7 +77,7 @@ class WeightControls extends StatelessWidget {
 
             onIncrementSmall();
           },
-          child: IconUtils.chevronUp,
+          child: const Icon(IconUtils.chevronUp),
         ),
         const SizedBox(width: 4),
         FloatingActionButton(
@@ -89,7 +89,7 @@ class WeightControls extends StatelessWidget {
 
             onIncrementLarge();
           },
-          child: IconUtils.chevronsUp,
+          child: const Icon(IconUtils.chevronsUp),
         ),
       ],
     );

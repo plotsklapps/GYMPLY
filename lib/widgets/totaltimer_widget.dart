@@ -67,7 +67,9 @@ class TotalTimerWidget extends SignalWidget {
                     await totalTimer.startTimer();
                   }
                 },
-                child: isTotalTimerRunning ? IconUtils.pause : IconUtils.play,
+                child: Icon(
+                  isTotalTimerRunning ? IconUtils.pause : IconUtils.play,
+                ),
               ),
             ),
           ],

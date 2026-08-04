@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/screens/profilescreen/keycard_widget.dart';
 import 'package:gymply/screens/profilescreen/metadataform_widget.dart';
@@ -88,8 +87,8 @@ class _ProfileWidget extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: <Widget>[
-                        FaIcon(
-                          FontAwesomeIcons.eye,
+                        Icon(
+                          IconUtils.eye,
                           color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 12),
@@ -118,7 +117,7 @@ class _ProfileWidget extends StatelessWidget {
                                 child: const ImportKeysModal(),
                               );
                             },
-                            icon: IconUtils.secretKey,
+                            icon: const Icon(IconUtils.secretKey),
                             label: const Text('Import Private Key (nsec)'),
                           ),
                         ),
@@ -143,7 +142,7 @@ class _ProfileWidget extends StatelessWidget {
           KeyCard(
             label: 'PUBLIC KEY (npub)',
             keyValue: npub,
-            icon: FontAwesomeIcons.key,
+            icon: IconUtils.publicKey,
             isSensitive: false,
           ),
           const SizedBox(height: 8),
@@ -153,7 +152,7 @@ class _ProfileWidget extends StatelessWidget {
             KeyCard(
               label: 'PRIVATE KEY (nsec)',
               onFetchValue: nostrService.getNsec,
-              icon: FontAwesomeIcons.lock,
+              icon: IconUtils.secretKey,
               isSensitive: true,
             ),
 
@@ -166,7 +165,7 @@ class _ProfileWidget extends StatelessWidget {
                   onPressed: () async {
                     await nostrService.logout();
                   },
-                  icon: IconUtils.logout,
+                  icon: const Icon(IconUtils.logout),
                   label: const Text('Logout and delete keys from device'),
                 ),
               ),

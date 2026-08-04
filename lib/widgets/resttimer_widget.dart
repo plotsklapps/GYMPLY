@@ -69,7 +69,9 @@ class RestTimerWidget extends SignalWidget {
                     await restTimer.startTimer();
                   }
                 },
-                child: isRestTimerRunning ? IconUtils.pause : IconUtils.play,
+                child: Icon(
+                  isRestTimerRunning ? IconUtils.pause : IconUtils.play,
+                ),
               ),
             ),
           ],

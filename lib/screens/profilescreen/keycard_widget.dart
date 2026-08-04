@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
 
@@ -17,7 +16,7 @@ class KeyCard extends StatefulWidget {
   final String label;
   final String? keyValue;
   final Future<String?> Function()? onFetchValue;
-  final FaIconData icon;
+  final IconData icon;
   final bool isSensitive;
 
   @override
@@ -45,7 +44,7 @@ class _KeyCardState extends State<KeyCard> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                FaIcon(widget.icon, size: 16),
+                Icon(widget.icon, size: 16),
                 const SizedBox(width: 8),
                 Text(
                   widget.label,
@@ -82,7 +81,9 @@ class _KeyCardState extends State<KeyCard> {
                         _isHidden = !_isHidden;
                       });
                     },
-                    icon: _isHidden ? IconUtils.eye : IconUtils.eyeOff,
+                    icon: _isHidden
+                        ? const Icon(IconUtils.eye)
+                        : const Icon(IconUtils.eyeOff),
                   ),
                 IconButton(
                   onPressed: () async {
@@ -105,7 +106,7 @@ class _KeyCardState extends State<KeyCard> {
                       );
                     }
                   },
-                  icon: IconUtils.copy,
+                  icon: const Icon(IconUtils.copy),
                 ),
               ],
             ),

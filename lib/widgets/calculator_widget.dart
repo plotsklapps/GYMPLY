@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 
@@ -115,7 +114,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconUtils.close,
+              icon: const Icon(IconUtils.close),
             ),
           ],
         ),
@@ -135,8 +134,8 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
                 });
                 _calculate();
               },
-              icon: FaIcon(
-                FontAwesomeIcons.arrowRightArrowLeft,
+              icon: Icon(
+                IconUtils.swap,
                 color: theme.colorScheme.secondary,
                 size: 32,
               ),
@@ -197,8 +196,8 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
                       child: FloatingActionButton(
                         heroTag: 'btn_delete',
                         onPressed: _onDeleteTap,
-                        child: FaIcon(
-                          FontAwesomeIcons.trashCan,
+                        child: Icon(
+                          IconUtils.delete,
                           color: theme.colorScheme.secondary,
                         ),
                       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -102,8 +101,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: ExerciseHistoryModal(exercise: exercise),
                         );
                       },
-                      icon: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
+                      icon: Icon(
+                        IconUtils.history,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -116,8 +115,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: ExerciseStatsModal(exercise: exercise),
                         );
                       },
-                      icon: FaIcon(
-                        FontAwesomeIcons.chartColumn,
+                      icon: Icon(
+                        IconUtils.statistics,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -131,8 +130,8 @@ class StrengthExerciseScreen extends StatelessWidget {
                           child: const ConvertCalculator(),
                         );
                       },
-                      icon: FaIcon(
-                        FontAwesomeIcons.calculator,
+                      icon: Icon(
+                        IconUtils.calculator,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -154,7 +153,7 @@ class StrengthExerciseScreen extends StatelessWidget {
                             );
                           }
                         },
-                        icon: IconUtils.add,
+                        icon: const Icon(IconUtils.add),
                         label: const Text(
                           'ADD SET',
                         ),

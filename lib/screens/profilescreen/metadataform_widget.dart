@@ -134,7 +134,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
                           height: 20,
                           child: CircularProgressIndicator(),
                         )
-                      : IconUtils.save,
+                      : const Icon(IconUtils.save),
                   label: const Text('Save Profile Changes'),
                 ),
               ),

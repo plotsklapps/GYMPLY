@@ -51,7 +51,7 @@ class NostrOnboarding extends StatelessWidget {
                   onPressed: () async {
                     await nostrService.generateKeys();
                   },
-                  icon: IconUtils.userAdd,
+                  icon: const Icon(IconUtils.userAdd),
                   label: const Text('Create new Keys'),
                 ),
               ),
@@ -67,7 +67,7 @@ class NostrOnboarding extends StatelessWidget {
                       child: const ImportKeysModal(),
                     );
                   },
-                  icon: IconUtils.userCheck,
+                  icon: const Icon(IconUtils.userCheck),
                   label: const Text('Use Existing Keys'),
                 ),
               ),

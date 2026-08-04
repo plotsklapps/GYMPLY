@@ -222,7 +222,7 @@ class WorkoutSummaryModal extends SignalWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Icon(
-                          FontAwesomeIcons.penToSquare,
+                          IconUtils.notes,
                           size: 20,
                           color: theme.colorScheme.primary,
                         ),
@@ -309,17 +309,17 @@ class WorkoutSummaryModal extends SignalWidget {
                     StatTile(
                       label: 'Exercises',
                       value: workout.exerciseCount.toString(),
-                      icon: FontAwesomeIcons.dumbbell,
+                      icon: IconUtils.dumbbell,
                     ),
                     StatTile(
                       label: 'Sets',
                       value: workout.totalSets.toString(),
-                      icon: FontAwesomeIcons.arrowUpWideShort,
+                      icon: IconUtils.numbers,
                     ),
                     StatTile(
                       label: 'Time',
                       value: workout.totalDuration.formatHHMM(),
-                      icon: FontAwesomeIcons.clock,
+                      icon: IconUtils.clock,
                     ),
                   ],
                 ),
@@ -339,13 +339,13 @@ class WorkoutSummaryModal extends SignalWidget {
                         return StatTile(
                           label: 'Volume',
                           value: '${workout.totalStrengthVolume} $weightUnit',
-                          icon: FontAwesomeIcons.weightHanging,
+                          icon: IconUtils.weight,
                         );
                       })(),
                       StatTile(
                         label: 'Reps',
                         value: workout.totalReps.toString(),
-                        icon: FontAwesomeIcons.arrowUp91,
+                        icon: IconUtils.numbers,
                       ),
                       (() {
                         final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
@@ -354,7 +354,7 @@ class WorkoutSummaryModal extends SignalWidget {
                           value:
                               '${workout.avgWorkoutWeight.toStringAsFixed(1)}'
                               '$weightUnit',
-                          icon: FontAwesomeIcons.gaugeHigh,
+                          icon: IconUtils.speed,
                         );
                       })(),
                     ],
@@ -374,17 +374,17 @@ class WorkoutSummaryModal extends SignalWidget {
                       StatTile(
                         label: 'Distance',
                         value: '${cardioDistance}km',
-                        icon: FontAwesomeIcons.rulerHorizontal,
+                        icon: IconUtils.ruler,
                       ),
                       StatTile(
                         label: 'Calories',
                         value: '${workout.totalCardioCalories}kcal',
-                        icon: FontAwesomeIcons.fire,
+                        icon: IconUtils.fire,
                       ),
                       StatTile(
                         label: 'Duration',
                         value: workout.totalCardioTime.format(),
-                        icon: FontAwesomeIcons.stopwatch,
+                        icon: IconUtils.stopwatch,
                       ),
                     ],
                   ),
@@ -403,17 +403,17 @@ class WorkoutSummaryModal extends SignalWidget {
                       StatTile(
                         label: 'Stretch Count',
                         value: workout.stretchExerciseCount.toString(),
-                        icon: FontAwesomeIcons.arrowUp91,
+                        icon: IconUtils.numbers,
                       ),
                       StatTile(
                         label: 'Stretch',
                         value: workout.totalStretchTime.format(),
-                        icon: FontAwesomeIcons.personFallingBurst,
+                        icon: IconUtils.stretch,
                       ),
                       StatTile(
                         label: 'Duration',
                         value: workout.totalCardioDuration.format(),
-                        icon: FontAwesomeIcons.stopwatch,
+                        icon: IconUtils.stopwatch,
                       ),
                     ],
                   ),

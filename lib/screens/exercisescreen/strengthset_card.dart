@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
+import 'package:gymply/theme/icons.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StrengthSetCard extends SignalWidget {
@@ -94,8 +94,8 @@ class StrengthSetCard extends SignalWidget {
                 child: ListTile(
                   leading: CircleAvatar(
                     child: isNewPR
-                        ? FaIcon(
-                            FontAwesomeIcons.medal,
+                        ? Icon(
+                            IconUtils.medal,
                             color: theme.colorScheme.secondary,
                           )
                         : Text(
@@ -131,8 +131,8 @@ class StrengthSetCard extends SignalWidget {
                     ],
                   ),
                   trailing: PopupMenuButton<String>(
-                    icon: FaIcon(
-                      FontAwesomeIcons.ellipsisVertical,
+                    icon: Icon(
+                      IconUtils.more,
                       color: isNewPR ? theme.colorScheme.onSecondary : null,
                     ),
                     onSelected: (String value) {
@@ -152,8 +152,8 @@ class StrengthSetCard extends SignalWidget {
                                 width: 24,
                                 height: 24,
                                 child: Center(
-                                  child: FaIcon(
-                                    FontAwesomeIcons.trashCan,
+                                  child: Icon(
+                                    IconUtils.delete,
                                     color: theme.colorScheme.error,
                                   ),
                                 ),

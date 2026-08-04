@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/comment_modal.dart';
 import 'package:gymply/modals/userdetail_modal.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -98,7 +97,7 @@ class WorkoutNote extends SignalWidget {
               ),
               trailing: isMine
                   ? PopupMenuButton<String>(
-                      icon: IconUtils.more,
+                      icon: const Icon(IconUtils.more),
                       onSelected: (String value) async {
                         if (value == 'delete') {
                           await nostrService.deleteWorkoutNote(event.id);
@@ -119,8 +118,8 @@ class WorkoutNote extends SignalWidget {
                                   width: 24,
                                   height: 24,
                                   child: Center(
-                                    child: FaIcon(
-                                      FontAwesomeIcons.trashCan,
+                                    child: Icon(
+                                      IconUtils.delete,
                                       color: theme.colorScheme.error,
                                       size: 20,
                                     ),
@@ -172,7 +171,7 @@ class WorkoutNote extends SignalWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     IconButton(
-                      icon: IconUtils.message,
+                      icon: const Icon(IconUtils.message),
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
@@ -199,8 +198,8 @@ class WorkoutNote extends SignalWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.heart,
+                      icon: Icon(
+                        hasLiked ? IconUtils.like : IconUtils.heart,
                         color: hasLiked ? theme.colorScheme.secondary : null,
                       ),
                       onPressed: () async {

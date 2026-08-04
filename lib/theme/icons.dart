@@ -101,4 +101,18 @@ class IconUtils {
   static const IconData layoutList = Icons.view_agenda_outlined;
   static const IconData layoutGrid = Icons.grid_view;
   static const IconData grip = Icons.drag_indicator;
+
+  static const IconData medal = Icons.emoji_events_outlined;
+  static const IconData trash = Icons.delete_outline;
+  static const IconData clock = Icons.access_time_outlined;
+  static const IconData stopwatch = Icons.timer_outlined;
+  static const IconData ruler = Icons.straighten;
+  static const IconData speed = Icons.speed;
+  static const IconData edit = Icons.edit_outlined;
+  static const IconData swap = Icons.swap_horiz;
+  static const IconData stretch = Icons.self_improvement;
+  static const IconData numbers = Icons.numbers;
+  static const IconData fingerprint = Icons.fingerprint;
+  static const IconData vault = Icons.lock_clock;
+  static const IconData shield = Icons.verified_user_outlined;
 }

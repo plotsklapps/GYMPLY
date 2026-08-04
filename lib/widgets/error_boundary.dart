@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gymply/theme/icons.dart';
 
 // Catch build-time errors to show fallback UI instead red screen of death.
 class ErrorBoundary extends StatefulWidget {
@@ -38,8 +38,8 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const FaIcon(
-                FontAwesomeIcons.circleXmark,
+              const Icon(
+                IconUtils.error,
                 color: Colors.red,
                 size: 48,
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
@@ -121,11 +120,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             controller: _tabController,
             labelPadding: EdgeInsets.zero,
             tabs: <Widget>[
-              if (showFeed)
-                const Tab(icon: FaIcon(FontAwesomeIcons.rss, size: 20)),
-              const Tab(icon: FaIcon(FontAwesomeIcons.arrowTrendUp, size: 20)),
-              const Tab(icon: FaIcon(FontAwesomeIcons.dumbbell, size: 20)),
-              const Tab(icon: FaIcon(FontAwesomeIcons.penToSquare, size: 20)),
+              if (showFeed) const Tab(icon: Icon(IconUtils.feed, size: 20)),
+              const Tab(icon: Icon(IconUtils.trendUp, size: 20)),
+              const Tab(icon: Icon(IconUtils.dumbbell, size: 20)),
+              const Tab(icon: Icon(IconUtils.edit, size: 20)),
             ],
           ),
         ),
@@ -157,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
               },
-              child: IconUtils.circleUp,
+              child: const Icon(IconUtils.circleUp),
             ),
             const Spacer(),
             Text(
@@ -184,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
               },
-              child: IconUtils.stop,
+              child: const Icon(IconUtils.stop),
             ),
             const SizedBox(width: 16),
             FloatingActionButton(
@@ -207,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
               },
-              child: IconUtils.add,
+              child: const Icon(IconUtils.add),
             ),
           ],
         ),

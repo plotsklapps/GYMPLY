@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
@@ -83,8 +82,8 @@ class StretchExerciseScreen extends SignalWidget {
                           child: ExerciseHistoryModal(exercise: exercise),
                         );
                       },
-                      icon: FaIcon(
-                        FontAwesomeIcons.clockRotateLeft,
+                      icon: Icon(
+                        IconUtils.history,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -97,8 +96,8 @@ class StretchExerciseScreen extends SignalWidget {
                         return ChoiceChip(
                           showCheckmark: false,
                           avatar: isSelected
-                              ? FaIcon(
-                                  FontAwesomeIcons.circleCheck,
+                              ? Icon(
+                                  IconUtils.check,
                                   color: theme.colorScheme.onSecondary,
                                 )
                               : null,
@@ -141,8 +140,8 @@ class StretchExerciseScreen extends SignalWidget {
                           child: ExerciseStatsModal(exercise: exercise),
                         );
                       },
-                      icon: FaIcon(
-                        FontAwesomeIcons.chartColumn,
+                      icon: Icon(
+                        IconUtils.statistics,
                         color: theme.colorScheme.secondary,
                       ),
                     ),
@@ -186,7 +185,7 @@ class StretchExerciseScreen extends SignalWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: IconUtils.close,
+                      child: const Icon(IconUtils.close),
                     ),
                     const SizedBox(width: 4),
 
@@ -222,12 +221,13 @@ class StretchExerciseScreen extends SignalWidget {
                           }
                         }
                       },
-                      child:
-                          (mode == StretchMode.stopwatch
-                              ? isStopwatchRunning
-                              : (isIntervalRunning || isRestRunning))
-                          ? IconUtils.pause
-                          : IconUtils.play,
+                      child: Icon(
+                        (mode == StretchMode.stopwatch
+                                ? isStopwatchRunning
+                                : (isIntervalRunning || isRestRunning))
+                            ? IconUtils.pause
+                            : IconUtils.play,
+                      ),
                     ),
                     const SizedBox(width: 4),
 
@@ -272,7 +272,7 @@ class StretchExerciseScreen extends SignalWidget {
                           await RestTimer().resetTimer();
                         }
                       },
-                      child: IconUtils.add,
+                      child: const Icon(IconUtils.add),
                     ),
                   ],
                 ),

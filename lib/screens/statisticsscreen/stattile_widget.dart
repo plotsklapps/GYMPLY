@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class StatTile extends StatelessWidget {
   const StatTile({
@@ -10,7 +9,7 @@ class StatTile extends StatelessWidget {
   });
   final String label;
   final String value;
-  final FaIconData icon;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,7 @@ class StatTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          FaIcon(icon, color: theme.colorScheme.secondary),
+          Icon(icon, color: theme.colorScheme.secondary),
           const SizedBox(height: 4),
           Text(
             value,
