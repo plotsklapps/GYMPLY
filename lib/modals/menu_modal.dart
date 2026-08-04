@@ -8,6 +8,7 @@ import 'package:gymply/modals/restorebackup_modal.dart';
 import 'package:gymply/modals/themesettings_modal.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
+import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
@@ -27,6 +28,9 @@ class MenuModal extends SignalWidget {
     // Watch backup/restore Signals.
     final bool isBackingUp = sIsBackingUp.value;
     final bool isRestoring = sIsRestoring.value;
+
+    // Watch supporter status.
+    final bool isSupporter = donationService.sIsSupporter.value;
 
     // Master processing state to disable all buttons during any activity.
     final bool isAnyProcessing = isChecking || isBackingUp || isRestoring;
@@ -171,22 +175,24 @@ class MenuModal extends SignalWidget {
                   title: const Text('Restore Data'),
                   subtitle: const Text('Load data from a backup file'),
                 ),
-                // Support GYMPLY. ListTile.
-                ListTile(
-                  onTap: () async {
-                    await ModalService.showModal(
-                      context: context,
-                      child: const DonationModal(),
-                    );
-                  },
-                  leading: Icon(
-                    IconUtils.heart,
-                    color: theme.colorScheme.secondary,
+
+                // Support GYMPLY. ListTile (for non-supporters).
+                if (!isSupporter)
+                  ListTile(
+                    onTap: () async {
+                      await ModalService.showModal(
+                        context: context,
+                        child: const DonationModal(),
+                      );
+                    },
+                    leading: Icon(
+                      IconUtils.heart,
+                      color: theme.colorScheme.secondary,
+                    ),
+                    title: const Text('Support GYMPLY.'),
+                    subtitle: const Text('Help keep this app free and private'),
+                    trailing: const Icon(IconUtils.chevronRight),
                   ),
-                  title: const Text('Support GYMPLY.'),
-                  subtitle: const Text('Help keep this app free and private'),
-                  trailing: const Icon(IconUtils.chevronRight),
-                ),
 
                 const Divider(),
 

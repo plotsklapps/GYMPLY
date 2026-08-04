@@ -26,11 +26,11 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
     final double weight = double.tryParse(inputWeight) ?? 0;
     setState(() {
       if (isMetric) {
-        // KGS to LBS.
-        result = (weight * 2.20462).toStringAsFixed(1);
-      } else {
         // LBS to KGS.
         result = (weight / 2.20462).toStringAsFixed(1);
+      } else {
+        // KGS to LBS.
+        result = (weight * 2.20462).toStringAsFixed(1);
       }
     });
   }
@@ -100,12 +100,12 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
             Expanded(
               child: isMetric
                   ? Text(
-                      'CONVERT KGS > LBS',
+                      'CONVERT LBS > KGS',
                       style: theme.textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     )
                   : Text(
-                      'CONVERT LBS > KGS',
+                      'CONVERT KGS > LBS',
                       style: theme.textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -125,7 +125,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
           children: <Widget>[
             DisplayColumn(
               value: inputWeight,
-              unit: isMetric ? 'kgs' : 'lbs',
+              unit: isMetric ? 'lbs' : 'kgs',
             ),
             IconButton(
               onPressed: () {
@@ -142,7 +142,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
             ),
             DisplayColumn(
               value: result,
-              unit: isMetric ? 'lbs' : 'kgs',
+              unit: isMetric ? 'kgs' : 'lbs',
               isSecondary: true,
             ),
           ],
@@ -197,7 +197,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
                         heroTag: 'btn_delete',
                         onPressed: _onDeleteTap,
                         child: Icon(
-                          IconUtils.delete,
+                          IconUtils.backspace,
                           color: theme.colorScheme.secondary,
                         ),
                       ),

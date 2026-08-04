@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               elevation: 0,
               onPressed: () async {
                 // Give a little bzzz.
-                await HapticFeedback.lightImpact();
+                await HapticFeedback.mediumImpact();
 
                 if (context.mounted) {
                   // Open menu modal.
@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
               },
-              child: const Icon(IconUtils.circleUp),
+              child: const Icon(IconUtils.chevronUp),
             ),
             const Spacer(),
             Text(
@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               elevation: 0,
               onPressed: () async {
                 // Give a little bzzz.
-                await HapticFeedback.lightImpact();
+                await HapticFeedback.mediumImpact();
 
                 if (context.mounted) {
                   // Do not use ModalService here because of entirely different

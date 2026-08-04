@@ -79,12 +79,11 @@ class DonationModal extends SignalWidget {
                     children: <Widget>[
                       Icon(
                         IconUtils.sparkles,
-                        size: 20,
                         color: theme.colorScheme.primary,
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'You get: 50+ Themes and 100+ Fonts!',
+                        'You get: 50+ Themes and 50+ Fonts!',
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.bold,

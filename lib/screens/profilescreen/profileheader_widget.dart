@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gymply/services/textformat_service.dart';
 import 'package:ndk/ndk.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -19,7 +20,7 @@ class ProfileHeader extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       clipBehavior: Clip.none,
       children: <Widget>[
-        // Banner defaults to theme.colorScheme.secondary is no banner is set.
+        // Banner defaults to theme.colorScheme.secondary if no banner is set.
         Container(
           height: 80,
           width: double.infinity,
@@ -29,9 +30,9 @@ class ProfileHeader extends StatelessWidget {
               bottomLeft: Radius.circular(12),
               bottomRight: Radius.circular(12),
             ),
-            image: bannerUrl != null && bannerUrl.isNotEmpty
+            image: isValidHttpUrl(bannerUrl)
                 ? DecorationImage(
-                    image: NetworkImage(bannerUrl),
+                    image: NetworkImage(bannerUrl!),
                     fit: BoxFit.cover,
                   )
                 : null,
@@ -52,8 +53,8 @@ class ProfileHeader extends StatelessWidget {
             child: CircleAvatar(
               radius: 40,
               backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              backgroundImage: pictureUrl != null && pictureUrl.isNotEmpty
-                  ? NetworkImage(pictureUrl)
+              backgroundImage: isValidHttpUrl(pictureUrl)
+                  ? NetworkImage(pictureUrl!)
                   : const AssetImage('assets/icons/gymplyIcon.png'),
             ),
           ),

@@ -3,7 +3,7 @@ description: "GYMPLY. The SIMPLE gym tracker."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 0.0.8+80
+version: 0.0.8+81
 
 environment:
   sdk: ^3.11.0
@@ -144,3 +144,93 @@ flutter:
     - family: Fira Sans
       fonts:
         - asset: assets/fonts/firasans.ttf
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/raleway.ttf
+    - family: PT Sans
+      fonts:
+        - asset: assets/fonts/ptsans.ttf
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/ubuntu.ttf
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/outfit.ttf
+    - family: Plus Jakarta Sans
+      fonts:
+        - asset: assets/fonts/plusjakartasans.ttf
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/dmsans.ttf
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/manrope.ttf
+    - family: Cabin
+      fonts:
+        - asset: assets/fonts/cabin.ttf
+    - family: Titillium Web
+      fonts:
+        - asset: assets/fonts/titilliumweb.ttf
+    - family: Space Grotesk
+      fonts:
+        - asset: assets/fonts/spacegrotesk.ttf
+    - family: Archivo
+      fonts:
+        - asset: assets/fonts/archivo.ttf
+    - family: Archivo Black
+      fonts:
+        - asset: assets/fonts/archivoblack.ttf
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/urbanist.ttf
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/sora.ttf
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/lexend.ttf
+    - family: Asap
+      fonts:
+        - asset: assets/fonts/asap.ttf
+    - family: Barlow Condensed
+      fonts:
+        - asset: assets/fonts/barlowcondensed.ttf
+    - family: Chakra Petch
+      fonts:
+        - asset: assets/fonts/chakrapetch.ttf
+    - family: Saira
+      fonts:
+        - asset: assets/fonts/saira.ttf
+    - family: Red Hat Display
+      fonts:
+        - asset: assets/fonts/redhatdisplay.ttf
+    - family: Public Sans
+      fonts:
+        - asset: assets/fonts/publicsans.ttf
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/figtree.ttf
+    - family: Instrument Sans
+      fonts:
+        - asset: assets/fonts/instrumentsans.ttf
+    - family: Noto Sans
+      fonts:
+        - asset: assets/fonts/notosans.ttf
+    - family: Overpass
+      fonts:
+        - asset: assets/fonts/overpass.ttf
+    - family: Mukta
+      fonts:
+        - asset: assets/fonts/mukta.ttf
+    - family: Blinker
+      fonts:
+        - asset: assets/fonts/blinker.ttf
+    - family: Josefin Sans
+      fonts:
+        - asset: assets/fonts/josefinsans.ttf
+    - family: Syne
+      fonts:
+        - asset: assets/fonts/syne.ttf
+    - family: Anek Latin
+      fonts:
+        - asset: assets/fonts/aneklatin.ttf

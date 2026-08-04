@@ -15,4 +15,17 @@ extension StringFormatter on String {
   String lowercaseAll() {
     return toLowerCase();
   }
+
+  // Check if string is a valid http or https URL.
+  bool get isValidHttpUrl {
+    final String trimmed = trim();
+    if (trimmed.isEmpty) return false;
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://');
+  }
+}
+
+// Helper function accepting nullable String.
+bool isValidHttpUrl(String? url) {
+  if (url == null) return false;
+  return url.isValidHttpUrl;
 }

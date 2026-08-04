@@ -163,7 +163,7 @@ class ThemeSettingsModal extends SignalWidget {
                         leading: const Icon(IconUtils.like),
                         title: const Text('Become a GYMPLY supporter'),
                         subtitle: const Text(
-                          'Get access to 50+ themes and 100+ '
+                          'Get access to 50+ themes and 50+ '
                           'fonts!',
                         ),
                         trailing: const Icon(IconUtils.chevronRight),

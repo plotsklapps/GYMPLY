@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
@@ -18,26 +19,22 @@ class UserDetailModal extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        // Fixed header.
         Row(
           children: <Widget>[
-            // Empty SizedBox to balance Icon and Text.
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                likers.length > 1 ? 'LIKED BY' : 'USER PROFILE',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                likers.length == 1
+                    ? 'USER DETAILS'
+                    : 'LIKES (${likers.length})',
+                style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
             ),
             IconButton(
               onPressed: () {
-                // Pop and return false.
-                Navigator.pop(context, false);
+                Navigator.pop(context);
               },
               icon: const Icon(IconUtils.close),
             ),
@@ -50,179 +47,146 @@ class UserDetailModal extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 16),
-                ...likers.asMap().entries.map((
-                  MapEntry<int, (String, Metadata?)> entry,
-                ) {
-                  final int index = entry.key;
-                  final (String pubkey, Metadata? metadata) = entry.value;
-                  final String npub = Nip19.encodePubKey(pubkey);
-                  final String name =
-                      metadata?.name ?? 'User ${pubkey.substring(0, 8)}';
-                  final String? avatar = metadata?.picture;
-                  final String? bio = metadata?.about;
-                  final String? nip05 = metadata?.nip05;
-                  final String? lud16 = metadata?.lud16;
-                  final String? website = metadata?.website;
+                for (final (String, Metadata?) user in likers) ...<Widget>[
+                  (() {
+                    final String pubkey = user.$1;
+                    final Metadata? meta = user.$2;
+                    final String name =
+                        meta?.name ?? 'User ${pubkey.substring(0, 8)}';
+                    final String? avatar = meta?.picture;
+                    final String npub = Nip19.encodePubKey(pubkey);
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor:
-                                theme.colorScheme.surfaceContainerHighest,
-                            backgroundImage: avatar != null
-                                ? NetworkImage(avatar)
-                                : const AssetImage(
-                                        'assets/icons/gymplyIcon.png',
-                                      )
-                                      as ImageProvider,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
                               children: <Widget>[
-                                Text(
-                                  name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  backgroundImage: isValidHttpUrl(avatar)
+                                      ? NetworkImage(avatar!)
+                                      : const AssetImage(
+                                              'assets/icons/gymplyIcon.png',
+                                            )
+                                            as ImageProvider,
                                 ),
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        npub,
-                                        style: theme.textTheme.labelSmall
-                                            ?.copyWith(
-                                              color: Colors.grey,
-                                            ),
-                                        overflow: TextOverflow.ellipsis,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        await Clipboard.setData(
-                                          ClipboardData(text: npub),
-                                        );
-                                        ToastService.showSuccess(
-                                          title: 'Npub Copied',
-                                          subtitle:
-                                              'Public key copied to clipboard',
-                                        );
-                                      },
-                                      child: Icon(
-                                        IconUtils.copy,
-                                        color: theme.colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ],
+                                      if (meta?.displayName != null &&
+                                          meta!.displayName!.isNotEmpty)
+                                        Text(
+                                          meta.displayName!,
+                                          style: theme.textTheme.labelSmall,
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                            if (meta?.about != null &&
+                                meta!.about!.isNotEmpty) ...<Widget>[
+                              const SizedBox(height: 8),
+                              Text(
+                                meta.about!,
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                            const Divider(),
+                            _UserDetailTile(
+                              label: 'NPUB',
+                              value: npub,
+                              icon: IconUtils.copy,
+                            ),
+                            if (meta?.nip05 != null && meta!.nip05!.isNotEmpty)
+                              _UserDetailTile(
+                                label: 'NIP-05',
+                                value: meta.nip05!,
+                                icon: IconUtils.idCard,
+                              ),
+                            if (meta?.lud16 != null && meta!.lud16!.isNotEmpty)
+                              _UserDetailTile(
+                                label: 'LUD-16',
+                                value: meta.lud16!,
+                                icon: IconUtils.zap,
+                              ),
+                            if (meta?.website != null &&
+                                meta!.website!.isNotEmpty)
+                              _UserDetailTile(
+                                label: 'WEBSITE',
+                                value: meta.website!,
+                                icon: IconUtils.link,
+                              ),
+                          ],
+                        ),
                       ),
-                      if (nip05 != null && nip05.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 8),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              IconUtils.idCard,
-                              color: theme.colorScheme.secondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                nip05,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (lud16 != null && lud16.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              IconUtils.zap,
-                              color: theme.colorScheme.secondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                lud16,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (website != null && website.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: <Widget>[
-                            Icon(
-                              IconUtils.link,
-                              color: theme.colorScheme.secondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                website,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.outline,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (bio != null && bio.isNotEmpty) ...<Widget>[
-                        const SizedBox(height: 8),
-                        Text(
-                          bio,
-                          style: theme.textTheme.bodySmall,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                      if (index < likers.length - 1)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Divider(),
-                        ),
-                    ],
-                  );
-                }),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.tonal(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('CLOSE'),
-                  ),
-                ),
+                    );
+                  })(),
+                ],
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UserDetailTile extends StatelessWidget {
+  const _UserDetailTile({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Row(
+      children: <Widget>[
+        Text(
+          '$label: ',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: theme.textTheme.labelSmall,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(text: value));
+            ToastService.showSuccess(
+              title: 'Copied to Clipboard',
+              subtitle: value,
+            );
+          },
+          icon: Icon(icon, size: 16),
         ),
       ],
     );

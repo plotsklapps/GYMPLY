@@ -25,6 +25,7 @@ class IconUtils {
   static const IconData add = Icons.add_circle_outline;
   static const IconData remove = Icons.remove_circle_outline;
   static const IconData delete = Icons.delete_forever_outlined;
+  static const IconData backspace = Icons.backspace_outlined;
   static const IconData more = Icons.more_vert;
   static const IconData search = Icons.search;
   static const IconData searchClose = Icons.search_off;
@@ -84,14 +85,14 @@ class IconUtils {
   static const IconData dumbbell = Icons.fitness_center_outlined;
   static const IconData notes = Icons.edit_note_outlined;
 
-  static const IconData palette = Icons.palette;
+  static const IconData palette = Icons.palette_outlined;
   static const IconData wakelockOn = Icons.smartphone;
   static const IconData wakelockOff = Icons.phonelink_off;
   static const IconData lightMode = Icons.lightbulb;
   static const IconData darkMode = Icons.lightbulb_outline;
   static const IconData useKGS = Icons.scale;
   static const IconData useLBS = Icons.monitor_weight;
-  static const IconData font = Icons.font_download;
+  static const IconData font = Icons.font_download_outlined;
   static const IconData color = Icons.color_lens;
   static const IconData fontOne = Icons.format_bold;
   static const IconData fontTwo = Icons.format_italic;

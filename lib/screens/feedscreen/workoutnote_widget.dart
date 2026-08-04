@@ -5,6 +5,7 @@ import 'package:gymply/modals/comment_modal.dart';
 import 'package:gymply/modals/userdetail_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
@@ -83,8 +84,8 @@ class WorkoutNote extends SignalWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                backgroundImage: avatar != null
-                    ? NetworkImage(avatar)
+                backgroundImage: isValidHttpUrl(avatar)
+                    ? NetworkImage(avatar!)
                     : const AssetImage('assets/icons/gymplyIcon.png'),
               ),
               title: Text(
@@ -258,9 +259,8 @@ class WorkoutNote extends SignalWidget {
                                         backgroundColor:
                                             theme.colorScheme.secondary,
                                         backgroundImage:
-                                            avatarUrl != null &&
-                                                avatarUrl.isNotEmpty
-                                            ? NetworkImage(avatarUrl)
+                                            isValidHttpUrl(avatarUrl)
+                                            ? NetworkImage(avatarUrl!)
                                             : const AssetImage(
                                                     'assets/icons/gymplyIcon.png',
                                                   )

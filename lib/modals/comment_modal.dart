@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gymply/services/nostr_service.dart';
+import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:ndk/ndk.dart';
@@ -124,7 +125,8 @@ class _CommentModalState extends State<CommentModal> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: CircleAvatar(
-                  backgroundImage: widget.authorMetadata?.picture != null
+                  backgroundImage:
+                      isValidHttpUrl(widget.authorMetadata?.picture)
                       ? NetworkImage(widget.authorMetadata!.picture!)
                       : const AssetImage('assets/icons/gymplyIcon.png')
                             as ImageProvider,
@@ -204,7 +206,7 @@ class _CommentModalState extends State<CommentModal> {
                           ),
                         CircleAvatar(
                           radius: 14,
-                          backgroundImage: meta?.picture != null
+                          backgroundImage: isValidHttpUrl(meta?.picture)
                               ? NetworkImage(meta!.picture!)
                               : const AssetImage('assets/icons/gymplyIcon.png')
                                     as ImageProvider,
