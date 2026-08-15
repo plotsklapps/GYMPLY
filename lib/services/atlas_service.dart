@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
 import 'package:gymply/models/exercise_model.dart' as gymply;
 import 'package:gymply/services/atlas_mapper.dart' as mapper;
+import 'package:material_ui/material_ui.dart';
 
 class AtlasService {
   factory AtlasService() => _instance;

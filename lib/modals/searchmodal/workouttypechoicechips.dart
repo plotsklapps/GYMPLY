@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:gymply/signals/selectedmusclegroup_signal.dart';
 import 'package:gymply/signals/selectedworkouttype_signal.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class WorkoutTypeChoiceChips extends StatelessWidget {
   const WorkoutTypeChoiceChips({

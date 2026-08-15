@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MonthStat extends StatelessWidget {
   const MonthStat({

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SomatotypeModal extends StatelessWidget {
   const SomatotypeModal({super.key});

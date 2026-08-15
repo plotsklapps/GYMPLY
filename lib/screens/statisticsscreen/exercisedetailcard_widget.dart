@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -7,6 +6,7 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailCard extends SignalWidget {

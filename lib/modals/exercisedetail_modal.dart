@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
@@ -10,6 +9,7 @@ import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailSheet extends SignalWidget {

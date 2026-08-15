@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/screens/profilescreen/keycard_widget.dart';
 import 'package:gymply/screens/profilescreen/metadataform_widget.dart';
@@ -7,6 +6,7 @@ import 'package:gymply/screens/profilescreen/profileheader_widget.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 

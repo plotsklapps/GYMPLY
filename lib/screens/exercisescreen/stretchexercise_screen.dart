@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
@@ -16,6 +15,7 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }

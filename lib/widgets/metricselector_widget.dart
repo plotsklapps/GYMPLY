@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MetricSelector extends StatelessWidget {
   const MetricSelector({

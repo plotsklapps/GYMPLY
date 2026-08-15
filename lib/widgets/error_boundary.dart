@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Catch build-time errors to show fallback UI instead red screen of death.
 class ErrorBoundary extends StatefulWidget {

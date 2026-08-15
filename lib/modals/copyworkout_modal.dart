@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CopyWorkoutModal extends StatefulWidget {
   const CopyWorkoutModal({required this.workout, super.key});

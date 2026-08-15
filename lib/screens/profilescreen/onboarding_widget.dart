@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NostrOnboarding extends StatelessWidget {
   const NostrOnboarding({super.key});

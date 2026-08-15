@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class EquipmentChoiceChips extends StatelessWidget {
   const EquipmentChoiceChips({

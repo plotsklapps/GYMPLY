@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart' hide StretchMode;
 import 'package:gymply/screens/exercisescreen/stretchexercise_screen.dart'
     show StretchMode;
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
+import 'package:material_ui/material_ui.dart' hide StretchMode;
 import 'package:signals/signals_flutter.dart';
 
 // StretchTimer Text Widget to handle high-frequency timer updates.
