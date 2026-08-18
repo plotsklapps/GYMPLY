@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -17,10 +18,11 @@ import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:logger/logger.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 // Central provider for user preferences and UI configuration.
-class SettingsService {
+class SettingsService with WidgetsBindingObserver {
   // Singleton pattern.
   factory SettingsService() {
     return _instance;
@@ -37,7 +39,24 @@ class SettingsService {
   void init() {
     _settingsBox = hiveService.settingsBox;
     loadSettings();
+
+    // Start observing app lifecycle to re-apply wakelock on resume.
+    WidgetsBinding.instance.addObserver(this);
+
+    // Reactive effect to toggle wakelock whenever the signal changes.
+    effect(() {
+      unawaited(WakelockPlus.toggle(enable: sWakelock.value));
+    });
+
     _logger.i('SettingsService: Initialized');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Re-apply current wakelock state when app returns to foreground.
+      unawaited(WakelockPlus.toggle(enable: sWakelock.value));
+    }
   }
 
   // Load settings from Hive into signals.
@@ -127,7 +146,7 @@ class SettingsService {
   Future<void> toggleWakelock({required bool value}) async {
     try {
       sWakelock.value = value;
-      await WakelockPlus.toggle(enable: value);
+      // Note: Actual system toggle is handled by the effect in init().
 
       final Settings? settings = _settingsBox.get('settings');
       if (settings != null) {
