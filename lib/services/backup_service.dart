@@ -165,18 +165,18 @@ class BackupService {
 
     try {
       // Restrict picking ONLY ZIP files.
-      final FilePickerResult? result = await FilePicker.pickFiles(
+      final List<PlatformFile> files = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: <String>['zip'],
       );
 
-      if (result == null) {
+      if (files.isEmpty) {
         sIsRestoring.value = false;
         return null;
       }
 
       // Read ZIP file into bytes.
-      return await result.files.single.readAsBytes();
+      return await files.single.readAsBytes();
     } on Object catch (e) {
       // Log error.
       _logger.e('BackupService: Local pick failed: $e');
