@@ -26,6 +26,15 @@ void main() async {
   // Set edge-to-edge UI.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  // Set style.
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ),
+  );
+
   // Lock orientation to portrait.
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
