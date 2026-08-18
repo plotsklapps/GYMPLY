@@ -45,7 +45,7 @@ void main() async {
   // SettingsService loads all personal settings.
   settingsService.init();
 
-  //  BodyMetricsService loads all body metric data.
+  // BodyMetricsService loads all body metric data.
   bodyMetricsService.init();
 
   // ExerciseService loads raw image assets.

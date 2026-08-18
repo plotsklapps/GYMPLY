@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
+import 'package:gymply/modals/quitgymply_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
@@ -104,8 +105,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final ThemeData theme = Theme.of(context);
     final bool showFeed = cShowFeed.value;
 
-    return Scaffold(
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+
+        final bool confirm = await ModalService.showModal(
+          context: context,
+          child: const QuitGymplyModal(),
+        );
+
+        if (confirm) {
+          await SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
         toolbarHeight: 160,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
