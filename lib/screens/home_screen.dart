@@ -121,108 +121,107 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       },
       child: Scaffold(
         appBar: AppBar(
-        toolbarHeight: 160,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            TotalTimerWidget(),
-            RestTimerWidget(),
-          ],
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(32),
-          child: TabBar(
-            controller: _tabController,
-            labelPadding: EdgeInsets.zero,
-            tabs: <Widget>[
-              if (showFeed) const Tab(icon: Icon(IconUtils.feed, size: 20)),
-              const Tab(icon: Icon(IconUtils.trendUp, size: 20)),
-              const Tab(icon: Icon(IconUtils.dumbbell, size: 20)),
-              const Tab(icon: Icon(IconUtils.edit, size: 20)),
+          toolbarHeight: 160,
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              TotalTimerWidget(),
+              RestTimerWidget(),
             ],
           ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(32),
+            child: TabBar(
+              controller: _tabController,
+              labelPadding: EdgeInsets.zero,
+              tabs: <Widget>[
+                if (showFeed) const Tab(icon: Icon(IconUtils.feed, size: 20)),
+                const Tab(icon: Icon(IconUtils.trendUp, size: 20)),
+                const Tab(icon: Icon(IconUtils.dumbbell, size: 20)),
+                const Tab(icon: Icon(IconUtils.edit, size: 20)),
+              ],
+            ),
+          ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          if (showFeed) const FeedScreen(),
-          const StatisticsScreen(),
-          const WorkoutScreen(),
-          const ExerciseScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
+        body: TabBarView(
+          controller: _tabController,
           children: <Widget>[
-            FloatingActionButton(
-              heroTag: 'menuFAB',
-              elevation: 0,
-              onPressed: () async {
-                // Give a little bzzz.
-                await HapticFeedback.mediumImpact();
-
-                if (context.mounted) {
-                  // Open menu modal.
-                  await ModalService.showModal(
-                    context: context,
-                    child: const MenuModal(),
-                  );
-                }
-              },
-              child: const Icon(IconUtils.chevronUp),
-            ),
-            const Spacer(),
-            Text(
-              'GYMPLY.',
-              style: theme.textTheme.displaySmall?.copyWith(
-                color: theme.colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const Spacer(),
-            FloatingActionButton(
-              heroTag: 'saveFAB',
-              elevation: 0,
-              onPressed: () async {
-                // Give a bigger bzzz.
-                await HapticFeedback.mediumImpact();
-
-                if (context.mounted) {
-                  // Open save workout modal.
-                  await ModalService.showModal(
-                    context: context,
-                    child: const SaveWorkoutModal(),
-                  );
-                }
-              },
-              child: const Icon(IconUtils.stop),
-            ),
-            const SizedBox(width: 16),
-            FloatingActionButton(
-              heroTag: 'newFAB',
-              elevation: 0,
-              onPressed: () async {
-                // Give a little bzzz.
-                await HapticFeedback.mediumImpact();
-
-                if (context.mounted) {
-                  // Do not use ModalService here because of entirely different
-                  // layout and scrollability.
-                  await showModalBottomSheet<void>(
-                    context: context,
-                    showDragHandle: true,
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return const SearchModal();
-                    },
-                  );
-                }
-              },
-              child: const Icon(IconUtils.add),
-            ),
+            if (showFeed) const FeedScreen(),
+            const StatisticsScreen(),
+            const WorkoutScreen(),
+            const ExerciseScreen(),
           ],
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            children: <Widget>[
+              FloatingActionButton(
+                heroTag: 'menuFAB',
+                elevation: 0,
+                onPressed: () async {
+                  // Give a little bzzz.
+                  await HapticFeedback.mediumImpact();
+
+                  if (context.mounted) {
+                    // Open menu modal.
+                    await ModalService.showModal(
+                      context: context,
+                      child: const MenuModal(),
+                    );
+                  }
+                },
+                child: const Icon(IconUtils.chevronUp),
+              ),
+              const Spacer(),
+              Text(
+                'GYMPLY.',
+                style: theme.textTheme.displaySmall?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const Spacer(),
+              FloatingActionButton(
+                heroTag: 'saveFAB',
+                elevation: 0,
+                onPressed: () async {
+                  // Give a bigger bzzz.
+                  await HapticFeedback.mediumImpact();
+
+                  if (context.mounted) {
+                    // Open save workout modal.
+                    await ModalService.showModal(
+                      context: context,
+                      child: const SaveWorkoutModal(),
+                    );
+                  }
+                },
+                child: const Icon(IconUtils.stop),
+              ),
+              const SizedBox(width: 16),
+              FloatingActionButton(
+                heroTag: 'newFAB',
+                elevation: 0,
+                onPressed: () async {
+                  // Give a little bzzz.
+                  await HapticFeedback.mediumImpact();
+
+                  if (context.mounted) {
+                    await showModalBottomSheet<void>(
+                      context: context,
+                      showDragHandle: true,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return const SearchModal();
+                      },
+                    );
+                  }
+                },
+                child: const Icon(IconUtils.add),
+              ),
+            ],
+          ),
         ),
       ),
     );
