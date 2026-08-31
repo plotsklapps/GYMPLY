@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class QuitGymplyModal extends StatelessWidget {
   const QuitGymplyModal({super.key});

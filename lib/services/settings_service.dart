@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -18,6 +17,7 @@ import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:logger/logger.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
