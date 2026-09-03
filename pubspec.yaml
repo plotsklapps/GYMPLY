@@ -48,7 +48,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   hive_ce_generator: ^1.11.1
-  very_good_analysis: ^10.2.0
+  very_good_analysis: ^11.0.0
 
 flutter_native_splash:
   # dart run flutter_native_splash:create
