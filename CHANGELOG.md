@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8+82] - 2026-08-25
+- **Auto-Start Rest Timer & App Settings:**
+  - Added new **Auto-start Rest Timer** toggle setting in `AppSettingsModal` (`lib/modals/appsettings_modal.dart`), stored persistently in Hive (`SettingsModel`).
+  - Automatically starts the rest timer when adding sets in Strength exercises, as well as Stopwatch mode in Cardio and Stretch exercises.
+  - Renamed `ThemeSettingsModal` to `AppSettingsModal` and updated `MenuModal` entry to "App Settings" with a dedicated settings icon.
+- **Data Backup & Export (BackupService):**
+  - Added `BackupService` enabling ZIP-based user data export and import for easy backups and device migrations.
+- **App Exit Confirmation (QuitGymplyModal):**
+  - Added `QuitGymplyModal` and exit confirmation dialog on `HomeScreen` to prevent accidental app closes.
+- **Reactive System & Lifecycle Management:**
+  - Added reactive `effect` and lifecycle observer in `SettingsService` to handle screen wakelock (`WakelockPlus`) and re-apply preferences upon app resume.
+  - Configured transparent system UI overlay styles for status and navigation bars across edge-to-edge displays.
+- **Build, Framework & Tooling Upgrades:**
+  - Upgraded Gradle wrapper, Android Gradle Plugin (AGP), and Kotlin build configurations.
+  - Upgraded dependencies including `flutter_secure_storage` (v11.0.0), `very_good_analysis` (v11.0.0), `file_picker`, `flutter_foreground_task`, `permission_handler`, `ndk`, `logger`, and `archive`.
+
 ## [0.0.8+81] - 2026-08-04
 - **Icon System Refactoring (Material Icons):**
   - Removed `font_awesome_flutter` package dependency and migrated all icons across the app to standard Flutter Material Icons centralized in `IconUtils` (`lib/theme/icons.dart`).
