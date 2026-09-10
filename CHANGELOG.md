@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [0.0.8+82] - 2026-08-25
+- **800+ Exercises added:**
+  - Exercises folder expanded with more than **800** new exercises!
 - **Auto-Start Rest Timer & App Settings:**
   - Added new **Auto-start Rest Timer** toggle setting in `AppSettingsModal` (`lib/modals/appsettings_modal.dart`), stored persistently in Hive (`SettingsModel`).
   - Automatically starts the rest timer when adding sets in Strength exercises, as well as Stopwatch mode in Cardio and Stretch exercises.
