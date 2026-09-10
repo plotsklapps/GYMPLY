@@ -1,15 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 // Catch build-time errors to show fallback UI instead red screen of death.
 class ErrorBoundary extends StatefulWidget {
-  const ErrorBoundary({
-    required this.child,
-    super.key,
-    this.fallback,
-  });
+  const ErrorBoundary({required this.child, super.key, this.fallback});
 
   final Widget child;
 
@@ -38,11 +34,7 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Icon(
-                IconUtils.error,
-                color: Colors.red,
-                size: 48,
-              ),
+              const Icon(IconUtils.error, color: Colors.red, size: 48),
               const SizedBox(height: 16),
               const Text(
                 'Something went wrong.',

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
@@ -5,13 +6,9 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class PRCard extends StatelessWidget {
-  const PRCard({
-    required this.workoutPRs,
-    super.key,
-  });
+  const PRCard({required this.workoutPRs, super.key});
 
   final List<Map<String, dynamic>> workoutPRs;
 

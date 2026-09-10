@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/about_modal.dart';
+import 'package:gymply/modals/appsettings_modal.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
 import 'package:gymply/modals/donation_modal.dart';
 import 'package:gymply/modals/restorebackup_modal.dart';
-import 'package:gymply/modals/themesettings_modal.dart';
 import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/donation_service.dart';
@@ -12,7 +13,6 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class MenuModal extends SignalWidget {
@@ -109,11 +109,11 @@ class MenuModal extends SignalWidget {
                   onTap: () async {
                     await ModalService.showModal(
                       context: context,
-                      child: const ThemeSettingsModal(),
+                      child: const AppSettingsModal(),
                     );
                   },
-                  leading: const Icon(IconUtils.palette),
-                  title: const Text('Theme Settings'),
+                  leading: const Icon(IconUtils.settings),
+                  title: const Text('App Settings'),
                   subtitle: const Text('Set up your GYMPLY experience'),
                   trailing: const Icon(IconUtils.chevronRight),
                 ),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/workoutsummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -7,16 +8,12 @@ import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/monthchart_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum WorkoutMetric { volume, reps, sets, time, distance, calories }
 
 class MonthStatModal extends SignalStatefulWidget {
-  const MonthStatModal({
-    required this.date,
-    super.key,
-  });
+  const MonthStatModal({required this.date, super.key});
 
   final DateTime date;
 
@@ -69,12 +66,10 @@ class _MonthStatModalState extends State<MonthStatModal> {
     final List<String> weekdays = <String>['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     // Filter workouts for this month.
-    final List<Workout> monthWorkouts = history.where(
-      (Workout w) {
-        return w.dateTime.year == widget.date.year &&
-            w.dateTime.month == widget.date.month;
-      },
-    ).toList();
+    final List<Workout> monthWorkouts = history.where((Workout w) {
+      return w.dateTime.year == widget.date.year &&
+          w.dateTime.month == widget.date.month;
+    }).toList();
 
     return Column(
       mainAxisSize: MainAxisSize.min,

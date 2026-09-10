@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/stretchsetstats_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class StretchSetCard extends StatelessWidget {
   const StretchSetCard({
@@ -38,11 +38,7 @@ class StretchSetCard extends StatelessWidget {
               ? 'STOPWATCH'
               : 'INTERVAL';
           final String caloriesLabel = userWeight > 0
-              ? ' • ${set.calculateEstimatedCalories(
-                  userWeight: userWeight,
-                  userAge: userAge,
-                  userSex: userSex,
-                )} kcal'
+              ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal'
               : '';
 
           return Card(
@@ -56,26 +52,23 @@ class StretchSetCard extends StatelessWidget {
                 set.restDuration == Duration.zero
                     ? set.totalDuration.inMilliseconds.formatHMMSSCC()
                     : 'STRETCH: $stretchTime REST: $restTime',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Row(
                 children: <Widget>[
                   Text('$modeLabel$caloriesLabel'),
                   const SizedBox(width: 8),
                   // Flame icons for intensity.
-                  ...List<Widget>.generate(
-                    (set.intensity ?? 1) + 1,
-                    (int index) {
-                      return Icon(
-                        IconUtils.fire,
-                        color: (set.intensity ?? 1) == 2
-                            ? theme.colorScheme.error
-                            : theme.colorScheme.primary,
-                      );
-                    },
-                  ),
+                  ...List<Widget>.generate((set.intensity ?? 1) + 1, (
+                    int index,
+                  ) {
+                    return Icon(
+                      IconUtils.fire,
+                      color: (set.intensity ?? 1) == 2
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.primary,
+                    );
+                  }),
                 ],
               ),
               trailing: PopupMenuButton<String>(
@@ -120,9 +113,7 @@ class StretchSetCard extends StatelessWidget {
                           SizedBox(
                             width: 24,
                             height: 24,
-                            child: Center(
-                              child: Icon(IconUtils.add),
-                            ),
+                            child: Center(child: Icon(IconUtils.add)),
                           ),
                         ],
                       ),

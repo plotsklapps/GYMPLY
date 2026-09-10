@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/resttimer_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerWidget extends SignalWidget {
@@ -26,10 +26,7 @@ class RestTimerWidget extends SignalWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
-          'REST',
-          style: theme.textTheme.bodyLarge,
-        ),
+        Text('REST', style: theme.textTheme.bodyLarge),
         TextButton(
           onPressed: () async {
             await ModalService.showModal(
@@ -43,9 +40,7 @@ class RestTimerWidget extends SignalWidget {
             style: theme.textTheme.displayLarge?.copyWith(
               color: theme.colorScheme.secondary,
               fontWeight: FontWeight.bold,
-              fontFeatures: const <FontFeature>[
-                FontFeature.tabularFigures(),
-              ],
+              fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
             ),
           ),
         ),

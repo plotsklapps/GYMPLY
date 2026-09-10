@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/screens/profilescreen/metadatatextfield_widget.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 
 class MetaDataForm extends StatefulWidget {
@@ -176,10 +176,7 @@ class _MetaDataFormState extends State<MetaDataForm> {
       );
     } on Object catch (e) {
       // Show toast to user.
-      ToastService.showError(
-        title: 'Update Failed',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Update Failed', subtitle: '$e');
     } finally {
       if (mounted) {
         setState(() {

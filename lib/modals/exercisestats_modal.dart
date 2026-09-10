@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -9,14 +10,10 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseStatsModal extends SignalWidget {
-  const ExerciseStatsModal({
-    required this.exercise,
-    super.key,
-  });
+  const ExerciseStatsModal({required this.exercise, super.key});
 
   final WorkoutExercise exercise;
 
@@ -35,10 +32,7 @@ class ExerciseStatsModal extends SignalWidget {
           label: 'Muscle Group',
           value: ex.muscleGroup.name.toUpperCase(),
         ),
-        _StatRow(
-          label: 'Equipment',
-          value: ex.equipment.name.toUpperCase(),
-        ),
+        _StatRow(label: 'Equipment', value: ex.equipment.name.toUpperCase()),
         _StatRow(label: 'Sets', value: ex.totalSets.toString()),
         _StatRow(label: 'Reps', value: ex.totalReps.toString()),
         _StatRow(
@@ -65,15 +59,9 @@ class ExerciseStatsModal extends SignalWidget {
       final int userSex = sSex.value;
 
       detailRows.addAll(<Widget>[
-        _StatRow(
-          label: 'Equipment',
-          value: ex.equipment.name.toUpperCase(),
-        ),
+        _StatRow(label: 'Equipment', value: ex.equipment.name.toUpperCase()),
         _StatRow(label: 'Sets', value: ex.totalSets.toString()),
-        _StatRow(
-          label: 'Duration',
-          value: ex.totalDuration.format(),
-        ),
+        _StatRow(label: 'Duration', value: ex.totalDuration.format()),
         _StatRow(
           label: 'Distance',
           value: '${ex.totalDistance.toStringAsFixed(2)} km',
@@ -81,11 +69,7 @@ class ExerciseStatsModal extends SignalWidget {
         _StatRow(
           label: 'Calories',
           value:
-              '${ex.calculateTotalCalories(
-                userWeight: userWeightKg,
-                userAge: userAge,
-                userSex: userSex,
-              )} kcal',
+              '${ex.calculateTotalCalories(userWeight: userWeightKg, userAge: userAge, userSex: userSex)} kcal',
         ),
       ]);
     } else if (exercise is StretchExercise) {
@@ -100,27 +84,18 @@ class ExerciseStatsModal extends SignalWidget {
 
       detailRows.addAll(<Widget>[
         _StatRow(label: 'Sets', value: ex.totalSets.toString()),
-        _StatRow(
-          label: 'Duration',
-          value: ex.totalDuration.format(),
-        ),
+        _StatRow(label: 'Duration', value: ex.totalDuration.format()),
         _StatRow(
           label: 'Calories',
           value:
-              '${ex.calculateTotalCalories(
-                userWeight: userWeightKg,
-                userAge: userAge,
-                userSex: userSex,
-              )} kcal',
+              '${ex.calculateTotalCalories(userWeight: userWeightKg, userAge: userAge, userSex: userSex)} kcal',
         ),
       ]);
     }
 
     // --- Personal Records Section ---
     detailRows
-      ..add(
-        Divider(height: 32, color: theme.colorScheme.outlineVariant),
-      )
+      ..add(Divider(height: 32, color: theme.colorScheme.outlineVariant))
       ..add(
         Builder(
           builder: (BuildContext context) {
@@ -251,10 +226,7 @@ class ExerciseStatsModal extends SignalWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(height: 8),
-                ...detailRows,
-              ],
+              children: <Widget>[const SizedBox(height: 8), ...detailRows],
             ),
           ),
         ),
@@ -264,10 +236,7 @@ class ExerciseStatsModal extends SignalWidget {
 }
 
 class _StatRow extends StatelessWidget {
-  const _StatRow({
-    required this.label,
-    required this.value,
-  });
+  const _StatRow({required this.label, required this.value});
 
   final String label;
   final String value;

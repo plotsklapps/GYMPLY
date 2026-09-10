@@ -14,7 +14,7 @@ import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:gymply/signals/selectedmusclegroup_signal.dart';
 import 'package:gymply/signals/selectedworkouttype_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
 class SearchModal extends SignalStatefulWidget {

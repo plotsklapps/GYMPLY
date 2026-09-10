@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 // Service to show consistent modal sheets that return a bool (when needed).
 class ModalService {

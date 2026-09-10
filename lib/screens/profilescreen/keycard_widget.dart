@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class KeyCard extends StatefulWidget {
   const KeyCard({
@@ -46,10 +46,7 @@ class _KeyCardState extends State<KeyCard> {
               children: <Widget>[
                 Icon(widget.icon, size: 16),
                 const SizedBox(width: 8),
-                Text(
-                  widget.label,
-                  style: theme.textTheme.labelSmall,
-                ),
+                Text(widget.label, style: theme.textTheme.labelSmall),
               ],
             ),
             const SizedBox(height: 8),
@@ -96,9 +93,7 @@ class _KeyCardState extends State<KeyCard> {
                     }
 
                     if (textToCopy != null) {
-                      await Clipboard.setData(
-                        ClipboardData(text: textToCopy),
-                      );
+                      await Clipboard.setData(ClipboardData(text: textToCopy));
                       // Show toast to user.
                       ToastService.showSuccess(
                         title: 'Copied to Clipboard',

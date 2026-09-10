@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 class IconUtils {
   static const IconData chevronLeft = Icons.keyboard_arrow_left;
@@ -19,6 +19,7 @@ class IconUtils {
   static const IconData stop = Icons.stop_circle_outlined;
   static const IconData reset = Icons.cancel_outlined;
   static const IconData close = Icons.cancel_outlined;
+  static const IconData settings = Icons.settings_outlined;
   static const IconData success = Icons.check_circle_outline;
   static const IconData warning = Icons.warning_amber_outlined;
   static const IconData error = Icons.error_outline;

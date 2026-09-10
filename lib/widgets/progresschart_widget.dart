@@ -1,12 +1,12 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 enum WorkoutRange { days30, months6, year1, allTime }
 
@@ -42,21 +42,17 @@ class _ProgressChartState extends State<ProgressChart> {
       case WorkoutRange.days30:
         return sorted.length > 30 ? sorted.sublist(sorted.length - 30) : sorted;
       case WorkoutRange.months6:
-        return sorted.where(
-          (Workout workout) {
-            return workout.dateTime.isAfter(
-              now.subtract(const Duration(days: 180)),
-            );
-          },
-        ).toList();
+        return sorted.where((Workout workout) {
+          return workout.dateTime.isAfter(
+            now.subtract(const Duration(days: 180)),
+          );
+        }).toList();
       case WorkoutRange.year1:
-        return sorted.where(
-          (Workout workout) {
-            return workout.dateTime.isAfter(
-              now.subtract(const Duration(days: 365)),
-            );
-          },
-        ).toList();
+        return sorted.where((Workout workout) {
+          return workout.dateTime.isAfter(
+            now.subtract(const Duration(days: 365)),
+          );
+        }).toList();
       case WorkoutRange.allTime:
         return sorted;
     }

@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // Explains GYMPLY's background timer approach and requests the
@@ -69,9 +69,7 @@ class PermissionModal extends StatelessWidget {
                       child: FilledButton.tonal(
                         onPressed: () async {
                           // 1. Request permissions (OS dialogs).
-                          await <Permission>[
-                            Permission.notification,
-                          ].request();
+                          await <Permission>[Permission.notification].request();
 
                           // Request battery optimalisation.
                           const Future<void> Function() requestBattery =

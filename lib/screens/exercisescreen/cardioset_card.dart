@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/cardiosetstats_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class CardioSetCard extends StatelessWidget {
   const CardioSetCard({
@@ -41,11 +41,7 @@ class CardioSetCard extends StatelessWidget {
               ? ' • ${set.distance!.toStringAsFixed(2)} km'
               : '';
           final String caloriesLabel = userWeight > 0
-              ? ' • ${set.calculateEstimatedCalories(
-                  userWeight: userWeight,
-                  userAge: userAge,
-                  userSex: userSex,
-                )} kcal'
+              ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal'
               : '';
           final String repsLabel = (set.reps != null && set.reps! > 0)
               ? ' • ${set.reps} reps'
@@ -62,26 +58,23 @@ class CardioSetCard extends StatelessWidget {
                 set.restDuration == Duration.zero
                     ? set.totalDuration.inMilliseconds.formatHMMSSCC()
                     : 'CARDIO: $cardioTime REST: $restTime',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Row(
                 children: <Widget>[
                   Text('$modeLabel$distanceLabel$caloriesLabel$repsLabel'),
                   const SizedBox(width: 8),
                   // Flame icons for intensity.
-                  ...List<Widget>.generate(
-                    (set.intensity ?? 1) + 1,
-                    (int index) {
-                      return Icon(
-                        IconUtils.fire,
-                        color: (set.intensity ?? 1) == 2
-                            ? theme.colorScheme.error
-                            : theme.colorScheme.primary,
-                      );
-                    },
-                  ),
+                  ...List<Widget>.generate((set.intensity ?? 1) + 1, (
+                    int index,
+                  ) {
+                    return Icon(
+                      IconUtils.fire,
+                      color: (set.intensity ?? 1) == 2
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.primary,
+                    );
+                  }),
                 ],
               ),
               trailing: PopupMenuButton<String>(
@@ -139,9 +132,7 @@ class CardioSetCard extends StatelessWidget {
                           SizedBox(
                             width: 24,
                             height: 24,
-                            child: Center(
-                              child: Icon(IconUtils.add),
-                            ),
+                            child: Center(child: Icon(IconUtils.add)),
                           ),
                         ],
                       ),

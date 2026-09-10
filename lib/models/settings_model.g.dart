@@ -36,13 +36,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       flexSchemeName: fields[15] as String?,
       googleFontFamily: fields[16] as String?,
       useLbs: fields[17] == null ? false : fields[17] as bool,
+      isAutoStartRestTimer: fields[18] == null ? false : fields[18] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -76,7 +77,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(16)
       ..write(obj.googleFontFamily)
       ..writeByte(17)
-      ..write(obj.useLbs);
+      ..write(obj.useLbs)
+      ..writeByte(18)
+      ..write(obj.isAutoStartRestTimer);
   }
 
   @override

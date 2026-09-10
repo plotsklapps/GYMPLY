@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
@@ -13,14 +14,10 @@ import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/metricselector_widget.dart';
 import 'package:gymply/widgets/progresschart_widget.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseHistoryModal extends SignalStatefulWidget {
-  const ExerciseHistoryModal({
-    required this.exercise,
-    super.key,
-  });
+  const ExerciseHistoryModal({required this.exercise, super.key});
 
   final WorkoutExercise exercise;
 
@@ -61,18 +58,14 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
     // Filter for workouts containing this specific exercise.
     final List<Workout> relevantWorkouts =
         allWorkouts.where((Workout w) {
-            return w.exercises.any(
-              (WorkoutExercise ex) {
-                return ex.exerciseName == widget.exercise.exerciseName;
-              },
-            );
+            return w.exercises.any((WorkoutExercise ex) {
+              return ex.exerciseName == widget.exercise.exerciseName;
+            });
           }).toList()
           // Sort by date (ascending) for chart.
-          ..sort(
-            (Workout a, Workout b) {
-              return a.dateTime.compareTo(b.dateTime);
-            },
-          );
+          ..sort((Workout a, Workout b) {
+            return a.dateTime.compareTo(b.dateTime);
+          });
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -134,9 +127,7 @@ class _ExerciseHistoryModalState extends State<ExerciseHistoryModal> {
                     const Divider(),
                     (() {
                       final PersonalRecord pr = workoutService
-                          .getPersonalRecords(
-                            widget.exercise.id,
-                          );
+                          .getPersonalRecords(widget.exercise.id);
 
                       if (widget.exercise is StrengthExercise) {
                         return _StrengthPRs(pr: pr);

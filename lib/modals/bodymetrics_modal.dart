@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/somatotype_modal.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
@@ -8,7 +9,6 @@ import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Enum for Segmentedbutton choices.
@@ -322,18 +322,9 @@ class _BodyMetricsModalState extends State<BodyMetricsModal> {
                         width: double.infinity,
                         child: SegmentedButton<int>(
                           segments: const <ButtonSegment<int>>[
-                            ButtonSegment<int>(
-                              value: 0,
-                              label: Text('Ecto'),
-                            ),
-                            ButtonSegment<int>(
-                              value: 1,
-                              label: Text('Meso'),
-                            ),
-                            ButtonSegment<int>(
-                              value: 2,
-                              label: Text('Endo'),
-                            ),
+                            ButtonSegment<int>(value: 0, label: Text('Ecto')),
+                            ButtonSegment<int>(value: 1, label: Text('Meso')),
+                            ButtonSegment<int>(value: 2, label: Text('Endo')),
                           ],
                           selected: <int>{_somatotype},
                           onSelectionChanged: (Set<int> newSelection) {
@@ -502,10 +493,7 @@ class _BodyMetricsChart extends StatelessWidget {
       return Container(
         height: 100,
         alignment: Alignment.center,
-        child: Text(
-          'No history yet',
-          style: theme.textTheme.bodyMedium,
-        ),
+        child: Text('No history yet', style: theme.textTheme.bodyMedium),
       );
     }
 
@@ -574,17 +562,13 @@ class _BodyMetricsChart extends StatelessWidget {
             ? history.sublist(history.length - 30)
             : history;
       case BodyMetricRange.sixMonths:
-        return history.where(
-          (BodyMetric m) {
-            return m.date.isAfter(now.subtract(const Duration(days: 180)));
-          },
-        ).toList();
+        return history.where((BodyMetric m) {
+          return m.date.isAfter(now.subtract(const Duration(days: 180)));
+        }).toList();
       case BodyMetricRange.oneYear:
-        return history.where(
-          (BodyMetric m) {
-            return m.date.isAfter(now.subtract(const Duration(days: 365)));
-          },
-        ).toList();
+        return history.where((BodyMetric m) {
+          return m.date.isAfter(now.subtract(const Duration(days: 365)));
+        }).toList();
       case BodyMetricRange.allTime:
         return history;
     }
@@ -657,10 +641,7 @@ class _BodyMetricsBars extends StatelessWidget {
 }
 
 class _BodyMetricsLine extends StatelessWidget {
-  const _BodyMetricsLine({
-    required this.values,
-    required this.color,
-  });
+  const _BodyMetricsLine({required this.values, required this.color});
 
   final List<double> values;
   final Color color;
@@ -668,10 +649,7 @@ class _BodyMetricsLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: _LineChartPainter(
-        values: values,
-        color: color,
-      ),
+      painter: _LineChartPainter(values: values, color: color),
     );
   }
 }
@@ -690,11 +668,9 @@ class _LineChartPainter extends CustomPainter {
           ..color = color
           ..strokeWidth = 8
           ..strokeCap = StrokeCap.round;
-        canvas.drawPoints(
-          PointMode.points,
-          <Offset>[Offset(size.width / 2, size.height / 2)],
-          paint,
-        );
+        canvas.drawPoints(PointMode.points, <Offset>[
+          Offset(size.width / 2, size.height / 2),
+        ], paint);
       }
       return;
     }
@@ -770,10 +746,7 @@ class _ScrollColumn extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        Text(
-          label,
-          style: theme.textTheme.labelMedium,
-        ),
+        Text(label, style: theme.textTheme.labelMedium),
         const SizedBox(height: 8),
         Expanded(
           child: SizedBox(

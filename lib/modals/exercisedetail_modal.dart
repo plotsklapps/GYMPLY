@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
@@ -9,14 +10,10 @@ import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/favoriteexercises_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailSheet extends SignalWidget {
-  const ExerciseDetailSheet({
-    required this.exercise,
-    super.key,
-  });
+  const ExerciseDetailSheet({required this.exercise, super.key});
 
   final ExercisePath exercise;
 
@@ -157,10 +154,7 @@ class ExerciseDetailSheet extends SignalWidget {
                 const SizedBox(height: 16),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    exercise.fullPath,
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset(exercise.fullPath, fit: BoxFit.contain),
                 ),
                 const SizedBox(height: 24),
                 Row(

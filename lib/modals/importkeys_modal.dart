@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class ImportKeysModal extends StatelessWidget {
   const ImportKeysModal({super.key});
@@ -47,9 +47,7 @@ class ImportKeysModal extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextField(
                   controller: keyController,
-                  decoration: const InputDecoration(
-                    labelText: 'npub or nsec',
-                  ),
+                  decoration: const InputDecoration(labelText: 'npub or nsec'),
                 ),
                 const SizedBox(height: 24),
                 Row(

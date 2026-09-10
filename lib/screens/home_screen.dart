@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
@@ -12,7 +13,6 @@ import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class HomeScreen extends SignalStatefulWidget {
@@ -124,10 +124,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           toolbarHeight: 160,
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              TotalTimerWidget(),
-              RestTimerWidget(),
-            ],
+            children: <Widget>[TotalTimerWidget(), RestTimerWidget()],
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(32),

@@ -1,14 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedmusclegroup_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class MuscleGroupChoiceChips extends StatelessWidget {
-  const MuscleGroupChoiceChips({
-    required this.selectedMuscleGroup,
-    super.key,
-  });
+  const MuscleGroupChoiceChips({required this.selectedMuscleGroup, super.key});
 
   final MuscleGroup? selectedMuscleGroup;
 
@@ -38,9 +35,7 @@ class MuscleGroupChoiceChips extends StatelessWidget {
                       : Image.asset(
                           'assets/images/musclegroups/$assetName.png',
                         ),
-                  label: Text(
-                    assetName,
-                  ),
+                  label: Text(assetName),
                   selected: isSelected,
                   onSelected: (bool selected) {
                     sSelectedMuscleGroup.value = selected ? group : null;

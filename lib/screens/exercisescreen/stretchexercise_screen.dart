@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
@@ -15,7 +16,6 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 enum StretchMode { stopwatch, interval }
@@ -27,10 +27,7 @@ final Signal<StretchMode> sStretchMode = Signal<StretchMode>(
 );
 
 class StretchExerciseScreen extends SignalWidget {
-  const StretchExerciseScreen({
-    required this.exercise,
-    super.key,
-  });
+  const StretchExerciseScreen({required this.exercise, super.key});
 
   final StretchExercise exercise;
 
@@ -101,9 +98,7 @@ class StretchExerciseScreen extends SignalWidget {
                                   color: theme.colorScheme.onSecondary,
                                 )
                               : null,
-                          label: Text(
-                            value.name.capitalizeFirst(),
-                          ),
+                          label: Text(value.name.capitalizeFirst()),
                           selected: isSelected,
                           onSelected: (bool selected) {
                             if (selected) sStretchMode.value = value;
@@ -119,10 +114,7 @@ class StretchExerciseScreen extends SignalWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              'Auto',
-                              style: theme.textTheme.titleMedium,
-                            ),
+                            Text('Auto', style: theme.textTheme.titleMedium),
                             Switch(
                               value: IntervalTimer.sAutoIntervalOn.value,
                               onChanged: (bool value) {
@@ -249,6 +241,11 @@ class StretchExerciseScreen extends SignalWidget {
                             intensity: exercise.intensityInput ?? 1,
                           );
                           await StopwatchTimer().resetTimer();
+
+                          if (sAutoStartRestTimer.value) {
+                            await RestTimer().resetTimer();
+                            await RestTimer().startTimer();
+                          }
                         } else {
                           await IntervalTimer().pauseTimer();
                           await RestTimer().pauseTimer();

@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class ConvertCalculator extends StatefulWidget {
   const ConvertCalculator({super.key});
@@ -51,10 +51,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
   void _onDeleteTap() {
     setState(() {
       if (inputWeight.length > 1) {
-        inputWeight = inputWeight.substring(
-          0,
-          inputWeight.length - 1,
-        );
+        inputWeight = inputWeight.substring(0, inputWeight.length - 1);
       } else {
         inputWeight = '0';
       }
@@ -78,10 +75,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
           onPressed: () {
             _onKeyTap(label);
           },
-          child: Text(
-            label,
-            style: theme.textTheme.titleLarge,
-          ),
+          child: Text(label, style: theme.textTheme.titleLarge),
         ),
       ),
     );
@@ -123,10 +117,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            DisplayColumn(
-              value: inputWeight,
-              unit: isMetric ? 'lbs' : 'kgs',
-            ),
+            DisplayColumn(value: inputWeight, unit: isMetric ? 'lbs' : 'kgs'),
             IconButton(
               onPressed: () {
                 setState(() {
@@ -182,10 +173,7 @@ class _ConvertCalculatorState extends State<ConvertCalculator> {
                         heroTag: 'btn_clear',
                         onPressed: _onClearTap,
                         backgroundColor: theme.colorScheme.error,
-                        child: const Text(
-                          'C',
-                          style: TextStyle(fontSize: 24),
-                        ),
+                        child: const Text('C', style: TextStyle(fontSize: 24)),
                       ),
                     ),
                   ),
@@ -238,10 +226,7 @@ class DisplayColumn extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          unit,
-          style: theme.textTheme.labelLarge,
-        ),
+        Text(unit, style: theme.textTheme.labelLarge),
       ],
     );
   }

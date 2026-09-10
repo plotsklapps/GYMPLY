@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/comment_modal.dart';
 import 'package:gymply/modals/userdetail_modal.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -7,7 +8,6 @@ import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -111,9 +111,7 @@ class WorkoutNote extends SignalWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text(
-                                  'Delete',
-                                ),
+                                const Text('Delete'),
                                 const SizedBox(width: 4),
                                 SizedBox(
                                   width: 24,

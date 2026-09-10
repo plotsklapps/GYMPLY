@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/importkeys_modal.dart';
 import 'package:gymply/screens/profilescreen/keycard_widget.dart';
 import 'package:gymply/screens/profilescreen/metadataform_widget.dart';
@@ -6,7 +7,6 @@ import 'package:gymply/screens/profilescreen/profileheader_widget.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -21,10 +21,7 @@ class ProfileScreen extends SignalWidget {
     final Metadata? metadata = nostrService.sMetadata.value;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PROFILE'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('PROFILE'), centerTitle: true),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -87,10 +84,7 @@ class _ProfileWidget extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: <Widget>[
-                        Icon(
-                          IconUtils.eye,
-                          color: theme.colorScheme.primary,
-                        ),
+                        Icon(IconUtils.eye, color: theme.colorScheme.primary),
                         const SizedBox(width: 12),
                         const Expanded(
                           child: Text(

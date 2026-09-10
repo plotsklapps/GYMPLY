@@ -1,4 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/donation_modal.dart';
 import 'package:gymply/modals/supporterfont_modal.dart';
 import 'package:gymply/modals/supportertheme_modal.dart';
@@ -7,11 +8,10 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
-class ThemeSettingsModal extends SignalWidget {
-  const ThemeSettingsModal({super.key});
+class AppSettingsModal extends SignalWidget {
+  const AppSettingsModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,7 @@ class ThemeSettingsModal extends SignalWidget {
     final bool isDarkMode = sDarkMode.value;
     final bool isWakelock = sWakelock.value;
     final bool isUseLbs = sUseLbs.value;
+    final bool isAutoStartRestTimer = sAutoStartRestTimer.value;
     final FlexScheme flexScheme = sFlexScheme.value;
     final String font = sFont.value;
     final bool isSupporter = donationService.sIsSupporter.value;
@@ -35,7 +36,7 @@ class ThemeSettingsModal extends SignalWidget {
             const SizedBox(width: 48),
             Expanded(
               child: Text(
-                'THEME SETTINGS',
+                'APP SETTINGS',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
@@ -106,6 +107,25 @@ class ThemeSettingsModal extends SignalWidget {
                   value: isUseLbs,
                   onChanged: (bool value) async {
                     await settingsService.toggleUseLbs(value: value);
+                  },
+                ),
+
+                // Auto-start Rest Timer ListTile.
+                SwitchListTile(
+                  title: isAutoStartRestTimer
+                      ? const Text('Auto-start rest timer')
+                      : const Text('Manual rest timer'),
+                  subtitle: isAutoStartRestTimer
+                      ? const Text(
+                          'Rest timer starts automatically when adding a set',
+                        )
+                      : const Text('Start rest timer manually when needed'),
+                  secondary: const Icon(IconUtils.stopwatch),
+                  value: isAutoStartRestTimer,
+                  onChanged: (bool value) async {
+                    await settingsService.toggleAutoStartRestTimer(
+                      value: value,
+                    );
                   },
                 ),
 
@@ -183,26 +203,17 @@ class ThemeSettingsModal extends SignalWidget {
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.shark,
                                     label: Text('Orange'),
-                                    icon: Icon(
-                                      IconUtils.color,
-                                      color: kOrange,
-                                    ),
+                                    icon: Icon(IconUtils.color, color: kOrange),
                                   ),
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.greyLaw,
                                     label: Text('Purple'),
-                                    icon: Icon(
-                                      IconUtils.color,
-                                      color: kPurple,
-                                    ),
+                                    icon: Icon(IconUtils.color, color: kPurple),
                                   ),
                                   ButtonSegment<FlexScheme>(
                                     value: FlexScheme.sanJuanBlue,
                                     label: Text('Pink'),
-                                    icon: Icon(
-                                      IconUtils.color,
-                                      color: kPink,
-                                    ),
+                                    icon: Icon(IconUtils.color, color: kPink),
                                   ),
                                 ],
                                 selected: <FlexScheme>{flexScheme},

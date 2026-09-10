@@ -6,7 +6,7 @@ import 'package:gymply/screens/exercisescreen/cardioexercise_screen.dart';
 import 'package:gymply/screens/exercisescreen/strengthexercise_screen.dart';
 import 'package:gymply/screens/exercisescreen/stretchexercise_screen.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Dispatcher class. Decide which exercisescreen to show.

@@ -23,6 +23,7 @@ class Settings {
     this.flexSchemeName,
     this.googleFontFamily,
     this.useLbs = false,
+    this.isAutoStartRestTimer = false,
   });
 
   @HiveField(0, defaultValue: true)
@@ -81,6 +82,9 @@ class Settings {
 
   @HiveField(17, defaultValue: false)
   final bool useLbs;
+
+  @HiveField(18, defaultValue: false)
+  final bool isAutoStartRestTimer;
 
   FlexScheme get flexScheme {
     // If supporter, use saved Strin or default.
@@ -144,6 +148,7 @@ class Settings {
     bool? isSupporter,
     String? googleFontFamily,
     bool? useLbs,
+    bool? isAutoStartRestTimer,
   }) {
     // Map non-supporter FlexScheme enum choices to indexes.
     int updatedFlexSchemeIndex = flexSchemeIndex;
@@ -190,6 +195,7 @@ class Settings {
       flexSchemeName: flexScheme?.name ?? flexSchemeName,
       googleFontFamily: googleFontFamily ?? this.googleFontFamily,
       useLbs: useLbs ?? this.useLbs,
+      isAutoStartRestTimer: isAutoStartRestTimer ?? this.isAutoStartRestTimer,
     );
   }
 }

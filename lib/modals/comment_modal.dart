@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -171,11 +171,9 @@ class _CommentModalState extends State<CommentModal> {
                 // Check if comment is a reply.
                 // Reply is any comment that tags another event as 'reply'.
                 // Only indent ONCE for all replies to keep it readable.
-                final bool isReply = comment.tags.any(
-                  (List<String> t) {
-                    return t.length >= 4 && t[0] == 'e' && t[3] == 'reply';
-                  },
-                );
+                final bool isReply = comment.tags.any((List<String> t) {
+                  return t.length >= 4 && t[0] == 'e' && t[3] == 'reply';
+                });
 
                 return InkWell(
                   onTap: isWorkoutAuthor

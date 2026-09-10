@@ -1,12 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/services/textformat_service.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({
-    super.key,
-    this.metadata,
-  });
+  const ProfileHeader({super.key, this.metadata});
 
   final Metadata? metadata;
 
@@ -45,10 +42,7 @@ class ProfileHeader extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: theme.colorScheme.surface,
-                width: 4,
-              ),
+              border: Border.all(color: theme.colorScheme.surface, width: 4),
             ),
             child: CircleAvatar(
               radius: 40,

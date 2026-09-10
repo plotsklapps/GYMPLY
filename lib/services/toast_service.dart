@@ -1,14 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:toastification/toastification.dart';
 
 // Instead of Snackbars, GYMPLY uses toastification package.
 // These are toasts with a consistent look & feel.
 class ToastService {
-  static void showSuccess({
-    required String title,
-    required String subtitle,
-  }) {
+  static void showSuccess({required String title, required String subtitle}) {
     toastification.show(
       type: ToastificationType.success,
       style: ToastificationStyle.flatColored,
@@ -31,10 +28,7 @@ class ToastService {
     );
   }
 
-  static void showWarning({
-    required String title,
-    required String subtitle,
-  }) {
+  static void showWarning({required String title, required String subtitle}) {
     toastification.show(
       type: ToastificationType.warning,
       style: ToastificationStyle.flatColored,
@@ -57,10 +51,7 @@ class ToastService {
     );
   }
 
-  static void showError({
-    required String title,
-    required String subtitle,
-  }) {
+  static void showError({required String title, required String subtitle}) {
     toastification.show(
       type: ToastificationType.error,
       style: ToastificationStyle.flatColored,

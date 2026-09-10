@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -8,7 +9,6 @@ import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorkoutScreen extends SignalStatefulWidget {
@@ -110,9 +110,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               SizedBox(
                                 width: 24,
                                 height: 24,
-                                child: Center(
-                                  child: Icon(IconUtils.grip),
-                                ),
+                                child: Center(child: Icon(IconUtils.grip)),
                               ),
                             ],
                           ),

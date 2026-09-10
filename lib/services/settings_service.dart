@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -17,7 +18,6 @@ import 'package:gymply/signals/onboarding_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:logger/logger.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -92,6 +92,7 @@ class SettingsService with WidgetsBindingObserver {
     sOnboardingCompleted.value = settings.onboardingCompleted;
     sExercisesGridMode.value = settings.isExercisesGridMode;
     sUseLbs.value = settings.useLbs;
+    sAutoStartRestTimer.value = settings.isAutoStartRestTimer;
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -166,6 +167,33 @@ class SettingsService with WidgetsBindingObserver {
       ToastService.showError(
         title: 'Settings Error',
         subtitle: 'Failed to update wakelock.',
+      );
+    }
+  }
+
+  // Toggle AutoStartRestTimer.
+  Future<void> toggleAutoStartRestTimer({required bool value}) async {
+    try {
+      sAutoStartRestTimer.value = value;
+
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(isAutoStartRestTimer: value),
+        );
+      }
+
+      _logger.i('SettingsService: AutoStartRestTimer toggled to $value');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to toggle AutoStartRestTimer',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Settings Error',
+        subtitle: 'Failed to update rest timer setting.',
       );
     }
   }
@@ -273,10 +301,7 @@ class SettingsService with WidgetsBindingObserver {
       if (settings != null) {
         await _settingsBox.put(
           'settings',
-          settings.copyWith(
-            googleFontFamily: font,
-            fontFamily: font,
-          ),
+          settings.copyWith(googleFontFamily: font, fontFamily: font),
         );
       }
 
@@ -335,11 +360,7 @@ class SettingsService with WidgetsBindingObserver {
       }
 
       // Check if current font is one of the free ones.
-      final List<String> freeFonts = <String>[
-        'Teko',
-        'Kanit',
-        'Bebas Neue',
-      ];
+      final List<String> freeFonts = <String>['Teko', 'Kanit', 'Bebas Neue'];
 
       if (!freeFonts.contains(sFont.value)) {
         unawaited(updateFont('Teko'));
@@ -440,10 +461,7 @@ class SettingsService with WidgetsBindingObserver {
             }).toList();
 
             updatedExercises.add(
-              ex.copyWith(
-                weightInput: newWeightInput,
-                sets: newSets,
-              ),
+              ex.copyWith(weightInput: newWeightInput, sets: newSets),
             );
           } else {
             updatedExercises.add(ex);
@@ -475,10 +493,7 @@ class SettingsService with WidgetsBindingObserver {
         }).toList();
 
         updatedActiveExercises.add(
-          ex.copyWith(
-            weightInput: newWeightInput,
-            sets: newSets,
-          ),
+          ex.copyWith(weightInput: newWeightInput, sets: newSets),
         );
       } else {
         updatedActiveExercises.add(ex);

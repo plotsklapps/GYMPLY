@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/signals/selectedequipment_signal.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class EquipmentChoiceChips extends StatelessWidget {
   const EquipmentChoiceChips({
@@ -27,9 +27,7 @@ class EquipmentChoiceChips extends StatelessWidget {
             // Map on current WorkoutType.
             if (workoutType == WorkoutType.strength)
               ...StrengthEquipment.values.map((StrengthEquipment e) {
-                final Equipment equipment = Equipment.values.byName(
-                  e.name,
-                );
+                final Equipment equipment = Equipment.values.byName(e.name);
                 final bool isSelected = selectedEquipment == equipment;
                 final String assetName = equipment.name.capitalizeFirst();
 
@@ -44,9 +42,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),
-                    label: Text(
-                      e.name.capitalizeFirst(),
-                    ),
+                    label: Text(e.name.capitalizeFirst()),
                     selected: isSelected,
                     onSelected: (bool selected) {
                       sSelectedEquipment.value = selected ? equipment : null;
@@ -71,9 +67,7 @@ class EquipmentChoiceChips extends StatelessWidget {
                             color: theme.colorScheme.onSecondary,
                           )
                         : Image.asset('assets/images/equipment/$assetName.png'),
-                    label: Text(
-                      e.name.capitalizeFirst(),
-                    ),
+                    label: Text(e.name.capitalizeFirst()),
                     selected: isSelected,
                     onSelected: (bool selected) {
                       sSelectedEquipment.value = selected ? equip : null;

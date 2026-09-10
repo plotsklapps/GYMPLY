@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
@@ -16,7 +17,6 @@ import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StatisticsScreen extends SignalStatefulWidget {
@@ -323,11 +323,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       const StatisticsSectionHeader(
                         title: 'EXERCISE BREAKDOWN',
                       ),
-                      ...currentWorkout.exercises.map(
-                        (WorkoutExercise ex) {
-                          return ExerciseDetailCard(exercise: ex);
-                        },
-                      ),
+                      ...currentWorkout.exercises.map((WorkoutExercise ex) {
+                        return ExerciseDetailCard(exercise: ex);
+                      }),
                     ],
                   ),
           ),

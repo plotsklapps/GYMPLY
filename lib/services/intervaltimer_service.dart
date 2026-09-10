@@ -50,9 +50,7 @@ class IntervalTimer {
         else if (exercise is StretchExercise) {
           workoutService.addStretchSet(
             exercise,
-            stretchDuration: Duration(
-              milliseconds: sInitialIntervalTime.value,
-            ),
+            stretchDuration: Duration(milliseconds: sInitialIntervalTime.value),
             restDuration: Duration(seconds: RestTimer.sInitialRestTime.value),
             totalDuration: Duration(
               milliseconds:
@@ -113,12 +111,9 @@ class IntervalTimer {
   );
 
   // Computed Signal for formatted time (watches sElapsedIntervalTime Signal).
-  static final Computed<String> cFormattedIntervalTime = Computed<String>(
-    () {
-      return sElapsedIntervalTime.value.formatHMMSSD();
-    },
-    options: const ComputedOptions<String>(name: 'cFormattedIntervalTime'),
-  );
+  static final Computed<String> cFormattedIntervalTime = Computed<String>(() {
+    return sElapsedIntervalTime.value.formatHMMSSD();
+  }, options: const ComputedOptions<String>(name: 'cFormattedIntervalTime'));
 
   Future<void> startTimer() async {
     // Synchronous check to prevent multiple timers.

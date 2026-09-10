@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
@@ -6,14 +7,10 @@ import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class ExerciseDetailCard extends SignalWidget {
-  const ExerciseDetailCard({
-    required this.exercise,
-    super.key,
-  });
+  const ExerciseDetailCard({required this.exercise, super.key});
 
   final WorkoutExercise exercise;
 
@@ -50,10 +47,7 @@ class ExerciseDetailCard extends SignalWidget {
           value: '${ex.avgWeightPerSet.toStringAsFixed(1)} $weightUnit',
         ),
         Divider(height: 24, color: theme.colorScheme.secondary),
-        Text(
-          '1RM Estimates',
-          style: theme.textTheme.titleMedium,
-        ),
+        Text('1RM Estimates', style: theme.textTheme.titleMedium),
         ExerciseDetailRow(
           label: 'Lombardi (rep range 1-5)',
           value: '${ex.oneRepMaxLombardi.toStringAsFixed(1)} $weightUnit',
@@ -83,10 +77,7 @@ class ExerciseDetailCard extends SignalWidget {
           value: ex.equipment.name.toUpperCase(),
         ),
         ExerciseDetailRow(label: 'Sets', value: ex.totalSets.toString()),
-        ExerciseDetailRow(
-          label: 'Duration',
-          value: ex.totalDuration.format(),
-        ),
+        ExerciseDetailRow(label: 'Duration', value: ex.totalDuration.format()),
         ExerciseDetailRow(
           label: 'Distance',
           value: '${ex.totalDistance.toStringAsFixed(2)} km',
@@ -94,21 +85,14 @@ class ExerciseDetailCard extends SignalWidget {
         ExerciseDetailRow(
           label: 'Calories',
           value:
-              '${ex.calculateTotalCalories(
-                userWeight: userWeightKg,
-                userAge: userAge,
-                userSex: userSex,
-              )} kcal',
+              '${ex.calculateTotalCalories(userWeight: userWeightKg, userAge: userAge, userSex: userSex)} kcal',
         ),
       ]);
     } else if (exercise is StretchExercise) {
       final StretchExercise ex = exercise as StretchExercise;
       detailRows.addAll(<Widget>[
         ExerciseDetailRow(label: 'Sets', value: ex.totalSets.toString()),
-        ExerciseDetailRow(
-          label: 'Duration',
-          value: ex.totalDuration.format(),
-        ),
+        ExerciseDetailRow(label: 'Duration', value: ex.totalDuration.format()),
       ]);
     }
 

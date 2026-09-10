@@ -1,16 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StrengthSetCard extends SignalWidget {
-  const StrengthSetCard({
-    required this.exercise,
-    super.key,
-  });
+  const StrengthSetCard({required this.exercise, super.key});
 
   final StrengthExercise exercise;
 
@@ -42,20 +39,16 @@ class StrengthSetCard extends SignalWidget {
 
           // Find index of first set that achieved these peaks.
           final int weightPRIndex = (sessionMaxWeight > historicalPR.maxWeight)
-              ? exercise.sets.indexWhere(
-                  (StrengthSet s) {
-                    return s.weight == sessionMaxWeight;
-                  },
-                )
+              ? exercise.sets.indexWhere((StrengthSet s) {
+                  return s.weight == sessionMaxWeight;
+                })
               : -1;
 
           final int volumePRIndex =
               (sessionMaxVolume > historicalPR.maxSetVolume)
-              ? exercise.sets.indexWhere(
-                  (StrengthSet s) {
-                    return (s.weight * s.reps) == sessionMaxVolume;
-                  },
-                )
+              ? exercise.sets.indexWhere((StrengthSet s) {
+                  return (s.weight * s.reps) == sessionMaxVolume;
+                })
               : -1;
 
           return ListView.builder(
@@ -100,9 +93,7 @@ class StrengthSetCard extends SignalWidget {
                           )
                         : Text(
                             displayIndex.toString(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                   ),
                   title: Row(

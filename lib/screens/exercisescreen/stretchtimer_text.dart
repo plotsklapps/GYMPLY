@@ -1,16 +1,13 @@
+import 'package:flutter/material.dart' hide StretchMode;
 import 'package:gymply/screens/exercisescreen/stretchexercise_screen.dart'
     show StretchMode;
 import 'package:gymply/services/intervaltimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
-import 'package:material_ui/material_ui.dart' hide StretchMode;
 import 'package:signals/signals_flutter.dart';
 
 // StretchTimer Text Widget to handle high-frequency timer updates.
 class StretchTimerText extends SignalWidget {
-  const StretchTimerText({
-    required this.mode,
-    super.key,
-  });
+  const StretchTimerText({required this.mode, super.key});
 
   // Stopwatch or Interval.
   final StretchMode mode;
@@ -31,9 +28,7 @@ class StretchTimerText extends SignalWidget {
       timerText,
       style: theme.textTheme.displayLarge?.copyWith(
         fontWeight: FontWeight.bold,
-        fontFeatures: const <FontFeature>[
-          FontFeature.tabularFigures(),
-        ],
+        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
       ),
     );
   }

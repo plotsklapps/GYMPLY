@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
@@ -6,10 +7,11 @@ import 'package:gymply/screens/exercisescreen/rep_controls.dart';
 import 'package:gymply/screens/exercisescreen/strengthset_card.dart';
 import 'package:gymply/screens/exercisescreen/weight_controls.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/calculator_widget.dart';
-import 'package:material_ui/material_ui.dart';
 
 class StrengthExerciseScreen extends StatelessWidget {
   const StrengthExerciseScreen({required this.exercise, super.key});
@@ -151,12 +153,15 @@ class StrengthExerciseScreen extends StatelessWidget {
                               currentWeight,
                               currentReps,
                             );
+
+                            if (sAutoStartRestTimer.value) {
+                              await RestTimer().resetTimer();
+                              await RestTimer().startTimer();
+                            }
                           }
                         },
                         icon: const Icon(IconUtils.add),
-                        label: const Text(
-                          'ADD SET',
-                        ),
+                        label: const Text('ADD SET'),
                       ),
                     ),
                   ],

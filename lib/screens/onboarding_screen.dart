@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/permission_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -255,10 +255,7 @@ class OnboardingSlide extends StatelessWidget {
         children: <Widget>[
           // Using a fixed percentage height instead of a Spacer.
           SizedBox(height: screenHeight * 0.15),
-          SizedBox(
-            height: 128,
-            child: Center(child: iconWidget),
-          ),
+          SizedBox(height: 128, child: Center(child: iconWidget)),
           const SizedBox(height: 48),
           Text(
             title,

@@ -1,5 +1,5 @@
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 class StretchSetStatsModal extends StatefulWidget {
   const StretchSetStatsModal({

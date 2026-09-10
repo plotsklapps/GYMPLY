@@ -1,15 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart';
 
 class UserDetailModal extends StatelessWidget {
-  const UserDetailModal({
-    required this.likers,
-    super.key,
-  });
+  const UserDetailModal({required this.likers, super.key});
 
   final List<(String, Metadata?)> likers;
 

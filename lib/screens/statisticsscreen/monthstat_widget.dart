@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:intl/intl.dart';
-import 'package:material_ui/material_ui.dart';
 
 class MonthStat extends StatelessWidget {
   const MonthStat({
@@ -30,9 +30,7 @@ class MonthStat extends StatelessWidget {
       onTap: () async {
         await ModalService.showModal(
           context: context,
-          child: MonthStatModal(
-            date: date,
-          ),
+          child: MonthStatModal(date: date),
         );
       },
       borderRadius: BorderRadius.circular(8),
@@ -46,10 +44,7 @@ class MonthStat extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: <Widget>[
-                  Text(
-                    monthName,
-                    style: theme.textTheme.labelLarge,
-                  ),
+                  Text(monthName, style: theme.textTheme.labelLarge),
                 ],
               ),
               // 7-column Grid for aligned monthly dots (Mon-Sun).
@@ -71,9 +66,9 @@ class MonthStat extends StatelessWidget {
                   final int day = index - startOffset + 1;
 
                   // Check if day number has a workout.
-                  final String key = DateFormat('yyyyMMdd').format(
-                    DateTime(date.year, date.month, day),
-                  );
+                  final String key = DateFormat(
+                    'yyyyMMdd',
+                  ).format(DateTime(date.year, date.month, day));
                   final bool hasWorkout = workoutDateKeys.contains(key);
 
                   return Center(

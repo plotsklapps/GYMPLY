@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/addimage_modal.dart';
 import 'package:gymply/modals/sharetosocials_modal.dart';
@@ -11,7 +12,6 @@ import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:material_ui/material_ui.dart';
 
 class SaveWorkoutModal extends StatefulWidget {
   const SaveWorkoutModal({super.key});
@@ -58,9 +58,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
 
   Future<void> _pickImage(int index) async {
     // Modal to choose phone gallery or camera.
-    final ImageSource? source = await addImageModal(
-      context,
-    );
+    final ImageSource? source = await addImageModal(context);
 
     if (source != null) {
       final String? filename = await imageService.pickAndSaveImage(source);
@@ -131,9 +129,7 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                   onTapOutside: (PointerDownEvent event) {
                     _titleFocusNode.unfocus();
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'Workout title',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Workout title'),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
