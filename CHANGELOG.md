@@ -2,7 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.8+82] - 2026-08-25
+## [0.0.8+83] - 2026-09-10
+- **Google Play Photos & Videos Policy Compliance:**
+  - Explicitly stripped `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, and `READ_EXTERNAL_STORAGE` permissions from `AndroidManifest.xml` via `tools:node="remove"`.
+  - Seamlessly transitioned media selection to Android's native, permissionless System Photo Picker on Android 13+ (API 33+).
+
+## [0.0.8+82] - 2026-09-10
 - **800+ Exercises added:**
   - Exercises folder expanded with more than **800** new exercises!
 - **Auto-Start Rest Timer & App Settings:**
