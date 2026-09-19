@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.8+85] - 2026-09-19
+## [0.0.8+86] - 2026-09-19
 - **Expanded Exercise & Asset Library:**
   - Added over **800+ exercises and images** to the app, offering an extensive selection for strength, cardio, and stretching workouts.
 - **Material UI & Framework Migration:**
