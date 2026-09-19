@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/screens/feedscreen/workoutnote_widget.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:ndk/ndk.dart' hide Logger;
 import 'package:signals/signals_flutter.dart';
 

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class RestTimerModal extends SignalWidget {

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/nostr_service.dart';
@@ -11,6 +10,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Toggleable metrics.

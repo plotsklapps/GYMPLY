@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/cardiosetstats_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CardioSetCard extends StatelessWidget {
   const CardioSetCard({

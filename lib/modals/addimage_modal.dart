@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Shows a bottom sheet to choose between Camera and Gallery.
 Future<ImageSource?> addImageModal(BuildContext context) async {

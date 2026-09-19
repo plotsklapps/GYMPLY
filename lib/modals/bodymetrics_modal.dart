@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/somatotype_modal.dart';
 import 'package:gymply/models/bodymetrics_model.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
@@ -9,6 +8,7 @@ import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/signals/bodymetrics_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 // Enum for Segmentedbutton choices.

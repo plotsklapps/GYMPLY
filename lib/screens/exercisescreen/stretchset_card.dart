@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/stretchsetstats_modal.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class StretchSetCard extends StatelessWidget {
   const StretchSetCard({

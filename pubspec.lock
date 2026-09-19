@@ -333,10 +333,10 @@ packages:
     dependency: transitive
     description:
       name: cupertino_ui
-      sha256: e9dfe7fac704028f8928cbe4028a0be5e8a709498e8daf8247de99e99a32aef3
+      sha256: c6747018d37d32feeeb858a1d7043831cb541460ebe1a890a995cdb8df8ea5a5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.1.0"
   dart_style:
     dependency: transitive
     description:
@@ -421,18 +421,18 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "1fb0cb9de6a189d76980a5a00ae3d4c9ec07e87519fd7368b75f5ebf0126977e"
+      sha256: "98c0b156b6380ba55bc767a14e2e6b3feb246e713ad40092424596fa79005bea"
       url: "https://pub.dev"
     source: hosted
-    version: "13.0.0"
+    version: "13.1.0"
   file_picker_darwin:
     dependency: transitive
     description:
       name: file_picker_darwin
-      sha256: da861ccc4cdbc8bacf1f85d53dede63d40dd7c0b5ff823cd2b564a8daa1bc058
+      sha256: deb3ff69d58656b885c85bc1627f09ecb79860f272a5e7577149582ede4dce5d
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   file_picker_linux:
     dependency: transitive
     description:
@@ -501,18 +501,18 @@ packages:
     dependency: "direct main"
     description:
       name: flex_color_scheme
-      sha256: ab854146f201d2d62cc251fd525ef023b84182c4a0bfe4ae4c18ffc505b412d3
+      sha256: "77973145524ae7aab669cd1debe4971f4ec256771b205f3da1ac33f147df5f79"
       url: "https://pub.dev"
     source: hosted
-    version: "8.4.0"
+    version: "9.0.0"
   flex_seed_scheme:
     dependency: transitive
     description:
       name: flex_seed_scheme
-      sha256: a3183753bbcfc3af106224bff3ab3e1844b73f58062136b7499919f49f3667e7
+      sha256: "08f9ee11f9a08c2dee76d0a07ea824c8a09ea4db9456e32ac4f6dfb34d28392c"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.1"
+    version: "5.0.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -575,18 +575,18 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_secure_storage
-      sha256: d87713a152ee2f255117bdbbf43da1dea1797e0551e499e0334f0c9dcfafddd2
+      sha256: d4e1fb6b2cb524868929e78dc0282fa000554b22060fb53789dc481c9fc95bb8
       url: "https://pub.dev"
     source: hosted
-    version: "11.1.1"
+    version: "11.2.0"
   flutter_secure_storage_darwin:
     dependency: transitive
     description:
       name: flutter_secure_storage_darwin
-      sha256: d0b136b1e21fd4081170fc394e64197046ce889e8f63f2370a13e41b832cc044
+      sha256: a031ceac9b070e62ef183cd7f7d1a8798ebde402d5049f0fe6eb3a51bd797a21
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.3"
   flutter_secure_storage_linux:
     dependency: transitive
     description:
@@ -599,10 +599,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage_platform_interface
-      sha256: "4bc033841169d07f690d46d89dbc3f5305b6562820822445384c82e0866e2719"
+      sha256: "64951127f001f546891c86f414972bf49ef2c4c8a4c92c65f5790cc0c9100045"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   flutter_secure_storage_web:
     dependency: transitive
     description:
@@ -809,10 +809,10 @@ packages:
     dependency: "direct main"
     description:
       name: in_app_purchase
-      sha256: "0e9510b80b0074e89ab0a8e0fc901439b779dc9ae575ab8d419253c6e1627716"
+      sha256: d8317ec2ed6fe33199957d67ee67e08a4fd4871ef93b91d7611d8ee560892afc
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "3.3.1"
   in_app_purchase_android:
     dependency: transitive
     description:
@@ -953,10 +953,10 @@ packages:
     dependency: "direct main"
     description:
       name: material_ui
-      sha256: fbfb53cab6c4629438feeade5f3d305f72944bc9d9f25786b19106d32b80ec45
+      sha256: "6d056d60ce745335fcf1c726a4fc46a481a62229f202b65dbc2db5edbbabc7e2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.0"
   meta:
     dependency: transitive
     description:
@@ -1622,10 +1622,10 @@ packages:
     dependency: transitive
     description:
       name: vector_math
-      sha256: f36f9f3be64c6198714492bb455c11056e33e2f85d9a0b676a48301e44fdcf47
+      sha256: "92b9910f66ed1057fd4da7b040ae7c74cafacf885bdc81be496928d5049b032d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.3"
   very_good_analysis:
     dependency: "direct dev"
     description:
@@ -1764,4 +1764,4 @@ packages:
     version: "2.1.0"
 sdks:
   dart: ">=3.13.0 <4.0.0"
-  flutter: ">=3.44.0"
+  flutter: ">=3.47.0"

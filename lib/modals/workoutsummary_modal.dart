@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -13,6 +12,7 @@ import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class WorkoutSummaryModal extends SignalWidget {

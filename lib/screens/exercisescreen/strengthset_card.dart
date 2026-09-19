@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/models/personalrecord_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
 class StrengthSetCard extends SignalWidget {

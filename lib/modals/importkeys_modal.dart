@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ImportKeysModal extends StatelessWidget {
   const ImportKeysModal({super.key});

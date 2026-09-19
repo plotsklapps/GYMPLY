@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:gymply/modals/monthstat_modal.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum WorkoutRange { days30, months6, year1, allTime }
 

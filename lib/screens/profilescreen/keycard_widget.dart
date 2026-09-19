@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/theme/icons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class KeyCard extends StatefulWidget {
   const KeyCard({
