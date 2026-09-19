@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8+85] - 2026-09-19
+- **Expanded Exercise & Asset Library:**
+  - Added over **800+ exercises and images** to the app, offering an extensive selection for strength, cardio, and stretching workouts.
+- **Material UI & Framework Migration:**
+  - Refactored project-wide imports from `package:flutter/material.dart` to the new `material_ui` package for Flutter 3.47+ compatibility.
+  - Upgraded `flex_color_scheme` to `^9.0.0`.
+- **Dependency & Build Upgrades:**
+  - Upgraded `file_picker` to `^13.0.0` and updated lockfile dependencies.
+
 ## [0.0.8+84] - 2026-09-10
 - **Google Play Photos & Videos Policy Compliance:**
   - Explicitly stripped `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, and `READ_EXTERNAL_STORAGE` permissions from `AndroidManifest.xml` via `tools:node="remove"`.
