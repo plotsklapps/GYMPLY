@@ -36,6 +36,8 @@ class TotalTimer {
   Timer? _timer;
   DateTime? _startTime;
 
+  DateTime? get startTime => _startTime;
+
   Future<void> startTimer() async {
     // Prevent multiple timers from running at once.
     if (_timer != null) return;

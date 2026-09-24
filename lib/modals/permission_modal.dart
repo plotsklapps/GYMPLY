@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -11,6 +13,27 @@ class PermissionModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
+    final String explanationText = Platform.isIOS
+        ? 'GYMPLY. needs notification permission to ring the timer bell and '
+            'alert you when your rest or interval timer ends while using other '
+            'apps (like Instagram) or when your screen is locked.\n\n'
+            'Live Activities also pin your active workout and rest timers '
+            'directly to your Lock Screen and Notification Center.\n\n'
+            'Allowing this does NOT change the fact that GYMPLY. is strictly '
+            'offline-first. Your data never leaves your device.'
+        : 'GYMPLY. uses a foreground service to keep your timers '
+            'accurate and audible even when the app is minimised or '
+            'your screen is off.\n\n'
+            'Android will ask for the following permissions:\n\n'
+            '• Notification access - to display the live timer in your '
+            'status bar and keep the timer running.\n\n'
+            '• Ignore battery optimisations - to ensure your workout '
+            'timer continues running smoothly without being closed by '
+            'the system to save power.\n\n'
+            'Allowing these does NOT change the fact that GYMPLY. is '
+            'strictly offline-first. Your data never leaves your '
+            'device, and no metrics are ever transmitted.';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -45,18 +68,7 @@ class PermissionModal extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'GYMPLY. uses a foreground service to keep your timers '
-                    'accurate and audible even when the app is minimised or '
-                    'your screen is off.\n\n'
-                    'Android will ask for the following permissions:\n\n'
-                    '• Notification access - to display the live timer in your '
-                    'status bar and keep the timer running.\n\n'
-                    '• Ignore battery optimisations - to ensure your workout '
-                    'timer continues running smoothly without being closed by '
-                    'the system to save power.\n\n'
-                    'Allowing these does NOT change the fact that GYMPLY. is '
-                    'strictly offline-first. Your data never leaves your '
-                    'device, and no metrics are ever transmitted.',
+                    explanationText,
                     style: theme.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -68,13 +80,14 @@ class PermissionModal extends StatelessWidget {
                     Expanded(
                       child: FilledButton.tonal(
                         onPressed: () async {
-                          // 1. Request permissions (OS dialogs).
+                          // 1. Request notification permission (OS dialogs).
                           await <Permission>[Permission.notification].request();
 
-                          // Request battery optimalisation.
-                          const Future<void> Function() requestBattery =
-                              NotificationService.requestBatteryOptimization;
-                          await requestBattery();
+                          // Request battery optimization on Android only.
+                          if (Platform.isAndroid) {
+                            await NotificationService
+                                .requestBatteryOptimization();
+                          }
 
                           // Close the modal.
                           if (context.mounted) {

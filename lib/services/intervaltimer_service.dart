@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/audio_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:logger/logger.dart';
@@ -80,6 +84,8 @@ class IntervalTimer {
   DateTime? _endTime;
   bool _isIntervalSequenceActive = false;
 
+  DateTime? get endTime => _endTime;
+
   // Int Signal to track initial interval time (in milliseconds).
   static final Signal<int> sInitialIntervalTime = Signal<int>(
     60000,
@@ -145,7 +151,18 @@ class IntervalTimer {
         Duration(milliseconds: sElapsedIntervalTime.value),
       );
 
-      // Set a high-frequency timer (10ms) to support centisecond updates.
+      // Schedule OS alert with custom timer bell sound for background/iOS.
+      final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
+      unawaited(
+        notificationService.scheduleTimerAlert(
+          id: NotificationService.intervalTimerNotificationId,
+          scheduledDate: _endTime!,
+          title: 'GYMPLY • INTERVAL FINISHED',
+          body: 'TOTAL TIME: ${totalSeconds.formatHMMSS()}\nTime to rest!',
+        ),
+      );
+
+      // Set a high-frequency timer (100ms) to support responsive updates.
       _timer = Timer.periodic(const Duration(milliseconds: 100), (
         Timer timer,
       ) async {
@@ -166,11 +183,26 @@ class IntervalTimer {
           sIntervalTimerRunning.value = false;
           sElapsedIntervalTime.value = 0;
 
-          // Play interval-completed sound.
-          unawaited(AudioService().playTimerBell());
+          // Cancel any pending alert so it doesn't double-trigger.
+          unawaited(
+            notificationService.cancelTimerAlert(
+              NotificationService.intervalTimerNotificationId,
+            ),
+          );
 
-          // Short pause to allow sound to start before state transition.
-          await Future<void>.delayed(const Duration(milliseconds: 800));
+          // Only play sound via AudioPlayer if app is in foreground on iOS.
+          // On iOS in background, scheduled OS notification handles the sound.
+          // On Android, background service handles audio.
+          final bool isForeground =
+              WidgetsBinding.instance.lifecycleState ==
+                  AppLifecycleState.resumed;
+          if (!Platform.isIOS || isForeground) {
+            unawaited(AudioService().playTimerBell());
+            // Short pause to allow sound to start before state transition.
+            if (isForeground) {
+              await Future<void>.delayed(const Duration(milliseconds: 800));
+            }
+          }
 
           // Reset Signals.
           sIntervalTimerCompleted.value = true;
@@ -187,10 +219,44 @@ class IntervalTimer {
     }
   }
 
+  void syncOnResume() {
+    if (!sIntervalTimerRunning.value || _endTime == null) return;
+
+    final Duration remaining = _endTime!.difference(DateTime.now());
+    final int remainingMs = remaining.inMilliseconds;
+
+    if (remainingMs <= 0) {
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
+      sIntervalTimerRunning.value = false;
+      sElapsedIntervalTime.value = 0;
+      sIntervalTimerCompleted.value = true;
+      sElapsedIntervalTime.value = sInitialIntervalTime.value;
+
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.intervalTimerNotificationId,
+        ),
+      );
+
+      unawaited(RestTimer().startTimer());
+    } else {
+      sElapsedIntervalTime.value = remainingMs;
+    }
+  }
+
   Future<void> pauseTimer() async {
     try {
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
+
+      // Cancel OS scheduled alert.
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.intervalTimerNotificationId,
+        ),
+      );
 
       // Cancel timer and reset Signals.
       _timer?.cancel();
@@ -211,6 +277,13 @@ class IntervalTimer {
 
       // Give a bigger bzzz.
       await HapticFeedback.mediumImpact();
+
+      // Cancel OS scheduled alert.
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.intervalTimerNotificationId,
+        ),
+      );
 
       // Reset timer and reset Signals.
       _timer?.cancel();

@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gymply/services/audio_service.dart';
 import 'package:gymply/services/intervaltimer_service.dart';
+import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -45,6 +50,8 @@ class RestTimer {
   Timer? _timer;
   DateTime? _endTime;
 
+  DateTime? get endTime => _endTime;
+
   Future<void> startTimer() async {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sRestTimerRunning.value) return;
@@ -74,6 +81,18 @@ class RestTimer {
       // Calculate when resttimer should end.
       _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
+      // Schedule OS alert with custom timer bell sound for background/iOS.
+      final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
+      unawaited(
+        notificationService.scheduleTimerAlert(
+          id: NotificationService.restTimerNotificationId,
+          scheduledDate: _endTime!,
+          title: 'GYMPLY • REST FINISHED',
+          body: 'TOTAL TIME: ${totalSeconds.formatHMMSS()}\n'
+              'Time for your next set!',
+        ),
+      );
+
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         if (_endTime == null) return;
 
@@ -93,8 +112,22 @@ class RestTimer {
           sRestTimerRunning.value = false;
           sElapsedRestTime.value = 0;
 
-          // Play rest-completed sound first.
-          unawaited(AudioService().playTimerBell());
+          // Cancel any pending alert so it doesn't double-trigger.
+          unawaited(
+            notificationService.cancelTimerAlert(
+              NotificationService.restTimerNotificationId,
+            ),
+          );
+
+          // Only play sound via AudioPlayer if app is in foreground on iOS.
+          // On iOS in background, scheduled OS notification handles the sound.
+          // On Android, background service handles audio.
+          final bool isForeground =
+              WidgetsBinding.instance.lifecycleState ==
+                  AppLifecycleState.resumed;
+          if (!Platform.isIOS || isForeground) {
+            unawaited(AudioService().playTimerBell());
+          }
 
           // Reset Signals.
           sRestTimerCompleted.value = true;
@@ -108,10 +141,41 @@ class RestTimer {
     }
   }
 
+  void syncOnResume() {
+    if (!sRestTimerRunning.value || _endTime == null) return;
+
+    final Duration remaining = _endTime!.difference(DateTime.now());
+    final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
+
+    if (remainingSeconds <= 0) {
+      _timer?.cancel();
+      _timer = null;
+      _endTime = null;
+      sRestTimerRunning.value = false;
+      sElapsedRestTime.value = 0;
+      sRestTimerCompleted.value = true;
+      sElapsedRestTime.value = sInitialRestTime.value;
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.restTimerNotificationId,
+        ),
+      );
+    } else {
+      sElapsedRestTime.value = remainingSeconds;
+    }
+  }
+
   Future<void> pauseTimer() async {
     try {
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
+
+      // Cancel OS scheduled alert.
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.restTimerNotificationId,
+        ),
+      );
 
       // Cancel timer and reset Signals.
       _timer?.cancel();
@@ -131,6 +195,13 @@ class RestTimer {
     try {
       // Give a bigger bzzz.
       await HapticFeedback.mediumImpact();
+
+      // Cancel OS scheduled alert.
+      unawaited(
+        notificationService.cancelTimerAlert(
+          NotificationService.restTimerNotificationId,
+        ),
+      );
 
       // Reset timer and reset Signals.
       _timer?.cancel();

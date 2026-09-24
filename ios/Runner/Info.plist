@@ -70,11 +70,11 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>audio</string>
-			<string>fetch</string>
-			<string>processing</string>
-		</array>
+		<key>NSCameraUsageDescription</key>
+		<string>GYMPLY requires camera access to let you take photos of your workouts, exercises, and equipment.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>GYMPLY requires photo library access to let you select images for your exercises and workouts.</string>
+		<key>NSSupportsLiveActivities</key>
+		<true/>
 	</dict>
 </plist>
