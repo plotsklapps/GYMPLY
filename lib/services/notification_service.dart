@@ -42,9 +42,7 @@ class NotificationService {
           channelName: 'GYMPLY Timer',
           channelDescription: 'Shows the live timer status.',
         ),
-        iosNotificationOptions: const IOSNotificationOptions(
-          showNotification: false,
-        ),
+        iosNotificationOptions: const IOSNotificationOptions(),
         foregroundTaskOptions: ForegroundTaskOptions(
           eventAction: ForegroundTaskEventAction.repeat(1000),
         ),

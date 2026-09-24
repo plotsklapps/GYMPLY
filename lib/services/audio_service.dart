@@ -28,11 +28,18 @@ class AudioService {
     try {
       _logger.i('AudioService: Initializing native Android audio context...');
 
-      // Make phone audio 'duck' GYMPLY sounds.
+      // Make phone audio duck and configure iOS session for background playback.
       await _player.setAudioContext(
         AudioContext(
           android: const AudioContextAndroid(
             audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+          ),
+          iOS: AudioContextIOS(
+            category: AVAudioSessionCategory.playback,
+            options: const <AVAudioSessionOptions>{
+              AVAudioSessionOptions.duckOthers,
+              AVAudioSessionOptions.mixWithOthers,
+            },
           ),
         ),
       );
