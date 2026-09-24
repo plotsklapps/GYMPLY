@@ -88,7 +88,8 @@ class RestTimer {
           id: NotificationService.restTimerNotificationId,
           scheduledDate: _endTime!,
           title: 'GYMPLY • REST FINISHED',
-          body: 'TOTAL TIME: ${totalSeconds.formatHMMSS()}\n'
+          body:
+              'TOTAL TIME: ${totalSeconds.formatHMMSS()}\n'
               'Time for your next set!',
         ),
       );
@@ -112,19 +113,11 @@ class RestTimer {
           sRestTimerRunning.value = false;
           sElapsedRestTime.value = 0;
 
-          // Cancel any pending alert so it doesn't double-trigger.
-          unawaited(
-            notificationService.cancelTimerAlert(
-              NotificationService.restTimerNotificationId,
-            ),
-          );
-
           // Only play sound via AudioPlayer if app is in foreground on iOS.
-          // On iOS in background, scheduled OS notification handles the sound.
-          // On Android, background service handles audio.
+          // On iOS in background, scheduled OS notification handles the sound natively.
           final bool isForeground =
               WidgetsBinding.instance.lifecycleState ==
-                  AppLifecycleState.resumed;
+              AppLifecycleState.resumed;
           if (!Platform.isIOS || isForeground) {
             unawaited(AudioService().playTimerBell());
           }
@@ -155,11 +148,6 @@ class RestTimer {
       sElapsedRestTime.value = 0;
       sRestTimerCompleted.value = true;
       sElapsedRestTime.value = sInitialRestTime.value;
-      unawaited(
-        notificationService.cancelTimerAlert(
-          NotificationService.restTimerNotificationId,
-        ),
-      );
     } else {
       sElapsedRestTime.value = remainingSeconds;
     }

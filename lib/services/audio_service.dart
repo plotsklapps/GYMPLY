@@ -44,6 +44,9 @@ class AudioService {
         ),
       );
 
+      // Keep player intact after sound completes so audio tail is not clipped.
+      await _player.setReleaseMode(ReleaseMode.stop);
+
       _isInitialized = true;
 
       // Log success.
@@ -66,10 +69,8 @@ class AudioService {
       // Always ensure initialization is complete before playing.
       await initialize();
 
-      // Stop current playback -> set source -> play.
-      await _player.stop();
-      await _player.setSource(AssetSource(assetPath));
-      await _player.resume();
+      // Play sound directly from AssetSource.
+      await _player.play(AssetSource(assetPath));
 
       // Log success.
       _logger.i('AudioService: Playback started for $assetPath');

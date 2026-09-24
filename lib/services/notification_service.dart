@@ -55,10 +55,10 @@ class NotificationService with WidgetsBindingObserver {
       // Configure local notification plugin.
       const DarwinInitializationSettings darwinInit =
           DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
-      );
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          );
 
       const InitializationSettings initSettings = InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -122,19 +122,20 @@ class NotificationService with WidgetsBindingObserver {
 
       const DarwinNotificationDetails darwinDetails = DarwinNotificationDetails(
         presentAlert: true,
-        presentSound: false,
+        presentSound: true,
         sound: 'timerbell.wav',
         interruptionLevel: InterruptionLevel.timeSensitive,
       );
 
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-        'gymply_timer_alerts',
-        'GYMPLY Timer Alerts',
-        channelDescription: 'Alerts when your rest or interval timer completes',
-        importance: Importance.max,
-        priority: Priority.high,
-      );
+            'gymply_timer_alerts',
+            'GYMPLY Timer Alerts',
+            channelDescription:
+                'Alerts when your rest or interval timer completes',
+            importance: Importance.max,
+            priority: Priority.high,
+          );
 
       await _localNotifications.zonedSchedule(
         id: id,

@@ -183,19 +183,12 @@ class IntervalTimer {
           sIntervalTimerRunning.value = false;
           sElapsedIntervalTime.value = 0;
 
-          // Cancel any pending alert so it doesn't double-trigger.
-          unawaited(
-            notificationService.cancelTimerAlert(
-              NotificationService.intervalTimerNotificationId,
-            ),
-          );
-
           // Only play sound via AudioPlayer if app is in foreground on iOS.
-          // On iOS in background, scheduled OS notification handles the sound.
+          // On iOS in background, scheduled OS notification handles the sound natively.
           // On Android, background service handles audio.
           final bool isForeground =
               WidgetsBinding.instance.lifecycleState ==
-                  AppLifecycleState.resumed;
+              AppLifecycleState.resumed;
           if (!Platform.isIOS || isForeground) {
             unawaited(AudioService().playTimerBell());
             // Short pause to allow sound to start before state transition.
@@ -233,12 +226,6 @@ class IntervalTimer {
       sElapsedIntervalTime.value = 0;
       sIntervalTimerCompleted.value = true;
       sElapsedIntervalTime.value = sInitialIntervalTime.value;
-
-      unawaited(
-        notificationService.cancelTimerAlert(
-          NotificationService.intervalTimerNotificationId,
-        ),
-      );
 
       unawaited(RestTimer().startTimer());
     } else {
