@@ -18,6 +18,7 @@ class StrengthExercise extends WorkoutExercise {
     required this.sets,
     this.weightInput,
     this.repsInput,
+    super.notes,
   });
 
   @HiveField(3)
@@ -38,6 +39,7 @@ class StrengthExercise extends WorkoutExercise {
     List<StrengthSet>? sets,
     double? weightInput,
     int? repsInput,
+    String? notes,
   }) {
     return StrengthExercise(
       id: id,
@@ -48,6 +50,7 @@ class StrengthExercise extends WorkoutExercise {
       sets: sets ?? this.sets,
       weightInput: weightInput ?? this.weightInput,
       repsInput: repsInput ?? this.repsInput,
+      notes: notes ?? this.notes,
     );
   }
 

@@ -19,6 +19,7 @@ class CardioExercise extends WorkoutExercise {
     this.caloriesInput,
     this.intensityInput,
     this.repsInput,
+    super.notes,
   });
 
   @HiveField(3)
@@ -49,6 +50,7 @@ class CardioExercise extends WorkoutExercise {
     int? caloriesInput,
     int? intensityInput,
     int? repsInput,
+    String? notes,
   }) {
     return CardioExercise(
       id: id,
@@ -62,6 +64,7 @@ class CardioExercise extends WorkoutExercise {
       caloriesInput: caloriesInput ?? this.caloriesInput,
       intensityInput: intensityInput ?? this.intensityInput,
       repsInput: repsInput ?? this.repsInput,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -73,12 +76,9 @@ class CardioExercise extends WorkoutExercise {
   }
 
   Duration get totalDuration {
-    return sets.fold(
-      Duration.zero,
-      (Duration sum, CardioSet set) {
-        return sum + set.totalDuration;
-      },
-    );
+    return sets.fold(Duration.zero, (Duration sum, CardioSet set) {
+      return sum + set.totalDuration;
+    });
   }
 
   double get totalDistance {

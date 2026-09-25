@@ -1,4 +1,5 @@
 import 'package:gymply/modals/exercisehistory_modal.dart';
+import 'package:gymply/modals/exercisenote_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/modals/intervaltimer_sheet.dart';
 import 'package:gymply/modals/stopwatchtimer_modal.dart';
@@ -68,76 +69,118 @@ class CardioExerciseScreen extends SignalWidget {
                   ),
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    // History Button.
-                    IconButton(
-                      onPressed: () async {
-                        await ModalService.showModal(
-                          context: context,
-                          child: ExerciseHistoryModal(exercise: exercise),
-                        );
-                      },
-                      icon: Icon(
-                        IconUtils.history,
-                        color: theme.colorScheme.secondary,
-                      ),
-                    ),
-
-                    // Choice Chips.
-                    Wrap(
-                      spacing: 4,
-                      children: CardioMode.values.map((CardioMode value) {
-                        final bool isSelected = mode == value;
-                        return ChoiceChip(
-                          showCheckmark: false,
-                          avatar: isSelected
-                              ? Icon(
-                                  IconUtils.check,
-                                  color: theme.colorScheme.onSecondary,
-                                )
-                              : null,
-                          label: Text(value.name.capitalizeFirst()),
-                          selected: isSelected,
-                          onSelected: (bool selected) {
-                            if (selected) sCardioMode.value = value;
-                          },
-                        );
-                      }).toList(),
-                    ),
-
-                    // Auto-Interval Switch.
-                    if (mode == CardioMode.interval)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text('Auto', style: theme.textTheme.titleMedium),
-                            Switch(
-                              value: IntervalTimer.sAutoIntervalOn.value,
-                              onChanged: (bool value) {
-                                IntervalTimer.sAutoIntervalOn.value = value;
-                              },
-                            ),
-                          ],
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // History Button.
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () async {
+                          await ModalService.showModal(
+                            context: context,
+                            child: ExerciseHistoryModal(exercise: exercise),
+                          );
+                        },
+                        icon: Icon(
+                          IconUtils.history,
+                          color: theme.colorScheme.secondary,
                         ),
                       ),
-                    // Statistics Button.
-                    IconButton(
-                      onPressed: () async {
-                        await ModalService.showModal(
-                          context: context,
-                          child: ExerciseStatsModal(exercise: exercise),
-                        );
-                      },
-                      icon: Icon(
-                        IconUtils.statistics,
-                        color: theme.colorScheme.secondary,
+
+                      // Choice Chips.
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: CardioMode.values.map((CardioMode value) {
+                          final bool isSelected = mode == value;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: ChoiceChip(
+                              showCheckmark: false,
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              labelPadding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              avatar: isSelected
+                                  ? Icon(
+                                      IconUtils.check,
+                                      color: theme.colorScheme.onSecondary,
+                                    )
+                                  : null,
+                              label: Text(value.name.capitalizeFirst()),
+                              selected: isSelected,
+                              onSelected: (bool selected) {
+                                if (selected) sCardioMode.value = value;
+                              },
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    ),
-                  ],
+
+                      // Auto-Interval Switch.
+                      if (mode == CardioMode.interval)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('Auto', style: theme.textTheme.labelLarge),
+                              Transform.scale(
+                                scale: 0.75,
+                                child: Switch(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  value: IntervalTimer.sAutoIntervalOn.value,
+                                  onChanged: (bool value) {
+                                    IntervalTimer.sAutoIntervalOn.value = value;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // Statistics Button.
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () async {
+                          await ModalService.showModal(
+                            context: context,
+                            child: ExerciseStatsModal(exercise: exercise),
+                          );
+                        },
+                        icon: Icon(
+                          IconUtils.statistics,
+                          color: theme.colorScheme.secondary,
+                        ),
+                      ),
+
+                      // Note Button.
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () async {
+                          await ModalService.showModal(
+                            context: context,
+                            child: ExerciseNoteModal(exercise: exercise),
+                          );
+                        },
+                        icon: Badge(
+                          isLabelVisible: exercise.notes.trim().isNotEmpty,
+                          backgroundColor: theme.colorScheme.secondary,
+                          child: Icon(
+                            IconUtils.notes,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 8),

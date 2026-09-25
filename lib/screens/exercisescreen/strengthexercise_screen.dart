@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/exercisehistory_modal.dart';
+import 'package:gymply/modals/exercisenote_modal.dart';
 import 'package:gymply/modals/exercisestats_modal.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/screens/exercisescreen/rep_controls.dart';
@@ -97,6 +98,9 @@ class StrengthExerciseScreen extends StatelessWidget {
                   children: <Widget>[
                     // History Button.
                     IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
@@ -111,6 +115,9 @@ class StrengthExerciseScreen extends StatelessWidget {
 
                     // Statistics Button.
                     IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
                       onPressed: () async {
                         await ModalService.showModal(
                           context: context,
@@ -125,6 +132,9 @@ class StrengthExerciseScreen extends StatelessWidget {
 
                     // Calculator Button.
                     IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
                       onPressed: () async {
                         // Show metric to us system modal.
                         await ModalService.showModal(
@@ -135,6 +145,27 @@ class StrengthExerciseScreen extends StatelessWidget {
                       icon: Icon(
                         IconUtils.calculator,
                         color: theme.colorScheme.secondary,
+                      ),
+                    ),
+
+                    // Note Button.
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () async {
+                        await ModalService.showModal(
+                          context: context,
+                          child: ExerciseNoteModal(exercise: exercise),
+                        );
+                      },
+                      icon: Badge(
+                        isLabelVisible: exercise.notes.trim().isNotEmpty,
+                        backgroundColor: theme.colorScheme.secondary,
+                        child: Icon(
+                          IconUtils.notes,
+                          color: theme.colorScheme.secondary,
+                        ),
                       ),
                     ),
 

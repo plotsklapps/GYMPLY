@@ -1017,10 +1017,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: a0167e01bd8caf8a56e459c8cbdf11ec16c938192f0a5750ca25f1d6715403e4
+      sha256: "58ffe956b06dd83069000fb0ee7b64dbc52a1d72efdacd98afdb031b8b9ac1f0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0-dev.6"
+    version: "0.10.0-dev.7"
   nm:
     dependency: transitive
     description:

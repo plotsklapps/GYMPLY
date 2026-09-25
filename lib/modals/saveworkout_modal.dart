@@ -6,6 +6,7 @@ import 'package:gymply/modals/sharetosocials_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/theme/icons.dart';
@@ -28,6 +29,9 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _notesFocusNode = FocusNode();
 
+  late final String _suggestedTitle;
+  bool _isTitleFocused = false;
+
   final int _maxTitleLength = 40;
   final int _maxNoteLength = 150;
 
@@ -39,15 +43,35 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
     super.initState();
     // Load existing data from the active workout.
     final Workout workout = sActiveWorkout.value;
-    _titleController.text = workout.title;
+    _suggestedTitle = workout.title.isNotEmpty
+        ? workout.title
+        : DateTime.now().defaultWorkoutTitle;
+
+    // Leave title empty so suggested title appears as hintText.
+    if (workout.title.isNotEmpty &&
+        workout.title != DateTime.now().defaultWorkoutTitle) {
+      _titleController.text = workout.title;
+    }
+
     _notesController.text = workout.notes;
     for (int i = 0; i < workout.imagePaths.length && i < 2; i++) {
       _imageFilenames[i] = workout.imagePaths[i];
+    }
+
+    _titleFocusNode.addListener(_onTitleFocusChange);
+  }
+
+  void _onTitleFocusChange() {
+    if (_titleFocusNode.hasFocus != _isTitleFocused) {
+      setState(() {
+        _isTitleFocused = _titleFocusNode.hasFocus;
+      });
     }
   }
 
   @override
   void dispose() {
+    _titleFocusNode.removeListener(_onTitleFocusChange);
     // Kill controllers.
     _titleController.dispose();
     _notesController.dispose();
@@ -126,10 +150,13 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 TextField(
                   controller: _titleController,
                   focusNode: _titleFocusNode,
+                  textCapitalization: TextCapitalization.sentences,
                   onTapOutside: (PointerDownEvent event) {
                     _titleFocusNode.unfocus();
                   },
-                  decoration: const InputDecoration(labelText: 'Workout title'),
+                  decoration: InputDecoration(
+                    hintText: _isTitleFocused ? null : _suggestedTitle,
+                  ),
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -158,12 +185,11 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 TextField(
                   controller: _notesController,
                   focusNode: _notesFocusNode,
+                  textCapitalization: TextCapitalization.sentences,
                   onTapOutside: (PointerDownEvent event) {
                     _notesFocusNode.unfocus();
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'How did it go?',
-                  ),
+                  decoration: const InputDecoration(hintText: 'How did it go?'),
                   maxLines: 3,
                   maxLength: _maxNoteLength,
                   buildCounter:
@@ -290,10 +316,16 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                               .cast<String>()
                               .toList();
 
+                          // If title field is left empty/unchanged, use suggested title.
+                          final String titleToSave =
+                              _titleController.text.trim().isEmpty
+                              ? _suggestedTitle
+                              : _titleController.text.trim();
+
                           // Save current workout.
                           await workoutService.finishWorkout(
-                            title: _titleController.text,
-                            notes: _notesController.text,
+                            title: titleToSave,
+                            notes: _notesController.text.trim(),
                             imagePaths: imagesToSave,
                           );
 

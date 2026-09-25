@@ -85,6 +85,7 @@ class IconUtils {
   static const IconData female = Icons.female_outlined;
   static const IconData dumbbell = Icons.fitness_center_outlined;
   static const IconData notes = Icons.edit_note_outlined;
+  static const IconData noteSolid = Icons.edit_note;
 
   static const IconData palette = Icons.palette_outlined;
   static const IconData wakelockOn = Icons.smartphone;

@@ -399,6 +399,26 @@ class WorkoutService {
     );
   }
 
+  // Update notes for any WorkoutExercise (Strength, Cardio, Stretch).
+  void updateExerciseNotes(WorkoutExercise exercise, String notes) {
+    WorkoutExercise updatedExercise;
+    if (exercise is StrengthExercise) {
+      updatedExercise = exercise.copyWith(notes: notes);
+    } else if (exercise is CardioExercise) {
+      updatedExercise = exercise.copyWith(notes: notes);
+    } else if (exercise is StretchExercise) {
+      updatedExercise = exercise.copyWith(notes: notes);
+    } else {
+      return;
+    }
+
+    _replaceExercise(exercise, updatedExercise);
+
+    _logger.i(
+      'WorkoutService: Updated notes for ${exercise.exerciseName}',
+    );
+  }
+
   // Add set to StrengthExercise Object.
   void addStrengthSet(StrengthExercise exercise, double weight, int reps) {
     // Create StrengthSet Object.
@@ -478,9 +498,7 @@ class WorkoutService {
       ..remove(set);
 
     // Create updated CardioExercise Object.
-    final CardioExercise updatedExercise = exercise.copyWith(
-      sets: updatedSets,
-    );
+    final CardioExercise updatedExercise = exercise.copyWith(sets: updatedSets);
 
     // Helper method to replace Object inside active workout.
     _replaceExercise(exercise, updatedExercise);
@@ -675,23 +693,11 @@ class WorkoutService {
         exercisesToAdd.add(ex.copyWith());
       } else {
         if (ex is StrengthExercise) {
-          exercisesToAdd.add(
-            ex.copyWith(
-              sets: <StrengthSet>[],
-            ),
-          );
+          exercisesToAdd.add(ex.copyWith(sets: <StrengthSet>[]));
         } else if (ex is CardioExercise) {
-          exercisesToAdd.add(
-            ex.copyWith(
-              sets: <CardioSet>[],
-            ),
-          );
+          exercisesToAdd.add(ex.copyWith(sets: <CardioSet>[]));
         } else if (ex is StretchExercise) {
-          exercisesToAdd.add(
-            ex.copyWith(
-              sets: <StretchSet>[],
-            ),
-          );
+          exercisesToAdd.add(ex.copyWith(sets: <StretchSet>[]));
         } else {
           exercisesToAdd.add(ex.copyWith());
         }
@@ -903,11 +909,9 @@ class WorkoutService {
 
         // Check for set volume PR.
         if (maxSetVolInSession > historicalPR.maxSetVolume) {
-          final StrengthSet volSet = exercise.sets.firstWhere(
-            (StrengthSet s) {
-              return (s.weight * s.reps) == maxSetVolInSession;
-            },
-          );
+          final StrengthSet volSet = exercise.sets.firstWhere((StrengthSet s) {
+            return (s.weight * s.reps) == maxSetVolInSession;
+          });
           prs.add(<String, dynamic>{
             'exercise': exercise,
             'exerciseName': exercise.exerciseName,

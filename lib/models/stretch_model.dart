@@ -14,6 +14,7 @@ class StretchExercise extends WorkoutExercise {
     this.restDurationInput,
     this.caloriesInput,
     this.intensityInput,
+    super.notes,
   });
 
   @HiveField(3)
@@ -36,6 +37,7 @@ class StretchExercise extends WorkoutExercise {
     Duration? restDurationInput,
     int? caloriesInput,
     int? intensityInput,
+    String? notes,
   }) {
     return StretchExercise(
       id: id,
@@ -46,6 +48,7 @@ class StretchExercise extends WorkoutExercise {
       restDurationInput: restDurationInput ?? this.restDurationInput,
       caloriesInput: caloriesInput ?? this.caloriesInput,
       intensityInput: intensityInput ?? this.intensityInput,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -57,12 +60,9 @@ class StretchExercise extends WorkoutExercise {
   }
 
   Duration get totalDuration {
-    return sets.fold(
-      Duration.zero,
-      (Duration sum, StretchSet set) {
-        return sum + set.totalDuration;
-      },
-    );
+    return sets.fold(Duration.zero, (Duration sum, StretchSet set) {
+      return sum + set.totalDuration;
+    });
   }
 
   /// Calculates total calories for all sets in this exercise.

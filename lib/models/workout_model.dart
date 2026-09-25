@@ -87,34 +87,31 @@ class Workout {
 
   // Total sets across all exercise types.
   int get totalSets {
-    return exercises.fold(
-      0,
-      (int sum, WorkoutExercise ex) {
-        return sum + ex.totalSets;
-      },
-    );
+    return exercises.fold(0, (int sum, WorkoutExercise ex) {
+      return sum + ex.totalSets;
+    });
   }
 
   // --- Strength Summaries ---
 
   // Total weight moved (Weight * Reps) for all strength exercises.
   double get totalStrengthVolume {
-    return exercises.whereType<StrengthExercise>().fold(
-      0,
-      (double sum, StrengthExercise ex) {
-        return sum + ex.totalWeight;
-      },
-    );
+    return exercises.whereType<StrengthExercise>().fold(0, (
+      double sum,
+      StrengthExercise ex,
+    ) {
+      return sum + ex.totalWeight;
+    });
   }
 
   // Total number of repetitions performed across all strength exercises.
   int get totalReps {
-    return exercises.whereType<StrengthExercise>().fold(
-      0,
-      (int sum, StrengthExercise ex) {
-        return sum + ex.totalReps;
-      },
-    );
+    return exercises.whereType<StrengthExercise>().fold(0, (
+      int sum,
+      StrengthExercise ex,
+    ) {
+      return sum + ex.totalReps;
+    });
   }
 
   // Average weight per rep across the entire workout.
@@ -127,12 +124,12 @@ class Workout {
 
   // Total distance covered across all cardio exercises (in km).
   double get totalCardioDistance {
-    return exercises.whereType<CardioExercise>().fold(
-      0,
-      (double sum, CardioExercise ex) {
-        return sum + ex.totalDistance;
-      },
-    );
+    return exercises.whereType<CardioExercise>().fold(0, (
+      double sum,
+      CardioExercise ex,
+    ) {
+      return sum + ex.totalDistance;
+    });
   }
 
   // Calculates total calories for all cardio exercises in this workout.
@@ -156,12 +153,12 @@ class Workout {
 
   // Total calories burned across all cardio exercises (Legacy).
   int get totalCardioCalories {
-    return exercises.whereType<CardioExercise>().fold(
-      0,
-      (int sum, CardioExercise ex) {
-        return sum + ex.totalCalories;
-      },
-    );
+    return exercises.whereType<CardioExercise>().fold(0, (
+      int sum,
+      CardioExercise ex,
+    ) {
+      return sum + ex.totalCalories;
+    });
   }
 
   // Calculates total calories for all stretching exercises in this workout.
@@ -185,34 +182,34 @@ class Workout {
 
   // Total calories burned across all stretching exercises (Legacy).
   int get totalStretchCalories {
-    return exercises.whereType<StretchExercise>().fold(
-      0,
-      (int sum, StretchExercise ex) {
-        return sum + ex.totalCalories;
-      },
-    );
+    return exercises.whereType<StretchExercise>().fold(0, (
+      int sum,
+      StretchExercise ex,
+    ) {
+      return sum + ex.totalCalories;
+    });
   }
 
   // --- Time & Duration Summaries ---
 
   // Total time spent specifically on Cardio exercises.
   Duration get totalCardioTime {
-    return exercises.whereType<CardioExercise>().fold(
-      Duration.zero,
-      (Duration sum, CardioExercise ex) {
-        return sum + ex.totalDuration;
-      },
-    );
+    return exercises.whereType<CardioExercise>().fold(Duration.zero, (
+      Duration sum,
+      CardioExercise ex,
+    ) {
+      return sum + ex.totalDuration;
+    });
   }
 
   // Total time spent specifically on Stretching exercises.
   Duration get totalStretchTime {
-    return exercises.whereType<StretchExercise>().fold(
-      Duration.zero,
-      (Duration sum, StretchExercise ex) {
-        return sum + ex.totalDuration;
-      },
-    );
+    return exercises.whereType<StretchExercise>().fold(Duration.zero, (
+      Duration sum,
+      StretchExercise ex,
+    ) {
+      return sum + ex.totalDuration;
+    });
   }
 
   // Combined duration of all active exercises (Cardio + Stretch).
@@ -229,6 +226,7 @@ abstract class WorkoutExercise {
     required this.id,
     required this.exerciseName,
     required this.imagePath,
+    this.notes = '',
   });
 
   @HiveField(0, defaultValue: 0)
@@ -237,6 +235,8 @@ abstract class WorkoutExercise {
   final String exerciseName;
   @HiveField(2, defaultValue: '')
   final String imagePath;
+  @HiveField(8, defaultValue: '')
+  final String notes;
 
   // Every exercise type must report its total number of sets.
   int get totalSets;

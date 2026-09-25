@@ -35,7 +35,6 @@ class AudioService {
             audioFocus: AndroidAudioFocus.gainTransientMayDuck,
           ),
           iOS: AudioContextIOS(
-            category: AVAudioSessionCategory.playback,
             options: const <AVAudioSessionOptions>{
               AVAudioSessionOptions.duckOthers,
               AVAudioSessionOptions.mixWithOthers,
