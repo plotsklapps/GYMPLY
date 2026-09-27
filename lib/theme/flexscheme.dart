@@ -71,9 +71,8 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
         toggleButtonsSelectedForegroundSchemeColor: SchemeColor.onPrimary,
         toggleButtonsUnselectedSchemeColor: SchemeColor.primary,
         toggleButtonsBorderSchemeColor: SchemeColor.outline,
-        segmentedButtonSchemeColor: SchemeColor.secondaryContainer,
-        segmentedButtonSelectedForegroundSchemeColor:
-            SchemeColor.onSecondaryContainer,
+        segmentedButtonSchemeColor: SchemeColor.secondary,
+        segmentedButtonSelectedForegroundSchemeColor: SchemeColor.onSecondary,
         segmentedButtonUnselectedSchemeColor: SchemeColor.transparent,
         segmentedButtonUnselectedForegroundSchemeColor: SchemeColor.onSurface,
         segmentedButtonBorderSchemeColor: SchemeColor.outline,
@@ -210,9 +209,8 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
         toggleButtonsSelectedForegroundSchemeColor: SchemeColor.onPrimary,
         toggleButtonsUnselectedSchemeColor: SchemeColor.primary,
         toggleButtonsBorderSchemeColor: SchemeColor.outline,
-        segmentedButtonSchemeColor: SchemeColor.secondaryContainer,
-        segmentedButtonSelectedForegroundSchemeColor:
-            SchemeColor.onSecondaryContainer,
+        segmentedButtonSchemeColor: SchemeColor.secondary,
+        segmentedButtonSelectedForegroundSchemeColor: SchemeColor.onSecondary,
         segmentedButtonUnselectedSchemeColor: SchemeColor.transparent,
         segmentedButtonUnselectedForegroundSchemeColor: SchemeColor.onSurface,
         segmentedButtonBorderSchemeColor: SchemeColor.outline,
