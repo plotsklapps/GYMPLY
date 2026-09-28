@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.8+89] - 2026-09-29
+- **Weekly, Monthly & Yearly "Wrapped" Summaries:**
+  - Added cinematic, "Spotify Wrapped" style summary modals (`WeeklySummaryModal`, `MonthlySummaryModal`, and `YearlySummaryModal`) powered by `flutter_animate` staggered entrance animations and `flutter_body_atlas` front & back muscle heatmaps.
+  - **Weekly Wrapped Auto-Trigger:** Automatically greets users on app launch at the start of a new week (Monday to Sunday) if the previous week contained workouts. Persisted via Hive so it only triggers once per week.
+  - **Monthly Wrapped:** Added a full-width *"MONTHLY SUMMARY"* button at the bottom of `MonthStatModal` providing in-depth monthly statistics including peak volume/sets/reps days, top 3 exercises, top 3 equipment, muscle focus badges, and achieved PRs.
+  - **Yearly Wrapped:** Tapping the active year in `StatisticsScreen` opens an entire year review featuring annual workout counts, total duration, busiest month, top 5 exercises, top 5 equipment, and annual PR achievements.
+- **Multi-Year Navigation & Filter:**
+  - Added a compact, horizontal year-selection slider above the 12-month calendar in `StatisticsScreen`, right-aligned so the current year stays prominent while allowing seamless swiping to past workout years.
+  - Updated `MonthStatModal` year selector to strictly display years containing recorded workouts.
+- **Theme & Color Consistency:**
+  - Standardized all summary modals to strictly use theme-driven `theme.colorScheme.secondary` and `onSecondary` for highlights, cards, and focus badges.
+
 ## [0.0.8+87] - 2026-09-25
 - **Exercise Notes Feature:**
   - Added exercise-level notes support across `StrengthExercise`, `CardioExercise`, and `StretchExercise` models, persisted locally via Hive.
