@@ -25,13 +25,14 @@ class StretchExerciseAdapter extends TypeAdapter<StretchExercise> {
       restDurationInput: fields[5] as Duration?,
       caloriesInput: (fields[6] as num?)?.toInt(),
       intensityInput: (fields[7] as num?)?.toInt(),
+      notes: fields[8] == null ? '' : fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, StretchExercise obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class StretchExerciseAdapter extends TypeAdapter<StretchExercise> {
       ..writeByte(6)
       ..write(obj.caloriesInput)
       ..writeByte(7)
-      ..write(obj.intensityInput);
+      ..write(obj.intensityInput)
+      ..writeByte(8)
+      ..write(obj.notes);
   }
 
   @override

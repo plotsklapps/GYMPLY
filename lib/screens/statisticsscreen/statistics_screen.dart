@@ -1,4 +1,5 @@
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
+import 'package:gymply/modals/yearlysummary_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -9,6 +10,7 @@ import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/atlas_mapper.dart';
 import 'package:gymply/services/atlas_service.dart';
+import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -31,7 +33,7 @@ class StatisticsScreen extends SignalStatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   late final PageController _pageController;
 
-  final int _targetYear = DateTime.now().year;
+  int _selectedYear = DateTime.now().year;
 
   @override
   void initState() {
@@ -57,6 +59,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         : userWeight;
     final int userAge = sAge.value;
     final int userSex = sSex.value;
+
+    // Collect all years containing recorded workouts + current year.
+    final Set<int> availableYears =
+        history.map((Workout w) => w.dateTime.year).toSet()
+          ..add(DateTime.now().year);
+
+    // Ascending order: [2024, 2025, 2026] (Current year is on far right).
+    final List<int> sortedYearsAsc = availableYears.toList()..sort();
+
+    if (!sortedYearsAsc.contains(_selectedYear)) {
+      _selectedYear = DateTime.now().year;
+    }
 
     final Set<String> workoutDateKeys = history.map((Workout w) {
       return w.dateKey;
@@ -117,6 +131,53 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return Scaffold(
       body: Column(
         children: <Widget>[
+          // Compact Year Slider Bar (right-aligned, reverse scrollable).
+          Padding(
+            padding: EdgeInsets.zero,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              reverse: true,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: sortedYearsAsc.map((int year) {
+                  final bool isSelected = year == _selectedYear;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: InkWell(
+                      onTap: () async {
+                        if (_selectedYear == year) {
+                          await ModalService.showModal(
+                            context: context,
+                            child: YearlySummaryModal(year: year),
+                          );
+                        } else {
+                          setState(() {
+                            _selectedYear = year;
+                            _pageController.jumpToPage(0);
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(4),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          year.toString(),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? theme.colorScheme.secondary
+                                : theme.colorScheme.outlineVariant,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
           SizedBox(
             height: 100,
             child: PageView.builder(
@@ -130,7 +191,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: List<Widget>.generate(3, (int monthInQuarter) {
                       final int month = (quarterIndex * 3) + monthInQuarter + 1;
                       return MonthStat(
-                        date: DateTime(_targetYear, month),
+                        date: DateTime(_selectedYear, month),
                         workoutDateKeys: workoutDateKeys,
                       );
                     }),

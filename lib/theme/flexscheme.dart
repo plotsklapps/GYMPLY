@@ -37,6 +37,11 @@ final Signal<bool> sAutoStartRestTimer = Signal<bool>(
   options: const SignalOptions<bool>(name: 'sAutoStartRestTimer'),
 );
 
+final Signal<String> sLastShownWeeklySummaryKey = Signal<String>(
+  '',
+  options: const SignalOptions<String>(name: 'sLastShownWeeklySummaryKey'),
+);
+
 // Override textTheme for the XL fonts.
 const TextTheme _textThemeOverrides = TextTheme(
   displayLarge: TextStyle(fontFamily: 'Bebas Neue'),

@@ -1,3 +1,4 @@
+import 'package:gymply/modals/monthlysummary_modal.dart';
 import 'package:gymply/modals/workoutsummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
@@ -24,8 +25,15 @@ class MonthStatModal extends SignalStatefulWidget {
 }
 
 class _MonthStatModalState extends State<MonthStatModal> {
+  late DateTime _currentDate;
   // Default to Volume.
   WorkoutMetric _selectedMetric = WorkoutMetric.volume;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentDate = widget.date;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +42,14 @@ class _MonthStatModalState extends State<MonthStatModal> {
     // Watch Signals to ensure the modal rebuilds on deletion or changes.
     final List<Workout> history = sWorkoutHistory.value;
     final Workout active = sActiveWorkout.value;
+
+    // Collect only years containing recorded workouts + current year.
+    final Set<int> availableYears =
+        history.map((Workout w) => w.dateTime.year).toSet()
+          ..add(DateTime.now().year)
+          ..add(_currentDate.year);
+    final List<int> sortedYears = availableYears.toList()
+      ..sort((int a, int b) => b.compareTo(a));
 
     // Calculate workout keys dynamically.
     final Set<String> workoutDateKeys = history.map((Workout w) {
@@ -45,21 +61,21 @@ class _MonthStatModalState extends State<MonthStatModal> {
       workoutDateKeys.add(active.dateKey);
     }
 
-    final String monthName = DateFormat(
-      'MMMM yyyy',
-    ).format(widget.date).toUpperCase();
+    final String monthNameOnly = DateFormat(
+      'MMMM',
+    ).format(_currentDate).toUpperCase();
 
     // Calculate days in the month.
     final int daysInMonth = DateTime(
-      widget.date.year,
-      widget.date.month + 1,
+      _currentDate.year,
+      _currentDate.month + 1,
       0,
     ).day;
 
     // Monday-start offset (0-6).
     final int firstDayWeekday = DateTime(
-      widget.date.year,
-      widget.date.month,
+      _currentDate.year,
+      _currentDate.month,
     ).weekday;
     final int startOffset = firstDayWeekday - 1;
 
@@ -67,8 +83,8 @@ class _MonthStatModalState extends State<MonthStatModal> {
 
     // Filter workouts for this month.
     final List<Workout> monthWorkouts = history.where((Workout w) {
-      return w.dateTime.year == widget.date.year &&
-          w.dateTime.month == widget.date.month;
+      return w.dateTime.year == _currentDate.year &&
+          w.dateTime.month == _currentDate.month;
     }).toList();
 
     return Column(
@@ -79,11 +95,58 @@ class _MonthStatModalState extends State<MonthStatModal> {
             // Empty SizedBox to balance Icon and Text.
             const SizedBox(width: 48),
             Expanded(
-              child: Text(
-                // Month + Year.
-                monthName,
-                style: theme.textTheme.titleLarge,
-                textAlign: TextAlign.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('$monthNameOnly ', style: theme.textTheme.titleLarge),
+                  if (sortedYears.length > 1)
+                    PopupMenuButton<int>(
+                      initialValue: _currentDate.year,
+                      onSelected: (int year) {
+                        setState(() {
+                          _currentDate = DateTime(year, _currentDate.month);
+                        });
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            '${_currentDate.year}',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Icon(
+                            IconUtils.chevronDown,
+                            size: 18,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ],
+                      ),
+                      itemBuilder: (BuildContext context) {
+                        return sortedYears.map((int year) {
+                          return PopupMenuItem<int>(
+                            value: year,
+                            child: Text(
+                              year.toString(),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: year == _currentDate.year
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          );
+                        }).toList();
+                      },
+                    )
+                  else
+                    Text(
+                      '${_currentDate.year}',
+                      style: theme.textTheme.titleLarge,
+                    ),
+                ],
               ),
             ),
             IconButton(
@@ -140,8 +203,8 @@ class _MonthStatModalState extends State<MonthStatModal> {
 
                     final int day = index - startOffset + 1;
                     final DateTime currentDay = DateTime(
-                      widget.date.year,
-                      widget.date.month,
+                      _currentDate.year,
+                      _currentDate.month,
                       day,
                     );
                     final String key = DateFormat(
@@ -230,6 +293,24 @@ class _MonthStatModalState extends State<MonthStatModal> {
                     });
                   },
                 ),
+                const SizedBox(height: 24),
+
+                // Monthly Summary Button
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await ModalService.showModal(
+                        context: context,
+                        child: MonthlySummaryModal(date: _currentDate),
+                      );
+                    },
+                    icon: const Icon(IconUtils.statistics),
+                    label: const Text('MONTHLY SUMMARY'),
+                  ),
+                ),
+                const SizedBox(height: 8),
               ],
             ),
           ),

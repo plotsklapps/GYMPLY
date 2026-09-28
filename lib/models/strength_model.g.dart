@@ -25,13 +25,14 @@ class StrengthExerciseAdapter extends TypeAdapter<StrengthExercise> {
       sets: (fields[5] as List).cast<StrengthSet>(),
       weightInput: (fields[6] as num?)?.toDouble(),
       repsInput: (fields[7] as num?)?.toInt(),
+      notes: fields[8] == null ? '' : fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, StrengthExercise obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class StrengthExerciseAdapter extends TypeAdapter<StrengthExercise> {
       ..writeByte(6)
       ..write(obj.weightInput)
       ..writeByte(7)
-      ..write(obj.repsInput);
+      ..write(obj.repsInput)
+      ..writeByte(8)
+      ..write(obj.notes);
   }
 
   @override

@@ -1,17 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
+import 'package:gymply/modals/weeklysummary_modal.dart';
+import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
 import 'package:gymply/screens/feedscreen/feed_screen.dart';
 import 'package:gymply/screens/statisticsscreen/statistics_screen.dart';
 import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
+import 'package:gymply/services/settings_service.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:gymply/widgets/resttimer_widget.dart';
 import 'package:gymply/widgets/totaltimer_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
@@ -66,6 +74,64 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _recreateTabController(newLength);
       }
     });
+
+    // Auto-check for weekly summary on new week start.
+    _checkAndShowWeeklySummary();
+  }
+
+  void _checkAndShowWeeklySummary() {
+    final DateTime now = DateTime.now();
+    // Monday of the current week (Monday = 1, Sunday = 7).
+    final DateTime currentWeekMonday = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: now.weekday - 1));
+
+    // Previous week Monday & Sunday.
+    final DateTime prevWeekMonday = currentWeekMonday.subtract(
+      const Duration(days: 7),
+    );
+    final DateTime prevWeekSunday = prevWeekMonday.add(
+      const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+    );
+
+    final String prevWeekKey =
+        '${prevWeekMonday.year}_W${_getWeekOfYear(prevWeekMonday)}';
+
+    if (sLastShownWeeklySummaryKey.value == prevWeekKey) {
+      return;
+    }
+
+    final List<Workout> history = sWorkoutHistory.value;
+    final List<Workout> prevWeekWorkouts = history.where((Workout w) {
+      return w.dateTime.isAfter(
+            prevWeekMonday.subtract(const Duration(seconds: 1)),
+          ) &&
+          w.dateTime.isBefore(prevWeekSunday.add(const Duration(seconds: 1)));
+    }).toList();
+
+    if (prevWeekWorkouts.isNotEmpty) {
+      unawaited(settingsService.updateLastShownWeeklySummaryKey(prevWeekKey));
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (mounted) {
+          await ModalService.showModal(
+            context: context,
+            child: WeeklySummaryModal(
+              startDate: prevWeekMonday,
+              endDate: prevWeekSunday,
+              workouts: prevWeekWorkouts,
+            ),
+          );
+        }
+      });
+    }
+  }
+
+  int _getWeekOfYear(DateTime date) {
+    final int dayOfYear = int.parse(DateFormat('D').format(date));
+    return ((dayOfYear - date.weekday + 10) / 7).floor();
   }
 
   int _getClampedIndex(int index, int length) {

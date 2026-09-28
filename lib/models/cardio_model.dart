@@ -34,7 +34,7 @@ class CardioExercise extends WorkoutExercise {
   final Duration? restDurationInput;
   @HiveField(7)
   final double? distanceInput;
-  @HiveField(8)
+  @HiveField(11)
   final int? caloriesInput;
   @HiveField(9)
   final int? intensityInput;

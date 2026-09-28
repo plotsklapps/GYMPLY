@@ -93,6 +93,7 @@ class SettingsService with WidgetsBindingObserver {
     sExercisesGridMode.value = settings.isExercisesGridMode;
     sUseLbs.value = settings.useLbs;
     sAutoStartRestTimer.value = settings.isAutoStartRestTimer;
+    sLastShownWeeklySummaryKey.value = settings.lastShownWeeklySummaryKey;
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -167,6 +168,29 @@ class SettingsService with WidgetsBindingObserver {
       ToastService.showError(
         title: 'Settings Error',
         subtitle: 'Failed to update wakelock.',
+      );
+    }
+  }
+
+  // Update Last Shown Weekly Summary Key.
+  Future<void> updateLastShownWeeklySummaryKey(String key) async {
+    try {
+      sLastShownWeeklySummaryKey.value = key;
+
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(lastShownWeeklySummaryKey: key),
+        );
+      }
+
+      _logger.i('SettingsService: lastShownWeeklySummaryKey updated to $key');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to update lastShownWeeklySummaryKey',
+        error: e,
+        stackTrace: stackTrace,
       );
     }
   }

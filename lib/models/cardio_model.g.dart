@@ -25,16 +25,17 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       cardioDurationInput: fields[5] as Duration?,
       restDurationInput: fields[6] as Duration?,
       distanceInput: (fields[7] as num?)?.toDouble(),
-      caloriesInput: (fields[8] as num?)?.toInt(),
+      caloriesInput: (fields[11] as num?)?.toInt(),
       intensityInput: (fields[9] as num?)?.toInt(),
       repsInput: (fields[10] as num?)?.toInt(),
+      notes: fields[8] == null ? '' : fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, CardioExercise obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -52,11 +53,13 @@ class CardioExerciseAdapter extends TypeAdapter<CardioExercise> {
       ..writeByte(7)
       ..write(obj.distanceInput)
       ..writeByte(8)
-      ..write(obj.caloriesInput)
+      ..write(obj.notes)
       ..writeByte(9)
       ..write(obj.intensityInput)
       ..writeByte(10)
-      ..write(obj.repsInput);
+      ..write(obj.repsInput)
+      ..writeByte(11)
+      ..write(obj.caloriesInput);
   }
 
   @override

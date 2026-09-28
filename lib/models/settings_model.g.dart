@@ -37,13 +37,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       googleFontFamily: fields[16] as String?,
       useLbs: fields[17] == null ? false : fields[17] as bool,
       isAutoStartRestTimer: fields[18] == null ? false : fields[18] as bool,
+      lastShownWeeklySummaryKey: fields[19] == null ? '' : fields[19] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -79,7 +80,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(17)
       ..write(obj.useLbs)
       ..writeByte(18)
-      ..write(obj.isAutoStartRestTimer);
+      ..write(obj.isAutoStartRestTimer)
+      ..writeByte(19)
+      ..write(obj.lastShownWeeklySummaryKey);
   }
 
   @override

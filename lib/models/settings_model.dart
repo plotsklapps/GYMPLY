@@ -24,6 +24,7 @@ class Settings {
     this.googleFontFamily,
     this.useLbs = false,
     this.isAutoStartRestTimer = false,
+    this.lastShownWeeklySummaryKey = '',
   });
 
   @HiveField(0, defaultValue: true)
@@ -85,6 +86,9 @@ class Settings {
 
   @HiveField(18, defaultValue: false)
   final bool isAutoStartRestTimer;
+
+  @HiveField(19, defaultValue: '')
+  final String lastShownWeeklySummaryKey;
 
   FlexScheme get flexScheme {
     // If supporter, use saved Strin or default.
@@ -149,6 +153,7 @@ class Settings {
     String? googleFontFamily,
     bool? useLbs,
     bool? isAutoStartRestTimer,
+    String? lastShownWeeklySummaryKey,
   }) {
     // Map non-supporter FlexScheme enum choices to indexes.
     int updatedFlexSchemeIndex = flexSchemeIndex;
@@ -196,6 +201,8 @@ class Settings {
       googleFontFamily: googleFontFamily ?? this.googleFontFamily,
       useLbs: useLbs ?? this.useLbs,
       isAutoStartRestTimer: isAutoStartRestTimer ?? this.isAutoStartRestTimer,
+      lastShownWeeklySummaryKey:
+          lastShownWeeklySummaryKey ?? this.lastShownWeeklySummaryKey,
     );
   }
 }
