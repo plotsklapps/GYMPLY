@@ -624,21 +624,27 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                         children: yearPRs.take(10).map((
                           Map<String, dynamic> pr,
                         ) {
+                          final String exerciseName =
+                              (pr['exerciseName'] as String? ?? 'PR')
+                                  .toUpperCase();
+                          final String prType = (pr['type'] as String? ?? 'PR')
+                              .toUpperCase();
+                          final String detail = _formatPRDetail(pr, weightUnit);
+
                           return ListTile(
                             leading: const Icon(
                               IconUtils.medal,
                               color: Colors.amber,
                             ),
                             title: Text(
-                              pr['exerciseName'] as String,
+                              '$exerciseName $prType PR',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Text(pr['metric'] as String),
-                            trailing: Text(
-                              pr['value'] as String,
-                              style: theme.textTheme.titleMedium?.copyWith(
+                            subtitle: Text(
+                              detail,
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.secondary,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -763,5 +769,35 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
         ),
       ),
     );
+  }
+
+  String _formatPRDetail(Map<String, dynamic> pr, String weightUnit) {
+    final String type = (pr['type'] as String?) ?? '';
+    final dynamic val = pr['value'];
+
+    if (type == 'REP') {
+      if (val is num) {
+        return '${val.toStringAsFixed(1)} $weightUnit';
+      }
+    } else if (type == 'SET') {
+      final double weight = (pr['weight'] as num?)?.toDouble() ?? 0.0;
+      final int reps = (pr['reps'] as num?)?.toInt() ?? 0;
+      return '${weight.toStringAsFixed(1)} $weightUnit x $reps reps';
+    } else if (type == 'TOTAL') {
+      if (val is num) {
+        return '${val.toStringAsFixed(1)} $weightUnit Volume';
+      } else if (val is Duration) {
+        return val.format();
+      }
+    } else if (type == 'TIME' || type == 'HOLD') {
+      if (val is Duration) {
+        return val.format();
+      }
+    } else if (type == 'DIST') {
+      if (val is num) {
+        return '${val.toStringAsFixed(2)} km';
+      }
+    }
+    return val?.toString() ?? '';
   }
 }
