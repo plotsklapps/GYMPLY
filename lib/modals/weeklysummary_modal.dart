@@ -8,8 +8,6 @@ import 'package:gymply/services/atlas_service.dart';
 import 'package:gymply/services/textformat_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
-import 'package:gymply/signals/bodymetrics_signal.dart';
-import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:intl/intl.dart';
@@ -44,8 +42,12 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
     final ThemeData theme = Theme.of(context);
     final String weightUnit = sUseLbs.value ? 'lbs' : 'kg';
 
-    final String startStr = DateFormat('MMM d').format(widget.startDate).toUpperCase();
-    final String endStr = DateFormat('MMM d, yyyy').format(widget.endDate).toUpperCase();
+    final String startStr = DateFormat(
+      'MMM d',
+    ).format(widget.startDate).toUpperCase();
+    final String endStr = DateFormat(
+      'MMM d, yyyy',
+    ).format(widget.endDate).toUpperCase();
     final String rangeTitle = '$startStr - $endStr';
 
     final int totalWorkouts = widget.workouts.length;
@@ -81,10 +83,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
           val = ex is StrengthExercise ? ex.totalWeight : 0.0;
         } else if (_selectedMetric == SummaryMetric.sets) {
           val = ex.totalSets.toDouble();
-        } else if (_selectedMetric == SummaryMetric.reps) {
+        } else {
           val = ex is StrengthExercise ? ex.totalReps.toDouble() : 0.0;
-        } else if (_selectedMetric == SummaryMetric.exercises) {
-          val = 1.0;
         }
 
         exerciseMetricMap[ex.exerciseName] =
@@ -106,13 +106,16 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
 
     // Sort Muscle Groups
     final List<MapEntry<MuscleGroup, double>> sortedMuscles =
-        muscleMetricMap.entries.toList()
-          ..sort((MapEntry<MuscleGroup, double> a, MapEntry<MuscleGroup, double> b) {
-            return b.value.compareTo(a.value);
-          });
+        muscleMetricMap.entries.toList()..sort((
+          MapEntry<MuscleGroup, double> a,
+          MapEntry<MuscleGroup, double> b,
+        ) {
+          return b.value.compareTo(a.value);
+        });
 
-    final List<MapEntry<MuscleGroup, double>> top3Muscles =
-        sortedMuscles.take(3).toList();
+    final List<MapEntry<MuscleGroup, double>> top3Muscles = sortedMuscles
+        .take(3)
+        .toList();
 
     MuscleGroup? leastTrainedMuscle;
     for (final MuscleGroup mg in MuscleGroup.values) {
@@ -133,17 +136,21 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
           ..sort((MapEntry<String, double> a, MapEntry<String, double> b) {
             return b.value.compareTo(a.value);
           });
-    final List<MapEntry<String, double>> top3Exercises =
-        sortedExercises.take(3).toList();
+    final List<MapEntry<String, double>> top3Exercises = sortedExercises
+        .take(3)
+        .toList();
 
     // Top 3 Equipment
     final List<MapEntry<Equipment, double>> sortedEquipment =
-        equipmentMetricMap.entries.toList()
-          ..sort((MapEntry<Equipment, double> a, MapEntry<Equipment, double> b) {
-            return b.value.compareTo(a.value);
-          });
-    final List<MapEntry<Equipment, double>> top3Equipment =
-        sortedEquipment.take(3).toList();
+        equipmentMetricMap.entries.toList()..sort((
+          MapEntry<Equipment, double> a,
+          MapEntry<Equipment, double> b,
+        ) {
+          return b.value.compareTo(a.value);
+        });
+    final List<MapEntry<Equipment, double>> top3Equipment = sortedEquipment
+        .take(3)
+        .toList();
 
     // Peak Days
     Workout? peakVolumeWorkout;
@@ -273,11 +280,6 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                         label: Text('Reps'),
                         icon: Icon(IconUtils.speed, size: 16),
                       ),
-                      ButtonSegment<SummaryMetric>(
-                        value: SummaryMetric.exercises,
-                        label: Text('Exercises'),
-                        icon: Icon(IconUtils.dumbbell, size: 16),
-                      ),
                     ],
                     selected: <SummaryMetric>{_selectedMetric},
                     onSelectionChanged: (Set<SummaryMetric> selection) {
@@ -310,9 +312,7 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                               Expanded(
                                 child: SizedBox(
                                   height: 200,
-                                  child: atlas.BodyAtlasView<
-                                    atlas.MuscleInfo
-                                  >(
+                                  child: atlas.BodyAtlasView<atlas.MuscleInfo>(
                                     view: atlas.AtlasAsset.musclesFront,
                                     resolver: const atlas.MuscleResolver(),
                                     colorMapping: atlasColors,
@@ -322,9 +322,7 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                               Expanded(
                                 child: SizedBox(
                                   height: 200,
-                                  child: atlas.BodyAtlasView<
-                                    atlas.MuscleInfo
-                                  >(
+                                  child: atlas.BodyAtlasView<atlas.MuscleInfo>(
                                     view: atlas.AtlasAsset.musclesBack,
                                     resolver: const atlas.MuscleResolver(),
                                     colorMapping: atlasColors,
@@ -344,7 +342,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                                       theme,
                                       label: '#1 MOST FOCUS',
                                       muscleName: top3Muscles.isNotEmpty
-                                          ? top3Muscles[0].key.name.capitalizeFirst()
+                                          ? top3Muscles[0].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.isNotEmpty
                                           ? _formatMetricVal(
@@ -361,7 +360,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                                       theme,
                                       label: '#2 FOCUS',
                                       muscleName: top3Muscles.length > 1
-                                          ? top3Muscles[1].key.name.capitalizeFirst()
+                                          ? top3Muscles[1].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.length > 1
                                           ? _formatMetricVal(
@@ -382,7 +382,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                                       theme,
                                       label: '#3 FOCUS',
                                       muscleName: top3Muscles.length > 2
-                                          ? top3Muscles[2].key.name.capitalizeFirst()
+                                          ? top3Muscles[2].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.length > 2
                                           ? _formatMetricVal(
@@ -399,11 +400,13 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                                       theme,
                                       label: 'LEAST ATTENTION',
                                       muscleName: leastTrainedMuscle != null
-                                          ? leastTrainedMuscle.name.capitalizeFirst()
+                                          ? leastTrainedMuscle.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: leastTrainedMuscle != null
                                           ? _formatMetricVal(
-                                              muscleMetricMap[leastTrainedMuscle] ?? 0.0,
+                                              muscleMetricMap[leastTrainedMuscle] ??
+                                                  0.0,
                                               weightUnit,
                                             )
                                           : '-',
@@ -437,9 +440,9 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                       _buildPeakCard(
                         theme,
                         title: 'HIGHEST VOLUME DAY',
-                        subtitle: DateFormat('EEEE, MMM d').format(
-                          peakVolumeWorkout.dateTime,
-                        ),
+                        subtitle: DateFormat(
+                          'EEEE, MMM d',
+                        ).format(peakVolumeWorkout.dateTime),
                         value:
                             '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} $weightUnit',
                         icon: IconUtils.weight,
@@ -449,9 +452,9 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                       _buildPeakCard(
                         theme,
                         title: 'MOST SETS DAY',
-                        subtitle: DateFormat('EEEE, MMM d').format(
-                          peakSetsWorkout.dateTime,
-                        ),
+                        subtitle: DateFormat(
+                          'EEEE, MMM d',
+                        ).format(peakSetsWorkout.dateTime),
                         value: '${peakSetsWorkout.totalSets} SETS',
                         icon: IconUtils.numbers,
                       ),
@@ -460,9 +463,9 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                       _buildPeakCard(
                         theme,
                         title: 'MOST REPS DAY',
-                        subtitle: DateFormat('EEEE, MMM d').format(
-                          peakRepsWorkout.dateTime,
-                        ),
+                        subtitle: DateFormat(
+                          'EEEE, MMM d',
+                        ).format(peakRepsWorkout.dateTime),
                         value: '${peakRepsWorkout.totalReps} REPS',
                         icon: IconUtils.speed,
                       ),
@@ -488,7 +491,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                         children: List<Widget>.generate(top3Exercises.length, (
                           int i,
                         ) {
-                          final MapEntry<String, double> entry = top3Exercises[i];
+                          final MapEntry<String, double> entry =
+                              top3Exercises[i];
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundColor: i == 0
@@ -642,10 +646,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
       return '${val.toStringAsFixed(0)} $weightUnit';
     } else if (_selectedMetric == SummaryMetric.sets) {
       return '${val.toInt()} Sets';
-    } else if (_selectedMetric == SummaryMetric.reps) {
-      return '${val.toInt()} Reps';
     } else {
-      return '${val.toInt()} Exercises';
+      return '${val.toInt()} Reps';
     }
   }
 

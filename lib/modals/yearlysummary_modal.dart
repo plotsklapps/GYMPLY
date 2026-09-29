@@ -15,7 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 
-enum SummaryMetric { volume, sets, reps, exercises }
+enum SummaryMetric { volume, sets, reps }
 
 class YearlySummaryModal extends SignalStatefulWidget {
   const YearlySummaryModal({required this.year, super.key});
@@ -151,10 +151,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
           val = ex is StrengthExercise ? ex.totalWeight : 0.0;
         } else if (_selectedMetric == SummaryMetric.sets) {
           val = ex.totalSets.toDouble();
-        } else if (_selectedMetric == SummaryMetric.reps) {
+        } else {
           val = ex is StrengthExercise ? ex.totalReps.toDouble() : 0.0;
-        } else if (_selectedMetric == SummaryMetric.exercises) {
-          val = 1.0;
         }
 
         exerciseMetricMap[ex.exerciseName] =
@@ -176,13 +174,16 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
 
     // Sort Muscle Groups
     final List<MapEntry<MuscleGroup, double>> sortedMuscles =
-        muscleMetricMap.entries.toList()
-          ..sort((MapEntry<MuscleGroup, double> a, MapEntry<MuscleGroup, double> b) {
-            return b.value.compareTo(a.value);
-          });
+        muscleMetricMap.entries.toList()..sort((
+          MapEntry<MuscleGroup, double> a,
+          MapEntry<MuscleGroup, double> b,
+        ) {
+          return b.value.compareTo(a.value);
+        });
 
-    final List<MapEntry<MuscleGroup, double>> top3Muscles =
-        sortedMuscles.take(3).toList();
+    final List<MapEntry<MuscleGroup, double>> top3Muscles = sortedMuscles
+        .take(3)
+        .toList();
 
     MuscleGroup? leastTrainedMuscle;
     for (final MuscleGroup mg in MuscleGroup.values) {
@@ -203,17 +204,21 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
           ..sort((MapEntry<String, double> a, MapEntry<String, double> b) {
             return b.value.compareTo(a.value);
           });
-    final List<MapEntry<String, double>> top5Exercises =
-        sortedExercises.take(5).toList();
+    final List<MapEntry<String, double>> top5Exercises = sortedExercises
+        .take(5)
+        .toList();
 
     // Top 5 Equipment
     final List<MapEntry<Equipment, double>> sortedEquipment =
-        equipmentMetricMap.entries.toList()
-          ..sort((MapEntry<Equipment, double> a, MapEntry<Equipment, double> b) {
-            return b.value.compareTo(a.value);
-          });
-    final List<MapEntry<Equipment, double>> top5Equipment =
-        sortedEquipment.take(5).toList();
+        equipmentMetricMap.entries.toList()..sort((
+          MapEntry<Equipment, double> a,
+          MapEntry<Equipment, double> b,
+        ) {
+          return b.value.compareTo(a.value);
+        });
+    final List<MapEntry<Equipment, double>> top5Equipment = sortedEquipment
+        .take(5)
+        .toList();
 
     // Peak Days
     Workout? peakVolumeWorkout;
@@ -343,11 +348,6 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                         label: Text('Reps'),
                         icon: Icon(IconUtils.speed, size: 16),
                       ),
-                      ButtonSegment<SummaryMetric>(
-                        value: SummaryMetric.exercises,
-                        label: Text('Exercises'),
-                        icon: Icon(IconUtils.dumbbell, size: 16),
-                      ),
                     ],
                     selected: <SummaryMetric>{_selectedMetric},
                     onSelectionChanged: (Set<SummaryMetric> selection) {
@@ -436,9 +436,7 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                               Expanded(
                                 child: SizedBox(
                                   height: 200,
-                                  child: atlas.BodyAtlasView<
-                                    atlas.MuscleInfo
-                                  >(
+                                  child: atlas.BodyAtlasView<atlas.MuscleInfo>(
                                     view: atlas.AtlasAsset.musclesFront,
                                     resolver: const atlas.MuscleResolver(),
                                     colorMapping: atlasColors,
@@ -448,9 +446,7 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                               Expanded(
                                 child: SizedBox(
                                   height: 200,
-                                  child: atlas.BodyAtlasView<
-                                    atlas.MuscleInfo
-                                  >(
+                                  child: atlas.BodyAtlasView<atlas.MuscleInfo>(
                                     view: atlas.AtlasAsset.musclesBack,
                                     resolver: const atlas.MuscleResolver(),
                                     colorMapping: atlasColors,
@@ -470,7 +466,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                       theme,
                                       label: '#1 MOST FOCUS',
                                       muscleName: top3Muscles.isNotEmpty
-                                          ? top3Muscles[0].key.name.capitalizeFirst()
+                                          ? top3Muscles[0].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.isNotEmpty
                                           ? _formatMetricVal(
@@ -487,7 +484,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                       theme,
                                       label: '#2 FOCUS',
                                       muscleName: top3Muscles.length > 1
-                                          ? top3Muscles[1].key.name.capitalizeFirst()
+                                          ? top3Muscles[1].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.length > 1
                                           ? _formatMetricVal(
@@ -508,7 +506,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                       theme,
                                       label: '#3 FOCUS',
                                       muscleName: top3Muscles.length > 2
-                                          ? top3Muscles[2].key.name.capitalizeFirst()
+                                          ? top3Muscles[2].key.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: top3Muscles.length > 2
                                           ? _formatMetricVal(
@@ -525,11 +524,13 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                       theme,
                                       label: 'LEAST ATTENTION',
                                       muscleName: leastTrainedMuscle != null
-                                          ? leastTrainedMuscle.name.capitalizeFirst()
+                                          ? leastTrainedMuscle.name
+                                                .capitalizeFirst()
                                           : 'N/A',
                                       valStr: leastTrainedMuscle != null
                                           ? _formatMetricVal(
-                                              muscleMetricMap[leastTrainedMuscle] ?? 0.0,
+                                              muscleMetricMap[leastTrainedMuscle] ??
+                                                  0.0,
                                               weightUnit,
                                             )
                                           : '-',
@@ -614,7 +615,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                         children: List<Widget>.generate(top5Exercises.length, (
                           int i,
                         ) {
-                          final MapEntry<String, double> entry = top5Exercises[i];
+                          final MapEntry<String, double> entry =
+                              top5Exercises[i];
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundColor: i == 0
@@ -726,8 +728,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                           final String exerciseName =
                               (pr['exerciseName'] as String? ?? 'PR')
                                   .toUpperCase();
-                          final String prType =
-                              (pr['type'] as String? ?? 'PR').toUpperCase();
+                          final String prType = (pr['type'] as String? ?? 'PR')
+                              .toUpperCase();
                           final String detail = _formatPRDetail(pr, weightUnit);
 
                           return ListTile(
@@ -770,10 +772,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
       return '${val.toStringAsFixed(0)} $weightUnit';
     } else if (_selectedMetric == SummaryMetric.sets) {
       return '${val.toInt()} Sets';
-    } else if (_selectedMetric == SummaryMetric.reps) {
-      return '${val.toInt()} Reps';
     } else {
-      return '${val.toInt()} Exercises';
+      return '${val.toInt()} Reps';
     }
   }
 
