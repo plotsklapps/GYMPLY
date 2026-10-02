@@ -1,4 +1,5 @@
 import 'package:gymply/models/workout_model.dart';
+import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -37,6 +38,10 @@ class _SavePlannedWorkoutModalState extends State<SavePlannedWorkoutModal> {
     final ThemeData theme = Theme.of(context);
     final Workout workout = sActiveWorkout.value;
     final String defaultTitle = workout.dateTime.defaultWorkoutTitle;
+
+    final bool isAlreadySaved = sPlannedWorkouts.value.any((Workout w) {
+      return w.id == workout.id || w.dateKey == workout.dateKey;
+    });
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -113,7 +118,9 @@ class _SavePlannedWorkoutModalState extends State<SavePlannedWorkoutModal> {
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
                   labelText: 'Workout Title',
-                  hintText: defaultTitle,
+                  hintText: workout.title.isNotEmpty
+                      ? workout.title
+                      : defaultTitle,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
               ),
@@ -171,13 +178,46 @@ class _SavePlannedWorkoutModalState extends State<SavePlannedWorkoutModal> {
 
               const SizedBox(height: 24),
 
-              // Save Button
+              // Action Buttons
+              if (workout.exercises.isNotEmpty) ...<Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () async {
+                      final String title = _titleController.text.trim().isEmpty
+                          ? (workout.title.isNotEmpty
+                              ? workout.title
+                              : defaultTitle)
+                          : _titleController.text.trim();
+
+                      final Workout plannedToSave = workout.copyWith(
+                        title: title,
+                        isPlanned: true,
+                      );
+
+                      await workoutService.savePlannedWorkout(plannedToSave);
+                      sActiveWorkout.value = plannedToSave;
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        navigateToTab(AppTab.workout);
+                      }
+                    },
+                    icon: const Icon(IconUtils.edit),
+                    label: const Text('EDIT WORKOUT ON WORKOUTSCREEN'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.icon(
+                child: FilledButton.tonalIcon(
                   onPressed: () async {
                     final String title = _titleController.text.trim().isEmpty
-                        ? defaultTitle
+                        ? (workout.title.isNotEmpty
+                            ? workout.title
+                            : defaultTitle)
                         : _titleController.text.trim();
 
                     final Workout plannedToSave = workout.copyWith(
@@ -203,6 +243,36 @@ class _SavePlannedWorkoutModalState extends State<SavePlannedWorkoutModal> {
                   label: const Text('SAVE PLANNED WORKOUT'),
                 ),
               ),
+
+              if (isAlreadySaved) ...<Widget>[
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      await workoutService.deletePlannedWorkout(workout.id);
+
+                      // Reset active workout to fresh today session.
+                      sActiveWorkout.value = Workout(
+                        id: const Uuid().v4(),
+                        title: DateTime.now().defaultWorkoutTitle,
+                        dateTime: DateTime.now(),
+                        totalDuration: 0,
+                      );
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
+                      side: BorderSide(color: theme.colorScheme.error),
+                    ),
+                    icon: const Icon(IconUtils.delete),
+                    label: const Text('DELETE SCHEDULED WORKOUT'),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
