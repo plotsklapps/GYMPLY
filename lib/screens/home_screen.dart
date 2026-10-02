@@ -17,6 +17,7 @@ import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
@@ -282,8 +283,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    if (TotalTimer.sTotalTimerRunning.value) {
-                      // Live session: search/add exercises to active workout.
+                    final bool isTimerRunning =
+                        TotalTimer.sTotalTimerRunning.value;
+                    final Workout active = sActiveWorkout.value;
+                    final bool isAlreadyPlanning =
+                        active.isPlanned || active.exercises.isNotEmpty;
+
+                    if (isTimerRunning || isAlreadyPlanning) {
+                      // Live session or planning session in progress: search and add exercises directly.
                       await showModalBottomSheet<void>(
                         context: context,
                         showDragHandle: true,
@@ -293,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         },
                       );
                     } else {
-                      // Stopped session: select future date to plan workout.
+                      // Stopped session & fresh planning: select future date first.
                       await ModalService.showModal(
                         context: context,
                         child: const SelectPlannedDateModal(),
