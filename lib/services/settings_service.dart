@@ -94,6 +94,7 @@ class SettingsService with WidgetsBindingObserver {
     sUseLbs.value = settings.useLbs;
     sAutoStartRestTimer.value = settings.isAutoStartRestTimer;
     sLastShownWeeklySummaryKey.value = settings.lastShownWeeklySummaryKey;
+    sExerciseNotes.value = Map<int, String>.from(settings.exerciseNotes);
     _logger.i('SettingsService: Settings loaded');
   }
 
@@ -189,6 +190,39 @@ class SettingsService with WidgetsBindingObserver {
     } on Object catch (e, stackTrace) {
       _logger.e(
         'SettingsService: Failed to update lastShownWeeklySummaryKey',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  // Update global Exercise Note (single source of truth).
+  Future<void> updateExerciseNote(int exerciseId, String note) async {
+    try {
+      final Map<int, String> current = Map<int, String>.from(
+        sExerciseNotes.value,
+      );
+
+      if (note.trim().isEmpty) {
+        current.remove(exerciseId);
+      } else {
+        current[exerciseId] = note.trim();
+      }
+
+      sExerciseNotes.value = current;
+
+      final Settings? settings = _settingsBox.get('settings');
+      if (settings != null) {
+        await _settingsBox.put(
+          'settings',
+          settings.copyWith(exerciseNotes: current),
+        );
+      }
+
+      _logger.i('SettingsService: Exercise note updated for ID $exerciseId');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'SettingsService: Failed to update exercise note for $exerciseId',
         error: e,
         stackTrace: stackTrace,
       );

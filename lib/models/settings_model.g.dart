@@ -38,13 +38,16 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       useLbs: fields[17] == null ? false : fields[17] as bool,
       isAutoStartRestTimer: fields[18] == null ? false : fields[18] as bool,
       lastShownWeeklySummaryKey: fields[19] == null ? '' : fields[19] as String,
+      exerciseNotes: fields[20] == null
+          ? {}
+          : (fields[20] as Map).cast<int, String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.darkMode)
       ..writeByte(1)
@@ -82,7 +85,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(18)
       ..write(obj.isAutoStartRestTimer)
       ..writeByte(19)
-      ..write(obj.lastShownWeeklySummaryKey);
+      ..write(obj.lastShownWeeklySummaryKey)
+      ..writeByte(20)
+      ..write(obj.exerciseNotes);
   }
 
   @override

@@ -42,6 +42,11 @@ final Signal<String> sLastShownWeeklySummaryKey = Signal<String>(
   options: const SignalOptions<String>(name: 'sLastShownWeeklySummaryKey'),
 );
 
+final Signal<Map<int, String>> sExerciseNotes = Signal<Map<int, String>>(
+  const <int, String>{},
+  options: const SignalOptions<Map<int, String>>(name: 'sExerciseNotes'),
+);
+
 // Override textTheme for the XL fonts.
 const TextTheme _textThemeOverrides = TextTheme(
   displayLarge: TextStyle(fontFamily: 'Bebas Neue'),

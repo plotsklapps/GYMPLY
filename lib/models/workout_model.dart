@@ -247,5 +247,5 @@ abstract class WorkoutExercise {
   // Every exercise type must report its total number of sets.
   int get totalSets;
 
-  WorkoutExercise copyWith();
+  WorkoutExercise copyWith({String? notes});
 }

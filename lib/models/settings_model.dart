@@ -25,6 +25,7 @@ class Settings {
     this.useLbs = false,
     this.isAutoStartRestTimer = false,
     this.lastShownWeeklySummaryKey = '',
+    this.exerciseNotes = const <int, String>{},
   });
 
   @HiveField(0, defaultValue: true)
@@ -81,14 +82,21 @@ class Settings {
   @HiveField(16)
   final String? googleFontFamily;
 
+  // Weight units preference (true = LBS, false = KGs).
   @HiveField(17, defaultValue: false)
   final bool useLbs;
 
+  // Toggle auto-start rest timer upon set completion.
   @HiveField(18, defaultValue: false)
   final bool isAutoStartRestTimer;
 
+  // ISO week key (e.g. "2026_W41") for which weekly summary was last shown.
   @HiveField(19, defaultValue: '')
   final String lastShownWeeklySummaryKey;
+
+  // Single source of truth for exercise notes mapped by exercise ID.
+  @HiveField(20, defaultValue: <int, String>{})
+  final Map<int, String> exerciseNotes;
 
   FlexScheme get flexScheme {
     // If supporter, use saved Strin or default.
@@ -154,6 +162,7 @@ class Settings {
     bool? useLbs,
     bool? isAutoStartRestTimer,
     String? lastShownWeeklySummaryKey,
+    Map<int, String>? exerciseNotes,
   }) {
     // Map non-supporter FlexScheme enum choices to indexes.
     int updatedFlexSchemeIndex = flexSchemeIndex;
@@ -203,6 +212,7 @@ class Settings {
       isAutoStartRestTimer: isAutoStartRestTimer ?? this.isAutoStartRestTimer,
       lastShownWeeklySummaryKey:
           lastShownWeeklySummaryKey ?? this.lastShownWeeklySummaryKey,
+      exerciseNotes: exerciseNotes ?? this.exerciseNotes,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:gymply/models/cardio_model.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/personalrecord_model.dart';
@@ -5,6 +7,7 @@ import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/hive_service.dart';
+import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
@@ -63,6 +66,16 @@ class WorkoutService {
       '${sWorkoutHistory.value.length} workouts from history and '
       '${sPlannedWorkouts.value.length} planned workouts',
     );
+
+    // Seed global exercise notes from history for existing Play Store users
+    for (final Workout w in sWorkoutHistory.value) {
+      for (final WorkoutExercise ex in w.exercises) {
+        if (ex.notes.trim().isNotEmpty &&
+            !sExerciseNotes.value.containsKey(ex.id)) {
+          unawaited(settingsService.updateExerciseNote(ex.id, ex.notes));
+        }
+      }
+    }
 
     // Check if there's a workout for today.
     final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
@@ -291,30 +304,36 @@ class WorkoutService {
     final bool isCardio = path.muscleSegment == 'Cardio';
     final bool isStretch = path.equipmentSegment == 'Stretch';
 
+    // Retrieve latest note from single source of truth.
+    final int exerciseId = int.parse(path.id);
+    final String initialNote = sExerciseNotes.value[exerciseId] ?? '';
+
     if (isCardio) {
       newExercise = CardioExercise(
-        id: int.parse(path.id),
+        id: exerciseId,
         exerciseName: path.exerciseName,
         imagePath: path.fullPath,
         equipment: Equipment.values.byName(path.equipmentSegment.toLowerCase()),
         sets: <CardioSet>[],
+        notes: initialNote,
       );
 
       // Log exercise addition.
       _logger.i('WorkoutService: Adding exercise: ${path.exerciseName}');
     } else if (isStretch) {
       newExercise = StretchExercise(
-        id: int.parse(path.id),
+        id: exerciseId,
         exerciseName: path.exerciseName,
         imagePath: path.fullPath,
         sets: <StretchSet>[],
+        notes: initialNote,
       );
 
       // Log exercise addition.
       _logger.i('WorkoutService: Adding exercise: ${path.exerciseName}');
     } else {
       newExercise = StrengthExercise(
-        id: int.parse(path.id),
+        id: exerciseId,
         exerciseName: path.exerciseName,
         imagePath: path.fullPath,
         muscleGroup: MuscleGroup.values.byName(
@@ -322,6 +341,7 @@ class WorkoutService {
         ),
         equipment: Equipment.values.byName(path.equipmentSegment.toLowerCase()),
         sets: <StrengthSet>[],
+        notes: initialNote,
       );
 
       // Log exercise addition.
@@ -487,6 +507,9 @@ class WorkoutService {
     }
 
     _replaceExercise(exercise, updatedExercise);
+
+    // Save to global single source of truth in Settings.
+    unawaited(settingsService.updateExerciseNote(exercise.id, notes));
 
     _logger.i('WorkoutService: Updated notes for ${exercise.exerciseName}');
   }
@@ -761,17 +784,25 @@ class WorkoutService {
     final List<WorkoutExercise> exercisesToAdd = <WorkoutExercise>[];
 
     for (final WorkoutExercise ex in workoutToCopy.exercises) {
+      final String latestNote = sExerciseNotes.value[ex.id] ?? ex.notes;
+
       if (keepValues) {
-        exercisesToAdd.add(ex.copyWith());
+        exercisesToAdd.add(ex.copyWith(notes: latestNote));
       } else {
         if (ex is StrengthExercise) {
-          exercisesToAdd.add(ex.copyWith(sets: <StrengthSet>[]));
+          exercisesToAdd.add(
+            ex.copyWith(sets: <StrengthSet>[], notes: latestNote),
+          );
         } else if (ex is CardioExercise) {
-          exercisesToAdd.add(ex.copyWith(sets: <CardioSet>[]));
+          exercisesToAdd.add(
+            ex.copyWith(sets: <CardioSet>[], notes: latestNote),
+          );
         } else if (ex is StretchExercise) {
-          exercisesToAdd.add(ex.copyWith(sets: <StretchSet>[]));
+          exercisesToAdd.add(
+            ex.copyWith(sets: <StretchSet>[], notes: latestNote),
+          );
         } else {
-          exercisesToAdd.add(ex.copyWith());
+          exercisesToAdd.add(ex.copyWith(notes: latestNote));
         }
       }
     }
