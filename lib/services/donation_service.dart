@@ -23,35 +23,24 @@ class DonationService {
   static const String idYearly = 'support_yearly';
 
   // Subscription IDs.
-  static const Set<String> _kIds = <String>{
-    idMonthly,
-    idYearly,
-  };
+  static const Set<String> _kIds = <String>{idMonthly, idYearly};
 
   // Signals for state management.
   final Signal<bool> sIsAvailable = Signal<bool>(
     false,
-    options: const SignalOptions<bool>(
-      name: 'sIsAvailable',
-    ),
+    options: const SignalOptions<bool>(name: 'sIsAvailable'),
   );
   final Signal<bool> sIsLoading = Signal<bool>(
     false,
-    options: const SignalOptions<bool>(
-      name: 'sIsLoading',
-    ),
+    options: const SignalOptions<bool>(name: 'sIsLoading'),
   );
   final Signal<List<ProductDetails>> sProducts = Signal<List<ProductDetails>>(
     <ProductDetails>[],
-    options: const SignalOptions<List<ProductDetails>>(
-      name: 'sProducts',
-    ),
+    options: const SignalOptions<List<ProductDetails>>(name: 'sProducts'),
   );
   final Signal<bool> sIsSupporter = Signal<bool>(
     false,
-    options: const SignalOptions<bool>(
-      name: 'sIsSupporter',
-    ),
+    options: const SignalOptions<bool>(name: 'sIsSupporter'),
   );
 
   // Initialize the service.
@@ -133,9 +122,7 @@ class DonationService {
 
   // Start a purchase. All remaining products are subscriptions.
   Future<void> buyProduct(ProductDetails product) async {
-    final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: product,
-    );
+    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
     await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 

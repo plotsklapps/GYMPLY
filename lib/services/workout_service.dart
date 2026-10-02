@@ -18,6 +18,11 @@ import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+final Signal<List<Workout>> sPlannedWorkouts = Signal<List<Workout>>(
+  <Workout>[],
+  options: const SignalOptions<List<Workout>>(name: 'sPlannedWorkouts'),
+);
+
 // Central provider managing state and logic of active and completed
 // workouts. It knows how to train.
 //
@@ -37,6 +42,7 @@ class WorkoutService {
 
   // Hive boxes.
   late Box<Workout> _workoutBox;
+  late Box<Workout> _plannedWorkoutBox;
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
@@ -45,19 +51,26 @@ class WorkoutService {
 
     // Retrieve Hive boxes from HiveService.
     _workoutBox = hiveService.workoutBox;
+    _plannedWorkoutBox = hiveService.plannedWorkoutBox;
 
-    // Load all workouts into sWorkoutHistory Signal.
+    // Load all workouts into Signals.
     sWorkoutHistory.value = _workoutBox.values.toList();
+    sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
 
     // Log workout history list length.
     _logger.i(
       'WorkoutService: Loaded '
-      '${sWorkoutHistory.value.length} workouts from history',
+      '${sWorkoutHistory.value.length} workouts from history and '
+      '${sPlannedWorkouts.value.length} planned workouts',
     );
 
     // Check if there's a workout for today.
     final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
     final Workout? todayWorkout = _workoutBox.get(todayKey);
+
+    final Workout? plannedToday = _plannedWorkoutBox.values.where((Workout w) {
+      return w.dateKey == todayKey;
+    }).firstOrNull;
 
     if (todayWorkout != null) {
       // Set today's workout to the active workout.
@@ -71,6 +84,19 @@ class WorkoutService {
         'WorkoutService: '
         'Resuming current session ($todayKey) with '
         '${todayWorkout.exercises.length} exercises',
+      );
+    } else if (plannedToday != null) {
+      // Pre-load planned workout for today into active workout seamlessly.
+      sActiveWorkout.value = plannedToday.copyWith(
+        dateTime: DateTime.now(),
+        isPlanned: true,
+      );
+      TotalTimer().syncTotalTime(0);
+
+      _logger.i(
+        'WorkoutService: '
+        "Pre-loaded today's planned workout ($todayKey) with "
+        '${plannedToday.exercises.length} exercises',
       );
     } else {
       // Log no workout found.
@@ -200,6 +226,54 @@ class WorkoutService {
       ToastService.showError(
         title: 'Workout Error',
         subtitle: 'Failed to delete workout.',
+      );
+    }
+  }
+
+  // Save a planned/scheduled workout for a future date.
+  Future<void> savePlannedWorkout(Workout workout) async {
+    try {
+      final Workout plannedEntry = workout.copyWith(isPlanned: true);
+      await _plannedWorkoutBox.put(plannedEntry.id, plannedEntry);
+      sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
+
+      final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
+      if (plannedEntry.dateKey == todayKey) {
+        sActiveWorkout.value = plannedEntry;
+      }
+
+      _logger.i(
+        'WorkoutService: Saved planned workout for ${plannedEntry.dateKey}',
+      );
+      ToastService.showSuccess(
+        title: 'Workout Scheduled',
+        subtitle:
+            'Planned for ${DateFormat.yMMMMd().format(plannedEntry.dateTime)}',
+      );
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'WorkoutService: Failed to save planned workout',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ToastService.showError(
+        title: 'Planning Error',
+        subtitle: 'Failed to schedule workout.',
+      );
+    }
+  }
+
+  // Delete a planned workout.
+  Future<void> deletePlannedWorkout(String id) async {
+    try {
+      await _plannedWorkoutBox.delete(id);
+      sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
+      _logger.i('WorkoutService: Deleted planned workout $id');
+    } on Object catch (e, stackTrace) {
+      _logger.e(
+        'WorkoutService: Failed to delete planned workout',
+        error: e,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -414,9 +488,7 @@ class WorkoutService {
 
     _replaceExercise(exercise, updatedExercise);
 
-    _logger.i(
-      'WorkoutService: Updated notes for ${exercise.exerciseName}',
-    );
+    _logger.i('WorkoutService: Updated notes for ${exercise.exerciseName}');
   }
 
   // Add set to StrengthExercise Object.

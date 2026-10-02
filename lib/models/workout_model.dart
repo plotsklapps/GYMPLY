@@ -17,6 +17,7 @@ class Workout {
     this.exercises = const <WorkoutExercise>[],
     this.notes = '',
     this.imagePaths = const <String>[],
+    this.isPlanned = false,
   });
 
   @HiveField(0, defaultValue: '')
@@ -33,22 +34,27 @@ class Workout {
   final String notes;
   @HiveField(6, defaultValue: <String>[])
   final List<String> imagePaths;
+  @HiveField(7, defaultValue: false)
+  final bool isPlanned;
 
   Workout copyWith({
     String? title,
+    DateTime? dateTime,
     int? totalDuration,
     List<WorkoutExercise>? exercises,
     String? notes,
     List<String>? imagePaths,
+    bool? isPlanned,
   }) {
     return Workout(
       id: id,
       title: title ?? this.title,
-      dateTime: dateTime,
+      dateTime: dateTime ?? this.dateTime,
       totalDuration: totalDuration ?? this.totalDuration,
       exercises: exercises ?? this.exercises,
       notes: notes ?? this.notes,
       imagePaths: imagePaths ?? this.imagePaths,
+      isPlanned: isPlanned ?? this.isPlanned,
     );
   }
 

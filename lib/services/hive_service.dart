@@ -25,17 +25,23 @@ class HiveService {
 
   // Hive boxes.
   late Box<Workout> _workoutBox;
+  late Box<Workout> _plannedWorkoutBox;
   late Box<Settings> _settingsBox;
   late Box<BodyMetric> _bodyMetricsBox;
 
   // Box names.
   static const String _workoutBoxName = 'workouts';
+  static const String _plannedWorkoutBoxName = 'planned_workouts';
   static const String _settingsBoxName = 'settings';
   static const String _bodyMetricsBoxName = 'bodymetrics';
 
   // Getters for boxes.
   Box<Workout> get workoutBox {
     return _workoutBox;
+  }
+
+  Box<Workout> get plannedWorkoutBox {
+    return _plannedWorkoutBox;
   }
 
   Box<Settings> get settingsBox {
@@ -51,6 +57,7 @@ class HiveService {
     try {
       // Open or create Hive boxes.
       _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
+      _plannedWorkoutBox = await Hive.openBox<Workout>(_plannedWorkoutBoxName);
       _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
       _bodyMetricsBox = await Hive.openBox<BodyMetric>(_bodyMetricsBoxName);
 

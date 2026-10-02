@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
+import 'package:gymply/modals/saveplannedworkout_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
+import 'package:gymply/modals/selectplanneddate_modal.dart';
 import 'package:gymply/modals/weeklysummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
@@ -14,6 +16,7 @@ import 'package:gymply/screens/workout_screen.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/settings_service.dart';
+import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
@@ -253,11 +256,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    // Open save workout modal.
-                    await ModalService.showModal(
-                      context: context,
-                      child: const SaveWorkoutModal(),
-                    );
+                    if (TotalTimer.sTotalTimerRunning.value) {
+                      // Live session: save completed workout.
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SaveWorkoutModal(),
+                      );
+                    } else {
+                      // Stopped session: save planned/scheduled workout.
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SavePlannedWorkoutModal(),
+                      );
+                    }
                   }
                 },
                 child: const Icon(IconUtils.stop),
@@ -271,14 +282,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    await showModalBottomSheet<void>(
-                      context: context,
-                      showDragHandle: true,
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return const SearchModal();
-                      },
-                    );
+                    if (TotalTimer.sTotalTimerRunning.value) {
+                      // Live session: search/add exercises to active workout.
+                      await showModalBottomSheet<void>(
+                        context: context,
+                        showDragHandle: true,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return const SearchModal();
+                        },
+                      );
+                    } else {
+                      // Stopped session: select future date to plan workout.
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SelectPlannedDateModal(),
+                      );
+                    }
                   }
                 },
                 child: const Icon(IconUtils.add),

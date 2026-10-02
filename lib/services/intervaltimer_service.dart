@@ -184,7 +184,7 @@ class IntervalTimer {
           sElapsedIntervalTime.value = 0;
 
           // Only play sound via AudioPlayer if app is in foreground on iOS.
-          // On iOS in background, scheduled OS notification handles the sound natively.
+          // On iOS in background, scheduled OS notification handles sound.
           // On Android, background service handles audio.
           final bool isForeground =
               WidgetsBinding.instance.lifecycleState ==

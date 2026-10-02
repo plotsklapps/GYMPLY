@@ -114,7 +114,7 @@ class RestTimer {
           sElapsedRestTime.value = 0;
 
           // Only play sound via AudioPlayer if app is in foreground on iOS.
-          // On iOS in background, scheduled OS notification handles the sound natively.
+          // On iOS in background, scheduled OS notification handles sound.
           final bool isForeground =
               WidgetsBinding.instance.lifecycleState ==
               AppLifecycleState.resumed;

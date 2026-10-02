@@ -21,14 +21,15 @@ class AudioService {
   /// Initializes audioplayer and sets Android context.
   Future<void> initialize() async {
     if (_isInitialized) return;
-    return _initFuture ??= _performInitialization();
+    return await (_initFuture ??= _performInitialization());
   }
 
   Future<void> _performInitialization() async {
     try {
       _logger.i('AudioService: Initializing native Android audio context...');
 
-      // Make phone audio duck and configure iOS session for background playback.
+      // Make phone audio duck and configure iOS session
+      // for background playback.
       await _player.setAudioContext(
         AudioContext(
           android: const AudioContextAndroid(

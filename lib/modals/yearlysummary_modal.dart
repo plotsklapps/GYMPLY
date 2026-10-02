@@ -401,7 +401,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                       ),
                                 ),
                                 Text(
-                                  '${busiestMonthEntry.value} Workouts completed',
+                                  '${busiestMonthEntry.value} Workouts '
+                                  'completed',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: theme.colorScheme.onSecondary,
                                   ),
@@ -568,7 +569,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                           peakVolumeWorkout.dateTime,
                         ),
                         value:
-                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} $weightUnit',
+                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} '
+                            '$weightUnit',
                         icon: IconUtils.weight,
                       ),
                     if (peakSetsWorkout != null &&

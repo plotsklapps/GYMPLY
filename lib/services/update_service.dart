@@ -123,10 +123,7 @@ class UpdateService {
       _logger.e('UpdateService: Error checking for updates: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: 'Update check failed',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Update check failed', subtitle: '$e');
     } finally {
       sIsCheckingForUpdate.value = false;
     }

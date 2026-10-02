@@ -76,13 +76,13 @@ class BodyMetricsService {
       );
 
       // Check if an entry for today already exists.
-      final int existingIndex = _bodyMetricsBox.values.toList().indexWhere(
-        (BodyMetric m) {
-          return m.date.year == now.year &&
-              m.date.month == now.month &&
-              m.date.day == now.day;
-        },
-      );
+      final int existingIndex = _bodyMetricsBox.values.toList().indexWhere((
+        BodyMetric m,
+      ) {
+        return m.date.year == now.year &&
+            m.date.month == now.month &&
+            m.date.day == now.day;
+      });
 
       if (existingIndex != -1) {
         // Update existing entry for today.

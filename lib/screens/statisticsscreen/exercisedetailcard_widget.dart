@@ -85,7 +85,11 @@ class ExerciseDetailCard extends SignalWidget {
         ExerciseDetailRow(
           label: 'Calories',
           value:
-              '${ex.calculateTotalCalories(userWeight: userWeightKg, userAge: userAge, userSex: userSex)} kcal',
+              '${ex.calculateTotalCalories(
+                userWeight: userWeightKg,
+                userAge: userAge,
+                userSex: userSex,
+              )} kcal',
         ),
       ]);
     } else if (exercise is StretchExercise) {

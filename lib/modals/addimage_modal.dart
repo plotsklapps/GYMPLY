@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 Future<ImageSource?> addImageModal(BuildContext context) async {
   final ThemeData theme = Theme.of(context);
 
-  return showModalBottomSheet<ImageSource>(
+  return await showModalBottomSheet<ImageSource>(
     showDragHandle: true,
     isScrollControlled: true,
     useSafeArea: true,

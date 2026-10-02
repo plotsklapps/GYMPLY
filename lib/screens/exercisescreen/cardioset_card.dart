@@ -40,8 +40,13 @@ class CardioSetCard extends StatelessWidget {
           final String distanceLabel = set.distance != null
               ? ' • ${set.distance!.toStringAsFixed(2)} km'
               : '';
+          final int setCalories = set.calculateEstimatedCalories(
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          );
           final String caloriesLabel = userWeight > 0
-              ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal'
+              ? ' • $setCalories kcal'
               : '';
           final String repsLabel = (set.reps != null && set.reps! > 0)
               ? ' • ${set.reps} reps'

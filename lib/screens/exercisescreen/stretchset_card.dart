@@ -37,8 +37,13 @@ class StretchSetCard extends StatelessWidget {
           final String modeLabel = set.restDuration == Duration.zero
               ? 'STOPWATCH'
               : 'INTERVAL';
+          final int setCalories = set.calculateEstimatedCalories(
+            userWeight: userWeight,
+            userAge: userAge,
+            userSex: userSex,
+          );
           final String caloriesLabel = userWeight > 0
-              ? ' • ${set.calculateEstimatedCalories(userWeight: userWeight, userAge: userAge, userSex: userSex)} kcal'
+              ? ' • $setCalories kcal'
               : '';
 
           return Card(

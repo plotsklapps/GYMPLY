@@ -444,7 +444,8 @@ class _WeeklySummaryModalState extends State<WeeklySummaryModal> {
                           'EEEE, MMM d',
                         ).format(peakVolumeWorkout.dateTime),
                         value:
-                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} $weightUnit',
+                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} '
+                            '$weightUnit',
                         icon: IconUtils.weight,
                       ),
                     if (peakSetsWorkout != null &&

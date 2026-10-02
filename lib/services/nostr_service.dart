@@ -208,9 +208,7 @@ class NostrService {
       // Load metadata from NDK with a timeout to prevent hanging.
       return await _ndk.metadata
           .loadMetadata(hex)
-          .timeout(
-            const Duration(seconds: 5),
-          );
+          .timeout(const Duration(seconds: 5));
     } on Object catch (e) {
       // Log error.
       _logger.w('Failed to load metadata for $pubkey: $e');
@@ -364,11 +362,9 @@ class NostrService {
 
     // Instant UI injection (no need to refresh feed).
     final List<Nip01Event> newList = <Nip01Event>[event, ...sFeedEvents.value]
-      ..sort(
-        (Nip01Event a, Nip01Event b) {
-          return b.createdAt.compareTo(a.createdAt);
-        },
-      );
+      ..sort((Nip01Event a, Nip01Event b) {
+        return b.createdAt.compareTo(a.createdAt);
+      });
     sFeedEvents.value = newList;
   }
 
@@ -536,10 +532,7 @@ class NostrService {
       _logger.e('Failed to send reaction: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: "Reaction 'Like' Failed",
-        subtitle: '$e',
-      );
+      ToastService.showError(title: "Reaction 'Like' Failed", subtitle: '$e');
     }
   }
 
@@ -589,10 +582,7 @@ class NostrService {
       _logger.e('Failed to broadcast deletion request: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: 'Deletion Request Failed',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Deletion Request Failed', subtitle: '$e');
     }
   }
 
@@ -624,11 +614,10 @@ class NostrService {
             })) {
               // Update Feed List (newest first).
               final List<Nip01Event> newList =
-                  <Nip01Event>[event, ...sFeedEvents.value]..sort(
-                    (Nip01Event a, Nip01Event b) {
+                  <Nip01Event>[event, ...sFeedEvents.value]
+                    ..sort((Nip01Event a, Nip01Event b) {
                       return b.createdAt.compareTo(a.createdAt);
-                    },
-                  );
+                    });
               // Set Signal.
               sFeedEvents.value = newList;
 
@@ -813,10 +802,7 @@ class NostrService {
       _logger.e('Could not resolve metadata for $pubkey: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: 'Error Resolving Metadata',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Error Resolving Metadata', subtitle: '$e');
     }
   }
 
@@ -941,10 +927,7 @@ class NostrService {
       _logger.e('Error generating keys: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: 'Error Generating Keys',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Error Generating Keys', subtitle: '$e');
 
       return false;
     }
@@ -1006,10 +989,7 @@ class NostrService {
       _logger.e('Error using existing keys: $e');
 
       // Show toast to user.
-      ToastService.showError(
-        title: 'Error Importing Keys',
-        subtitle: '$e',
-      );
+      ToastService.showError(title: 'Error Importing Keys', subtitle: '$e');
 
       return false;
     }
@@ -1039,7 +1019,7 @@ class NostrService {
 
   // Get nsec from secure storage.
   Future<String?> getNsec() async {
-    return _storage.read(key: 'nostr_nsec');
+    return await _storage.read(key: 'nostr_nsec');
   }
 }
 

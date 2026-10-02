@@ -26,13 +26,14 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
           : (fields[4] as List).cast<WorkoutExercise>(),
       notes: fields[5] == null ? '' : fields[5] as String,
       imagePaths: fields[6] == null ? [] : (fields[6] as List).cast<String>(),
+      isPlanned: fields[7] == null ? false : fields[7] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Workout obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -46,7 +47,9 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       ..writeByte(5)
       ..write(obj.notes)
       ..writeByte(6)
-      ..write(obj.imagePaths);
+      ..write(obj.imagePaths)
+      ..writeByte(7)
+      ..write(obj.isPlanned);
   }
 
   @override

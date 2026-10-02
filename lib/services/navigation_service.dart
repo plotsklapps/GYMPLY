@@ -7,12 +7,9 @@ enum AppTab { feed, stats, workout, exercise }
 
 // Computed Signal for Feed visibility.
 // Shows only if user has a pubkey AND is online.
-final Computed<bool> cShowFeed = Computed<bool>(
-  () {
-    return nostrService.sNpub.value != null && sIsOnline.value;
-  },
-  options: const ComputedOptions<bool>(name: 'cShowFeed'),
-);
+final Computed<bool> cShowFeed = Computed<bool>(() {
+  return nostrService.sNpub.value != null && sIsOnline.value;
+}, options: const ComputedOptions<bool>(name: 'cShowFeed'));
 
 // Int Signal to track current physical tab index. Default to 1 (Statistics).
 final Signal<int> sCurrentTab = Signal<int>(

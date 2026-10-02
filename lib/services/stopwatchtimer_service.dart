@@ -26,13 +26,10 @@ class StopwatchTimer {
   );
 
   // Computed Signal for formatted time.
-  static final Computed<String> cFormattedStopwatchTime = Computed<String>(
-    () {
-      // Using centiseconds to provide stopwatch 'feel'.
-      return sElapsedStopwatchTime.value.formatHMMSSCC();
-    },
-    options: const ComputedOptions<String>(name: 'cFormattedStopwatchTime'),
-  );
+  static final Computed<String> cFormattedStopwatchTime = Computed<String>(() {
+    // Using centiseconds to provide stopwatch 'feel'.
+    return sElapsedStopwatchTime.value.formatHMMSSCC();
+  }, options: const ComputedOptions<String>(name: 'cFormattedStopwatchTime'));
 
   // Bool Signal to track if stopwatch is running.
   static final Signal<bool> sStopwatchTimerRunning = Signal<bool>(
