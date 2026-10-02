@@ -2,6 +2,7 @@ import 'package:gymply/modals/saveplannedworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -344,7 +345,7 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
                   ),
                   subtitle: Text(
                     plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                        ? 'Has a scheduled workout • Tap to view/edit'
+                        ? 'Has a scheduled workout • Tap for options'
                         : 'No workout scheduled yet',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
@@ -376,14 +377,11 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
                     Navigator.pop(context);
 
                     if (existingPlanned != null) {
+                      // Directly edit workout on WorkoutScreen!
                       sActiveWorkout.value = existingPlanned;
-                      if (context.mounted) {
-                        await ModalService.showModal(
-                          context: context,
-                          child: const SavePlannedWorkoutModal(),
-                        );
-                      }
+                      navigateToTab(AppTab.workout);
                     } else {
+                      // Create new planned workout session and open exercise search.
                       sActiveWorkout.value = Workout(
                         id: const Uuid().v4(),
                         title: _selectedDate.defaultWorkoutTitle,
@@ -411,7 +409,7 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
                   ),
                   label: Text(
                     plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                        ? 'VIEW / EDIT SCHEDULED WORKOUT'
+                        ? 'EDIT SCHEDULED WORKOUT'
                         : 'ADD EXERCISES FOR THIS DATE',
                   ),
                 ),
