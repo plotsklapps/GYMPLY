@@ -1,3 +1,4 @@
+import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/saveplannedworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -6,6 +7,7 @@ import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
+import 'package:gymply/signals/workouthistory_signal.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
@@ -414,6 +416,79 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
                   ),
                 ),
               ),
+
+              // Recent Workouts to Copy Section
+              if (sWorkoutHistory.value.isNotEmpty &&
+                  !plannedDateKeys.contains(
+                    _selectedDate.yyyyMMdd,
+                  )) ...<Widget>[
+                const SizedBox(height: 24),
+                Row(
+                  children: <Widget>[
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'OR COPY A RECENT WORKOUT',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                ...sWorkoutHistory.value.reversed.take(6).map((Workout w) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      onTap: () async {
+                        final bool? copied = await ModalService.showModal(
+                          context: context,
+                          child: CopyWorkoutModal(
+                            workout: w,
+                            initialTargetDate: _selectedDate,
+                          ),
+                        );
+                        if (copied == true && context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      leading: CircleAvatar(
+                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
+                        child: Icon(
+                          IconUtils.dumbbell,
+                          size: 20,
+                          color: theme.colorScheme.secondary,
+                        ),
+                      ),
+                      title: Text(
+                        w.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(
+                        '${w.formattedDate} • ${w.exercises.length} exercises',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                      trailing: Icon(
+                        IconUtils.chevronRight,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                  );
+                }),
+              ],
+
               const SizedBox(height: 8),
             ],
           ),
