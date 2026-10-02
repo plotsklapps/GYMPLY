@@ -58,7 +58,6 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
       _viewDate.month + 1,
       0,
     ).day;
-    // Monday-start offset (1 = Mon, 7 = Sun) -> offset 0 to 6
     final int firstDayWeekday = DateTime(
       _viewDate.year,
       _viewDate.month,
@@ -107,390 +106,397 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
           ],
         ),
         const Divider(),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            children: <Widget>[
-              // Month Selector Controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
                 children: <Widget>[
-                  IconButton(
-                    onPressed: isCanGoBack
-                        ? () {
-                            setState(() {
-                              _viewDate = DateTime(
-                                _viewDate.year,
-                                _viewDate.month - 1,
-                              );
-                            });
-                          }
-                        : null,
-                    icon: Icon(
-                      IconUtils.chevronLeft,
-                      color: isCanGoBack
-                          ? theme.colorScheme.onSurface
-                          : theme.colorScheme.outlineVariant,
-                    ),
-                  ),
-                  Text(
-                    DateFormat('MMMM yyyy').format(_viewDate).toUpperCase(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.secondary,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _viewDate = DateTime(
-                          _viewDate.year,
-                          _viewDate.month + 1,
-                        );
-                      });
-                    },
-                    icon: const Icon(IconUtils.chevronRight),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-
-              // Weekday Header Row (Monday = Column 1, Sunday = Column 7)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: weekdays.map((String day) {
-                  return Expanded(
-                    child: Center(
-                      child: Text(
-                        day,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.outline,
+                  // Month Selector Controls
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: isCanGoBack
+                            ? () {
+                                setState(() {
+                                  _viewDate = DateTime(
+                                    _viewDate.year,
+                                    _viewDate.month - 1,
+                                  );
+                                });
+                              }
+                            : null,
+                        icon: Icon(
+                          IconUtils.chevronLeft,
+                          color: isCanGoBack
+                              ? theme.colorScheme.onSurface
+                              : theme.colorScheme.outlineVariant,
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 8),
-
-              // Calendar Grid
-              GridView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                ),
-                itemCount: startOffset + daysInMonth,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index < startOffset) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final int day = index - startOffset + 1;
-                  final DateTime currentDay = DateTime(
-                    _viewDate.year,
-                    _viewDate.month,
-                    day,
-                  );
-                  final String dateKey = currentDay.yyyyMMdd;
-
-                  final bool isPast = currentDay.isBefore(todayStart);
-                  final bool isSelected =
-                      currentDay.year == _selectedDate.year &&
-                      currentDay.month == _selectedDate.month &&
-                      currentDay.day == _selectedDate.day;
-                  final bool hasPlannedWorkout = plannedDateKeys.contains(
-                    dateKey,
-                  );
-                  final bool isToday =
-                      currentDay.year == todayStart.year &&
-                      currentDay.month == todayStart.month &&
-                      currentDay.day == todayStart.day;
-
-                  return InkWell(
-                    onTap: isPast
-                        ? null
-                        : () {
-                            setState(() {
-                              _selectedDate = currentDay;
-                            });
-                          },
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isSelected
-                            ? theme.colorScheme.secondary
-                            : hasPlannedWorkout
-                            ? theme.colorScheme.surfaceContainerHigh
-                            : isToday
-                            ? theme.colorScheme.surfaceContainerHighest
-                            : null,
-                        border: isSelected
-                            ? Border.all(
-                                color: theme.colorScheme.secondary,
-                                width: 2,
-                              )
-                            : hasPlannedWorkout
-                            ? Border.all(
-                                color: theme.colorScheme.secondary,
-                                width: 2,
-                              )
-                            : isToday
-                            ? Border.all(color: theme.colorScheme.outline)
-                            : null,
+                      Text(
+                        DateFormat('MMMM yyyy').format(_viewDate).toUpperCase(),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.secondary,
+                        ),
                       ),
-                      child: Center(
-                        child: Text(
-                          day.toString(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight:
-                                isSelected || hasPlannedWorkout || isToday
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: isPast
-                                ? theme.colorScheme.outlineVariant
-                                : isSelected
-                                ? theme.colorScheme.onSecondary
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _viewDate = DateTime(
+                              _viewDate.year,
+                              _viewDate.month + 1,
+                            );
+                          });
+                        },
+                        icon: const Icon(IconUtils.chevronRight),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Weekday Header Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      for (final String day in weekdays)
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              day,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.outline,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Calendar Grid
+                  GridView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          mainAxisSpacing: 4,
+                          crossAxisSpacing: 4,
+                        ),
+                    itemCount: startOffset + daysInMonth,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index < startOffset) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final int day = index - startOffset + 1;
+                      final DateTime currentDay = DateTime(
+                        _viewDate.year,
+                        _viewDate.month,
+                        day,
+                      );
+                      final String dateKey = currentDay.yyyyMMdd;
+
+                      final bool isPast = currentDay.isBefore(todayStart);
+                      final bool isSelected =
+                          currentDay.year == _selectedDate.year &&
+                          currentDay.month == _selectedDate.month &&
+                          currentDay.day == _selectedDate.day;
+                      final bool hasPlannedWorkout = plannedDateKeys.contains(
+                        dateKey,
+                      );
+                      final bool isToday =
+                          currentDay.year == todayStart.year &&
+                          currentDay.month == todayStart.month &&
+                          currentDay.day == todayStart.day;
+
+                      return InkWell(
+                        onTap: isPast
+                            ? null
+                            : () {
+                                setState(() {
+                                  _selectedDate = currentDay;
+                                });
+                              },
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? theme.colorScheme.secondary
                                 : hasPlannedWorkout
-                                ? theme.colorScheme.secondary
+                                ? theme.colorScheme.surfaceContainerHigh
                                 : isToday
-                                ? theme.colorScheme.secondary
-                                : theme.colorScheme.onSurface,
+                                ? theme.colorScheme.surfaceContainerHighest
+                                : null,
+                            border: isSelected
+                                ? Border.all(
+                                    color: theme.colorScheme.secondary,
+                                    width: 2,
+                                  )
+                                : hasPlannedWorkout
+                                ? Border.all(
+                                    color: theme.colorScheme.secondary,
+                                    width: 2,
+                                  )
+                                : isToday
+                                ? Border.all(color: theme.colorScheme.outline)
+                                : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              day.toString(),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight:
+                                    isSelected || hasPlannedWorkout || isToday
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isPast
+                                    ? theme.colorScheme.outlineVariant
+                                    : isSelected
+                                    ? theme.colorScheme.onSecondary
+                                    : hasPlannedWorkout
+                                    ? theme.colorScheme.secondary
+                                    : isToday
+                                    ? theme.colorScheme.secondary
+                                    : theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Calendar Key Legend
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: theme.colorScheme.secondary,
+                            width: 2,
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 12),
-
-              // Calendar Key Legend
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: theme.colorScheme.secondary,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Planned Workout',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: theme.colorScheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Selected Date',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Selected Date Info Badge
-              Card(
-                color: theme.colorScheme.surfaceContainerLow,
-                child: ListTile(
-                  onTap: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                      ? () async {
-                          final String targetKey = _selectedDate.yyyyMMdd;
-                          final Workout? existingPlanned = plannedWorkouts
-                              .where((Workout w) => w.dateKey == targetKey)
-                              .firstOrNull;
-                          if (existingPlanned != null) {
-                            sActiveWorkout.value = existingPlanned;
-                            Navigator.pop(context);
-                            await ModalService.showModal(
-                              context: context,
-                              child: const SavePlannedWorkoutModal(),
-                            );
-                          }
-                        }
-                      : null,
-                  leading: Icon(
-                    IconUtils.calendarMonth,
-                    color: theme.colorScheme.secondary,
-                  ),
-                  title: Text(
-                    DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                        ? 'Has a scheduled workout • Tap for options'
-                        : 'No workout scheduled yet',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                          ? theme.colorScheme.secondary
-                          : theme.colorScheme.outline,
-                    ),
-                  ),
-                  trailing: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                      ? Icon(
-                          IconUtils.chevronRight,
-                          color: theme.colorScheme.secondary,
-                        )
-                      : null,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () async {
-                    final String targetKey = _selectedDate.yyyyMMdd;
-                    final Workout? existingPlanned = plannedWorkouts
-                        .where((Workout w) => w.dateKey == targetKey)
-                        .firstOrNull;
-
-                    Navigator.pop(context);
-
-                    if (existingPlanned != null) {
-                      // Directly edit workout on WorkoutScreen!
-                      sActiveWorkout.value = existingPlanned;
-                      navigateToTab(AppTab.workout);
-                    } else {
-                      // Create new planned workout session and open exercise search.
-                      sActiveWorkout.value = Workout(
-                        id: const Uuid().v4(),
-                        title: _selectedDate.defaultWorkoutTitle,
-                        dateTime: _selectedDate,
-                        totalDuration: 0,
-                        isPlanned: true,
-                      );
-
-                      if (context.mounted) {
-                        await showModalBottomSheet<void>(
-                          context: context,
-                          showDragHandle: true,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return const SearchModal();
-                          },
-                        );
-                      }
-                    }
-                  },
-                  icon: Icon(
-                    plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                        ? IconUtils.edit
-                        : IconUtils.add,
-                  ),
-                  label: Text(
-                    plannedDateKeys.contains(_selectedDate.yyyyMMdd)
-                        ? 'EDIT SCHEDULED WORKOUT'
-                        : 'ADD EXERCISES FOR THIS DATE',
-                  ),
-                ),
-              ),
-
-              // Recent Workouts to Copy Section
-              if (sWorkoutHistory.value.isNotEmpty &&
-                  !plannedDateKeys.contains(
-                    _selectedDate.yyyyMMdd,
-                  )) ...<Widget>[
-                const SizedBox(height: 24),
-                Row(
-                  children: <Widget>[
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        'OR COPY A RECENT WORKOUT',
+                      const SizedBox(width: 6),
+                      Text(
+                        'Planned Workout',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.outline,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
                         ),
                       ),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                ...sWorkoutHistory.value.reversed.take(6).map((Workout w) {
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      onTap: () async {
-                        final bool? copied = await ModalService.showModal(
-                          context: context,
-                          child: CopyWorkoutModal(
-                            workout: w,
-                            initialTargetDate: _selectedDate,
-                          ),
-                        );
-                        if (copied == true && context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      },
-                      leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
-                        child: Icon(
-                          IconUtils.dumbbell,
-                          size: 20,
+                      const SizedBox(width: 16),
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Selected Date',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Selected Date Info Badge
+                  Card(
+                    color: theme.colorScheme.surfaceContainerLow,
+                    child: ListTile(
+                      onTap: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                          ? () async {
+                              final String targetKey = _selectedDate.yyyyMMdd;
+                              final Workout? existingPlanned = plannedWorkouts
+                                  .where((Workout w) => w.dateKey == targetKey)
+                                  .firstOrNull;
+                              if (existingPlanned != null) {
+                                sActiveWorkout.value = existingPlanned;
+                                Navigator.pop(context);
+                                await ModalService.showModal(
+                                  context: context,
+                                  child: const SavePlannedWorkoutModal(),
+                                );
+                              }
+                            }
+                          : null,
+                      leading: Icon(
+                        IconUtils.calendarMonth,
+                        color: theme.colorScheme.secondary,
+                      ),
                       title: Text(
-                        w.title,
+                        DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Text(
-                        '${w.formattedDate} • ${w.exercises.length} exercises',
+                        plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                            ? 'Has a scheduled workout • Tap for options'
+                            : 'No workout scheduled yet',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.outline,
+                          color:
+                              plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                              ? theme.colorScheme.secondary
+                              : theme.colorScheme.outline,
                         ),
                       ),
-                      trailing: Icon(
-                        IconUtils.chevronRight,
-                        color: theme.colorScheme.secondary,
+                      trailing: plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                          ? Icon(
+                              IconUtils.chevronRight,
+                              color: theme.colorScheme.secondary,
+                            )
+                          : null,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () async {
+                        final String targetKey = _selectedDate.yyyyMMdd;
+                        final Workout? existingPlanned = plannedWorkouts
+                            .where((Workout w) => w.dateKey == targetKey)
+                            .firstOrNull;
+
+                        Navigator.pop(context);
+
+                        if (existingPlanned != null) {
+                          // Directly edit workout on WorkoutScreen!
+                          sActiveWorkout.value = existingPlanned;
+                          navigateToTab(AppTab.workout);
+                        } else {
+                          // Create new planned workout session and open exercise search.
+                          sActiveWorkout.value = Workout(
+                            id: const Uuid().v4(),
+                            title: _selectedDate.defaultWorkoutTitle,
+                            dateTime: _selectedDate,
+                            totalDuration: 0,
+                            isPlanned: true,
+                          );
+
+                          if (context.mounted) {
+                            await showModalBottomSheet<void>(
+                              context: context,
+                              showDragHandle: true,
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return const SearchModal();
+                              },
+                            );
+                          }
+                        }
+                      },
+                      icon: Icon(
+                        plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                            ? IconUtils.edit
+                            : IconUtils.add,
+                      ),
+                      label: Text(
+                        plannedDateKeys.contains(_selectedDate.yyyyMMdd)
+                            ? 'EDIT SCHEDULED WORKOUT'
+                            : 'ADD EXERCISES FOR THIS DATE',
                       ),
                     ),
-                  );
-                }),
-              ],
+                  ),
 
-              const SizedBox(height: 8),
-            ],
+                  // Recent Workouts to Copy Section
+                  if (sWorkoutHistory.value.isNotEmpty &&
+                      !plannedDateKeys.contains(
+                        _selectedDate.yyyyMMdd,
+                      )) ...<Widget>[
+                    const SizedBox(height: 24),
+                    Row(
+                      children: <Widget>[
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            'OR COPY A RECENT WORKOUT',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.outline,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    ...sWorkoutHistory.value.reversed.take(6).map((Workout w) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          onTap: () async {
+                            final bool? copied = await ModalService.showModal(
+                              context: context,
+                              child: CopyWorkoutModal(
+                                workout: w,
+                                initialTargetDate: _selectedDate,
+                              ),
+                            );
+                            if (copied == true && context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                theme.colorScheme.surfaceContainerHigh,
+                            child: Icon(
+                              IconUtils.dumbbell,
+                              size: 20,
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
+                          title: Text(
+                            w.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            '${w.formattedDate} • ${w.exercises.length} exercises',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.outline,
+                            ),
+                          ),
+                          trailing: Icon(
+                            IconUtils.chevronRight,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
           ),
         ),
       ],
