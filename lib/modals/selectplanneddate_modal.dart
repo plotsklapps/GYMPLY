@@ -450,14 +450,14 @@ class _SelectPlannedDateModalState extends State<SelectPlannedDateModal> {
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           onTap: () async {
-                            final bool? copied = await ModalService.showModal(
+                            final bool copied = await ModalService.showModal(
                               context: context,
                               child: CopyWorkoutModal(
                                 workout: w,
                                 initialTargetDate: _selectedDate,
                               ),
                             );
-                            if (copied == true && context.mounted) {
+                            if (copied && context.mounted) {
                               Navigator.pop(context);
                             }
                           },
