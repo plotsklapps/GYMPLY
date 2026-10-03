@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+90] - 2026-09-29
+- **Planned & Scheduled Workouts Feature:**
+  - Added full support for planning workouts for future dates (including pre-filled sets, reps, weights, and warming-up notes).
+  - **Hive CE Persistence:** Added `plannedWorkoutBox` and `@HiveField(7) isPlanned` to the `Workout` model for persistent local scheduling.
+  - **Automatic Day Matching:** Opening GYMPLY on a scheduled date automatically pre-loads that day's exercises directly onto `WorkoutScreen`.
+  - **Dynamic FAB Routing:** Tapping the `+` FAB when `TotalTimer` is inactive opens `SelectPlannedDateModal`; tapping `Stop` opens `SavePlannedWorkoutModal` and clears the planning buffer upon save.
+  - **Seamless Planning Session UX:** Tapping `+` while preparing a workout opens exercise search directly without re-prompting for a date.
+- **Copy Past Workouts to Future Dates:**
+  - **Target Date Selector:** Enhanced `CopyWorkoutModal` with a target date picker to copy historical workouts into Today or any future date.
+  - **Recent Workout Cards:** Added an *"OR COPY A RECENT WORKOUT"* section in `SelectPlannedDateModal` showing the last 6 workouts as Cards for 1-tap scheduling.
+  - **Direct Editing:** Tapping a scheduled workout opens it directly on `WorkoutScreen` with exercises loaded for instant editing.
+- **Custom Monday-Start Planning Calendar:**
+  - Built a 7-column monthly calendar grid in `SelectPlannedDateModal` strictly starting on Monday (`M, T, W, T, F, S, S`) with month navigation controls.
+  - Added visual circle badges around dates with scheduled workouts and a clear legend key.
+- **Global Single Source of Truth for Exercise Notes:**
+  - Mapped exercise notes globally by exercise ID in `Settings` (`@HiveField(20)`).
+  - Automatically populates the latest note when adding an exercise via search or copying past workouts.
+  - Automatically seeds global notes from historical workouts for 100% backward compatibility with existing databases.
+- **Responsive Modal Layouts & Scrollability:**
+  - Wrapped modal contents in `Flexible` and `SingleChildScrollView` across `SavePlannedWorkoutModal`, `SelectPlannedDateModal`, and `CopyWorkoutModal` to eliminate overflow errors on small screens while maintaining compact sizing on large displays.
+- **Android Gradle Plugin & Build Upgrades:**
+  - Upgraded Android Gradle Plugin (AGP) to `9.1.0`, Gradle wrapper to `9.3.1`, and Kotlin plugin to `2.3.20`.
+  - Updated Android build configuration for full Java 21 / 25 compatibility.
+
 ## [0.0.8+89] - 2026-09-29
 - **Weekly, Monthly & Yearly "Wrapped" Summaries:**
   - Added cinematic, "Spotify Wrapped" style summary modals (`WeeklySummaryModal`, `MonthlySummaryModal`, and `YearlySummaryModal`) powered by `flutter_animate` staggered entrance animations and `flutter_body_atlas` front & back muscle heatmaps.
