@@ -286,11 +286,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     final bool isTimerRunning =
                         TotalTimer.sTotalTimerRunning.value;
                     final Workout active = sActiveWorkout.value;
-                    final bool isAlreadyPlanning =
-                        active.isPlanned || active.exercises.isNotEmpty;
+                    final bool isAlreadyPlanning = active.isPlanned;
 
                     if (isTimerRunning || isAlreadyPlanning) {
-                      // Live session or planning session in progress: search and add exercises directly.
+                      // Live session or active planning session in progress: search and add exercises directly.
                       await showModalBottomSheet<void>(
                         context: context,
                         showDragHandle: true,

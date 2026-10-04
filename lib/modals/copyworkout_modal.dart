@@ -5,6 +5,7 @@ import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
+import 'package:gymply/theme/flexscheme.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
@@ -72,17 +73,25 @@ class _CopyWorkoutModalState extends State<CopyWorkoutModal> {
       final List<WorkoutExercise> exercisesToAdd = <WorkoutExercise>[];
 
       for (final WorkoutExercise ex in widget.workout.exercises) {
+        final String latestNote = sExerciseNotes.value[ex.id] ?? ex.notes;
+
         if (!_emptyExercises) {
-          exercisesToAdd.add(ex.copyWith());
+          exercisesToAdd.add(ex.copyWith(notes: latestNote));
         } else {
           if (ex is StrengthExercise) {
-            exercisesToAdd.add(ex.copyWith(sets: <StrengthSet>[]));
+            exercisesToAdd.add(
+              ex.copyWith(sets: <StrengthSet>[], notes: latestNote),
+            );
           } else if (ex is CardioExercise) {
-            exercisesToAdd.add(ex.copyWith(sets: <CardioSet>[]));
+            exercisesToAdd.add(
+              ex.copyWith(sets: <CardioSet>[], notes: latestNote),
+            );
           } else if (ex is StretchExercise) {
-            exercisesToAdd.add(ex.copyWith(sets: <StretchSet>[]));
+            exercisesToAdd.add(
+              ex.copyWith(sets: <StretchSet>[], notes: latestNote),
+            );
           } else {
-            exercisesToAdd.add(ex.copyWith());
+            exercisesToAdd.add(ex.copyWith(notes: latestNote));
           }
         }
       }

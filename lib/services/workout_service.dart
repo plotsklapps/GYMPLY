@@ -750,7 +750,11 @@ class WorkoutService {
       sActiveWorkout.value.exercises,
     );
 
-    final int index = exercises.indexOf(oldEx);
+    int index = exercises.indexOf(oldEx);
+    if (index == -1) {
+      index = exercises.indexWhere((WorkoutExercise ex) => ex.id == oldEx.id);
+    }
+
     if (index != -1) {
       // Log replacement.
       _logger.i(

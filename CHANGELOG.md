@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+91] - 2026-09-29
+- **Exercise Notes Bug Fix:**
+  - Fixed exercise replacement lookup bug by matching unique exercise IDs (`ex.id`) to ensure instant UI re-rendering and note badge display upon saving.
+  - Guaranteed global single source of truth note propagation when copying workouts or adding exercises from search.
+- **Copying & Scheduling Refinements:**
+  - Directly opens `WorkoutScreen` when tapping *"EDIT SCHEDULED WORKOUT"* for instant editing of pre-filled exercises.
+  - Preserves active planning session state so tapping `+` FAB allows adding multiple exercises sequentially without re-prompting for target dates.
+- **Gradle & Build Resolution:**
+  - Resolved `AndroidLocationsException` build conflict and confirmed debug APK build output.
+
 ## [0.0.9+90] - 2026-09-29
 - **Planned & Scheduled Workouts Feature:**
   - Added full support for planning workouts for future dates (including pre-filled sets, reps, weights, and warming-up notes).
