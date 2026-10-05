@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+92] - 2026-09-29
+- **Routines & Templates System:**
+  - Added full support for reusable workout routines and templates with Hive CE persistence (`routineBox`, `@HiveType(typeId: 13)`).
+  - **`RoutineModal`:** Dedicated template manager to view, launch, create, edit, or delete saved routines.
+  - **In-Place Routine Editing:** Tapping *"EDIT ROUTINE"* loads all exercises onto `WorkoutScreen` for instant modification (adding/deleting exercises, updating sets/reps/weights/cues).
+  - **Dedicated `SaveRoutineModal`:** Pressing `Stop` FAB during routine editing opens `SaveRoutineModal` with pre-filled title/description fields and exercise summary, saving to Hive and resetting `WorkoutScreen` clean.
+  - **Save Completed Workouts as Routines:** Added a *"Save as Routine"* switch with *"Keep Sets, Reps & Weight Values"* sub-toggle in `SaveWorkoutModal`.
+- **Smart 3-Choice Workout Entry (`StartWorkoutModal`):**
+  - Tapping the `+` FAB from an empty state opens `StartWorkoutModal` offering 3 clear approaches:
+    - 🏋️ **Freestyle:** Starts `TotalTimer` automatically and opens `SearchModal` directly.
+    - 📋 **Routines:** Opens `RoutineModal` to pick or create a template.
+    - 📅 **Plan Ahead:** Opens `SelectPlannedDateModal` to schedule future dates.
+  - Once a workout session or timer is active, tapping `+` opens `SearchModal` directly to add exercises on the fly.
+- **Smart 3-Way `Stop` FAB (`saveFAB`) Decision Tree:**
+  - `Stop` FAB on `HomeScreen` always routes to the correct modal: `SaveRoutineModal` for templates, `SavePlannedWorkoutModal` for future plans, and `SaveWorkoutModal` for live completed workouts.
+  - Fixed calendar highlight logic so routine templates and future plans never leave erroneous badges on the calendar.
+- **iOS Live Activity & Dynamic Island Extension:**
+  - Added native iOS Widget Extension (`GymplyLiveActivity`) with WidgetKit and SwiftUI for iOS 16.1+ Live Activities and Dynamic Island support.
+  - Displays GPU-rendered live total workout time and active rest/interval countdowns on the Lock Screen, Notification Center, and Dynamic Island (compact leading/trailing, minimal, and expanded views).
+  - Configured cross-platform status bar icon brightness (`statusBarBrightness: Brightness.dark` and `statusBarIconBrightness: Brightness.light`).
+
 ## [0.0.9+91] - 2026-09-29
 - **Exercise Notes Bug Fix:**
   - Fixed exercise replacement lookup bug by matching unique exercise IDs (`ex.id`) to ensure instant UI re-rendering and note badge display upon saving.
