@@ -554,10 +554,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: "92f85ca0fe488bf26af993a3275a0f699d1e2fa94e84932bd8ece5fde0718d8f"
+      sha256: "6c3ebe2ba8e9c968eb13c34d3af500f3173c1c1b633c145b4eadfe1fdf8afabb"
       url: "https://pub.dev"
     source: hosted
-    version: "23.0.0-dev.2"
+    version: "23.0.0-dev.3"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -586,10 +586,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_local_notifications_windows
-      sha256: "048c2efd75f76d7d48084fea9a0e35f7e84127f742c37500c4cc7aab681e71cb"
+      sha256: "9eea91aec421b65a6d324734255dd4994d13a3ff6f5f00dd67fe65273b7a870b"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0-dev.1"
+    version: "4.0.0-dev.2"
   flutter_localizations:
     dependency: transitive
     description: flutter
