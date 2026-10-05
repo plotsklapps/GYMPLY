@@ -34,9 +34,8 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: Colors.transparent,
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      //iOS:
       statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
     ),
   );
 
