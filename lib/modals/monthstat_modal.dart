@@ -56,8 +56,10 @@ class _MonthStatModalState extends State<MonthStatModal> {
       return w.dateKey;
     }).toSet();
 
-    // Add active workout to keys if it has exercises.
-    if (active.exercises.isNotEmpty) {
+    // Add active workout to keys ONLY if it is a live session (NOT planned, NOT routine).
+    if (active.exercises.isNotEmpty &&
+        !active.isPlanned &&
+        !active.isRoutine) {
       workoutDateKeys.add(active.dateKey);
     }
 

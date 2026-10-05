@@ -18,6 +18,7 @@ class Workout {
     this.notes = '',
     this.imagePaths = const <String>[],
     this.isPlanned = false,
+    this.isRoutine = false,
   });
 
   @HiveField(0, defaultValue: '')
@@ -36,6 +37,8 @@ class Workout {
   final List<String> imagePaths;
   @HiveField(7, defaultValue: false)
   final bool isPlanned;
+  @HiveField(8, defaultValue: false)
+  final bool isRoutine;
 
   Workout copyWith({
     String? title,
@@ -45,6 +48,7 @@ class Workout {
     String? notes,
     List<String>? imagePaths,
     bool? isPlanned,
+    bool? isRoutine,
   }) {
     return Workout(
       id: id,
@@ -55,6 +59,7 @@ class Workout {
       notes: notes ?? this.notes,
       imagePaths: imagePaths ?? this.imagePaths,
       isPlanned: isPlanned ?? this.isPlanned,
+      isRoutine: isRoutine ?? this.isRoutine,
     );
   }
 

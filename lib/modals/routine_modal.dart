@@ -1,6 +1,7 @@
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/models/routine_model.dart';
 import 'package:gymply/models/workout_model.dart';
+import 'package:gymply/services/navigation_service.dart';
 import 'package:gymply/services/routine_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
 import 'package:gymply/theme/icons.dart';
@@ -144,36 +145,13 @@ class _RoutineModalState extends State<RoutineModal> {
                                         ],
                                       ),
                                     ),
-                                    PopupMenuButton<String>(
-                                      icon: const Icon(IconUtils.more),
-                                      onSelected: (String choice) async {
-                                        if (choice == 'delete') {
-                                          await routineService.deleteRoutine(
-                                            routine.id,
-                                          );
-                                        } else if (choice == 'edit') {
-                                          _showEditRoutineDialog(
-                                            context,
-                                            routine,
-                                          );
-                                        }
-                                      },
-                                      itemBuilder: (BuildContext context) {
-                                        return <PopupMenuEntry<String>>[
-                                          const PopupMenuItem<String>(
-                                            value: 'edit',
-                                            child: Text('Edit Title/Notes'),
-                                          ),
-                                          PopupMenuItem<String>(
-                                            value: 'delete',
-                                            child: Text(
-                                              'Delete Routine',
-                                              style: TextStyle(
-                                                color: theme.colorScheme.error,
-                                              ),
-                                            ),
-                                          ),
-                                        ];
+                                    IconButton(
+                                      icon: const Icon(IconUtils.delete),
+                                      color: theme.colorScheme.error,
+                                      onPressed: () async {
+                                        await routineService.deleteRoutine(
+                                          routine.id,
+                                        );
                                       },
                                     ),
                                   ],
@@ -191,18 +169,43 @@ class _RoutineModalState extends State<RoutineModal> {
                                   ),
                                 ],
                                 const SizedBox(height: 12),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: FilledButton.icon(
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                      await routineService.startRoutineToday(
-                                        routine,
-                                      );
-                                    },
-                                    icon: const Icon(IconUtils.play),
-                                    label: const Text('START THIS ROUTINE'),
-                                  ),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          // Load routine into sActiveWorkout as a routine template session
+                                          sActiveWorkout.value = Workout(
+                                            id: routine.id,
+                                            title: routine.title,
+                                            dateTime: DateTime.now(),
+                                            totalDuration: 0,
+                                            exercises: routine.exercises,
+                                            notes: routine.notes,
+                                            isPlanned: true,
+                                            isRoutine: true,
+                                          );
+
+                                          Navigator.pop(context);
+                                          navigateToTab(AppTab.workout);
+                                        },
+                                        icon: const Icon(IconUtils.edit),
+                                        label: const Text('EDIT ROUTINE'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: FilledButton.icon(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await routineService
+                                              .startRoutineToday(routine);
+                                        },
+                                        icon: const Icon(IconUtils.play),
+                                        label: const Text('START'),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -220,13 +223,14 @@ class _RoutineModalState extends State<RoutineModal> {
                       onPressed: () async {
                         Navigator.pop(context);
 
-                        // Start a fresh planned/routine container in sActiveWorkout
+                        // Start a fresh routine template container in sActiveWorkout
                         sActiveWorkout.value = Workout(
                           id: const Uuid().v4(),
                           title: 'New Routine',
                           dateTime: DateTime.now(),
                           totalDuration: 0,
                           isPlanned: true,
+                          isRoutine: true,
                         );
 
                         if (context.mounted) {
@@ -251,62 +255,6 @@ class _RoutineModalState extends State<RoutineModal> {
           ),
         ),
       ],
-    );
-  }
-
-  void _showEditRoutineDialog(BuildContext context, Routine routine) {
-    final TextEditingController titleController = TextEditingController(
-      text: routine.title,
-    );
-    final TextEditingController notesController = TextEditingController(
-      text: routine.notes,
-    );
-
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Routine'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: notesController,
-                decoration: const InputDecoration(labelText: 'Notes'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('CANCEL'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                final String newTitle = titleController.text.trim().isEmpty
-                    ? routine.title
-                    : titleController.text.trim();
-                final Routine updated = routine.copyWith(
-                  title: newTitle,
-                  notes: notesController.text.trim(),
-                );
-                await routineService.updateRoutine(updated);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('SAVE'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

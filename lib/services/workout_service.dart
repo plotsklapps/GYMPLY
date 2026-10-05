@@ -129,24 +129,30 @@ class WorkoutService {
       TotalTimer().syncTotalTime(0);
     }
 
-    // Auto-save active workout whenever it changes.
+    // Auto-save active live workout whenever it changes.
     effect(() async {
       // Create Workout Object.
       final Workout workout = sActiveWorkout.value;
 
-      // Only auto-save if workout is "real".
-      if (workout.exercises.isNotEmpty || workout.totalDuration > 0) {
-        // Store to Hive.
+      // Only auto-save to history (_workoutBox) if it is a REAL live workout session
+      // (NOT a routine template, NOT a future planned workout).
+      if (!workout.isPlanned &&
+          !workout.isRoutine &&
+          (workout.exercises.isNotEmpty || workout.totalDuration > 0)) {
+        // Store to Hive history.
         await _workoutBox.put(workout.dateKey, workout);
 
         // Update history Signal so Statistics reflects changes.
         sWorkoutHistory.value = _workoutBox.values.toList();
 
         // Log success.
-        _logger.i('WorkoutService: Auto-saved workout for ${workout.dateKey}');
+        _logger.i(
+          'WorkoutService: Auto-saved live workout for ${workout.dateKey}',
+        );
       } else {
-        // Log warning.
-        _logger.w('WorkoutService: Skipping auto-save for empty template.');
+        _logger.i(
+          'WorkoutService: Skipping history auto-save for planned/routine workout.',
+        );
       }
     });
   }

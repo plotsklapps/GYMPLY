@@ -27,13 +27,14 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       notes: fields[5] == null ? '' : fields[5] as String,
       imagePaths: fields[6] == null ? [] : (fields[6] as List).cast<String>(),
       isPlanned: fields[7] == null ? false : fields[7] as bool,
+      isRoutine: fields[8] == null ? false : fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Workout obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -49,7 +50,9 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       ..writeByte(6)
       ..write(obj.imagePaths)
       ..writeByte(7)
-      ..write(obj.isPlanned);
+      ..write(obj.isPlanned)
+      ..writeByte(8)
+      ..write(obj.isRoutine);
   }
 
   @override

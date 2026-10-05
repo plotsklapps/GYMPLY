@@ -75,7 +75,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final Set<String> workoutDateKeys = history.map((Workout w) {
       return w.dateKey;
     }).toSet();
-    if (activeWorkout.exercises.isNotEmpty) {
+    if (activeWorkout.exercises.isNotEmpty &&
+        !activeWorkout.isPlanned &&
+        !activeWorkout.isRoutine) {
       workoutDateKeys.add(activeWorkout.dateKey);
     }
 

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
+import 'package:gymply/modals/saveplannedworkout_modal.dart';
+import 'package:gymply/modals/saveroutine_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/modals/startworkout_modal.dart';
@@ -256,10 +258,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    await ModalService.showModal(
-                      context: context,
-                      child: const SaveWorkoutModal(),
-                    );
+                    final Workout active = sActiveWorkout.value;
+
+                    if (active.isRoutine) {
+                      // Mode 3: Creating or editing a Routine template -> open SaveRoutineModal!
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SaveRoutineModal(),
+                      );
+                    } else if (active.isPlanned) {
+                      // Mode 2: Scheduling a workout for a future date -> open SavePlannedWorkoutModal!
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SavePlannedWorkoutModal(),
+                      );
+                    } else {
+                      // Mode 1: Live workout session -> open SaveWorkoutModal!
+                      await ModalService.showModal(
+                        context: context,
+                        child: const SaveWorkoutModal(),
+                      );
+                    }
                   }
                 },
                 child: const Icon(IconUtils.stop),
