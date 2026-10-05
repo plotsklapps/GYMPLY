@@ -12,6 +12,7 @@ import 'package:gymply/services/exercise_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/notification_service.dart';
+import 'package:gymply/services/routine_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
@@ -66,6 +67,9 @@ void main() async {
 
   // WorkoutService loads active workout session and history.
   await workoutService.init();
+
+  // RoutineService loads saved routine templates.
+  await routineService.init();
 
   // ConnectivityService monitors internet status.
   await connectivityService.init();

@@ -3,9 +3,14 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/addimage_modal.dart';
 import 'package:gymply/modals/sharetosocials_modal.dart';
+import 'package:gymply/models/cardio_model.dart';
+import 'package:gymply/models/routine_model.dart';
+import 'package:gymply/models/strength_model.dart';
+import 'package:gymply/models/stretch_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/routine_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -13,6 +18,7 @@ import 'package:gymply/theme/icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:uuid/uuid.dart';
 
 class SaveWorkoutModal extends StatefulWidget {
   const SaveWorkoutModal({super.key});
@@ -28,6 +34,9 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
   final TextEditingController _notesController = TextEditingController();
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _notesFocusNode = FocusNode();
+
+  bool _saveAsRoutine = false;
+  bool _keepRoutineValues = true;
 
   late final String _suggestedTitle;
   bool _isTitleFocused = false;
@@ -293,6 +302,44 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                       ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                const Divider(),
+
+                // Save as Routine Switch.
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    'Save as Routine',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: const Text(
+                    'Store this workout as a reusable template in Routines.',
+                  ),
+                  value: _saveAsRoutine,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _saveAsRoutine = value;
+                    });
+                  },
+                ),
+                if (_saveAsRoutine)
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Keep Sets, Reps & Weight Values',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text(
+                      'Preserve values in template (otherwise empty sets).',
+                    ),
+                    value: _keepRoutineValues,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _keepRoutineValues = value;
+                      });
+                    },
+                  ),
+
                 const SizedBox(height: 24),
                 Row(
                   children: <Widget>[
@@ -321,6 +368,43 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                               _titleController.text.trim().isEmpty
                               ? _suggestedTitle
                               : _titleController.text.trim();
+
+                          // Save as Routine template if enabled.
+                          if (_saveAsRoutine) {
+                            final List<WorkoutExercise> routineExercises =
+                                <WorkoutExercise>[];
+                            for (final WorkoutExercise ex
+                                in sActiveWorkout.value.exercises) {
+                              if (_keepRoutineValues) {
+                                routineExercises.add(ex.copyWith());
+                              } else {
+                                if (ex is StrengthExercise) {
+                                  routineExercises.add(
+                                    ex.copyWith(sets: <StrengthSet>[]),
+                                  );
+                                } else if (ex is CardioExercise) {
+                                  routineExercises.add(
+                                    ex.copyWith(sets: <CardioSet>[]),
+                                  );
+                                } else if (ex is StretchExercise) {
+                                  routineExercises.add(
+                                    ex.copyWith(sets: <StretchSet>[]),
+                                  );
+                                } else {
+                                  routineExercises.add(ex.copyWith());
+                                }
+                              }
+                            }
+
+                            final Routine newRoutine = Routine(
+                              id: const Uuid().v4(),
+                              title: titleToSave,
+                              exercises: routineExercises,
+                              notes: _notesController.text.trim(),
+                            );
+
+                            await routineService.saveRoutine(newRoutine);
+                          }
 
                           // Save current workout.
                           await workoutService.finishWorkout(

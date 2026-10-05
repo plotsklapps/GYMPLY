@@ -104,6 +104,7 @@ class IconUtils {
   static const IconData layoutList = Icons.view_agenda_outlined;
   static const IconData layoutGrid = Icons.grid_view;
   static const IconData grip = Icons.drag_indicator;
+  static const IconData list = Icons.format_list_bulleted;
 
   static const IconData medal = Icons.emoji_events_outlined;
   static const IconData trash = Icons.delete_outline;

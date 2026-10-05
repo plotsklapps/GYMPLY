@@ -1,4 +1,5 @@
 import 'package:gymply/models/bodymetrics_model.dart';
+import 'package:gymply/models/routine_model.dart';
 import 'package:gymply/models/settings_model.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/toast_service.dart';
@@ -26,12 +27,14 @@ class HiveService {
   // Hive boxes.
   late Box<Workout> _workoutBox;
   late Box<Workout> _plannedWorkoutBox;
+  late Box<Routine> _routineBox;
   late Box<Settings> _settingsBox;
   late Box<BodyMetric> _bodyMetricsBox;
 
   // Box names.
   static const String _workoutBoxName = 'workouts';
   static const String _plannedWorkoutBoxName = 'planned_workouts';
+  static const String _routineBoxName = 'routines';
   static const String _settingsBoxName = 'settings';
   static const String _bodyMetricsBoxName = 'bodymetrics';
 
@@ -42,6 +45,10 @@ class HiveService {
 
   Box<Workout> get plannedWorkoutBox {
     return _plannedWorkoutBox;
+  }
+
+  Box<Routine> get routineBox {
+    return _routineBox;
   }
 
   Box<Settings> get settingsBox {
@@ -58,6 +65,7 @@ class HiveService {
       // Open or create Hive boxes.
       _workoutBox = await Hive.openBox<Workout>(_workoutBoxName);
       _plannedWorkoutBox = await Hive.openBox<Workout>(_plannedWorkoutBoxName);
+      _routineBox = await Hive.openBox<Routine>(_routineBoxName);
       _settingsBox = await Hive.openBox<Settings>(_settingsBoxName);
       _bodyMetricsBox = await Hive.openBox<BodyMetric>(_bodyMetricsBoxName);
 

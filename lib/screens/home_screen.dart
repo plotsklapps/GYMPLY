@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
-import 'package:gymply/modals/saveplannedworkout_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
-import 'package:gymply/modals/selectplanneddate_modal.dart';
+import 'package:gymply/modals/startworkout_modal.dart';
 import 'package:gymply/modals/weeklysummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/screens/exercisescreen/exercise_screen.dart';
@@ -257,19 +256,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    if (TotalTimer.sTotalTimerRunning.value) {
-                      // Live session: save completed workout.
-                      await ModalService.showModal(
-                        context: context,
-                        child: const SaveWorkoutModal(),
-                      );
-                    } else {
-                      // Stopped session: save planned/scheduled workout.
-                      await ModalService.showModal(
-                        context: context,
-                        child: const SavePlannedWorkoutModal(),
-                      );
-                    }
+                    await ModalService.showModal(
+                      context: context,
+                      child: const SaveWorkoutModal(),
+                    );
                   }
                 },
                 child: const Icon(IconUtils.stop),
@@ -287,9 +277,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         TotalTimer.sTotalTimerRunning.value;
                     final Workout active = sActiveWorkout.value;
                     final bool isAlreadyPlanning = active.isPlanned;
+                    final bool hasExercises = active.exercises.isNotEmpty;
 
-                    if (isTimerRunning || isAlreadyPlanning) {
-                      // Live session or active planning session in progress: search and add exercises directly.
+                    if (isTimerRunning || isAlreadyPlanning || hasExercises) {
+                      // Live session or active session in progress: search and add exercises directly.
                       await showModalBottomSheet<void>(
                         context: context,
                         showDragHandle: true,
@@ -299,10 +290,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         },
                       );
                     } else {
-                      // Stopped session & fresh planning: select future date first.
+                      // Stopped session & empty state: open 3-choice entry modal!
                       await ModalService.showModal(
                         context: context,
-                        child: const SelectPlannedDateModal(),
+                        child: const StartWorkoutModal(),
                       );
                     }
                   }
