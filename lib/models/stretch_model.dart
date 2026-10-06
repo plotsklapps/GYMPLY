@@ -65,7 +65,7 @@ class StretchExercise extends WorkoutExercise {
     });
   }
 
-  /// Calculates total calories for all sets in this exercise.
+  // Calculates total calories for all sets in this exercise.
   int calculateTotalCalories({
     required double userWeight,
     required int userAge,
@@ -110,8 +110,8 @@ class StretchSet {
   @HiveField(4)
   final int? intensity;
 
-  /// Calculates estimated calories burned based on MET values.
-  /// Stretching usually has a low MET (around 2.3).
+  // Calculates estimated calories burned based on MET values.
+  // Stretching usually has a low MET (around 2.3).
   int calculateEstimatedCalories({
     required double userWeight,
     required int userAge,

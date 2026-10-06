@@ -105,8 +105,8 @@ class NotificationService with WidgetsBindingObserver {
     }
   }
 
-  /// Schedules a native OS alert that plays `timerbell.wav` when the timer
-  /// reaches zero, even if the app is suspended in the background or killed.
+  // Schedules a native OS alert that plays `timerbell.wav` when the timer
+  // reaches zero, even if the app is suspended in the background or killed.
   Future<void> scheduleTimerAlert({
     required int id,
     required DateTime scheduledDate,
@@ -160,7 +160,7 @@ class NotificationService with WidgetsBindingObserver {
     }
   }
 
-  /// Cancels a scheduled local notification.
+  // Cancels a scheduled local notification.
   Future<void> cancelTimerAlert(int id) async {
     if (!Platform.isIOS) return;
 

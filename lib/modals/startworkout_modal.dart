@@ -79,8 +79,7 @@ class StartWorkoutModal extends StatelessWidget {
                         }
                       },
                       leading: CircleAvatar(
-                        backgroundColor:
-                            theme.colorScheme.surfaceContainerHigh,
+                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
                         child: Icon(
                           IconUtils.dumbbell,
                           color: theme.colorScheme.secondary,
@@ -119,8 +118,7 @@ class StartWorkoutModal extends StatelessWidget {
                         }
                       },
                       leading: CircleAvatar(
-                        backgroundColor:
-                            theme.colorScheme.surfaceContainerHigh,
+                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
                         child: Icon(
                           IconUtils.list,
                           color: theme.colorScheme.secondary,
@@ -133,7 +131,7 @@ class StartWorkoutModal extends StatelessWidget {
                         ),
                       ),
                       subtitle: const Text(
-                        'Choose a pre-saved routine template or create a new one.',
+                        'Choose a pre-saved routine template.',
                       ),
                       trailing: Icon(
                         IconUtils.chevronRight,

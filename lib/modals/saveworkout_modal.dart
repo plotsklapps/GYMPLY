@@ -324,14 +324,18 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     _isRoutineOrigin
-                        ? "Update '$_originRoutineTitle' Routine"
+                        ? 'Update Routine Template'
                         : 'Save as New Routine',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     _isRoutineOrigin
-                        ? "Keep '$_originRoutineTitle' template updated with today's changes."
-                        : 'Store this workout as a reusable template in Routines.',
+                        ? (_saveAsRoutine
+                            ? "Update the '$_originRoutineTitle' routine template in your list."
+                            : "Leave the '$_originRoutineTitle' routine template unchanged.")
+                        : (_saveAsRoutine
+                            ? 'Store this workout as a new reusable template in Routines.'
+                            : 'Do not save a new routine template.'),
                   ),
                   value: _saveAsRoutine,
                   onChanged: (bool value) {
@@ -343,12 +347,20 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 if (_saveAsRoutine)
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text(
-                      'Keep Sets, Reps & Weight Values',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(
+                      _isRoutineOrigin
+                          ? "Include Today's New Weights & Reps"
+                          : 'Include Sets, Reps & Weight Values',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: const Text(
-                      'Preserve values in template (otherwise empty sets).',
+                    subtitle: Text(
+                      _isRoutineOrigin
+                          ? (_keepRoutineValues
+                              ? "Template will be updated with today's new weights and reps."
+                              : "Template will keep its original saved weights and reps.")
+                          : (_keepRoutineValues
+                              ? "New template will include today's sets, reps, and weights."
+                              : "New template will contain empty exercise selections without sets."),
                     ),
                     value: _keepRoutineValues,
                     onChanged: (bool value) {
@@ -389,33 +401,52 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
 
                           // Save as Routine template if enabled.
                           if (_saveAsRoutine) {
-                            final List<WorkoutExercise> routineExercises =
+                            List<WorkoutExercise> routineExercises =
                                 <WorkoutExercise>[];
-                            for (final WorkoutExercise ex
-                                in sActiveWorkout.value.exercises) {
-                              if (_keepRoutineValues) {
-                                routineExercises.add(ex.copyWith());
+
+                            if (_isRoutineOrigin && !_keepRoutineValues) {
+                              // Retain original routine exercises from sRoutines.value
+                              final Routine? origin = sRoutines.value
+                                  .where(
+                                    (Routine r) => r.id == _originRoutineId,
+                                  )
+                                  .firstOrNull;
+                              if (origin != null) {
+                                routineExercises = List<WorkoutExercise>.from(
+                                  origin.exercises,
+                                );
                               } else {
-                                if (ex is StrengthExercise) {
-                                  routineExercises.add(
-                                    ex.copyWith(sets: <StrengthSet>[]),
-                                  );
-                                } else if (ex is CardioExercise) {
-                                  routineExercises.add(
-                                    ex.copyWith(sets: <CardioSet>[]),
-                                  );
-                                } else if (ex is StretchExercise) {
-                                  routineExercises.add(
-                                    ex.copyWith(sets: <StretchSet>[]),
-                                  );
-                                } else {
+                                routineExercises = List<WorkoutExercise>.from(
+                                  sActiveWorkout.value.exercises,
+                                );
+                              }
+                            } else {
+                              for (final WorkoutExercise ex
+                                  in sActiveWorkout.value.exercises) {
+                                if (_keepRoutineValues) {
                                   routineExercises.add(ex.copyWith());
+                                } else {
+                                  if (ex is StrengthExercise) {
+                                    routineExercises.add(
+                                      ex.copyWith(sets: <StrengthSet>[]),
+                                    );
+                                  } else if (ex is CardioExercise) {
+                                    routineExercises.add(
+                                      ex.copyWith(sets: <CardioSet>[]),
+                                    );
+                                  } else if (ex is StretchExercise) {
+                                    routineExercises.add(
+                                      ex.copyWith(sets: <StretchSet>[]),
+                                    );
+                                  } else {
+                                    routineExercises.add(ex.copyWith());
+                                  }
                                 }
                               }
                             }
 
-                            final String routineIdToUse = _isRoutineOrigin &&
-                                    _originRoutineId != null
+                            final String routineIdToUse =
+                                _isRoutineOrigin && _originRoutineId != null
                                 ? _originRoutineId!
                                 : const Uuid().v4();
 

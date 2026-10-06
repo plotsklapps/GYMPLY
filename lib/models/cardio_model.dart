@@ -87,7 +87,7 @@ class CardioExercise extends WorkoutExercise {
     });
   }
 
-  /// Calculates total calories for all sets in this exercise.
+  // Calculates total calories for all sets in this exercise.
   int calculateTotalCalories({
     required double userWeight,
     required int userAge,
@@ -138,9 +138,9 @@ class CardioSet {
   @HiveField(6)
   final int? reps;
 
-  /// Calculates estimated calories burned based on MET values.
-  /// If [userWeight] or [userAge] are 0, returns the stored [calories] or 0.
-  /// [userSex] should be 0 for male, 1 for female.
+  // Calculates estimated calories burned based on MET values.
+  // If [userWeight] or [userAge] are 0, returns the stored [calories] or 0.
+  // [userSex] should be 0 for male, 1 for female.
   int calculateEstimatedCalories({
     required double userWeight,
     required int userAge,

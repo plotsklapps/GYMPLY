@@ -9,8 +9,8 @@ class AtlasService {
   // Singleton instance
   static final AtlasService _instance = AtlasService._internal();
 
-  /// Calculates a map of [atlas.MuscleInfo] to [Color] for the heatmap
-  /// based on the intensity of muscle groups used in a list of exercises.
+  // Calculates a map of [atlas.MuscleInfo] to [Color] for the heatmap
+  // based on the intensity of muscle groups used in a list of exercises.
   Map<atlas.MuscleInfo, Color> getAtlasColors(
     List<gymply.MuscleGroup> workedMuscles,
     ColorScheme colorScheme,

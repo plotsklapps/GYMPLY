@@ -18,7 +18,7 @@ class AudioService {
   bool _isInitialized = false;
   Future<void>? _initFuture;
 
-  /// Initializes audioplayer and sets Android context.
+  // Initializes audioplayer and sets Android context.
   Future<void> initialize() async {
     if (_isInitialized) return;
     return await (_initFuture ??= _performInitialization());
