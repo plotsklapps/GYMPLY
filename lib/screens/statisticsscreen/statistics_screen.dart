@@ -1,5 +1,4 @@
 import 'package:flutter_body_atlas/flutter_body_atlas.dart' as atlas;
-import 'package:gymply/modals/yearlysummary_modal.dart';
 import 'package:gymply/models/exercise_model.dart';
 import 'package:gymply/models/strength_model.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -10,7 +9,6 @@ import 'package:gymply/screens/statisticsscreen/sectionheader_widget.dart';
 import 'package:gymply/screens/statisticsscreen/stattile_widget.dart';
 import 'package:gymply/services/atlas_mapper.dart';
 import 'package:gymply/services/atlas_service.dart';
-import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -144,13 +142,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: InkWell(
-                      onTap: () async {
-                        if (_selectedYear == year) {
-                          await ModalService.showModal(
-                            context: context,
-                            child: YearlySummaryModal(year: year),
-                          );
-                        } else {
+                      onTap: () {
+                        if (_selectedYear != year) {
                           setState(() {
                             _selectedYear = year;
                             _pageController.jumpToPage(0);

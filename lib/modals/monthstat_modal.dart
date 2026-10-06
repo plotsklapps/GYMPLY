@@ -1,5 +1,7 @@
 import 'package:gymply/modals/monthlysummary_modal.dart';
+import 'package:gymply/modals/weeklysummary_modal.dart';
 import 'package:gymply/modals/workoutsummary_modal.dart';
+import 'package:gymply/modals/yearlysummary_modal.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/signals/activeworkout_signal.dart';
@@ -295,20 +297,102 @@ class _MonthStatModalState extends State<MonthStatModal> {
                 ),
                 const SizedBox(height: 24),
 
-                // Monthly Summary Button
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await ModalService.showModal(
-                        context: context,
-                        child: MonthlySummaryModal(date: _currentDate),
-                      );
-                    },
-                    icon: const Icon(IconUtils.statistics),
-                    label: const Text('MONTHLY SUMMARY'),
+                // Wrapped Section Header
+                Text(
+                  'WRAPPED',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.secondary,
+                    letterSpacing: 1.5,
                   ),
+                ),
+                const SizedBox(height: 12),
+
+                // Wrapped Buttons Row
+                Row(
+                  children: <Widget>[
+                    // Weekly Wrapped Button
+                    Expanded(
+                      child: FilledButton.tonalIcon(
+                        onPressed: () async {
+                          final DateTime monday = _currentDate.subtract(
+                            Duration(days: _currentDate.weekday - 1),
+                          );
+                          final DateTime mondayStart = DateTime(
+                            monday.year,
+                            monday.month,
+                            monday.day,
+                          );
+                          final DateTime sundayEnd = mondayStart.add(
+                            const Duration(
+                              days: 6,
+                              hours: 23,
+                              minutes: 59,
+                              seconds: 59,
+                            ),
+                          );
+
+                          final List<Workout> weekWorkouts = sWorkoutHistory
+                              .value
+                              .where((Workout w) {
+                                return w.dateTime.isAfter(
+                                      mondayStart.subtract(
+                                        const Duration(seconds: 1),
+                                      ),
+                                    ) &&
+                                    w.dateTime.isBefore(
+                                      sundayEnd.add(const Duration(seconds: 1)),
+                                    );
+                              })
+                              .toList();
+
+                          Navigator.pop(context);
+                          await ModalService.showModal(
+                            context: context,
+                            child: WeeklySummaryModal(
+                              startDate: mondayStart,
+                              endDate: sundayEnd,
+                              workouts: weekWorkouts,
+                            ),
+                          );
+                        },
+                        icon: const Icon(IconUtils.statistics, size: 18),
+                        label: const Text('WEEKLY'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+
+                    // Monthly Wrapped Button
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await ModalService.showModal(
+                            context: context,
+                            child: MonthlySummaryModal(date: _currentDate),
+                          );
+                        },
+                        icon: const Icon(IconUtils.statistics, size: 18),
+                        label: const Text('MONTHLY'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+
+                    // Yearly Wrapped Button
+                    Expanded(
+                      child: FilledButton.tonalIcon(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await ModalService.showModal(
+                            context: context,
+                            child: YearlySummaryModal(year: _currentDate.year),
+                          );
+                        },
+                        icon: const Icon(IconUtils.statistics, size: 18),
+                        label: const Text('YEARLY'),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
               ],
