@@ -58,18 +58,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final int userAge = sAge.value;
     final int userSex = sSex.value;
 
-    // Collect all years containing recorded workouts + current year.
-    final Set<int> availableYears =
-        history.map((Workout w) => w.dateTime.year).toSet()
-          ..add(DateTime.now().year);
-
-    // Ascending order: [2024, 2025, 2026] (Current year is on far right).
-    final List<int> sortedYearsAsc = availableYears.toList()..sort();
-
-    if (!sortedYearsAsc.contains(_selectedYear)) {
-      _selectedYear = DateTime.now().year;
-    }
-
     final Set<String> workoutDateKeys = history.map((Workout w) {
       return w.dateKey;
     }).toSet();
@@ -129,48 +117,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return Scaffold(
       body: Column(
         children: <Widget>[
-          // Compact Year Slider Bar (right-aligned, reverse scrollable).
-          Padding(
-            padding: EdgeInsets.zero,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: sortedYearsAsc.map((int year) {
-                  final bool isSelected = year == _selectedYear;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: InkWell(
-                      onTap: () {
-                        if (_selectedYear != year) {
-                          setState(() {
-                            _selectedYear = year;
-                            _pageController.jumpToPage(0);
-                          });
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          year.toString(),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? theme.colorScheme.secondary
-                                : theme.colorScheme.outlineVariant,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
           SizedBox(
             height: 100,
             child: PageView.builder(
