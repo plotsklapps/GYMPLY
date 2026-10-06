@@ -299,8 +299,8 @@ class _MonthStatModalState extends State<MonthStatModal> {
 
                 // Wrapped Section Header
                 Text(
-                  'WRAPPED',
-                  style: theme.textTheme.labelSmall?.copyWith(
+                  'GYMPLY WRAPPED',
+                  style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.secondary,
                     letterSpacing: 1.5,
