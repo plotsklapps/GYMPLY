@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
-import 'package:gymply/modals/saveplannedworkout_modal.dart';
-import 'package:gymply/modals/saveroutine_modal.dart';
 import 'package:gymply/modals/saveworkout_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
 import 'package:gymply/modals/startworkout_modal.dart';
@@ -258,27 +256,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   await HapticFeedback.mediumImpact();
 
                   if (context.mounted) {
-                    final Workout active = sActiveWorkout.value;
-
-                    if (active.isRoutine) {
-                      // Mode 3: Creating or editing a Routine template -> open SaveRoutineModal!
-                      await ModalService.showModal(
-                        context: context,
-                        child: const SaveRoutineModal(),
-                      );
-                    } else if (active.isPlanned) {
-                      // Mode 2: Scheduling a workout for a future date -> open SavePlannedWorkoutModal!
-                      await ModalService.showModal(
-                        context: context,
-                        child: const SavePlannedWorkoutModal(),
-                      );
-                    } else {
-                      // Mode 1: Live workout session -> open SaveWorkoutModal!
-                      await ModalService.showModal(
-                        context: context,
-                        child: const SaveWorkoutModal(),
-                      );
-                    }
+                    await ModalService.showModal(
+                      context: context,
+                      child: const SaveWorkoutModal(),
+                    );
                   }
                 },
                 child: const Icon(IconUtils.stop),
@@ -295,11 +276,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     final bool isTimerRunning =
                         TotalTimer.sTotalTimerRunning.value;
                     final Workout active = sActiveWorkout.value;
-                    final bool isAlreadyPlanning = active.isPlanned;
                     final bool hasExercises = active.exercises.isNotEmpty;
 
-                    if (isTimerRunning || isAlreadyPlanning || hasExercises) {
-                      // Live session or active session in progress: search and add exercises directly.
+                    if (isTimerRunning || hasExercises || active.isRoutine) {
+                      // Live session or active workout in progress: search and add exercises directly.
                       await showModalBottomSheet<void>(
                         context: context,
                         showDragHandle: true,
@@ -309,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         },
                       );
                     } else {
-                      // Stopped session & empty state: open 3-choice entry modal!
+                      // Stopped session & empty state: open 2-choice entry modal!
                       await ModalService.showModal(
                         context: context,
                         child: const StartWorkoutModal(),

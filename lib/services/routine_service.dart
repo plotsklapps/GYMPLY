@@ -124,6 +124,7 @@ class RoutineService {
         dateTime: DateTime.now(),
         totalDuration: 0,
         exercises: exercisesToStart,
+        routineId: routine.id,
       );
 
       // Start TotalTimer

@@ -1,6 +1,5 @@
 import 'package:gymply/modals/routine_modal.dart';
 import 'package:gymply/modals/searchmodal/search_modal.dart';
-import 'package:gymply/modals/selectplanneddate_modal.dart';
 import 'package:gymply/services/modal_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
 import 'package:gymply/theme/icons.dart';
@@ -25,7 +24,7 @@ class StartWorkoutModal extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'START OR PLAN WORKOUT',
+                    'START WORKOUT',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -135,46 +134,6 @@ class StartWorkoutModal extends StatelessWidget {
                       ),
                       subtitle: const Text(
                         'Choose a pre-saved routine template or create a new one.',
-                      ),
-                      trailing: Icon(
-                        IconUtils.chevronRight,
-                        color: theme.colorScheme.secondary,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Option 3: Plan Ahead
-                  Card(
-                    child: ListTile(
-                      onTap: () async {
-                        Navigator.pop(context);
-
-                        // Open SelectPlannedDateModal
-                        if (context.mounted) {
-                          await ModalService.showModal(
-                            context: context,
-                            child: const SelectPlannedDateModal(),
-                          );
-                        }
-                      },
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            theme.colorScheme.surfaceContainerHigh,
-                        child: Icon(
-                          IconUtils.calendarMonth,
-                          color: theme.colorScheme.secondary,
-                        ),
-                      ),
-                      title: Text(
-                        'Plan Ahead',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: const Text(
-                        'Schedule a workout for tomorrow or a future date.',
                       ),
                       trailing: Icon(
                         IconUtils.chevronRight,

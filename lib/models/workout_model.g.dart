@@ -26,8 +26,8 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
           : (fields[4] as List).cast<WorkoutExercise>(),
       notes: fields[5] == null ? '' : fields[5] as String,
       imagePaths: fields[6] == null ? [] : (fields[6] as List).cast<String>(),
-      isPlanned: fields[7] == null ? false : fields[7] as bool,
       isRoutine: fields[8] == null ? false : fields[8] as bool,
+      routineId: fields[9] == null ? '' : fields[9] as String?,
     );
   }
 
@@ -49,10 +49,10 @@ class WorkoutAdapter extends TypeAdapter<Workout> {
       ..write(obj.notes)
       ..writeByte(6)
       ..write(obj.imagePaths)
-      ..writeByte(7)
-      ..write(obj.isPlanned)
       ..writeByte(8)
-      ..write(obj.isRoutine);
+      ..write(obj.isRoutine)
+      ..writeByte(9)
+      ..write(obj.routineId);
   }
 
   @override

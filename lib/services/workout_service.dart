@@ -21,11 +21,6 @@ import 'package:logger/logger.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-final Signal<List<Workout>> sPlannedWorkouts = Signal<List<Workout>>(
-  <Workout>[],
-  options: const SignalOptions<List<Workout>>(name: 'sPlannedWorkouts'),
-);
-
 // Central provider managing state and logic of active and completed
 // workouts. It knows how to train.
 //
@@ -43,28 +38,24 @@ class WorkoutService {
 
   final Logger _logger = Logger();
 
-  // Hive boxes.
+  // Hive box.
   late Box<Workout> _workoutBox;
-  late Box<Workout> _plannedWorkoutBox;
 
   // Initialize Hive Boxes and load today's state.
   Future<void> init() async {
     // Log status.
-    _logger.i('WorkoutService: Initializing Hive boxes and loading state');
+    _logger.i('WorkoutService: Initializing Hive box and loading state');
 
-    // Retrieve Hive boxes from HiveService.
+    // Retrieve Hive box from HiveService.
     _workoutBox = hiveService.workoutBox;
-    _plannedWorkoutBox = hiveService.plannedWorkoutBox;
 
     // Load all workouts into Signals.
     sWorkoutHistory.value = _workoutBox.values.toList();
-    sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
 
     // Log workout history list length.
     _logger.i(
       'WorkoutService: Loaded '
-      '${sWorkoutHistory.value.length} workouts from history and '
-      '${sPlannedWorkouts.value.length} planned workouts',
+      '${sWorkoutHistory.value.length} workouts from history',
     );
 
     // Seed global exercise notes from history for existing Play Store users
@@ -81,10 +72,6 @@ class WorkoutService {
     final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
     final Workout? todayWorkout = _workoutBox.get(todayKey);
 
-    final Workout? plannedToday = _plannedWorkoutBox.values.where((Workout w) {
-      return w.dateKey == todayKey;
-    }).firstOrNull;
-
     if (todayWorkout != null) {
       // Set today's workout to the active workout.
       sActiveWorkout.value = todayWorkout;
@@ -97,19 +84,6 @@ class WorkoutService {
         'WorkoutService: '
         'Resuming current session ($todayKey) with '
         '${todayWorkout.exercises.length} exercises',
-      );
-    } else if (plannedToday != null) {
-      // Pre-load planned workout for today into active workout seamlessly.
-      sActiveWorkout.value = plannedToday.copyWith(
-        dateTime: DateTime.now(),
-        isPlanned: true,
-      );
-      TotalTimer().syncTotalTime(0);
-
-      _logger.i(
-        'WorkoutService: '
-        "Pre-loaded today's planned workout ($todayKey) with "
-        '${plannedToday.exercises.length} exercises',
       );
     } else {
       // Log no workout found.
@@ -135,9 +109,8 @@ class WorkoutService {
       final Workout workout = sActiveWorkout.value;
 
       // Only auto-save to history (_workoutBox) if it is a REAL live workout session
-      // (NOT a routine template, NOT a future planned workout).
-      if (!workout.isPlanned &&
-          !workout.isRoutine &&
+      // (NOT a routine template).
+      if (!workout.isRoutine &&
           (workout.exercises.isNotEmpty || workout.totalDuration > 0)) {
         // Store to Hive history.
         await _workoutBox.put(workout.dateKey, workout);
@@ -148,10 +121,6 @@ class WorkoutService {
         // Log success.
         _logger.i(
           'WorkoutService: Auto-saved live workout for ${workout.dateKey}',
-        );
-      } else {
-        _logger.i(
-          'WorkoutService: Skipping history auto-save for planned/routine workout.',
         );
       }
     });
@@ -248,55 +217,6 @@ class WorkoutService {
       );
     }
   }
-
-  // Save a planned/scheduled workout for a future date.
-  Future<void> savePlannedWorkout(Workout workout) async {
-    try {
-      final Workout plannedEntry = workout.copyWith(isPlanned: true);
-      await _plannedWorkoutBox.put(plannedEntry.id, plannedEntry);
-      sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
-
-      final String todayKey = DateFormat('yyyyMMdd').format(DateTime.now());
-      if (plannedEntry.dateKey == todayKey) {
-        sActiveWorkout.value = plannedEntry;
-      }
-
-      _logger.i(
-        'WorkoutService: Saved planned workout for ${plannedEntry.dateKey}',
-      );
-      ToastService.showSuccess(
-        title: 'Workout Scheduled',
-        subtitle:
-            'Planned for ${DateFormat.yMMMMd().format(plannedEntry.dateTime)}',
-      );
-    } on Object catch (e, stackTrace) {
-      _logger.e(
-        'WorkoutService: Failed to save planned workout',
-        error: e,
-        stackTrace: stackTrace,
-      );
-      ToastService.showError(
-        title: 'Planning Error',
-        subtitle: 'Failed to schedule workout.',
-      );
-    }
-  }
-
-  // Delete a planned workout.
-  Future<void> deletePlannedWorkout(String id) async {
-    try {
-      await _plannedWorkoutBox.delete(id);
-      sPlannedWorkouts.value = _plannedWorkoutBox.values.toList();
-      _logger.i('WorkoutService: Deleted planned workout $id');
-    } on Object catch (e, stackTrace) {
-      _logger.e(
-        'WorkoutService: Failed to delete planned workout',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
-  }
-
   // Add exercise to sActiveWorkout Signal.
   void addExercise(ExercisePath path) {
     // Fetch latest List<WorkoutExercise> from sActiveWorkout Signal.

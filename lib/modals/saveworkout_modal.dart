@@ -35,8 +35,11 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _notesFocusNode = FocusNode();
 
+  bool _isRoutineOrigin = false;
   bool _saveAsRoutine = false;
   bool _keepRoutineValues = true;
+  String _originRoutineTitle = '';
+  String? _originRoutineId;
 
   late final String _suggestedTitle;
   bool _isTitleFocused = false;
@@ -50,8 +53,19 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
   @override
   void initState() {
     super.initState();
-    // Load existing data from the active workout.
     final Workout workout = sActiveWorkout.value;
+
+    if (workout.routineId != null && workout.routineId!.isNotEmpty) {
+      _isRoutineOrigin = true;
+      _saveAsRoutine = true;
+      _originRoutineId = workout.routineId;
+
+      final Routine? origin = sRoutines.value
+          .where((Routine r) => r.id == workout.routineId)
+          .firstOrNull;
+      _originRoutineTitle = origin?.title ?? workout.title;
+    }
+
     _suggestedTitle = workout.title.isNotEmpty
         ? workout.title
         : DateTime.now().defaultWorkoutTitle;
@@ -305,15 +319,19 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                 const SizedBox(height: 16),
                 const Divider(),
 
-                // Save as Routine Switch.
+                // Save as Routine / Update Routine Switch.
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    'Save as Routine',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  title: Text(
+                    _isRoutineOrigin
+                        ? "Update '$_originRoutineTitle' Routine"
+                        : 'Save as New Routine',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: const Text(
-                    'Store this workout as a reusable template in Routines.',
+                  subtitle: Text(
+                    _isRoutineOrigin
+                        ? "Keep '$_originRoutineTitle' template updated with today's changes."
+                        : 'Store this workout as a reusable template in Routines.',
                   ),
                   value: _saveAsRoutine,
                   onChanged: (bool value) {
@@ -396,14 +414,23 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                               }
                             }
 
-                            final Routine newRoutine = Routine(
-                              id: const Uuid().v4(),
+                            final String routineIdToUse = _isRoutineOrigin &&
+                                    _originRoutineId != null
+                                ? _originRoutineId!
+                                : const Uuid().v4();
+
+                            final Routine routineToSave = Routine(
+                              id: routineIdToUse,
                               title: titleToSave,
                               exercises: routineExercises,
                               notes: _notesController.text.trim(),
                             );
 
-                            await routineService.saveRoutine(newRoutine);
+                            if (_isRoutineOrigin) {
+                              await routineService.updateRoutine(routineToSave);
+                            } else {
+                              await routineService.saveRoutine(routineToSave);
+                            }
                           }
 
                           // Save current workout.
