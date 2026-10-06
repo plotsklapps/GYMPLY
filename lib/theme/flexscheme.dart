@@ -199,7 +199,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
   } else {
     return FlexThemeData.light(
       // Using FlexColorScheme built-in FlexScheme enum based colors
-      scheme: FlexScheme.shark,
+      scheme: activeScheme,
       // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.seeded,
       // Convenience direct styling properties.
