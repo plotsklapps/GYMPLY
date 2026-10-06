@@ -143,13 +143,9 @@ class AppSettingsModal extends SignalWidget {
                     subtitle: const Text('Change your theme'),
                     trailing: const Icon(IconUtils.chevronRight),
                     onTap: () async {
-                      await showModalBottomSheet<void>(
-                        showDragHandle: true,
+                      await ModalService.showModal(
                         context: context,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return const SupporterThemeModal();
-                        },
+                        child: const SupporterThemeModal(),
                       );
                     },
                   ),
@@ -159,13 +155,9 @@ class AppSettingsModal extends SignalWidget {
                     subtitle: const Text('Change your font'),
                     trailing: const Icon(IconUtils.chevronRight),
                     onTap: () async {
-                      await showModalBottomSheet<void>(
-                        showDragHandle: true,
+                      await ModalService.showModal(
                         context: context,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return const SupporterFontModal();
-                        },
+                        child: const SupporterFontModal(),
                       );
                     },
                   ),

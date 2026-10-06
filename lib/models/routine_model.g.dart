@@ -23,13 +23,17 @@ class RoutineAdapter extends TypeAdapter<Routine> {
           ? []
           : (fields[2] as List).cast<WorkoutExercise>(),
       notes: fields[3] == null ? '' : fields[3] as String,
+      muscleGroup: fields[4] as MuscleGroup?,
+      muscleGroups: fields[5] == null
+          ? []
+          : (fields[5] as List).cast<MuscleGroup>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Routine obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -37,7 +41,11 @@ class RoutineAdapter extends TypeAdapter<Routine> {
       ..writeByte(2)
       ..write(obj.exercises)
       ..writeByte(3)
-      ..write(obj.notes);
+      ..write(obj.notes)
+      ..writeByte(4)
+      ..write(obj.muscleGroup)
+      ..writeByte(5)
+      ..write(obj.muscleGroups);
   }
 
   @override

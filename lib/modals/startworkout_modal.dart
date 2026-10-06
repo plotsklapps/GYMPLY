@@ -54,7 +54,7 @@ class StartWorkoutModal extends StatelessWidget {
         Flexible(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Column(
                 children: <Widget>[
                   // Option 1: Freestyle
@@ -79,14 +79,13 @@ class StartWorkoutModal extends StatelessWidget {
                         }
                       },
                       leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
                         child: Icon(
                           IconUtils.dumbbell,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
                       title: Text(
-                        'Freestyle',
+                        'Freestyle / Oldschool',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -118,20 +117,19 @@ class StartWorkoutModal extends StatelessWidget {
                         }
                       },
                       leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
                         child: Icon(
                           IconUtils.list,
                           color: theme.colorScheme.secondary,
                         ),
                       ),
                       title: Text(
-                        'Routines',
+                        'Routines / Templates',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       subtitle: const Text(
-                        'Choose a pre-saved routine template.',
+                        'Choose a premade routine template.',
                       ),
                       trailing: Icon(
                         IconUtils.chevronRight,
