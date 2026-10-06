@@ -2,7 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.9+93] - 2026-09-29
+## [0.0.9+94] - 2026-10-06
+- **Multi-Avatar Muscle Group Selection for Routines:**
+  - Added `@HiveField(5)` `muscleGroups` property to `Routine` model supporting selection of up to 3 muscle group avatars per template.
+  - **`EditRoutineModal`:** Converted the edit dialog into a clean `ModalService` bottom sheet modal allowing users to edit routine titles, descriptions, and select up to 3 muscle group avatars.
+  - **Avatar Badges on Routine Cards:** Routine cards in `RoutineModal` now display up to 3 muscle group avatar badges side-by-side alongside truncated 2-line title wrapping (`TextOverflow.ellipsis`).
+- **Centralized "GYMPLY WRAPPED" Section:**
+  - Replaced the single monthly summary button in `MonthStatModal` with a dedicated **`GYMPLY WRAPPED`** section offering 3 buttons: **`WEEKLY`**, **`MONTHLY`**, and **`YEARLY`**.
+  - Dynamically calculates week bounds for 1-tap launch of `WeeklySummaryModal`, `MonthlySummaryModal`, or `YearlySummaryModal` for any selected month.
+- **Statistics Screen Refinement:**
+  - Removed the horizontal year selector bar from `StatisticsScreen` for a cleaner, swipeable 12-month calendar view.
+- **Light Mode Theme Color Fix:**
+  - Fixed Light Mode theme color switching by binding `scheme: activeScheme` in `FlexThemeData.light`, restoring full theme color customization (Orange, Purple, Pink) across Light and Dark Mode.
+
+## [0.0.9+93] - 2026-10-05
 - **GYMPLY Philosophy Streamlining & Planning Removal:**
   - **Removed Future Date Planning:** Completely removed future workout scheduling, `SelectPlannedDateModal`, and `SavePlannedWorkoutModal` to keep GYMPLY strictly focused on live workouts and routines without friction.
   - **Reverted Copying:** Updated `CopyWorkoutModal` to copy historical workouts directly to Today.
