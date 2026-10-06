@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+93] - 2026-09-29
+- **GYMPLY Philosophy Streamlining & Planning Removal:**
+  - **Removed Future Date Planning:** Completely removed future workout scheduling, `SelectPlannedDateModal`, and `SavePlannedWorkoutModal` to keep GYMPLY strictly focused on live workouts and routines without friction.
+  - **Reverted Copying:** Updated `CopyWorkoutModal` to copy historical workouts directly to Today.
+  - **Streamlined Workout Entry (`StartWorkoutModal`):** Simplified the entry modal to 2 clear options: 🏋️ **Freestyle** and 📋 **Routines**.
+  - **Single `Stop` FAB Behavior:** Restored the `Stop` FAB (`saveFAB`) on `HomeScreen` to **ALWAYS open `SaveWorkoutModal`**.
+- **Single Birthplace for Routines & Dynamic Evolution:**
+  - **Born from Completed Workouts:** Removed manual blank-slate routine building from `RoutineModal`. Routines are created exclusively when finishing a live workout in `SaveWorkoutModal` via the *"Save as Routine"* switch.
+  - **Dynamic In-Place Routine Updates:** When a workout is started from a Routine, `SaveWorkoutModal` automatically detects the template and presents an **"Update Routine Template"** switch with a sub-toggle **"Include Today's New Weights & Reps"**.
+  - **Smart Template Preservation:** Toggling the sub-switch ON updates the routine in Hive with today's new weights and exercises; toggling OFF preserves the original saved routine weights and reps.
+  - **Dynamic Subtitle UI Copy:** Updated switch labels and subtitles to explicitly state whether a template is being updated or retained.
+- **Service Audit & Open Source Code Standards:**
+  - Audited all service files in `lib/services/` (`WorkoutService`, `RoutineService`, `HiveService`, `NotificationService`, `LiveActivityService`) for DRYness, single responsibility, and effective Dart coding style.
+  - Standardized all comments across models and services to strictly use `//` single-line comments in English.
+
 ## [0.0.9+92] - 2026-09-29
 - **Routines & Templates System:**
   - Added full support for reusable workout routines and templates with Hive CE persistence (`routineBox`, `@HiveType(typeId: 13)`).
