@@ -357,10 +357,10 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                       _isRoutineOrigin
                           ? (_keepRoutineValues
                               ? "Template will be updated with today's new weights and reps."
-                              : "Template will keep its original saved weights and reps.")
+                              : 'Template will keep its original saved weights and reps.')
                           : (_keepRoutineValues
                               ? "New template will include today's sets, reps, and weights."
-                              : "New template will contain empty exercise selections without sets."),
+                              : 'New template will contain empty exercise selections without sets.'),
                     ),
                     value: _keepRoutineValues,
                     onChanged: (bool value) {

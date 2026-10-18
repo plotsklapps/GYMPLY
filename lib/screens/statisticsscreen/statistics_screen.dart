@@ -31,7 +31,7 @@ class StatisticsScreen extends SignalStatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   late final PageController _pageController;
 
-  int _selectedYear = DateTime.now().year;
+  final int _selectedYear = DateTime.now().year;
 
   @override
   void initState() {

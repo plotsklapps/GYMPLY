@@ -32,7 +32,7 @@ dependencies:
   logger: ^2.6.2
   material_ui: ^1.0.0
   ndk: ^0.10.0-dev.6
-  open_filex: ^4.7.0
+  open_filex: ^5.0.0
   package_info_plus: ^10.1.0
   path: ^1.9.0
   path_provider: ^2.1.5
