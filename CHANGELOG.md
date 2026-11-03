@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+95] - 2026-11-03
+- **Dependency & Build Upgrades:**
+  - Upgraded direct dependencies in `pubspec.yaml`: `open_filex` to `^5.0.0` and `ndk` to `^0.11.0-dev.2`.
+  - Updated key dependencies in `pubspec.lock`, including `material_ui` (1.9.0), `cupertino_ui` (1.1.5), `file_picker` (13.3.2), `flutter_local_notifications` (23.0.0-dev.5), `toastification` (3.2.2), `wakelock_plus` (1.8.2), `crypto` (3.0.8), `equatable` (3.0.0), `build` (5.0.0), `build_runner` (2.17.1), `archive` (4.6.0), and `sembast` (3.10.0).
+  - Updated platform-specific plugins including `permission_handler_android`, `permission_handler_apple`, `image_picker_ios`, `in_app_purchase_storekit`, and `shared_preferences_android`.
+- **Code Style & Maintenance:**
+  - Standardized string quotes in `SaveWorkoutModal`.
+  - Converted floating-point color literals to integer representations across theme configs in `flexscheme.dart`.
+  - Marked `_selectedYear` as `final` in `StatisticsScreen`.
+  - Incremented project version to `0.0.9+95` and synced `version.json`.
+
 ## [0.0.9+94] - 2026-10-06
 - **Multi-Avatar Muscle Group Selection for Routines:**
   - Added `@HiveField(5)` `muscleGroups` property to `Routine` model supporting selection of up to 3 muscle group avatars per template.
