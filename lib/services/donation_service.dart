@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -48,6 +47,14 @@ class DonationService {
   // Initialize the service.
   Future<void> initialize() async {
     sIsSupporter.value = settingsService.isSupporter;
+
+    if (kIsWeb) {
+      sIsAvailable.value = false;
+      _logger.i(
+        'DonationService: Running on Web, skipping native IAP initialization.',
+      );
+      return;
+    }
 
     final Stream<List<PurchaseDetails>> purchaseUpdated = _iap.purchaseStream;
     _subscription = purchaseUpdated.listen(

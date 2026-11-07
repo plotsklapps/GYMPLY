@@ -14,6 +14,7 @@ import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/nostr_service.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/services/routine_service.dart';
+import 'package:gymply/services/scroll_service.dart';
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/workout_service.dart';
 import 'package:gymply/signals/onboarding_signal.dart';
@@ -102,6 +103,7 @@ class MainEntry extends SignalWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'GYMPLY.',
+        scrollBehavior: appScrollBehavior,
         // Theming fully done with flex_color_scheme package.
         theme: cThemeData.value,
         // First time users get an onboarding.
