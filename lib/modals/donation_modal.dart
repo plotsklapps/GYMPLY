@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -98,9 +100,13 @@ class DonationModal extends SignalWidget {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      'Donations are currently unavailable. '
-                      'Please ensure you have a working Google Play '
-                      'connection.',
+                      Platform.isIOS
+                          ? 'Donations are currently unavailable. '
+                                'Please ensure you have an active App Store '
+                                'connection.'
+                          : 'Donations are currently unavailable. '
+                                'Please ensure you have a working Google Play '
+                                'connection.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: theme.colorScheme.error),
                     ),
@@ -128,6 +134,14 @@ class DonationModal extends SignalWidget {
                     (ProductDetails p) => _ProductTile(product: p),
                   ),
                 ],
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: () async {
+                    await donationService.restorePurchases();
+                  },
+                  icon: const Icon(IconUtils.sync),
+                  label: const Text('RESTORE PURCHASES'),
+                ),
                 const SizedBox(height: 16),
               ],
             ),
@@ -175,7 +189,7 @@ class _ProductTile extends StatelessWidget {
           product.title
               .split('(')
               .first
-              .trim(), // Remove the "(GYMPLY.)" suffix from Google Play.
+              .trim(), // Remove the "(GYMPLY.)" suffix if present.
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(subtitle),

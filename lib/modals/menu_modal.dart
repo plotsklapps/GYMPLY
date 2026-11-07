@@ -142,7 +142,7 @@ class MenuModal extends SignalWidget {
                         )
                       : const Icon(IconUtils.download),
                   title: const Text('Backup Data'),
-                  subtitle: const Text('Save your workout history to device'),
+                  subtitle: const Text('Save or share your backup file'),
                 ),
 
                 // Restore ListTile.

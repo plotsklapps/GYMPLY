@@ -361,6 +361,23 @@ class NotificationService with WidgetsBindingObserver {
     }
   }
 
+  Future<void> requestIOSPermissions() async {
+    if (!Platform.isIOS) return;
+    try {
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } on Object catch (e, stack) {
+      _logger.e(
+        'NotificationService: Failed to request iOS permissions',
+        error: e,
+        stackTrace: stack,
+      );
+    }
+  }
+
   static Future<void> requestBatteryOptimization() async {
     await _requestBatteryOptimization();
   }

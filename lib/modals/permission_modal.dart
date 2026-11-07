@@ -81,10 +81,13 @@ class PermissionModal extends StatelessWidget {
                       child: FilledButton.tonal(
                         onPressed: () async {
                           // 1. Request notification permission (OS dialogs).
-                          await <Permission>[Permission.notification].request();
+                          await <Permission>[
+                            Permission.notification,
+                          ].request();
 
-                          // Request battery optimization on Android.
-                          if (Platform.isAndroid) {
+                          if (Platform.isIOS) {
+                            await notificationService.requestIOSPermissions();
+                          } else if (Platform.isAndroid) {
                             await NotificationService
                                 .requestBatteryOptimization();
                           }

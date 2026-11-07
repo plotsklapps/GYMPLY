@@ -18,7 +18,7 @@ class DonationService {
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
 
-  // IDs for Google Play Console.
+  // Product IDs for App Store and Google Play Console.
   static const String idMonthly = 'support_monthly';
   static const String idYearly = 'support_yearly';
 
@@ -83,7 +83,28 @@ class DonationService {
     }
   }
 
-  // Fetch product details from Google Play.
+  // Restore past purchases explicitly (required by App Store Guidelines).
+  Future<void> restorePurchases() async {
+    sIsLoading.value = true;
+    try {
+      await _iap.restorePurchases();
+      _logger.i('DonationService: Restored purchases successfully.');
+      ToastService.showSuccess(
+        title: 'Restoring Purchases',
+        subtitle: 'Checking store for past purchases...',
+      );
+    } on Exception catch (e) {
+      _logger.e('DonationService: Error restoring purchases: $e');
+      ToastService.showError(
+        title: 'Error',
+        subtitle: 'Failed to restore purchases: $e',
+      );
+    } finally {
+      sIsLoading.value = false;
+    }
+  }
+
+  // Fetch product details from App Store / Google Play.
   Future<void> fetchProducts() async {
     sIsLoading.value = true;
     try {
@@ -139,7 +160,15 @@ class DonationService {
     );
 
     for (final PurchaseDetails purchase in purchaseDetailsList) {
-      if (purchase.status == PurchaseStatus.error) {
+      if (purchase.status == PurchaseStatus.pending) {
+        _logger.i(
+          'DonationService: Purchase pending for ${purchase.productID}',
+        );
+        ToastService.showWarning(
+          title: 'Purchase Pending',
+          subtitle: 'Your transaction is being processed by the store.',
+        );
+      } else if (purchase.status == PurchaseStatus.error) {
         _logger.e('DonationService: Purchase error: ${purchase.error}');
         ToastService.showError(
           title: 'Purchase Failed',
