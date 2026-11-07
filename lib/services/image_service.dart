@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +32,7 @@ class ImageService {
 
   // Convert relative path (filename) to absolute path for display.
   Future<String> getAbsolutePath(String relativePath) async {
+    if (kIsWeb) return relativePath;
     final Directory dir = await _imageDirectory;
     return path.join(dir.path, relativePath);
   }
@@ -47,6 +49,10 @@ class ImageService {
       );
 
       if (image == null) return null;
+
+      if (kIsWeb) {
+        return image.path;
+      }
 
       final Directory imageDir = await _imageDirectory;
 

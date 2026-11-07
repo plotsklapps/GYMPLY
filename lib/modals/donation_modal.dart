@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -100,7 +101,7 @@ class DonationModal extends SignalWidget {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      Platform.isIOS
+                      !kIsWeb && Platform.isIOS
                           ? 'Donations are currently unavailable. '
                                 'Please ensure you have an active App Store '
                                 'connection.'

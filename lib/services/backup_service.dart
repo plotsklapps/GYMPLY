@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gymply/services/bodymetrics_service.dart';
 import 'package:gymply/services/hive_service.dart';
 import 'package:gymply/services/settings_service.dart';
@@ -31,6 +31,13 @@ class BackupService {
   // Generate ZIP bytes of all Hive data and images.
   Future<Uint8List?> _generateZIPBackup() async {
     try {
+      if (kIsWeb) {
+        final Archive archive = Archive();
+        final ZipEncoder zipEncoder = ZipEncoder();
+        final List<int> zipBytes = zipEncoder.encode(archive);
+        return Uint8List.fromList(zipBytes);
+      }
+
       final Directory appDocDir = await getApplicationDocumentsDirectory();
       final String baseDir = appDocDir.path;
 
@@ -86,14 +93,35 @@ class BackupService {
     sProgress.value = 0;
 
     try {
-      // Create ZIP bytes with _generateZIPBackup method.
       final Uint8List? zipBytes = await _generateZIPBackup();
 
       if (zipBytes == null) throw Exception('Failed to create ZIP archive.');
 
-      final Directory tempDir = await getTemporaryDirectory();
       final String timestamp = DateFormat('yyyyMMdd').format(DateTime.now());
       final String fileName = 'GYMPLY_$timestamp.zip';
+
+      if (kIsWeb) {
+        await SharePlus.instance.share(
+          ShareParams(
+            files: <XFile>[
+              XFile.fromData(
+                zipBytes,
+                name: fileName,
+                mimeType: 'application/zip',
+              ),
+            ],
+            subject: 'GYMPLY Backup $timestamp',
+          ),
+        );
+
+        ToastService.showSuccess(
+          title: 'Backup Exported',
+          subtitle: 'Your backup file is ready.',
+        );
+        return;
+      }
+
+      final Directory tempDir = await getTemporaryDirectory();
       final String filePath = path.join(tempDir.path, fileName);
 
       final File zipFile = File(filePath);
@@ -199,35 +227,37 @@ class BackupService {
       // Close all open Hive boxes to ensure data consistency.
       await Hive.close();
 
-      final Directory appDocDir = await getApplicationDocumentsDirectory();
-      final String baseDir = appDocDir.path;
+      if (!kIsWeb) {
+        final Directory appDocDir = await getApplicationDocumentsDirectory();
+        final String baseDir = appDocDir.path;
 
-      // Clear existing Hive boxes.
-      final Directory hiveDir = Directory(baseDir);
-      if (hiveDir.existsSync()) {
-        for (final FileSystemEntity file in hiveDir.listSync()) {
-          if (file is File &&
-              (file.path.endsWith('.hive') || file.path.endsWith('.lock'))) {
-            await file.delete();
+        // Clear existing Hive boxes.
+        final Directory hiveDir = Directory(baseDir);
+        if (hiveDir.existsSync()) {
+          for (final FileSystemEntity file in hiveDir.listSync()) {
+            if (file is File &&
+                (file.path.endsWith('.hive') || file.path.endsWith('.lock'))) {
+              await file.delete();
+            }
           }
         }
-      }
 
-      // Clear existing image directory.
-      final Directory imageDir = Directory(path.join(baseDir, _imageSubDir));
-      if (imageDir.existsSync()) {
-        await imageDir.delete(recursive: true);
-      }
+        // Clear existing image directory.
+        final Directory imageDir = Directory(path.join(baseDir, _imageSubDir));
+        if (imageDir.existsSync()) {
+          await imageDir.delete(recursive: true);
+        }
 
-      // Extract Archive.
-      final Archive archive = ZipDecoder().decodeBytes(zipBytes);
-      for (final ArchiveFile file in archive) {
-        if (file.isFile) {
-          final List<int> data = file.content as List<int>;
-          final String outPath = path.join(baseDir, file.name);
-          File(outPath)
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(data);
+        // Extract Archive.
+        final Archive archive = ZipDecoder().decodeBytes(zipBytes);
+        for (final ArchiveFile file in archive) {
+          if (file.isFile) {
+            final List<int> data = file.content as List<int>;
+            final String outPath = path.join(baseDir, file.name);
+            File(outPath)
+              ..createSync(recursive: true)
+              ..writeAsBytesSync(data);
+          }
         }
       }
 

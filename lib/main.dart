@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:gymply/hive_registrar.g.dart';
@@ -79,7 +80,7 @@ void main() async {
 
   // NotificationService initializes timer service channel and registers
   // task data callback for two-way service ↔ UI communication on Android.
-  if (Platform.isAndroid) {
+  if (!kIsWeb && Platform.isAndroid) {
     FlutterForegroundTask.initCommunicationPort();
   }
   await notificationService.init();

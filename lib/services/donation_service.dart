@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:gymply/services/settings_service.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -73,6 +75,10 @@ class DonationService {
   }
 
   Future<void> _checkAvailability() async {
+    if (kIsWeb) {
+      sIsAvailable.value = false;
+      return;
+    }
     sIsAvailable.value = await _iap.isAvailable();
 
     // Log success.
@@ -143,6 +149,13 @@ class DonationService {
 
   // Start a purchase. All remaining products are subscriptions.
   Future<void> buyProduct(ProductDetails product) async {
+    if (kIsWeb) {
+      ToastService.showWarning(
+        title: 'Coming Soon',
+        subtitle: 'Donations on Web will be available soon!',
+      );
+      return;
+    }
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
     await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }

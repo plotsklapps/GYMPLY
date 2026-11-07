@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gymply/services/audio_service.dart';
@@ -118,7 +120,7 @@ class RestTimer {
           final bool isForeground =
               WidgetsBinding.instance.lifecycleState ==
               AppLifecycleState.resumed;
-          if (!Platform.isIOS || isForeground) {
+          if (kIsWeb || !Platform.isIOS || isForeground) {
             unawaited(AudioService().playTimerBell());
           }
 

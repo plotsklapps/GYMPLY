@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/modals/copyworkout_modal.dart';
 import 'package:gymply/modals/deleteworkout_modal.dart';
 import 'package:gymply/models/workout_model.dart';
@@ -35,7 +36,9 @@ class WorkoutSummaryModal extends SignalWidget {
             children: <Widget>[
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.file(File(path), fit: BoxFit.contain),
+                child: kIsWeb
+                    ? Image.network(path, fit: BoxFit.contain)
+                    : Image.file(File(path), fit: BoxFit.contain),
               ),
               Positioned(
                 top: 10,
@@ -269,10 +272,15 @@ class WorkoutSummaryModal extends SignalWidget {
                                           clipBehavior: Clip.antiAlias,
                                           child: SizedBox(
                                             height: 160,
-                                            child: Image.file(
-                                              File(snapshot.data!),
-                                              fit: BoxFit.cover,
-                                            ),
+                                            child: kIsWeb
+                                                ? Image.network(
+                                                    snapshot.data!,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.file(
+                                                    File(snapshot.data!),
+                                                    fit: BoxFit.cover,
+                                                  ),
                                           ),
                                         ),
                                       );

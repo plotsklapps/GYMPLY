@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/services/notification_service.dart';
 import 'package:gymply/theme/icons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -14,7 +15,12 @@ class PermissionModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    final String explanationText = Platform.isIOS
+    final String explanationText = kIsWeb
+        ? 'GYMPLY. runs in your web browser. Timer sounds will play '
+              'automatically when a rest or interval period completes.\n\n'
+              'Your data is stored locally in your browser storage and never '
+              'leaves your device.'
+        : (!kIsWeb && Platform.isIOS)
         ? 'GYMPLY. needs notification permission to ring the timer bell and '
               'alert you when your rest or interval timer ends while using '
               'other apps (like Instagram) or when your screen is locked.\n\n'
@@ -80,16 +86,8 @@ class PermissionModal extends StatelessWidget {
                     Expanded(
                       child: FilledButton.tonal(
                         onPressed: () async {
-                          // 1. Request notification permission (OS dialogs).
-                          await <Permission>[
-                            Permission.notification,
-                          ].request();
-
-                          if (Platform.isIOS) {
-                            await notificationService.requestIOSPermissions();
-                          } else if (Platform.isAndroid) {
-                            await NotificationService
-                                .requestBatteryOptimization();
+                          if (!kIsWeb) {
+                            await _requestPermissions();
                           }
 
                           // Close the modal.
@@ -109,5 +107,15 @@ class PermissionModal extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _requestPermissions() async {
+    await <Permission>[Permission.notification].request();
+    if (Platform.isIOS) {
+      await notificationService.requestIOSPermissions();
+    }
+    if (Platform.isAndroid) {
+      await NotificationService.requestBatteryOptimization();
+    }
   }
 }

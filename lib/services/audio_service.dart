@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 class AudioService {
@@ -28,21 +29,22 @@ class AudioService {
     try {
       _logger.i('AudioService: Initializing native Android audio context...');
 
-      // Make phone audio duck and configure iOS session
-      // for background playback.
-      await _player.setAudioContext(
-        AudioContext(
-          android: const AudioContextAndroid(
-            audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+      // Make phone audio duck and configure iOS session on mobile.
+      if (!kIsWeb) {
+        await _player.setAudioContext(
+          AudioContext(
+            android: const AudioContextAndroid(
+              audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+            ),
+            iOS: AudioContextIOS(
+              options: const <AVAudioSessionOptions>{
+                AVAudioSessionOptions.duckOthers,
+                AVAudioSessionOptions.mixWithOthers,
+              },
+            ),
           ),
-          iOS: AudioContextIOS(
-            options: const <AVAudioSessionOptions>{
-              AVAudioSessionOptions.duckOthers,
-              AVAudioSessionOptions.mixWithOthers,
-            },
-          ),
-        ),
-      );
+        );
+      }
 
       // Keep player intact after sound completes so audio tail is not clipped.
       await _player.setReleaseMode(ReleaseMode.stop);

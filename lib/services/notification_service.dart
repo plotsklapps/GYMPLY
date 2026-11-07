@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -68,7 +69,7 @@ class NotificationService with WidgetsBindingObserver {
       await _localNotifications.initialize(settings: initSettings);
 
       // Initialize Android foreground service on Android only.
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
         FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
         FlutterForegroundTask.init(
           androidNotificationOptions: AndroidNotificationOptions(
@@ -113,7 +114,7 @@ class NotificationService with WidgetsBindingObserver {
     required String title,
     required String body,
   }) async {
-    if (!Platform.isIOS) return;
+    if (kIsWeb || !Platform.isIOS) return;
 
     try {
       if (scheduledDate.isBefore(DateTime.now())) return;
@@ -162,7 +163,7 @@ class NotificationService with WidgetsBindingObserver {
 
   // Cancels a scheduled local notification.
   Future<void> cancelTimerAlert(int id) async {
-    if (!Platform.isIOS) return;
+    if (kIsWeb || !Platform.isIOS) return;
 
     try {
       await _localNotifications.cancel(id: id);
@@ -181,7 +182,7 @@ class NotificationService with WidgetsBindingObserver {
     String? segmentLabel,
     String? segmentTime,
   }) async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
 
     try {
       if (await FlutterForegroundTask.isRunningService) {
@@ -242,7 +243,7 @@ class NotificationService with WidgetsBindingObserver {
       }
 
       // 2. Manage Android Foreground Service Lifecycle
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
         if (isTotalRunning) {
           if (!await FlutterForegroundTask.isRunningService) {
             await startService();
@@ -262,7 +263,7 @@ class NotificationService with WidgetsBindingObserver {
       }
 
       // 3. Manage iOS Live Activity Lifecycle
-      if (Platform.isIOS) {
+      if (!kIsWeb && Platform.isIOS) {
         if (isTotalRunning) {
           final DateTime totalStartTime =
               totalTimer.startTime ?? DateTime.now();
@@ -288,7 +289,7 @@ class NotificationService with WidgetsBindingObserver {
   }
 
   Future<void> startService() async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
 
     try {
       if (await FlutterForegroundTask.isRunningService) return;
@@ -313,7 +314,7 @@ class NotificationService with WidgetsBindingObserver {
   }
 
   Future<void> stopService() async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
 
     try {
       await FlutterForegroundTask.stopService();
@@ -330,9 +331,10 @@ class NotificationService with WidgetsBindingObserver {
   Future<void> requestPermissionWithModal(BuildContext context) async {
     try {
       // Check Notification permission across platforms.
+      if (kIsWeb) return;
       final PermissionStatus status = await Permission.notification.status;
       if (status.isGranted) {
-        if (Platform.isAndroid) await _requestBatteryOptimization();
+        if (!kIsWeb && Platform.isAndroid) await _requestBatteryOptimization();
         return;
       }
 
@@ -362,7 +364,7 @@ class NotificationService with WidgetsBindingObserver {
   }
 
   Future<void> requestIOSPermissions() async {
-    if (!Platform.isIOS) return;
+    if (kIsWeb || !Platform.isIOS) return;
     try {
       await _localNotifications
           .resolvePlatformSpecificImplementation<
@@ -383,7 +385,7 @@ class NotificationService with WidgetsBindingObserver {
   }
 
   static Future<void> _requestBatteryOptimization() async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
       await FlutterForegroundTask.requestIgnoreBatteryOptimization();
     }

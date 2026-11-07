@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/addimage_modal.dart';
 import 'package:gymply/modals/sharetosocials_modal.dart';
@@ -274,10 +275,16 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                                 return Stack(
                                                   fit: StackFit.expand,
                                                   children: <Widget>[
-                                                    Image.file(
-                                                      File(snapshot.data!),
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                    if (kIsWeb)
+                                                      Image.network(
+                                                        snapshot.data!,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    else
+                                                      Image.file(
+                                                        File(snapshot.data!),
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                     Positioned(
                                                       top: 4,
                                                       right: 4,

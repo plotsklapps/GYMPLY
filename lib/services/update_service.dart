@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/services/toast_service.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -17,7 +18,9 @@ class UpdateService {
   static final UpdateService _instance = UpdateService._internal();
 
   final Logger _logger = Logger();
-  final HttpClient _httpClient = HttpClient();
+  HttpClient? _httpClient;
+
+  HttpClient get _client => _httpClient ??= HttpClient();
 
   // Bool Signal to track update state.
   final Signal<bool> sIsCheckingForUpdate = Signal<bool>(
@@ -35,6 +38,14 @@ class UpdateService {
 
   // Check for updates and handle logic based on installer source (apk or aab).
   Future<void> checkForUpdates() async {
+    if (kIsWeb) {
+      ToastService.showSuccess(
+        title: 'Up to Date',
+        subtitle: 'You are running the web version of GYMPLY.',
+      );
+      return;
+    }
+
     sIsCheckingForUpdate.value = true;
 
     _logger.i('UpdateService: Starting update check...');
@@ -53,7 +64,7 @@ class UpdateService {
       );
 
       // Fetch metadata.
-      final HttpClientRequest request = await _httpClient.getUrl(
+      final HttpClientRequest request = await _client.getUrl(
         Uri.parse(_versionUrl),
       );
       final HttpClientResponse response = await request.close();

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:gymply/models/workout_model.dart';
 import 'package:gymply/services/image_service.dart';
 import 'package:gymply/services/nostr_service.dart';
@@ -48,6 +48,7 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
   // Set to false, to prevent double posting.
   bool _postToNostr = false;
   bool _isSharing = false;
+  List<String> _webImagePaths = <String>[];
 
   // Default to share volume, sets & duration.
   final List<ShareableMetric> _selectedMetrics = <ShareableMetric>[
@@ -71,6 +72,14 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
   }
 
   Future<void> _loadImages() async {
+    if (kIsWeb) {
+      if (mounted) {
+        setState(() {
+          _webImagePaths = widget.workout.imagePaths;
+        });
+      }
+      return;
+    }
     final List<File> files = <File>[];
     for (final String path in widget.workout.imagePaths) {
       final String absolutePath = await imageService.getAbsolutePath(path);
@@ -218,11 +227,17 @@ class _ShareToSocialsModalState extends State<ShareToSocialsModal> {
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(12),
-                                        child: Image.file(
-                                          _loadedImages[i],
-                                          height: 180,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        child: kIsWeb
+                                            ? Image.network(
+                                                _webImagePaths[i],
+                                                height: 180,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.file(
+                                                _loadedImages[i],
+                                                height: 180,
+                                                fit: BoxFit.cover,
+                                              ),
                                       ),
                                     ),
                                   ),

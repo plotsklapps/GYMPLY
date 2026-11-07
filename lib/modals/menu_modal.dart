@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:gymply/modals/about_modal.dart';
 import 'package:gymply/modals/appsettings_modal.dart';
 import 'package:gymply/modals/bodymetrics_modal.dart';
@@ -9,6 +8,7 @@ import 'package:gymply/screens/profilescreen/profile_screen.dart';
 import 'package:gymply/services/backup_service.dart';
 import 'package:gymply/services/donation_service.dart';
 import 'package:gymply/services/modal_service.dart';
+import 'package:gymply/services/pwa_service.dart';
 import 'package:gymply/services/update_service.dart';
 import 'package:gymply/signals/backup_signal.dart';
 import 'package:gymply/theme/icons.dart';
@@ -117,6 +117,18 @@ class MenuModal extends SignalWidget {
                   subtitle: const Text('Set up your GYMPLY experience'),
                   trailing: const Icon(IconUtils.chevronRight),
                 ),
+
+                // PWA Install ListTile.
+                if (kIsWeb)
+                  ListTile(
+                    onTap: () {
+                      pwaService.promptInstall(context);
+                    },
+                    leading: const Icon(IconUtils.download),
+                    title: const Text('Install GYMPLY. App'),
+                    subtitle: const Text('Add app to your device home screen'),
+                    trailing: const Icon(IconUtils.chevronRight),
+                  ),
 
                 const Divider(),
 

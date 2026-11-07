@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
@@ -20,7 +21,7 @@ class LiveActivityService {
   bool get isActivityActive => _isActivityActive;
 
   Future<bool> areActivitiesEnabled() async {
-    if (!Platform.isIOS) return false;
+    if (kIsWeb || !Platform.isIOS) return false;
 
     try {
       final bool? enabled = await _channel.invokeMethod<bool>(
@@ -42,7 +43,7 @@ class LiveActivityService {
     required String segmentLabel,
     DateTime? segmentEndTime,
   }) async {
-    if (!Platform.isIOS) return;
+    if (kIsWeb || !Platform.isIOS) return;
 
     try {
       final Map<String, dynamic> args = <String, dynamic>{
@@ -67,7 +68,7 @@ class LiveActivityService {
     required String segmentLabel,
     DateTime? segmentEndTime,
   }) async {
-    if (!Platform.isIOS || !_isActivityActive) return;
+    if (kIsWeb || !Platform.isIOS || !_isActivityActive) return;
 
     try {
       final Map<String, dynamic> args = <String, dynamic>{
@@ -86,7 +87,7 @@ class LiveActivityService {
   }
 
   Future<void> stopActivity() async {
-    if (!Platform.isIOS || !_isActivityActive) return;
+    if (kIsWeb || !Platform.isIOS || !_isActivityActive) return;
 
     try {
       await _channel.invokeMethod<bool>('stopActivity');

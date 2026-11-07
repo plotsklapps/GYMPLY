@@ -5,10 +5,7 @@ import 'package:gymply/theme/icons.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CopyWorkoutModal extends StatefulWidget {
-  const CopyWorkoutModal({
-    required this.workout,
-    super.key,
-  });
+  const CopyWorkoutModal({required this.workout, super.key});
 
   final Workout workout;
 
