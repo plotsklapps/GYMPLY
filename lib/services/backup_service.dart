@@ -168,16 +168,18 @@ class BackupService {
       // Show toast to user.
       ToastService.showError(title: 'Backup Failed', subtitle: '$e');
     } finally {
-      try {
-        // Re-initialize Hive boxes first!
-        await hiveService.init();
-        // Then re-initialize all dependent services.
-        await workoutService.init();
-        settingsService.init();
-        bodyMetricsService.init();
-      } on Object catch (e) {
-        // Log error.
-        _logger.e('BackupService: Failed to re-initialize services: $e');
+      if (!kIsWeb) {
+        try {
+          // Re-initialize Hive boxes first!
+          await hiveService.init();
+          // Then re-initialize all dependent services.
+          await workoutService.init();
+          settingsService.init();
+          bodyMetricsService.init();
+        } on Object catch (e) {
+          // Log error.
+          _logger.e('BackupService: Failed to re-initialize services: $e');
+        }
       }
 
       // Reset Signals.

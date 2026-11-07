@@ -60,12 +60,13 @@ class IconUtils {
   static const IconData idCard = Icons.badge_outlined;
   static const IconData copy = Icons.copy;
   static const IconData save = Icons.save_outlined;
-  static const IconData sync = Icons.sync;
-  static const IconData download = Icons.download;
-  static const IconData upload = Icons.upload;
-  static const IconData github = Icons.code;
+  static const IconData sync = Icons.sync_outlined;
+  static const IconData download = Icons.download_outlined;
+  static const IconData install = Icons.install_mobile_outlined;
+  static const IconData upload = Icons.upload_outlined;
+  static const IconData github = Icons.code_outlined;
   static const IconData codeCompare = Icons.compare_arrows;
-  static const IconData copyright = Icons.copyright;
+  static const IconData copyright = Icons.copyright_outlined;
   static const IconData handshake = Icons.handshake_outlined;
 
   static const IconData login = Icons.login;

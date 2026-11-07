@@ -22,7 +22,7 @@ class BodyMetricsService {
   final Logger _logger = Logger();
 
   // Reference to bodyMetrics box from HiveService.
-  late final Box<BodyMetric> _bodyMetricsBox;
+  late Box<BodyMetric> _bodyMetricsBox;
 
   // Initialize BodyMetricsService.
   void init() {

@@ -125,7 +125,7 @@ class MenuModal extends SignalWidget {
                       pwaService.promptInstall(context);
                     },
                     leading: const Icon(IconUtils.download),
-                    title: const Text('Install GYMPLY. App'),
+                    title: const Text('Install GYMPLY to your device'),
                     subtitle: const Text('Add app to your device home screen'),
                     trailing: const Icon(IconUtils.chevronRight),
                   ),

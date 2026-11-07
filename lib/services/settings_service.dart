@@ -33,7 +33,7 @@ class SettingsService with WidgetsBindingObserver {
   final Logger _logger = Logger();
 
   // Reference to settings box from HiveService.
-  late final Box<Settings> _settingsBox;
+  late Box<Settings> _settingsBox;
 
   // Initialize SettingsService.
   void init() {
