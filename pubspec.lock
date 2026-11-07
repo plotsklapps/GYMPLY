@@ -221,10 +221,10 @@ packages:
     dependency: transitive
     description:
       name: cbor
-      sha256: "2c5c37650f0a2d25149f03e748ab7b2857787bde338f95fe947738b80d713da2"
+      sha256: "9e0745c45bc29e8ed4acb79801ecbc86aab51f952e503517e6c002c7f4ca9118"
       url: "https://pub.dev"
     source: hosted
-    version: "6.5.1"
+    version: "6.5.2"
   characters:
     dependency: transitive
     description:
@@ -261,10 +261,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: "828110d598123b5ea96c00c9f3c72105bf79f8ee36c20a39b26209ade421ec57"
+      sha256: "1ef22a0be3af9370bd9481ac76db114db92bfe75d5ca2b2d7bc911764478a4d9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   collection:
     dependency: transitive
     description:
@@ -333,10 +333,10 @@ packages:
     dependency: "direct main"
     description:
       name: cupertino_ui
-      sha256: e003b87afde18cb396ec15928c7894063d64af04462c68df9a1404c461316dd2
+      sha256: "369e39a1c5c030a6212589c3da1809920b1c2cfade7b02aade7695bfa4b88c3a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.5"
+    version: "1.1.6"
   dart_style:
     dependency: transitive
     description:
@@ -546,10 +546,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_hooks
-      sha256: "8ae1f090e5f4ef5cfa6670ce1ab5dddadd33f3533a7f9ba19d9f958aa2a89f42"
+      sha256: b4f6eb8f13fc92523023a47d4a2e541b17827535334941f9a974f10da0797a7e
       url: "https://pub.dev"
     source: hosted
-    version: "0.21.3+1"
+    version: "0.21.4"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -562,42 +562,42 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: "17863011a16d3c6cb4c8f0ab6258f53073a6b19ab075d18d261fbcc0cfc91f44"
+      sha256: e99e9c6078d1359ba131b2c1eb8d68837170836a01bf2cea3cf2fa13e62ac2ac
       url: "https://pub.dev"
     source: hosted
-    version: "23.0.0-dev.5"
+    version: "23.0.0"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
       name: flutter_local_notifications_linux
-      sha256: "2d60f9cd94cf866d5ed0d350815fbe382ab47670173794e194daba45331fe3c6"
+      sha256: bcbcf3c15e33b6866805092308f5f6ef27e1191874f6a92ef59213a0812a79a2
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.0-dev.2"
+    version: "9.0.0"
   flutter_local_notifications_platform_interface:
     dependency: transitive
     description:
       name: flutter_local_notifications_platform_interface
-      sha256: c52ce1df03185a6c28c8de6b065cb23702941362c33c916ec30e1ea6635c945c
+      sha256: "4a49db4ce3d633ebc85c85b5fa959572600ec10bd097419c454579444308a0a0"
       url: "https://pub.dev"
     source: hosted
-    version: "13.0.0-dev.1"
+    version: "13.0.0"
   flutter_local_notifications_web:
     dependency: transitive
     description:
       name: flutter_local_notifications_web
-      sha256: "477646e6f265dcbbcba80c5cfb7ee7ef0bfb8c0477a57e7253bc1f284e432051"
+      sha256: ef117694fbfcd82308ab0e324cfc9282fa50c192e24ec54a58173ae327ebc544
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0-dev.1"
+    version: "2.0.0"
   flutter_local_notifications_windows:
     dependency: transitive
     description:
       name: flutter_local_notifications_windows
-      sha256: "9eea91aec421b65a6d324734255dd4994d13a3ff6f5f00dd67fe65273b7a870b"
+      sha256: c2d6efe9ba585d5f560d8b329131f00fe745834848e6221b22d1f62e0f0b16e2
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0-dev.2"
+    version: "4.0.0"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -721,10 +721,10 @@ packages:
     dependency: "direct main"
     description:
       name: hive_ce
-      sha256: "8b6eea82b06a7e2bb298a6a279139c45838b82491a66f3972bf609d48681392a"
+      sha256: c293d31ea3f617143f3309c620baba3ee5949c75c5ba2c8558cc2f7d517a730d
       url: "https://pub.dev"
     source: hosted
-    version: "2.22.0"
+    version: "2.23.0"
   hive_ce_flutter:
     dependency: "direct main"
     description:
@@ -825,10 +825,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_ios
-      sha256: b8f508306db2bf71141aba2de4ec13456338bf01e13f034bd2594f341a5f8eb2
+      sha256: f4e5650a81b268af3886bc789216ff6d56bdfa79934f93f1a5a8a303b8f60f77
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.13+14"
+    version: "0.8.13+15"
   image_picker_linux:
     dependency: transitive
     description:
@@ -889,10 +889,10 @@ packages:
     dependency: transitive
     description:
       name: in_app_purchase_storekit
-      sha256: fb2744b928bb0fcbfc95d1833469b3f638a44670aac3e278695930d3727011b6
+      sha256: e9278eb778170ce65a9e2d17672924f41b0f2f3ad958cd9f6ea7ffc0826efa29
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.16"
+    version: "0.4.17"
   intl:
     dependency: "direct main"
     description:
@@ -913,18 +913,18 @@ packages:
     dependency: transitive
     description:
       name: isolate_channel
-      sha256: a9d3d620695bc984244dafae00b95e4319d6974b2d77f4b9e1eb4f2efe099094
+      sha256: bd56e1bb2787bed914158c2696943dc7254732bfea2c207aafca6bc930580fd4
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1"
+    version: "0.6.2"
   jni:
     dependency: transitive
     description:
       name: jni
-      sha256: d8df6dab6847855512fe44dd9032b0bbe34dda7bf7597e41d30750879779813f
+      sha256: "2e91e6087291affd10b31b6c872f3e3ac7dc5d93b51b5ba485d930c8f08bde6c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   jni_flutter:
     dependency: transitive
     description:
@@ -1009,10 +1009,10 @@ packages:
     dependency: "direct main"
     description:
       name: material_ui
-      sha256: feb289df1e5f9ed9522f9fe3d909432a7f7bc76943f16abad09f80a16cd25196
+      sha256: a30f5d0625b6b83770f53ca3f7aafd6fd9d147cb3853f54a70668541046fe5d6
       url: "https://pub.dev"
     source: hosted
-    version: "1.9.0"
+    version: "1.10.0"
   meta:
     dependency: transitive
     description:
@@ -1057,10 +1057,10 @@ packages:
     dependency: transitive
     description:
       name: objective_c
-      sha256: "5c80c2ad6e2c0397de5db38c6d653e69616a3397e13aa7633bf39eb668f2041b"
+      sha256: "322d5f1f0680534acaf557c5d68e97b40c3800ee5e15b63dcacc3c31504674c2"
       url: "https://pub.dev"
     source: hosted
-    version: "9.6.2"
+    version: "9.6.3"
   open_filex:
     dependency: "direct main"
     description:
@@ -1217,10 +1217,10 @@ packages:
     dependency: transitive
     description:
       name: permission_handler_windows
-      sha256: caeae01858a0a7d2df67a445ac98e1ad95e55a0e77c73044f4e9b1c8c2289cbd
+      sha256: "210031f00c32d61038fb4175d82dd874a426bfbae2c2af774bd4e5abb5cac755"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.2.4"
   petitparser:
     dependency: transitive
     description:
@@ -1502,10 +1502,10 @@ packages:
     dependency: transitive
     description:
       name: synchronized
-      sha256: b3d516dbd3757ff2a458735e4f6cbac9ff261f576f6e87bcb17feabb39e657c5
+      sha256: "0ce4712bd3be1fccfab14458059baebb400ba6c6239b65398e3464945fabbae7"
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.0"
+    version: "3.6.1"
   term_glyph:
     dependency: transitive
     description:
