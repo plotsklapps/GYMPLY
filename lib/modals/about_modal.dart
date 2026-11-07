@@ -107,7 +107,7 @@ class AboutModal extends SignalWidget {
                   onTap: () async {
                     await launchUrl(
                       Uri.parse(
-                        'https://github.com/plotsklapps/GYMPLY./blob/master/CHANGELOG.md',
+                        'https://github.com/plotsklapps/gymply/blob/master/CHANGELOG.md',
                       ),
                     );
                   },

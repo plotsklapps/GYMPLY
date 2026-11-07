@@ -530,7 +530,8 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                                           : 'N/A',
                                       valStr: leastTrainedMuscle != null
                                           ? _formatMetricVal(
-                                              muscleMetricMap[leastTrainedMuscle] ??
+                                              muscleMetricMap[
+                                                      leastTrainedMuscle] ??
                                                   0.0,
                                               weightUnit,
                                             )
@@ -569,7 +570,7 @@ class _YearlySummaryModalState extends State<YearlySummaryModal> {
                           peakVolumeWorkout.dateTime,
                         ),
                         value:
-                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} '
+                            '${peakVolumeWorkout.totalStrengthVolume.round()} '
                             '$weightUnit',
                         icon: IconUtils.weight,
                       ),

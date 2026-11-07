@@ -279,7 +279,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     final bool hasExercises = active.exercises.isNotEmpty;
 
                     if (isTimerRunning || hasExercises || active.isRoutine) {
-                      // Live session or active workout in progress: search and add exercises directly.
+                      // Live session or active workout in progress: search
+                      // and add exercises directly.
                       await showModalBottomSheet<void>(
                         context: context,
                         showDragHandle: true,
@@ -289,7 +290,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         },
                       );
                     } else {
-                      // Stopped session & empty state: open 2-choice entry modal!
+                      // Stopped session & empty state: open 2-choice entry
+                      // modal!
                       await ModalService.showModal(
                         context: context,
                         child: const StartWorkoutModal(),

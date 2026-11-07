@@ -206,7 +206,8 @@ class _EditRoutineModalState extends State<EditRoutineModal> {
                                       ToastService.showError(
                                         title: 'Maximum Reached',
                                         subtitle:
-                                            'You can select up to 3 muscle group avatars.',
+                                            'You can select up to 3 muscle '
+                                            'group avatars.',
                                       );
                                     }
                                   }

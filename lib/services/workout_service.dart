@@ -108,8 +108,8 @@ class WorkoutService {
       // Create Workout Object.
       final Workout workout = sActiveWorkout.value;
 
-      // Only auto-save to history (_workoutBox) if it is a REAL live workout session
-      // (NOT a routine template).
+      // Only auto-save to history (_workoutBox) if it is a REAL live
+      // workout session (NOT a routine template).
       if (!workout.isRoutine &&
           (workout.exercises.isNotEmpty || workout.totalDuration > 0)) {
         // Store to Hive history.
@@ -217,6 +217,7 @@ class WorkoutService {
       );
     }
   }
+
   // Add exercise to sActiveWorkout Signal.
   void addExercise(ExercisePath path) {
     // Fetch latest List<WorkoutExercise> from sActiveWorkout Signal.

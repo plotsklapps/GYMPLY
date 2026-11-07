@@ -88,7 +88,8 @@ class _RoutineModalState extends State<RoutineModal> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Finish a workout and toggle "Save as Routine" on the Save Workout screen to create templates.',
+                            'Finish a workout and toggle "Save as Routine" '
+                            'on the Save Workout screen to create templates.',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.outline,
                             ),
@@ -102,6 +103,11 @@ class _RoutineModalState extends State<RoutineModal> {
                       children: routines.map((Routine routine) {
                         final List<MuscleGroup> activeGroups =
                             routine.activeMuscleGroups;
+                        final String activeGroupsStr = activeGroups.isEmpty
+                            ? ''
+                            : ' • ${activeGroups.map(
+                                (MuscleGroup g) => g.name.capitalizeFirst(),
+                              ).join(' + ')}';
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -167,8 +173,8 @@ class _RoutineModalState extends State<RoutineModal> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
-                                            '${routine.exercises.length} Exercises'
-                                            '${activeGroups.isNotEmpty ? " • ${activeGroups.map((MuscleGroup g) => g.name.capitalizeFirst()).join(' + ')}" : ""}',
+                                            '${routine.exercises.length} '
+                                            'Exercises$activeGroupsStr',
                                             style: theme.textTheme.bodySmall
                                                 ?.copyWith(
                                                   color: theme

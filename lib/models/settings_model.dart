@@ -99,7 +99,7 @@ class Settings {
   final Map<int, String> exerciseNotes;
 
   FlexScheme get flexScheme {
-    // If supporter, use saved Strin or default.
+    // If supporter, use saved String or default.
     if (isSupporter && flexSchemeName != null) {
       return FlexScheme.values.firstWhere(
         (FlexScheme flexScheme) {

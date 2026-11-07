@@ -500,7 +500,7 @@ class _MonthlySummaryModalState extends State<MonthlySummaryModal> {
                           peakVolumeWorkout.dateTime,
                         ),
                         value:
-                            '${peakVolumeWorkout.totalStrengthVolume.toStringAsFixed(0)} '
+                            '${peakVolumeWorkout.totalStrengthVolume.round()} '
                             '$weightUnit',
                         icon: IconUtils.weight,
                       ),

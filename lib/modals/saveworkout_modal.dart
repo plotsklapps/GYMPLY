@@ -331,11 +331,14 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                   subtitle: Text(
                     _isRoutineOrigin
                         ? (_saveAsRoutine
-                            ? "Update the '$_originRoutineTitle' routine template in your list."
-                            : "Leave the '$_originRoutineTitle' routine template unchanged.")
+                              ? "Update the '$_originRoutineTitle' routine "
+                                    'template in your list.'
+                              : "Leave the '$_originRoutineTitle' routine "
+                                    'template unchanged.')
                         : (_saveAsRoutine
-                            ? 'Store this workout as a new reusable template in Routines.'
-                            : 'Do not save a new routine template.'),
+                              ? 'Store this workout as a new reusable '
+                                    'template in Routines.'
+                              : 'Do not save a new routine template.'),
                   ),
                   value: _saveAsRoutine,
                   onChanged: (bool value) {
@@ -356,11 +359,15 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                     subtitle: Text(
                       _isRoutineOrigin
                           ? (_keepRoutineValues
-                              ? "Template will be updated with today's new weights and reps."
-                              : 'Template will keep its original saved weights and reps.')
+                                ? "Template will be updated with today's "
+                                      'new weights and reps.'
+                                : 'Template will keep its original saved '
+                                      'weights and reps.')
                           : (_keepRoutineValues
-                              ? "New template will include today's sets, reps, and weights."
-                              : 'New template will contain empty exercise selections without sets.'),
+                                ? "New template will include today's sets, "
+                                      'reps, and weights.'
+                                : 'New template will contain empty exercise '
+                                      'selections without sets.'),
                     ),
                     value: _keepRoutineValues,
                     onChanged: (bool value) {
@@ -394,8 +401,10 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                               .toList();
 
                           // If title field is left empty/unchanged, use suggested title.
-                          final String titleToSave =
-                              _titleController.text.trim().isEmpty
+                          final bool isTitleEmpty = _titleController.text
+                              .trim()
+                              .isEmpty;
+                          final String titleToSave = isTitleEmpty
                               ? _suggestedTitle
                               : _titleController.text.trim();
 
@@ -405,7 +414,8 @@ class _SaveWorkoutModalState extends State<SaveWorkoutModal> {
                                 <WorkoutExercise>[];
 
                             if (_isRoutineOrigin && !_keepRoutineValues) {
-                              // Retain original routine exercises from sRoutines.value
+                              // Retain original routine exercises from
+                              // sRoutines.value
                               final Routine? origin = sRoutines.value
                                   .where(
                                     (Routine r) => r.id == _originRoutineId,
