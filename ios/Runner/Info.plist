@@ -76,5 +76,11 @@
 		<string>GYMPLY requires photo library access to let you select images for your exercises and workouts.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>https</string>
+			<string>http</string>
+			<string>mailto</string>
+		</array>
 	</dict>
 </plist>

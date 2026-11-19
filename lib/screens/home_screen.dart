@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:gymply/modals/menu_modal.dart';
 import 'package:gymply/modals/quitgymply_modal.dart';
@@ -175,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final bool showFeed = cShowFeed.value;
 
     return PopScope(
-      canPop: false,
+      canPop: kIsWeb || !Platform.isAndroid,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
 
