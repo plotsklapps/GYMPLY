@@ -46,13 +46,13 @@ class TotalTimer {
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
 
-      sTotalTimerRunning.value = true;
-
       // Calculate start time based on current elapsed time to allow
-      // accurate resumption.
+      // accurate resumption BEFORE updating signal.
       _startTime = DateTime.now().subtract(
         Duration(seconds: sElapsedTotalTime.value),
       );
+
+      sTotalTimerRunning.value = true;
 
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         if (_startTime != null) {

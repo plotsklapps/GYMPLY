@@ -9,8 +9,11 @@ struct GymplyLiveActivityWidget: Widget {
       VStack(alignment: .leading, spacing: 8) {
         // Row 1: TOTAL TIME (Always shown)
         HStack {
-          Image(systemName: "figure.strengthtraining.traditional")
-            .foregroundColor(.orange)
+          Image("GymplyIcon")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 20, height: 20)
+            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
           Text("GYMPLY.")
             .font(.system(size: 13, weight: .black))
             .foregroundColor(.white)
@@ -41,47 +44,44 @@ struct GymplyLiveActivityWidget: Widget {
       .activityBackgroundTint(Color.black.opacity(0.92))
     } dynamicIsland: { context in
       DynamicIsland {
-        // Expanded Dynamic Island
-        DynamicIslandExpandedRegion(.leading) {
-          VStack(alignment: .leading, spacing: 2) {
-            Text("TOTAL TIME")
-              .font(.system(size: 10, weight: .bold))
+        // Expanded Dynamic Island (Full-Width Bottom Region)
+        DynamicIslandExpandedRegion(.bottom) {
+          HStack {
+            Image("GymplyIcon")
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+              .frame(width: 20, height: 20)
+              .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+            Text("GYMPLY.")
+              .font(.system(size: 13, weight: .black))
+              .foregroundColor(.white)
+            Spacer()
+            Text("TOTAL TIME:")
+              .font(.system(size: 13, weight: .bold))
               .foregroundColor(.gray)
             Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
               .font(.system(size: 14, weight: .bold, design: .monospaced))
               .foregroundColor(.white)
           }
-        }
-        DynamicIslandExpandedRegion(.trailing) {
-          if let endTime = context.state.segmentEndTime, !context.state.segmentLabel.isEmpty {
-            VStack(alignment: .trailing, spacing: 2) {
-              Text(context.state.segmentLabel)
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(context.state.segmentLabel == "REST" ? .green : .orange)
-              Text(timerInterval: Date.now...endTime, countsDown: true)
-                .font(.system(size: 18, weight: .black, design: .monospaced))
-                .foregroundColor(context.state.segmentLabel == "REST" ? .green : .orange)
-            }
-          }
+          .padding(.horizontal, 16)
         }
       } compactLeading: {
-        Image(systemName: "figure.strengthtraining.traditional")
-          .foregroundColor(.orange)
+        Image("GymplyIcon")
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width: 16, height: 16)
+          .clipShape(RoundedRectangle(cornerRadius: 3.5, style: .continuous))
       } compactTrailing: {
-        if let endTime = context.state.segmentEndTime, !context.state.segmentLabel.isEmpty {
-          Text(timerInterval: Date.now...endTime, countsDown: true)
-            .font(.system(size: 12, weight: .bold, design: .monospaced))
-            .foregroundColor(context.state.segmentLabel == "REST" ? .green : .orange)
-            .frame(width: 44)
-        } else {
-          Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
-            .font(.system(size: 12, weight: .bold, design: .monospaced))
-            .foregroundColor(.white)
-            .frame(width: 44)
-        }
+        Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
+          .font(.system(size: 12, weight: .bold, design: .monospaced))
+          .foregroundColor(.white)
+          .frame(width: 44)
       } minimal: {
-        Image(systemName: "figure.strengthtraining.traditional")
-          .foregroundColor(.orange)
+        Image("GymplyIcon")
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width: 16, height: 16)
+          .clipShape(RoundedRectangle(cornerRadius: 3.5, style: .continuous))
       }
     }
   }

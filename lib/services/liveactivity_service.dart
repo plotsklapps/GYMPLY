@@ -65,6 +65,7 @@ class LiveActivityService {
   }
 
   Future<void> updateActivity({
+    required DateTime totalStartTime,
     required String segmentLabel,
     DateTime? segmentEndTime,
   }) async {
@@ -72,6 +73,7 @@ class LiveActivityService {
 
     try {
       final Map<String, dynamic> args = <String, dynamic>{
+        'totalStartTimeMs': totalStartTime.millisecondsSinceEpoch,
         'segmentLabel': segmentLabel,
         'segmentEndTimeMs': segmentEndTime?.millisecondsSinceEpoch,
       };

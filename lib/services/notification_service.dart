@@ -275,6 +275,7 @@ class NotificationService with WidgetsBindingObserver {
             );
           } else {
             await liveActivityService.updateActivity(
+              totalStartTime: totalStartTime,
               segmentLabel: label,
               segmentEndTime: segmentEndTime,
             );

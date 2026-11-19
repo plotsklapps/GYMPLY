@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gymply/models/cardio_model.dart';
@@ -87,6 +86,7 @@ class IntervalTimer {
   bool _isIntervalSequenceActive = false;
 
   DateTime? get endTime => _endTime;
+  bool get isIntervalSequenceActive => _isIntervalSequenceActive;
 
   // Int Signal to track initial interval time (in milliseconds).
   static final Signal<int> sInitialIntervalTime = Signal<int>(
@@ -140,18 +140,18 @@ class IntervalTimer {
       // Ensure Audio engine is primed while in tap callback.
       unawaited(AudioService().initialize());
 
-      // Set Signals.
-      _isIntervalSequenceActive = true;
-      sIntervalTimerRunning.value = true;
-      sIntervalTimerCompleted.value = false;
-
-      // Give a little bzzz.
-      await HapticFeedback.lightImpact();
-
-      // Calculate when interval should end.
+      // Calculate when interval should end BEFORE updating signals.
       _endTime = DateTime.now().add(
         Duration(milliseconds: sElapsedIntervalTime.value),
       );
+
+      // Set Signals.
+      _isIntervalSequenceActive = true;
+      sIntervalTimerCompleted.value = false;
+      sIntervalTimerRunning.value = true;
+
+      // Give a little bzzz.
+      await HapticFeedback.lightImpact();
 
       // Schedule OS alert with custom timer bell sound for background/iOS.
       final int totalSeconds = TotalTimer.sElapsedTotalTime.value;

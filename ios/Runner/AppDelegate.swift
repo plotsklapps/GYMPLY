@@ -44,13 +44,15 @@ import UIKit
 
     case "startActivity":
       guard let args = call.arguments as? [String: Any],
-            let totalStartTimeMs = args["totalStartTimeMs"] as? Int64,
+            let totalStartTimeNum = args["totalStartTimeMs"] as? NSNumber,
             let segmentLabel = args["segmentLabel"] as? String else {
         result(FlutterError(code: "INVALID_ARGS", message: "Missing arguments", details: nil))
         return
       }
 
-      let segmentEndTimeMs = args["segmentEndTimeMs"] as? Int64
+      let totalStartTimeMs = totalStartTimeNum.int64Value
+      let segmentEndTimeMs = (args["segmentEndTimeMs"] as? NSNumber)?.int64Value
+
       LiveActivityManager.shared.start(
         totalStartTimeMs: totalStartTimeMs,
         segmentLabel: segmentLabel,
@@ -65,8 +67,10 @@ import UIKit
         return
       }
 
-      let segmentEndTimeMs = args["segmentEndTimeMs"] as? Int64
+      let totalStartTimeMs = (args["totalStartTimeMs"] as? NSNumber)?.int64Value
+      let segmentEndTimeMs = (args["segmentEndTimeMs"] as? NSNumber)?.int64Value
       LiveActivityManager.shared.update(
+        totalStartTimeMs: totalStartTimeMs,
         segmentLabel: segmentLabel,
         segmentEndTimeMs: segmentEndTimeMs
       )
@@ -119,8 +123,15 @@ class LiveActivityManager {
     }
   }
 
-  func update(segmentLabel: String, segmentEndTimeMs: Int64?) {
+  func update(totalStartTimeMs: Int64?, segmentLabel: String, segmentEndTimeMs: Int64?) {
     guard let activity = currentActivity else { return }
+    let totalStartTime: Date = {
+      if let ms = totalStartTimeMs, ms > 0 {
+        return Date(timeIntervalSince1970: Double(ms) / 1000.0)
+      }
+      return activity.content.state.totalStartTime
+    }()
+
     let segmentEndTime: Date? = {
       if let ms = segmentEndTimeMs, ms > 0 {
         return Date(timeIntervalSince1970: Double(ms) / 1000.0)
@@ -129,7 +140,7 @@ class LiveActivityManager {
     }()
 
     let updatedState = GymplyTimerAttributes.ContentState(
-      totalStartTime: activity.content.state.totalStartTime,
+      totalStartTime: totalStartTime,
       segmentLabel: segmentLabel,
       segmentEndTime: segmentEndTime
     )

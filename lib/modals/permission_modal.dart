@@ -23,7 +23,7 @@ class PermissionModal extends StatelessWidget {
         : (!kIsWeb && Platform.isIOS)
         ? 'GYMPLY. needs notification permission to ring the timer bell and '
               'alert you when your rest or interval timer ends while using '
-              'other apps (like Instagram) or when your screen is locked.\n\n'
+              'other apps or when your screen is locked.\n\n'
               'Live Activities also pin your active workout and rest timers '
               'directly to your Lock Screen and Notification Center.\n\n'
               'Allowing this does NOT change the fact that GYMPLY. is strictly '

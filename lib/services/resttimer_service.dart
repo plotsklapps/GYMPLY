@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gymply/services/audio_service.dart';
@@ -73,15 +72,15 @@ class RestTimer {
       // Ensure Audio engine is primed while in the tap callback.
       unawaited(AudioService().initialize());
 
+      // Calculate when resttimer should end BEFORE updating signals.
+      _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
+
       // Set Signals.
-      sRestTimerRunning.value = true;
       sRestTimerCompleted.value = false;
+      sRestTimerRunning.value = true;
 
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
-
-      // Calculate when resttimer should end.
-      _endTime = DateTime.now().add(Duration(seconds: sElapsedRestTime.value));
 
       // Schedule OS alert with custom timer bell sound for background/iOS.
       final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
