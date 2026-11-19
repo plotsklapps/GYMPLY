@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.9+96] - 2026-11-19
+- **iOS Compatibility & App Store Readiness:**
+  - **Restore Purchases & IAP:** Added purchase restoration via `DonationService.restorePurchases()` and a dedicated *"RESTORE PURCHASES"* button in `DonationModal` to comply with App Store Guideline 3.1.1. Added handling for pending purchase transactions and platform-specific messaging for store availability.
+  - **iOS Notifications:** Added `requestIOSPermissions` to `NotificationService` to prompt for alert, sound, and badge permissions on iOS when configuring background timers.
+  - **Platform Pop Handling:** Updated `PopScope.canPop` (`canPop: kIsWeb || !Platform.isAndroid`) in `home_screen.dart` so iOS and Web use standard non-blocking navigation while Android preserves the `QuitGymplyModal` exit confirmation and `SystemNavigator.pop()` functionality.
+  - **iOS External Links:** Added `LSApplicationQueriesSchemes` for `https`, `http`, and `mailto` to `ios/Runner/Info.plist` to support `canLaunchUrl()` on iOS 9+.
+- **Web Platform & PWA Integration:**
+  - Added full Web platform support with `kIsWeb` guards across audio, backup, donation, notification, update, and timer services.
+  - Introduced `PwaService` and an installation menu action in `MenuModal` to guide users through PWA installation.
+  - Created `AppScrollBehavior` in `scroll_service.dart` to support drag scrolling with mouse, trackpad, and stylus devices across web and desktop platforms.
+  - Added Firebase Hosting configuration (`firebase.json`, `.firebaserc`) for web deployment.
+- **Summary Metrics & UI Refinements:**
+  - Rounded peak volume figures across `WeeklySummaryModal`, `MonthlySummaryModal`, and `YearlySummaryModal`.
+  - Extracted active muscle group text formatting logic in `routine_modal.dart`.
+  - Cleaned up typos, standardized comment formats, and fixed repository URL casing in `about_modal.dart`.
+- **Dependency & Build Upgrades:**
+  - Upgraded key dependencies in `pubspec.lock`, including `archive` (4.7.0), `cupertino_ui` (1.1.6), `file_picker` (13.3.3), `flutter_local_notifications` (23.0.2), `hive_ce` (2.23.3), and `material_ui` (1.11.0).
+  - Incremented project version to `0.0.9+96` and synced `version.json`.
+
 ## [0.0.9+95] - 2026-11-03
 - **Dependency & Build Upgrades:**
   - Upgraded direct dependencies in `pubspec.yaml`: `open_filex` to `^5.0.0` and `ndk` to `^0.11.0-dev.2`.
