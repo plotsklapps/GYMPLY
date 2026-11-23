@@ -32,11 +32,11 @@ struct GymplyLiveActivityWidget: Widget {
           HStack {
             Text(context.state.segmentLabel)
               .font(.system(size: 16, weight: .heavy))
-              .foregroundColor(context.state.segmentLabel == "REST" ? .green : .orange)
+              .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
             Spacer()
             Text(timerInterval: Date.now...endTime, countsDown: true)
-              .font(.system(size: 22, weight: .black, design: .monospaced))
-              .foregroundColor(context.state.segmentLabel == "REST" ? .green : .orange)
+              .font(.system(size: 16, weight: .bold, design: .monospaced))
+              .foregroundColor(.white)
           }
         }
       }
