@@ -52,11 +52,13 @@ import UIKit
 
       let totalStartTimeMs = totalStartTimeNum.int64Value
       let segmentEndTimeMs = (args["segmentEndTimeMs"] as? NSNumber)?.int64Value
+      let exerciseName = args["exerciseName"] as? String
 
       LiveActivityManager.shared.start(
         totalStartTimeMs: totalStartTimeMs,
         segmentLabel: segmentLabel,
-        segmentEndTimeMs: segmentEndTimeMs
+        segmentEndTimeMs: segmentEndTimeMs,
+        exerciseName: exerciseName
       )
       result(true)
 
@@ -69,10 +71,13 @@ import UIKit
 
       let totalStartTimeMs = (args["totalStartTimeMs"] as? NSNumber)?.int64Value
       let segmentEndTimeMs = (args["segmentEndTimeMs"] as? NSNumber)?.int64Value
+      let exerciseName = args["exerciseName"] as? String
+
       LiveActivityManager.shared.update(
         totalStartTimeMs: totalStartTimeMs,
         segmentLabel: segmentLabel,
-        segmentEndTimeMs: segmentEndTimeMs
+        segmentEndTimeMs: segmentEndTimeMs,
+        exerciseName: exerciseName
       )
       result(true)
 
@@ -91,7 +96,7 @@ class LiveActivityManager {
   static let shared = LiveActivityManager()
   private var currentActivity: Activity<GymplyTimerAttributes>?
 
-  func start(totalStartTimeMs: Int64, segmentLabel: String, segmentEndTimeMs: Int64?) {
+  func start(totalStartTimeMs: Int64, segmentLabel: String, segmentEndTimeMs: Int64?, exerciseName: String?) {
     guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
     // End any current activity
@@ -109,7 +114,8 @@ class LiveActivityManager {
     let initialContentState = GymplyTimerAttributes.ContentState(
       totalStartTime: totalStartTime,
       segmentLabel: segmentLabel,
-      segmentEndTime: segmentEndTime
+      segmentEndTime: segmentEndTime,
+      exerciseName: exerciseName
     )
 
     do {
@@ -123,7 +129,7 @@ class LiveActivityManager {
     }
   }
 
-  func update(totalStartTimeMs: Int64?, segmentLabel: String, segmentEndTimeMs: Int64?) {
+  func update(totalStartTimeMs: Int64?, segmentLabel: String, segmentEndTimeMs: Int64?, exerciseName: String?) {
     guard let activity = currentActivity else { return }
     let totalStartTime: Date = {
       if let ms = totalStartTimeMs, ms > 0 {
@@ -142,7 +148,8 @@ class LiveActivityManager {
     let updatedState = GymplyTimerAttributes.ContentState(
       totalStartTime: totalStartTime,
       segmentLabel: segmentLabel,
-      segmentEndTime: segmentEndTime
+      segmentEndTime: segmentEndTime,
+      exerciseName: exerciseName
     )
 
     Task {

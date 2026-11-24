@@ -15,6 +15,7 @@ import 'package:gymply/services/resttimer_service.dart';
 import 'package:gymply/services/stopwatchtimer_service.dart';
 import 'package:gymply/services/timeformat_service.dart';
 import 'package:gymply/services/totaltimer_service.dart';
+import 'package:gymply/signals/selectedexercise_signal.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:signals/signals_flutter.dart';
@@ -267,17 +268,21 @@ class NotificationService with WidgetsBindingObserver {
         if (isTotalRunning) {
           final DateTime totalStartTime =
               totalTimer.startTime ?? DateTime.now();
+          final String? exerciseName = sSelectedExercise.value?.exerciseName;
+
           if (!liveActivityService.isActivityActive) {
             await liveActivityService.startActivity(
               totalStartTime: totalStartTime,
               segmentLabel: label,
               segmentEndTime: segmentEndTime,
+              exerciseName: exerciseName,
             );
           } else {
             await liveActivityService.updateActivity(
               totalStartTime: totalStartTime,
               segmentLabel: label,
               segmentEndTime: segmentEndTime,
+              exerciseName: exerciseName,
             );
           }
         } else {

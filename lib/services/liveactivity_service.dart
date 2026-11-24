@@ -42,6 +42,7 @@ class LiveActivityService {
     required DateTime totalStartTime,
     required String segmentLabel,
     DateTime? segmentEndTime,
+    String? exerciseName,
   }) async {
     if (kIsWeb || !Platform.isIOS) return;
 
@@ -50,6 +51,7 @@ class LiveActivityService {
         'totalStartTimeMs': totalStartTime.millisecondsSinceEpoch,
         'segmentLabel': segmentLabel,
         'segmentEndTimeMs': segmentEndTime?.millisecondsSinceEpoch,
+        'exerciseName': ?exerciseName,
       };
 
       await _channel.invokeMethod<bool>('startActivity', args);
@@ -68,6 +70,7 @@ class LiveActivityService {
     required DateTime totalStartTime,
     required String segmentLabel,
     DateTime? segmentEndTime,
+    String? exerciseName,
   }) async {
     if (kIsWeb || !Platform.isIOS || !_isActivityActive) return;
 
@@ -76,6 +79,7 @@ class LiveActivityService {
         'totalStartTimeMs': totalStartTime.millisecondsSinceEpoch,
         'segmentLabel': segmentLabel,
         'segmentEndTimeMs': segmentEndTime?.millisecondsSinceEpoch,
+        'exerciseName': ?exerciseName,
       };
 
       await _channel.invokeMethod<bool>('updateActivity', args);

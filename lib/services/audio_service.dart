@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
@@ -37,6 +38,7 @@ class AudioService {
               audioFocus: AndroidAudioFocus.gainTransientMayDuck,
             ),
             iOS: AudioContextIOS(
+              // category: AVAudioSessionCategory.playback,
               options: const <AVAudioSessionOptions>{
                 AVAudioSessionOptions.duckOthers,
                 AVAudioSessionOptions.mixWithOthers,
@@ -44,6 +46,22 @@ class AudioService {
             ),
           ),
         );
+
+        // Unduck iOS audio automatically when playback finishes.
+        _player.onPlayerComplete.listen((_) async {
+          if (Platform.isIOS) {
+            await _player.setAudioContext(
+              AudioContext(
+                iOS: AudioContextIOS(
+                  category: AVAudioSessionCategory.ambient,
+                  options: const <AVAudioSessionOptions>{
+                    AVAudioSessionOptions.mixWithOthers,
+                  },
+                ),
+              ),
+            );
+          }
+        });
       }
 
       // Keep player intact after sound completes so audio tail is not clipped.
@@ -70,6 +88,21 @@ class AudioService {
     try {
       // Always ensure initialization is complete before playing.
       await initialize();
+
+      // On iOS, we need to temporarily assert ducking priority before playing.
+      if (!kIsWeb && Platform.isIOS) {
+        await _player.setAudioContext(
+          AudioContext(
+            iOS: AudioContextIOS(
+              // category: AVAudioSessionCategory.playback,
+              options: const <AVAudioSessionOptions>{
+                AVAudioSessionOptions.duckOthers,
+                AVAudioSessionOptions.mixWithOthers,
+              },
+            ),
+          ),
+        );
+      }
 
       // Play sound directly from AssetSource.
       await _player.play(AssetSource(assetPath));

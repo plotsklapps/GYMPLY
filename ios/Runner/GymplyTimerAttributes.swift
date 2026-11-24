@@ -6,15 +6,18 @@ public struct GymplyTimerAttributes: ActivityAttributes {
     public var totalStartTime: Date
     public var segmentLabel: String
     public var segmentEndTime: Date?
+    public var exerciseName: String?
 
     public init(
       totalStartTime: Date,
       segmentLabel: String,
-      segmentEndTime: Date? = nil
+      segmentEndTime: Date? = nil,
+      exerciseName: String? = nil
     ) {
       self.totalStartTime = totalStartTime
       self.segmentLabel = segmentLabel
       self.segmentEndTime = segmentEndTime
+      self.exerciseName = exerciseName
     }
   }
 
