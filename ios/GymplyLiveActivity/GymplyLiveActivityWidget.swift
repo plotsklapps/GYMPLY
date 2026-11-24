@@ -66,14 +66,11 @@ struct GymplyLiveActivityWidget: Widget {
             .aspectRatio(contentMode: .fit)
             .frame(width: 22, height: 22)
             .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-            .padding(.leading, 8)
         }
         DynamicIslandExpandedRegion(.trailing) {
-            Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
-              .font(.system(size: 16, weight: .bold, design: .monospaced))
-              .foregroundColor(.white)
-              .frame(maxWidth: .infinity, alignment: .trailing)
-              .padding(.trailing, 8)
+          Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
+            .font(.system(size: 16, weight: .bold, design: .monospaced))
+            .foregroundColor(.white)
         }
         DynamicIslandExpandedRegion(.bottom) {
           VStack(spacing: 4) {
