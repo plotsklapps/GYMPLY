@@ -8,22 +8,27 @@ struct GymplyLiveActivityWidget: Widget {
       // Lock Screen and Notification Center Banner View
       VStack(alignment: .leading, spacing: 8) {
         // Row 1: TOP (Icon + GYMPLY + Total Timer)
-        HStack {
-          Image("GymplyIcon")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 22, height: 22)
-            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+        HStack(alignment: .center) {
+          // 1. Icoon & GYMPLY (links geclusterd)
+          HStack(spacing: 8) {
+            Image("GymplyIcon")
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+              .frame(width: 22, height: 22)
+              .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
 
-          Text("GYMPLY.")
-            .font(.system(size: 16, weight: .black))
-            .foregroundColor(.white)
+            Text("GYMPLY.")
+              .font(.system(size: 16, weight: .black))
+              .foregroundColor(.white)
+          }
 
           Spacer()
 
+          // 2. Timer (Strak Rechts uitgelijnd)
           Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
             .font(.system(size: 16, weight: .bold, design: .monospaced))
             .foregroundColor(.white)
+            .multilineTextAlignment(.trailing)
         }
 
         // Row 2: BOTTOM (Exercise Name & Active Timers)
@@ -64,11 +69,11 @@ struct GymplyLiveActivityWidget: Widget {
             .padding(.leading, 8)
         }
         DynamicIslandExpandedRegion(.trailing) {
-          Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
-            .font(.system(size: 16, weight: .bold, design: .monospaced))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.trailing, 8)
+            Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
+              .font(.system(size: 16, weight: .bold, design: .monospaced))
+              .foregroundColor(.white)
+              .frame(maxWidth: .infinity, alignment: .trailing)
+              .padding(.trailing, 8)
         }
         DynamicIslandExpandedRegion(.bottom) {
           VStack(spacing: 4) {
@@ -84,8 +89,6 @@ struct GymplyLiveActivityWidget: Widget {
           }
           .frame(maxWidth: .infinity)
           .padding(.vertical, 8)
-        }
-          .padding(.horizontal, 16)
         }
       } compactLeading: {
         Image("GymplyIcon")
