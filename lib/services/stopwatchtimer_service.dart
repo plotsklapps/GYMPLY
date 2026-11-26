@@ -40,6 +40,9 @@ class StopwatchTimer {
   Timer? _timer;
   final Stopwatch _stopwatch = Stopwatch();
   int _baseTime = 0;
+  DateTime? _startTime;
+
+  DateTime? get startTime => _startTime;
 
   Future<void> startTimer() async {
     // Prevent multiple timers from running at once.
@@ -58,6 +61,10 @@ class StopwatchTimer {
 
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
+
+      // Calculate effective start time BEFORE updating signal (for iOS Live
+      // Activity).
+      _startTime = DateTime.now().subtract(Duration(milliseconds: _baseTime));
 
       sStopwatchTimerRunning.value = true;
       _stopwatch.start();
@@ -86,6 +93,7 @@ class StopwatchTimer {
 
       _timer?.cancel();
       _timer = null;
+      _startTime = null;
       sStopwatchTimerRunning.value = false;
 
       // Sync final value.
@@ -113,6 +121,7 @@ class StopwatchTimer {
       // Cancel timer and reset Signals.
       _timer?.cancel();
       _timer = null;
+      _startTime = null;
 
       _stopwatch
         ..stop()

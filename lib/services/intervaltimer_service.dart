@@ -106,16 +106,52 @@ class IntervalTimer {
     }
   }
 
+  Future<void> _scheduleSingleIntervalAlerts(DateTime intervalEndTime) async {
+    if (kIsWeb || !Platform.isIOS) return;
+
+    final DateTime now = DateTime.now();
+    final int baseTotalSeconds = TotalTimer.sElapsedTotalTime.value;
+    final bool isTotalRunning = TotalTimer.sTotalTimerRunning.value;
+    final int restSec = RestTimer.sInitialRestTime.value;
+
+    final int projectedIntervalTotal = isTotalRunning
+        ? baseTotalSeconds +
+              intervalEndTime.difference(now).inSeconds.clamp(0, 86400)
+        : baseTotalSeconds;
+
+    await notificationService.scheduleTimerAlert(
+      id: NotificationService.intervalTimerNotificationId,
+      scheduledDate: intervalEndTime,
+      title: 'GYMPLY • INTERVAL FINISHED',
+      body:
+          'TOTAL TIME: ${projectedIntervalTotal.formatHMMSS()}\n'
+          '${restSec > 0 ? 'Time to rest!' : 'Interval complete!'}',
+    );
+
+    if (restSec > 0) {
+      final DateTime restEndTime = intervalEndTime.add(
+        Duration(seconds: restSec),
+      );
+      final int projectedRestTotal = isTotalRunning
+          ? baseTotalSeconds +
+                restEndTime.difference(now).inSeconds.clamp(0, 86400)
+          : baseTotalSeconds;
+
+      await notificationService.scheduleTimerAlert(
+        id: NotificationService.restTimerNotificationId,
+        scheduledDate: restEndTime,
+        title: 'GYMPLY • REST FINISHED',
+        body:
+            'TOTAL TIME: ${projectedRestTotal.formatHMMSS()}\n'
+            'Interval complete!',
+      );
+    }
+  }
+
   Future<void> _switchToSingleIntervalAlert() async {
     await notificationService.cancelAutoIntervalAlerts();
     if (!sIntervalTimerRunning.value || _endTime == null) return;
-    final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
-    await notificationService.scheduleTimerAlert(
-      id: NotificationService.intervalTimerNotificationId,
-      scheduledDate: _endTime!,
-      title: 'GYMPLY • INTERVAL FINISHED',
-      body: 'TOTAL TIME: ${totalSeconds.formatHMMSS()}\nTime to rest!',
-    );
+    await _scheduleSingleIntervalAlerts(_endTime!);
   }
 
   Future<void> _switchToSingleRestAlert() async {
@@ -253,15 +289,7 @@ class IntervalTimer {
         refreshBackgroundAlerts();
       } else {
         unawaited(notificationService.cancelAutoIntervalAlerts());
-        final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
-        unawaited(
-          notificationService.scheduleTimerAlert(
-            id: NotificationService.intervalTimerNotificationId,
-            scheduledDate: _endTime!,
-            title: 'GYMPLY • INTERVAL FINISHED',
-            body: 'TOTAL TIME: ${totalSeconds.formatHMMSS()}\nTime to rest!',
-          ),
-        );
+        unawaited(_scheduleSingleIntervalAlerts(_endTime!));
       }
 
       // Set a high-frequency timer (100ms) to support responsive updates.
@@ -334,10 +362,12 @@ class IntervalTimer {
 
     if (!sIntervalTimerRunning.value || _endTime == null) return false;
 
-    final Duration remaining = _endTime!.difference(DateTime.now());
+    final DateTime now = DateTime.now();
+    final Duration remaining = _endTime!.difference(now);
     final int remainingMs = remaining.inMilliseconds;
 
     if (remainingMs <= 0) {
+      final DateTime finishedAt = _endTime!;
       _timer?.cancel();
       _timer = null;
       _endTime = null;
@@ -345,6 +375,39 @@ class IntervalTimer {
       sElapsedIntervalTime.value = 0;
       sIntervalTimerCompleted.value = true;
       sElapsedIntervalTime.value = sInitialIntervalTime.value;
+
+      // On iOS, account for rest time already elapsed while the app was
+      // suspended during a single interval (work + rest).
+      if (!kIsWeb && Platform.isIOS) {
+        final int restSec = RestTimer.sInitialRestTime.value;
+        final int restMs = restSec * 1000;
+        final int overdueMs = now.difference(finishedAt).inMilliseconds;
+
+        if (restMs > 0 && overdueMs < restMs) {
+          final int remainingRestSec = ((restMs - overdueMs) / 1000)
+              .ceil()
+              .clamp(1, restSec);
+          RestTimer.sElapsedRestTime.value = remainingRestSec;
+          unawaited(restTimer.startTimer(silent: true));
+        } else {
+          // Both interval and rest already completed in the background.
+          _isIntervalSequenceActive = false;
+          _recordCompletedSet();
+          restTimer.stopForAutoIntervalSync();
+          RestTimer.sElapsedRestTime.value = restSec;
+          unawaited(
+            notificationService.cancelTimerAlert(
+              NotificationService.intervalTimerNotificationId,
+            ),
+          );
+          unawaited(
+            notificationService.cancelTimerAlert(
+              NotificationService.restTimerNotificationId,
+            ),
+          );
+        }
+        return true;
+      }
 
       unawaited(RestTimer().startTimer());
     } else {
@@ -455,6 +518,13 @@ class IntervalTimer {
           NotificationService.intervalTimerNotificationId,
         ),
       );
+      if (!kIsWeb && Platform.isIOS) {
+        unawaited(
+          notificationService.cancelTimerAlert(
+            NotificationService.restTimerNotificationId,
+          ),
+        );
+      }
       unawaited(notificationService.cancelAutoIntervalAlerts());
 
       // Cancel timer and reset Signals.
@@ -483,6 +553,13 @@ class IntervalTimer {
           NotificationService.intervalTimerNotificationId,
         ),
       );
+      if (!kIsWeb && Platform.isIOS) {
+        unawaited(
+          notificationService.cancelTimerAlert(
+            NotificationService.restTimerNotificationId,
+          ),
+        );
+      }
       unawaited(notificationService.cancelAutoIntervalAlerts());
 
       // Reset timer and reset Signals.

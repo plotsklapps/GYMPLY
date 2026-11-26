@@ -432,19 +432,64 @@ class NotificationService with WidgetsBindingObserver {
           final DateTime totalStartTime =
               totalTimer.startTime ?? DateTime.now();
           final String? exerciseName = sSelectedExercise.value?.exerciseName;
+          final bool isAutoInterval = IntervalTimer.sAutoIntervalOn.value;
+          final bool inIntervalSequence =
+              isIntervalRunning ||
+              (isRestRunning && intervalTimer.isIntervalSequenceActive);
+
+          String iosSegmentLabel = label;
+          String? iosSegmentDetail;
+          DateTime? iosSegmentStartTime;
+          DateTime? iosSegmentEndTime;
+          DateTime? iosStaleDate;
+
+          if (inIntervalSequence) {
+            final int workSec =
+                IntervalTimer.sInitialIntervalTime.value ~/ 1000;
+            final int restSec = RestTimer.sInitialRestTime.value;
+            final String workStr = workSec >= 3600
+                ? workSec.formatHMMSS()
+                : workSec.formatMSS();
+            final String restStr = restSec >= 3600
+                ? restSec.formatHMMSS()
+                : restSec.formatMSS();
+
+            iosSegmentLabel = isAutoInterval ? 'AUTO-INTERVAL' : 'INTERVAL';
+            iosSegmentDetail = '$workStr / $restStr';
+            if (!isAutoInterval) {
+              if (isIntervalRunning && intervalTimer.endTime != null) {
+                iosStaleDate = intervalTimer.endTime!.add(
+                  Duration(seconds: restSec),
+                );
+              } else if (isRestRunning && restTimer.endTime != null) {
+                iosStaleDate = restTimer.endTime;
+              }
+            }
+          } else if (isRestRunning) {
+            iosSegmentEndTime = segmentEndTime;
+            iosStaleDate = segmentEndTime;
+          } else if (isStopwatchRunning) {
+            iosSegmentStartTime = stopwatchTimer.startTime;
+          }
 
           if (!liveActivityService.isActivityActive) {
             await liveActivityService.startActivity(
               totalStartTime: totalStartTime,
-              segmentLabel: label,
-              segmentEndTime: segmentEndTime,
+              segmentLabel: iosSegmentLabel,
+              segmentDetail: iosSegmentDetail,
+              segmentStartTime: iosSegmentStartTime,
+              segmentEndTime: iosSegmentEndTime,
+              staleDate: iosStaleDate,
               exerciseName: exerciseName,
             );
           } else {
             await liveActivityService.updateActivity(
               totalStartTime: totalStartTime,
-              segmentLabel: label,
-              segmentEndTime: segmentEndTime,
+              segmentLabel: iosSegmentLabel,
+              segmentDetail: iosSegmentDetail,
+              segmentStartTime: iosSegmentStartTime,
+              segmentEndTime: iosSegmentEndTime,
+              staleDate: iosStaleDate,
               exerciseName: exerciseName,
             );
           }

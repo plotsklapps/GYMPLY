@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 
 class AudioService {
@@ -13,6 +14,10 @@ class AudioService {
 
   AudioService._internal();
   static final AudioService _instance = AudioService._internal();
+
+  static const MethodChannel _iosAudioChannel = MethodChannel(
+    'dev.plotsklapps.gymply/audio',
+  );
 
   final Logger _logger = Logger();
   final AudioPlayer _player = AudioPlayer();
@@ -27,41 +32,26 @@ class AudioService {
   }
 
   Future<void> _performInitialization() async {
+    // On iOS, native AVAudioPlayer handles timerbell playback and ducking on
+    // demand so Spotify/Apple Music is never ducked before a bell actually
+    // plays and always unducks cleanly via notifyOthersOnDeactivation.
+    if (!kIsWeb && Platform.isIOS) {
+      _isInitialized = true;
+      return;
+    }
+
     try {
       _logger.i('AudioService: Initializing native Android audio context...');
 
-      // Make phone audio duck and configure iOS session on mobile.
+      // Make phone audio duck on Android.
       if (!kIsWeb) {
         await _player.setAudioContext(
           AudioContext(
             android: const AudioContextAndroid(
               audioFocus: AndroidAudioFocus.gainTransientMayDuck,
             ),
-            iOS: AudioContextIOS(
-              // category: AVAudioSessionCategory.playback,
-              options: const <AVAudioSessionOptions>{
-                AVAudioSessionOptions.duckOthers,
-                AVAudioSessionOptions.mixWithOthers,
-              },
-            ),
           ),
         );
-
-        // Unduck iOS audio automatically when playback finishes.
-        _player.onPlayerComplete.listen((_) async {
-          if (Platform.isIOS) {
-            await _player.setAudioContext(
-              AudioContext(
-                iOS: AudioContextIOS(
-                  category: AVAudioSessionCategory.ambient,
-                  options: const <AVAudioSessionOptions>{
-                    AVAudioSessionOptions.mixWithOthers,
-                  },
-                ),
-              ),
-            );
-          }
-        });
       }
 
       // Keep player intact after sound completes so audio tail is not clipped.
@@ -85,24 +75,22 @@ class AudioService {
   Future<void> playTimerBell() async {
     const String assetPath = 'sounds/timerbell.wav';
 
+    // On iOS, delegate to native AVAudioPlayer so AVAudioSession activates
+    // with duckOthers for the bell and immediately deactivates with
+    // notifyOthersOnDeactivation when the bell finishes.
+    if (!kIsWeb && Platform.isIOS) {
+      try {
+        await _iosAudioChannel.invokeMethod<bool>('playTimerBell');
+        _logger.i('AudioService: Native iOS timerbell playback started.');
+      } on Object catch (e) {
+        _logger.e('AudioService: Error playing native iOS sound: $e');
+      }
+      return;
+    }
+
     try {
       // Always ensure initialization is complete before playing.
       await initialize();
-
-      // On iOS, we need to temporarily assert ducking priority before playing.
-      if (!kIsWeb && Platform.isIOS) {
-        await _player.setAudioContext(
-          AudioContext(
-            iOS: AudioContextIOS(
-              // category: AVAudioSessionCategory.playback,
-              options: const <AVAudioSessionOptions>{
-                AVAudioSessionOptions.duckOthers,
-                AVAudioSessionOptions.mixWithOthers,
-              },
-            ),
-          ),
-        );
-      }
 
       // Play sound directly from AssetSource.
       await _player.play(AssetSource(assetPath));

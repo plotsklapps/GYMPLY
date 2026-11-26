@@ -42,12 +42,34 @@ struct GymplyLiveActivityWidget: Widget {
           }
 
           if !context.isStale,
+             let detail = context.state.segmentDetail,
+             !detail.isEmpty,
+             !context.state.segmentLabel.isEmpty {
+            let labelText = Text(context.state.segmentLabel)
+              .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
+            let detailText = Text(detail)
+              .foregroundColor(.white)
+            Text("\(labelText) \(detailText)")
+              .font(.system(size: 14, weight: .bold))
+              .monospacedDigit()
+              .multilineTextAlignment(.center)
+          } else if !context.isStale,
              let endTime = context.state.segmentEndTime,
              !context.state.segmentLabel.isEmpty,
              endTime > Date.now {
             let labelText = Text(context.state.segmentLabel)
               .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
             let timerText = Text(timerInterval: Date.now...endTime, countsDown: true)
+              .foregroundColor(.white)
+            Text("\(labelText) \(timerText)")
+              .font(.system(size: 14, weight: .bold))
+              .monospacedDigit()
+              .multilineTextAlignment(.center)
+          } else if let startTime = context.state.segmentStartTime,
+                    !context.state.segmentLabel.isEmpty {
+            let labelText = Text(context.state.segmentLabel)
+              .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
+            let timerText = Text(timerInterval: startTime...Date.distantFuture, countsDown: false)
               .foregroundColor(.white)
             Text("\(labelText) \(timerText)")
               .font(.system(size: 14, weight: .bold))
