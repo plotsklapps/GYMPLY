@@ -40,6 +40,10 @@ class NotificationService with WidgetsBindingObserver {
   // IDs for scheduled local notification alerts.
   static const int restTimerNotificationId = 1001;
   static const int intervalTimerNotificationId = 1002;
+  static const int autoIntervalNotificationBaseId = 2000;
+  static const int maxAutoIntervalNotifications = 64;
+
+  int _autoIntervalScheduleGeneration = 0;
 
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
@@ -102,8 +106,19 @@ class NotificationService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _logger.i('NotificationService: App resumed, syncing active timers.');
-      restTimer.syncOnResume();
-      intervalTimer.syncOnResume();
+      if (!kIsWeb && Platform.isIOS) {
+        final bool handledByAutoInterval = intervalTimer.syncOnResume();
+        if (!handledByAutoInterval) {
+          restTimer.syncOnResume();
+        }
+      } else {
+        restTimer.syncOnResume();
+        intervalTimer.syncOnResume();
+      }
+    } else if (state == AppLifecycleState.paused &&
+        !kIsWeb &&
+        Platform.isIOS) {
+      intervalTimer.refreshBackgroundAlerts();
     }
   }
 
@@ -175,6 +190,154 @@ class NotificationService with WidgetsBindingObserver {
         error: e,
         stackTrace: stack,
       );
+    }
+  }
+
+  /// Schedules up to 64 alternating interval/rest local notifications on iOS
+  /// so Auto-Interval continues playing timer alerts while the app is
+  /// suspended in the background or on the Lock Screen.
+  Future<void> scheduleAutoIntervalAlerts({
+    required DateTime currentPhaseEndTime,
+    required bool startingInIntervalPhase,
+    required Duration intervalDuration,
+    required Duration restDuration,
+  }) async {
+    if (kIsWeb || !Platform.isIOS) return;
+    if (intervalDuration.inMilliseconds <= 0) return;
+
+    final int generation = ++_autoIntervalScheduleGeneration;
+
+    try {
+      await _cancelPendingAutoIntervalIds(includeSingleAlerts: true);
+      if (generation != _autoIntervalScheduleGeneration) return;
+
+      const DarwinNotificationDetails darwinDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentSound: true,
+        sound: 'timerbell.wav',
+        threadIdentifier: 'gymply_auto_interval',
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      );
+
+      const AndroidNotificationDetails androidDetails =
+          AndroidNotificationDetails(
+            'gymply_timer_alerts',
+            'GYMPLY Timer Alerts',
+            channelDescription:
+                'Alerts when your rest or interval timer completes',
+            importance: Importance.max,
+            priority: Priority.high,
+          );
+
+      const NotificationDetails details = NotificationDetails(
+        iOS: darwinDetails,
+        android: androidDetails,
+      );
+
+      final DateTime now = DateTime.now();
+      final int baseTotalSeconds = TotalTimer.sElapsedTotalTime.value;
+      final bool isTotalRunning = TotalTimer.sTotalTimerRunning.value;
+
+      DateTime nextFireTime = currentPhaseEndTime;
+      bool isIntervalPhase = startingInIntervalPhase;
+      int scheduledCount = 0;
+
+      for (int i = 0; i < maxAutoIntervalNotifications; i++) {
+        if (generation != _autoIntervalScheduleGeneration) return;
+
+        if (nextFireTime.isAfter(now)) {
+          final int projectedTotal = isTotalRunning
+              ? baseTotalSeconds + nextFireTime.difference(now).inSeconds
+              : baseTotalSeconds;
+
+          final String title = isIntervalPhase
+              ? 'GYMPLY • INTERVAL FINISHED'
+              : 'GYMPLY • REST FINISHED';
+          final String prompt = isIntervalPhase
+              ? (restDuration > Duration.zero
+                    ? 'Time to rest!'
+                    : 'Next interval starting!')
+              : 'Time for your next interval!';
+
+          final tz.TZDateTime tzDate = tz.TZDateTime.from(
+            nextFireTime,
+            tz.local,
+          );
+
+          await _localNotifications.zonedSchedule(
+            id: autoIntervalNotificationBaseId + i,
+            title: title,
+            body: 'TOTAL TIME: ${projectedTotal.formatHMMSS()}\n$prompt',
+            scheduledDate: tzDate,
+            notificationDetails: details,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          );
+          scheduledCount++;
+        }
+
+        if (isIntervalPhase) {
+          if (restDuration > Duration.zero) {
+            isIntervalPhase = false;
+            nextFireTime = nextFireTime.add(restDuration);
+          } else {
+            isIntervalPhase = true;
+            nextFireTime = nextFireTime.add(intervalDuration);
+          }
+        } else {
+          isIntervalPhase = true;
+          nextFireTime = nextFireTime.add(intervalDuration);
+        }
+      }
+
+      _logger.i(
+        'NotificationService: Scheduled $scheduledCount auto-interval alerts.',
+      );
+    } on Object catch (e, stack) {
+      _logger.e(
+        'NotificationService: Failed to schedule auto-interval alerts',
+        error: e,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  /// Cancels all pending Auto-Interval batch notifications on iOS.
+  Future<void> cancelAutoIntervalAlerts() async {
+    if (kIsWeb || !Platform.isIOS) return;
+
+    _autoIntervalScheduleGeneration++;
+
+    try {
+      await _cancelPendingAutoIntervalIds(includeSingleAlerts: false);
+      _logger.i('NotificationService: Cancelled auto-interval alerts.');
+    } on Object catch (e, stack) {
+      _logger.e(
+        'NotificationService: Failed to cancel auto-interval alerts',
+        error: e,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  Future<void> _cancelPendingAutoIntervalIds({
+    required bool includeSingleAlerts,
+  }) async {
+    final List<PendingNotificationRequest> pending = await _localNotifications
+        .pendingNotificationRequests();
+
+    for (final PendingNotificationRequest request in pending) {
+      final bool isBatchId =
+          request.id >= autoIntervalNotificationBaseId &&
+          request.id <
+              autoIntervalNotificationBaseId + maxAutoIntervalNotifications;
+      final bool isSingleId =
+          includeSingleAlerts &&
+          (request.id == restTimerNotificationId ||
+              request.id == intervalTimerNotificationId);
+
+      if (isBatchId || isSingleId) {
+        await _localNotifications.cancel(id: request.id);
+      }
     }
   }
 

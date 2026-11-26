@@ -53,7 +53,7 @@ class RestTimer {
 
   DateTime? get endTime => _endTime;
 
-  Future<void> startTimer() async {
+  Future<void> startTimer({bool silent = false}) async {
     // Synchronous check to prevent multiple timers.
     if (_timer != null || sRestTimerRunning.value) return;
 
@@ -80,20 +80,26 @@ class RestTimer {
       sRestTimerRunning.value = true;
 
       // Give a little bzzz.
-      await HapticFeedback.lightImpact();
+      if (!silent) {
+        await HapticFeedback.lightImpact();
+      }
 
-      // Schedule OS alert with custom timer bell sound for background/iOS.
-      final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
-      unawaited(
-        notificationService.scheduleTimerAlert(
-          id: NotificationService.restTimerNotificationId,
-          scheduledDate: _endTime!,
-          title: 'GYMPLY • REST FINISHED',
-          body:
-              'TOTAL TIME: ${totalSeconds.formatHMMSS()}\n'
-              'Time for your next set!',
-        ),
-      );
+      // Schedule OS alert(s) with custom timer bell sound for background/iOS.
+      if (intervalTimer.isAutoIntervalBatchManaged) {
+        intervalTimer.refreshBackgroundAlerts();
+      } else {
+        final int totalSeconds = TotalTimer.sElapsedTotalTime.value;
+        unawaited(
+          notificationService.scheduleTimerAlert(
+            id: NotificationService.restTimerNotificationId,
+            scheduledDate: _endTime!,
+            title: 'GYMPLY • REST FINISHED',
+            body:
+                'TOTAL TIME: ${totalSeconds.formatHMMSS()}\n'
+                'Time for your next set!',
+          ),
+        );
+      }
 
       _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
         if (_endTime == null) return;
@@ -154,17 +160,30 @@ class RestTimer {
     }
   }
 
+  /// Stops internal rest timer state without triggering completion effects
+  /// or haptics, used when IntervalTimer fast-forwards auto-interval on resume.
+  void stopForAutoIntervalSync() {
+    _timer?.cancel();
+    _timer = null;
+    _endTime = null;
+    sRestTimerRunning.value = false;
+    sRestTimerCompleted.value = false;
+  }
+
   Future<void> pauseTimer() async {
     try {
       // Give a little bzzz.
       await HapticFeedback.lightImpact();
 
-      // Cancel OS scheduled alert.
+      // Cancel OS scheduled alert(s).
       unawaited(
         notificationService.cancelTimerAlert(
           NotificationService.restTimerNotificationId,
         ),
       );
+      if (intervalTimer.isIntervalSequenceActive) {
+        unawaited(notificationService.cancelAutoIntervalAlerts());
+      }
 
       // Cancel timer and reset Signals.
       _timer?.cancel();
@@ -185,12 +204,15 @@ class RestTimer {
       // Give a bigger bzzz.
       await HapticFeedback.mediumImpact();
 
-      // Cancel OS scheduled alert.
+      // Cancel OS scheduled alert(s).
       unawaited(
         notificationService.cancelTimerAlert(
           NotificationService.restTimerNotificationId,
         ),
       );
+      if (intervalTimer.isIntervalSequenceActive) {
+        unawaited(notificationService.cancelAutoIntervalAlerts());
+      }
 
       // Reset timer and reset Signals.
       _timer?.cancel();

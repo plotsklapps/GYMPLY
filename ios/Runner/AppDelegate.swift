@@ -105,7 +105,8 @@ class LiveActivityManager {
     let totalStartTime = Date(timeIntervalSince1970: Double(totalStartTimeMs) / 1000.0)
     let segmentEndTime: Date? = {
       if let ms = segmentEndTimeMs, ms > 0 {
-        return Date(timeIntervalSince1970: Double(ms) / 1000.0)
+        let date = Date(timeIntervalSince1970: Double(ms) / 1000.0)
+        return date > Date() ? date : nil
       }
       return nil
     }()
@@ -121,7 +122,7 @@ class LiveActivityManager {
     do {
       let activity = try Activity.request(
         attributes: attributes,
-        content: .init(state: initialContentState, staleDate: nil)
+        content: .init(state: initialContentState, staleDate: segmentEndTime)
       )
       self.currentActivity = activity
     } catch {
@@ -140,7 +141,8 @@ class LiveActivityManager {
 
     let segmentEndTime: Date? = {
       if let ms = segmentEndTimeMs, ms > 0 {
-        return Date(timeIntervalSince1970: Double(ms) / 1000.0)
+        let date = Date(timeIntervalSince1970: Double(ms) / 1000.0)
+        return date > Date() ? date : nil
       }
       return nil
     }()
@@ -153,7 +155,7 @@ class LiveActivityManager {
     )
 
     Task {
-      await activity.update(.init(state: updatedState, staleDate: nil))
+      await activity.update(.init(state: updatedState, staleDate: segmentEndTime))
     }
   }
 

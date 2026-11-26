@@ -26,7 +26,8 @@ struct GymplyLiveActivityWidget: Widget {
 
           // 2. Timer (Strak Rechts uitgelijnd)
           Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
-            .font(.system(size: 16, weight: .bold, design: .monospaced))
+            .font(.system(size: 16, weight: .bold))
+            .monospacedDigit()
             .foregroundColor(.white)
             .multilineTextAlignment(.trailing)
         }
@@ -35,21 +36,23 @@ struct GymplyLiveActivityWidget: Widget {
         VStack(spacing: 4) {
           if let exerciseName = context.state.exerciseName, !exerciseName.isEmpty {
             Text(exerciseName)
-              .font(.system(size: 16, weight: .black))
+              .font(.system(size: 14, weight: .bold))
               .foregroundColor(.white)
               .multilineTextAlignment(.center)
           }
 
-          if let endTime = context.state.segmentEndTime, !context.state.segmentLabel.isEmpty {
-            HStack(spacing: 6) {
-              Text(context.state.segmentLabel)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
-
-              Text(timerInterval: Date.now...endTime, countsDown: true)
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
-                .foregroundColor(.white)
-            }
+          if !context.isStale,
+             let endTime = context.state.segmentEndTime,
+             !context.state.segmentLabel.isEmpty,
+             endTime > Date.now {
+            let labelText = Text(context.state.segmentLabel)
+              .foregroundColor(Color(red: 252/255, green: 176/255, blue: 117/255))
+            let timerText = Text(timerInterval: Date.now...endTime, countsDown: true)
+              .foregroundColor(.white)
+            Text("\(labelText) \(timerText)")
+              .font(.system(size: 14, weight: .bold))
+              .monospacedDigit()
+              .multilineTextAlignment(.center)
           }
         }
         .frame(maxWidth: .infinity)
@@ -66,11 +69,15 @@ struct GymplyLiveActivityWidget: Widget {
             .aspectRatio(contentMode: .fit)
             .frame(width: 22, height: 22)
             .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+            .padding(.leading, 8)
         }
         DynamicIslandExpandedRegion(.trailing) {
           Text(timerInterval: context.state.totalStartTime...Date.distantFuture, countsDown: false)
             .font(.system(size: 16, weight: .bold, design: .monospaced))
             .foregroundColor(.white)
+            .multilineTextAlignment(.trailing)
+            .lineLimit(1)
+            .padding(.trailing, 8)
         }
         DynamicIslandExpandedRegion(.bottom) {
           VStack(spacing: 4) {
