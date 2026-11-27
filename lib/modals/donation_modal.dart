@@ -6,13 +6,20 @@ import 'package:gymply/theme/icons.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DonationModal extends SignalWidget {
   const DonationModal({super.key});
 
+  static const String _privacyPolicyUrl =
+      'https://github.com/plotsklapps/gymply/blob/master/PRIVACY_POLICY.md';
+  static const String _appleEulaUrl =
+      'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool isIOS = !kIsWeb && Platform.isIOS;
 
     // Watch Signals.
     final bool isLoading = donationService.sIsLoading.value;
@@ -58,10 +65,15 @@ class DonationModal extends SignalWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'GYMPLY. is 100% free, private, and open-source.\n\n'
-                  'Your donations help cover development costs and keep '
-                  'the project alive without ever adding ads or selling '
-                  'your data.',
+                  isIOS
+                      ? 'GYMPLY. is 100% free, private, and open-source.\n\n'
+                            'Your supporter subscription helps cover '
+                            'development costs and keeps the project alive '
+                            'without ever adding ads or selling your data.'
+                      : 'GYMPLY. is 100% free, private, and open-source.\n\n'
+                            'Your donations help cover development costs and '
+                            'keep the project alive without ever adding ads '
+                            'or selling your data.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium,
                 ),
@@ -101,8 +113,8 @@ class DonationModal extends SignalWidget {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      !kIsWeb && Platform.isIOS
-                          ? 'Donations are currently unavailable. '
+                      isIOS
+                          ? 'Subscriptions are currently unavailable. '
                                 'Please ensure you have an active App Store '
                                 'connection.'
                           : 'Donations are currently unavailable. '
@@ -143,6 +155,45 @@ class DonationModal extends SignalWidget {
                   icon: const Icon(IconUtils.sync),
                   label: const Text('RESTORE PURCHASES'),
                 ),
+                if (isIOS) ...<Widget>[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Payment will be charged to your Apple ID account at '
+                    'confirmation of purchase. Subscription automatically '
+                    'renews unless cancelled at least 24 hours before the '
+                    'end of the current period. Manage or cancel anytime in '
+                    'your Apple ID Account Settings.',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 12,
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () async {
+                          await launchUrl(
+                            Uri.parse(_privacyPolicyUrl),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                        child: const Text('Privacy Policy'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await launchUrl(
+                            Uri.parse(_appleEulaUrl),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                        child: const Text('Terms of Use (EULA)'),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 16),
               ],
             ),
@@ -161,15 +212,21 @@ class _ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool isIOS = !kIsWeb && Platform.isIOS;
 
     String subtitle = '';
+    String priceLabel = product.price;
     IconData icon = IconUtils.heart;
 
     if (product.id.contains('support_monthly')) {
-      subtitle = 'Support monthly';
+      subtitle = isIOS ? '1 Month • Auto-renews monthly' : 'Support monthly';
+      if (isIOS) priceLabel = '${product.price} / mo';
       icon = IconUtils.calendarDay;
     } else if (product.id.contains('support_yearly')) {
-      subtitle = 'Support yearly (Best value!)';
+      subtitle = isIOS
+          ? '1 Year • Auto-renews yearly (Best value!)'
+          : 'Support yearly (Best value!)';
+      if (isIOS) priceLabel = '${product.price} / yr';
       icon = IconUtils.calendarMonth;
     }
 
@@ -195,7 +252,7 @@ class _ProductTile extends StatelessWidget {
         ),
         subtitle: Text(subtitle),
         trailing: Text(
-          product.price,
+          priceLabel,
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.secondary,
             fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:gymply/services/settings_service.dart';
@@ -75,8 +76,11 @@ class DonationService {
     );
     await _checkAvailability();
 
-    // Restore past purchases silently.
-    if (sIsAvailable.value) {
+    // Restore past purchases silently on Android. On iOS, calling
+    // restorePurchases() at launch can trigger an Apple ID sign-in prompt,
+    // which violates App Store Review Guidelines; iOS users restore explicitly
+    // via the Restore Purchases button.
+    if (sIsAvailable.value && !Platform.isIOS) {
       await _iap.restorePurchases();
     }
   }
@@ -171,6 +175,11 @@ class DonationService {
   Future<void> _onPurchaseUpdate(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
+    if (!kIsWeb && Platform.isIOS) {
+      await _onIOSPurchaseUpdate(purchaseDetailsList);
+      return;
+    }
+
     // Check if there's any active (purchased or restored) subscription in the
     // stream.
     final bool hasValidPurchase = purchaseDetailsList.any(
@@ -217,6 +226,57 @@ class DonationService {
         settingsService.verifySupporterPerks();
         _logger.i('DonationService: Supporter status revoked (expired).');
       }
+    }
+  }
+
+  // iOS-specific purchase handler: completes canceled/errored StoreKit
+  // transactions cleanly without falsely revoking an active supporter status.
+  Future<void> _onIOSPurchaseUpdate(
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
+    bool grantedSupporter = false;
+
+    for (final PurchaseDetails purchase in purchaseDetailsList) {
+      if (purchase.status == PurchaseStatus.pending) {
+        _logger.i(
+          'DonationService (iOS): Purchase pending for ${purchase.productID}',
+        );
+        ToastService.showWarning(
+          title: 'Purchase Pending',
+          subtitle: 'Your transaction is being processed by the App Store.',
+        );
+      } else if (purchase.status == PurchaseStatus.canceled) {
+        _logger.i(
+          'DonationService (iOS): Purchase canceled for ${purchase.productID}',
+        );
+        if (purchase.pendingCompletePurchase) {
+          await _iap.completePurchase(purchase);
+        }
+      } else if (purchase.status == PurchaseStatus.error) {
+        _logger.e('DonationService (iOS): Purchase error: ${purchase.error}');
+        if (purchase.pendingCompletePurchase) {
+          await _iap.completePurchase(purchase);
+        }
+        ToastService.showError(
+          title: 'Purchase Failed',
+          subtitle: purchase.error?.message ?? 'Unknown error',
+        );
+      } else if (purchase.status == PurchaseStatus.purchased ||
+          purchase.status == PurchaseStatus.restored) {
+        grantedSupporter = true;
+        if (purchase.pendingCompletePurchase) {
+          await _iap.completePurchase(purchase);
+        }
+      }
+    }
+
+    if (grantedSupporter && !sIsSupporter.value) {
+      sIsSupporter.value = true;
+      await settingsService.updateIsSupporter(value: true);
+      ToastService.showSuccess(
+        title: 'Thank You!',
+        subtitle: 'Your support keeps GYMPLY. alive and free.',
+      );
     }
   }
 
