@@ -21,10 +21,10 @@ packages:
     dependency: transitive
     description:
       name: android_file_picker
-      sha256: b8462091dcdd075511a842272374be2232e917ee2a51ecdba4aca02bff529482
+      sha256: a4231d430c2d4f21a5024b69e7830309db79eac8ad20ddad03e7e721db42acb4
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.1"
+    version: "2.2.2"
   ansicolor:
     dependency: transitive
     description:

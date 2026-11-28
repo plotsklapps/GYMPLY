@@ -92,6 +92,12 @@ class NotificationService with WidgetsBindingObserver {
       _isInitialized = true;
       _setupTimerEffect();
 
+      // On iOS, recover any active interval sequence if the OS terminated the
+      // app while suspended in the background.
+      if (!kIsWeb && Platform.isIOS) {
+        await intervalTimer.restoreAfterOSKillIfNeeded();
+      }
+
       _logger.i('NotificationService: Initialized successfully.');
     } on Object catch (e, stack) {
       _logger.e(
@@ -118,7 +124,7 @@ class NotificationService with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.paused &&
         !kIsWeb &&
         Platform.isIOS) {
-      intervalTimer.refreshBackgroundAlerts();
+      intervalTimer.onEnterBackground();
     }
   }
 

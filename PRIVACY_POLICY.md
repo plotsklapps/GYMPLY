@@ -74,12 +74,23 @@ If you choose to attach photos to exercises or workouts, GYMPLY requests access 
 
 ---
 
-## 4. In-App Subscriptions
+## 4. In-App Subscriptions & Optional Cloud Backup Sync
 
-GYMPLY offers optional auto-renewable Supporter Subscriptions through the **Apple App Store** (iOS/iPadOS) and **Google Play** (Android) to unlock extra themes and fonts.
+### In-App Subscriptions
+
+GYMPLY offers optional auto-renewable Supporter Subscriptions through the **Apple App Store** (iOS/iPadOS) and **Google Play** (Android) to unlock extra themes, fonts, and optional automatic Cloud Backup Sync.
 
 - All billing, payment processing, and subscription management are handled exclusively by Apple or Google under their respective privacy policies.
 - GYMPLY never receives, processes, or stores your payment details, name, or billing address.
+
+### Optional Cloud Backup Sync (Google Drive & Apple iCloud)
+
+Active Supporters may optionally enable automatic backup synchronization across their devices using their own personal cloud storage:
+
+- **Android (Google Drive):** GYMPLY requests only the restricted `https://www.googleapis.com/auth/drive.appdata` scope, which grants access exclusively to a hidden, app-specific folder in your personal Google Drive. GYMPLY cannot view, read, modify, or delete any other files or photos in your Google Drive. GYMPLY's use and transfer of information received from Google APIs adheres to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements.
+- **iOS / iPadOS (Apple iCloud):** GYMPLY stores backups exclusively in your personal private iCloud container (`iCloud.dev.plotsklapps.gymply`), managed by Apple under Apple's Privacy Policy.
+
+Backup files are never uploaded to or stored on any server operated by GYMPLY. You can disable cloud sync or revoke access at any time in the app or via your Google / Apple account settings.
 
 ---
 
@@ -90,7 +101,8 @@ The app accesses the internet **only** when needed for optional features:
 
 - loading or publishing to the optional Nostr feed (only when initiated by the user)
 - verifying or restoring optional App Store / Google Play supporter subscriptions
-- opening external links such as this privacy policy or the GitHub project page
+- syncing optional encrypted/archived backups directly with your personal Google Drive (`appDataFolder`) or Apple iCloud container (only when explicitly enabled by an active Supporter)
+- opening external links such as this privacy policy, terms of service, or the GitHub project page
 
 ---
 

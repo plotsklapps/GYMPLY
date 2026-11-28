@@ -101,43 +101,83 @@ class RestTimer {
         );
       }
 
-      _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
-        if (_endTime == null) return;
+      if (!kIsWeb && Platform.isIOS && intervalTimer.isIntervalSequenceActive) {
+        intervalTimer.saveIOSBackgroundStateIfActive();
+      }
 
-        final Duration remaining = _endTime!.difference(DateTime.now());
-        // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
-        final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
-
-        if (remainingSeconds > 0) {
-          sElapsedRestTime.value = remainingSeconds;
-        } else {
-          // Stop timer immediately.
-          _timer?.cancel();
-
-          // Reset Signals.
-          _timer = null;
-          _endTime = null;
-          sRestTimerRunning.value = false;
-          sElapsedRestTime.value = 0;
-
-          // Only play sound via AudioPlayer if app is in foreground on iOS.
-          // On iOS in background, scheduled OS notification handles sound.
-          final bool isForeground =
-              WidgetsBinding.instance.lifecycleState ==
-              AppLifecycleState.resumed;
-          if (kIsWeb || !Platform.isIOS || isForeground) {
-            unawaited(AudioService().playTimerBell());
-          }
-
-          // Reset Signals.
-          sRestTimerCompleted.value = true;
-          sElapsedRestTime.value = sInitialRestTime.value;
-        }
-      });
+      _startPeriodicTick();
       _logger.i('RestTimer: Started.');
     } on Object catch (e, stack) {
       // Log error.
       _logger.e('RestTimer: Failed to start', error: e, stackTrace: stack);
+    }
+  }
+
+  void _startPeriodicTick() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+      if (_endTime == null) return;
+
+      final Duration remaining = _endTime!.difference(DateTime.now());
+      // Use ceil() to ensure that even 8.9 seconds is shown as 9 seconds.
+      final int remainingSeconds = (remaining.inMilliseconds / 1000).ceil();
+
+      if (remainingSeconds > 0) {
+        sElapsedRestTime.value = remainingSeconds;
+      } else {
+        // On iOS, if this tick woke up overdue after background suspension
+        // during an interval sequence, hand off to IntervalTimer.syncOnResume()
+        // so all elapsed rounds are logged instead of just one.
+        if (!kIsWeb &&
+            Platform.isIOS &&
+            intervalTimer.isIntervalSequenceActive) {
+          final int overdueMs = -remaining.inMilliseconds;
+          final bool isForeground =
+              WidgetsBinding.instance.lifecycleState ==
+              AppLifecycleState.resumed;
+          if (!isForeground || overdueMs > 2000) {
+            intervalTimer.syncOnResume();
+            return;
+          }
+        }
+
+        // Stop timer immediately.
+        _timer?.cancel();
+
+        // Reset Signals.
+        _timer = null;
+        _endTime = null;
+        sRestTimerRunning.value = false;
+        sElapsedRestTime.value = 0;
+
+        // Only play sound via AudioPlayer if app is in foreground on iOS.
+        // On iOS in background, scheduled OS notification handles sound.
+        final bool isForeground =
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+        if (kIsWeb || !Platform.isIOS || isForeground) {
+          unawaited(AudioService().playTimerBell());
+        }
+
+        // Reset Signals.
+        sRestTimerCompleted.value = true;
+        sElapsedRestTime.value = sInitialRestTime.value;
+      }
+    });
+  }
+
+  /// Temporarily pauses the Dart periodic tick on iOS when entering background
+  /// so an overdue tick cannot race ahead of AppLifecycleState.resumed.
+  void suspendTickForIOSBackground() {
+    if (kIsWeb || !Platform.isIOS) return;
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  /// Restarts the Dart periodic tick on iOS if the rest timer is still active.
+  void resumeTickForIOSForeground() {
+    if (kIsWeb || !Platform.isIOS) return;
+    if (sRestTimerRunning.value && _endTime != null && _timer == null) {
+      _startPeriodicTick();
     }
   }
 
@@ -157,6 +197,7 @@ class RestTimer {
       sElapsedRestTime.value = sInitialRestTime.value;
     } else {
       sElapsedRestTime.value = remainingSeconds;
+      resumeTickForIOSForeground();
     }
   }
 
@@ -183,6 +224,7 @@ class RestTimer {
       );
       if (intervalTimer.isIntervalSequenceActive) {
         unawaited(notificationService.cancelAutoIntervalAlerts());
+        unawaited(intervalTimer.clearIOSBackgroundState());
       }
 
       // Cancel timer and reset Signals.
@@ -212,6 +254,7 @@ class RestTimer {
       );
       if (intervalTimer.isIntervalSequenceActive) {
         unawaited(notificationService.cancelAutoIntervalAlerts());
+        unawaited(intervalTimer.clearIOSBackgroundState());
       }
 
       // Reset timer and reset Signals.
